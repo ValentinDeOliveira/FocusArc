@@ -1,0 +1,49 @@
+@startuml
+class User {
+    UserId userId
+    String name
+    String email
+    Date lastLogin
+}
+
+class Arc {
+    UUID id
+    String name
+    int totalPlannedMinutes
+    int totalCompletedMinutes
+}
+
+class Chapter {
+    UUID id
+    String date
+    int plannedMinutes
+    int completedMinutes
+}
+
+class Task {
+    TaskId taskId
+    String title
+    short estimatedMinutes
+    Date scheduledDate
+    TaskStatus status
+}
+
+
+enum TaskStatus {
+    Planned
+    In progress
+    Done
+    Skipped
+}
+
+record UserId {
+    UUID id
+}
+record TaskId {
+    UUID id
+}
+
+User "1" *-- "0..*" Arc : has
+Arc "1" *-- "0..*" Chapter : has
+Chapter "1" *-- "0..*" Task : contains
+@enduml
