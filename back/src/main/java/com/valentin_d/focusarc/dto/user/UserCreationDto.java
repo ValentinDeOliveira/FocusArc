@@ -1,4 +1,7 @@
 package com.valentin_d.focusarc.dto.user;
 
-public record UserCreationDto(String name, String email) {
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+
+public record UserCreationDto(@NotBlank String name, @NotBlank @Email String email) {
 }
