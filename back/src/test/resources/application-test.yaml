@@ -1,0 +1,3 @@
+spring:
+  mongodb:
+    database: focusarc_test
