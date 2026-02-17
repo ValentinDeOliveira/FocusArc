@@ -31,7 +31,7 @@ class UserControllerTest {
 
     @Test
     void getUserByEmail_found() throws Exception {
-        when(userService.getByEmail(EMAIL))
+        when(userService.findByEmail(EMAIL))
                 .thenReturn(Optional.of(new User(NAME, EMAIL)));
 
         final var actions = mockMvc.perform(get(ROOT + "/email").param("email", EMAIL))
@@ -42,7 +42,7 @@ class UserControllerTest {
 
     @Test
     void getUserByEmail_notFound() throws Exception {
-        when(userService.getByEmail(EMAIL))
+        when(userService.findByEmail(EMAIL))
                 .thenReturn(Optional.empty());
 
         mockMvc.perform(get(ROOT + "/email").param("email", EMAIL))

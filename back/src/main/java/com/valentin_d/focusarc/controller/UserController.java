@@ -1,7 +1,9 @@
 package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.dto.user.UserCreationDto;
+import com.valentin_d.focusarc.dto.user.UserUpdateDto;
 import com.valentin_d.focusarc.model.User;
+import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.UserService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;
@@ -21,15 +23,33 @@ public class UserController {
     private final UserService service;
 
     @PostMapping
-    public ResponseEntity<User> create(@Valid @RequestBody UserCreationDto userCreationDto) {
+    public ResponseEntity<User> create(@Valid @RequestBody final UserCreationDto userCreationDto) {
         final var user = service.create(userCreationDto);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(user);
     }
 
     @GetMapping("/email")
-    public ResponseEntity<User> getByEmail(@RequestParam("email") @NotBlank @Email String email) {
-        final var user = service.getByEmail(email);
+    public ResponseEntity<User> getByEmail(@RequestParam("email") @NotBlank @Email final String email) {
+        final var user = service.findByEmail(email);
         return ResponseUtil.wrapOrNotFound(user);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<User> getById(@PathVariable @NotBlank final UserId id) {
+        final var user = service.findById(id);
+        return ResponseUtil.wrapOrNotFound(user);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<User> update(@PathVariable @NotBlank final UserId id,
+                                       @Valid @RequestBody final UserUpdateDto userUpdateDto) {
+        final var user = service.update(userUpdateDto, id);
+        return ResponseEntity.ok(user);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> delete(@PathVariable @NotBlank final UserId id) {
+        service.delete(id);
+        return ResponseEntity.noContent().build();
     }
 }
