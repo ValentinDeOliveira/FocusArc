@@ -1,4 +1,4 @@
-package com.valentin_d.focusarc.exception;
+package com.valentin_d.focusarc.exception.handler;
 
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestControllerAdvice
-public class GlobalExceptionHandler {
+public class ValidationExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
     public ResponseEntity<Map<String, Object>> handleValidationErrors(ConstraintViolationException ex) {

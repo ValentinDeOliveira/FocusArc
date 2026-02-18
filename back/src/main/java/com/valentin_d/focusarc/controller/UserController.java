@@ -9,6 +9,7 @@ import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -35,20 +36,20 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable @NotBlank final UserId id) {
+    public ResponseEntity<User> getById(@PathVariable @NotNull final UserId id) {
         final var user = service.findById(id);
         return ResponseUtil.wrapOrNotFound(user);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable @NotBlank final UserId id,
+    public ResponseEntity<User> update(@PathVariable @NotNull final UserId id,
                                        @Valid @RequestBody final UserUpdateDto userUpdateDto) {
         final var user = service.update(userUpdateDto, id);
         return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable @NotBlank final UserId id) {
+    public ResponseEntity<Void> delete(@PathVariable @NotNull final UserId id) {
         service.delete(id);
         return ResponseEntity.noContent().build();
     }
