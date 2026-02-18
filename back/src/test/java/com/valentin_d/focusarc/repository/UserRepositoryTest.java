@@ -1,6 +1,7 @@
 package com.valentin_d.focusarc.repository;
 
 import com.valentin_d.focusarc.model.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.mongodb.test.autoconfigure.DataMongoTest;
@@ -12,6 +13,11 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class UserRepositoryTest {
     @Autowired
     private UserRepository repository;
+
+    @BeforeEach
+    void setup() {
+        repository.deleteAll();
+    }
 
     @Test
     void should_find_user_by_email() {
