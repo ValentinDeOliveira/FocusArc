@@ -21,7 +21,11 @@ jobs:
           --health-retries 5
     steps:
       - uses: actions/checkout@v2
-
+      - name: Inspect mvnw
+        run: |
+          file mvnw
+          head -n 1 mvnw | cat -v
+        working-directory: backend
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
