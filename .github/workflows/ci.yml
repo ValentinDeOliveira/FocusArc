@@ -23,7 +23,7 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
-
+      # Add admin user to MongoDB to allow authentication for tests
       - name: Setup Mongo User
         run: |
           docker exec $(docker ps -q -f ancestor=mongo:latest) \
