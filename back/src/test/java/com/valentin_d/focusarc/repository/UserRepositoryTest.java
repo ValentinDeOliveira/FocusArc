@@ -16,11 +16,6 @@ class UserRepositoryTest {
     @Autowired
     private UserRepository repository;
 
-    @BeforeEach
-    void setup() {
-        repository.deleteAll();
-    }
-
     @Test
     void should_find_user_by_email() {
         final User user = new User("foobar", "foobar@mail.com");
