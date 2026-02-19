@@ -2,194 +2,113 @@ package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.dto.user.UserCreationDto;
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
+import com.valentin_d.focusarc.integration.BaseUserControllerIntegrationTest;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
-import com.valentin_d.focusarc.repository.UserRepository;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.resttestclient.TestRestTemplate;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.ActiveProfiles;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@ActiveProfiles("test")
-public class UserControllerIntegrationTest{
-    @LocalServerPort
-    private int port;
-    private final TestRestTemplate restTemplate = new TestRestTemplate();
-
-    @Autowired
-    private UserRepository userRepository;
-
-    private static final UserId userId = UserId.random();
-
-    @BeforeEach
-    void setUp() {
-        userRepository.deleteAll(); // clean db before each test
-        userRepository.save(new User(userId, "foobar", "foo@test.com"));
-    }
-
+public class UserControllerIntegrationTest extends BaseUserControllerIntegrationTest {
     @Test
     void createUser_returnsCreatedUser() {
-        UserCreationDto dto = new UserCreationDto("Alice", "alice@example.com");
+        final var dto = new UserCreationDto("Alice", "alice@example.com");
 
-        ResponseEntity<User> response = restTemplate.postForEntity(
-                "http://localhost:" + port + "/users",
-                new HttpEntity<>(dto),
-                User.class
-        );
+        final var response = request(URL, HttpMethod.POST, dto, User.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CREATED);
-        assertThat(response.getBody()).isNotNull();
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
 
         final User user = response.getBody();
 
         assertEquals("alice@example.com", user.getEmail());
         assertEquals("Alice", user.getName());
-        assertThat(user.getId()).isNotNull();
-        assertThat(user.getLastLogin()).isNotNull();
+        assertNotNull(user.getId());
+        assertNotNull(user.getLastLogin());
     }
 
     @Test
     void createUser_withExistingMail_shouldFail() {
-        UserCreationDto dto = new UserCreationDto("foo", "foo@test.com");
+        final var dto = new UserCreationDto("foo", "foo@test.com");
 
-        ResponseEntity<User> response = restTemplate.postForEntity(
-                "http://localhost:" + port + "/users",
-                new HttpEntity<>(dto),
-                User.class
-        );
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+        assertNull(response.getBody());
     }
 
     @Test
     void getUserByEmail_returnsUser_whenFound() {
-        ResponseEntity<User> response = restTemplate.getForEntity(
-                "http://localhost:" + port + "/users/email?email={email}",
-                User.class,
-                "foo@test.com"
-        );
+        final var response = request(URL + "/email?email="+ USER_EMAIL, HttpMethod.GET, null, User.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
+        assertHasContent(response);
 
         final User user = response.getBody();
 
-        assertEquals("foo@test.com", user.getEmail());
-        assertEquals("foobar", user.getName());
-        assertEquals(userId, user.getId());
-        assertThat(user.getLastLogin()).isNotNull();
+        assertGetUserEquals(user);
     }
 
     @Test
     void getUserByEmail_returnsNotFound_whenNotFound() {
-        ResponseEntity<User> response = restTemplate.getForEntity(
-                "http://localhost:" + port + "/users/email?email={email}",
-                User.class,
-                "bar@test.com"
-        );
+        final var response = request(URL + "/email?email=bar@test.com", HttpMethod.GET, null, User.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody()).isNull();
+        assertNotFound(response);
     }
 
     @Test
     void getUserById_returnsUser_whenFound() {
-        ResponseEntity<User> response = restTemplate.getForEntity(
-                "http://localhost:" + port + "/users/" + userId.id(),
-                User.class
-        );
+        final var response = request(URL + "/" + USER_ID.id(), HttpMethod.GET, null, User.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
+        assertHasContent(response);
 
         final User user = response.getBody();
 
-        assertEquals("foo@test.com", user.getEmail());
-        assertEquals("foobar", user.getName());
-        assertEquals(userId, user.getId());
-        assertThat(user.getLastLogin()).isNotNull();
+        assertGetUserEquals(user);
     }
 
     @Test
     void getUserById_returnsNotFound_whenNotFound() {
-        ResponseEntity<User> response = restTemplate.getForEntity(
-                "http://localhost:" + port + "/users/" + UserId.random().id(),
-                User.class
-        );
+        final var response = request(URL + "/" +  UserId.random().id(), HttpMethod.GET, null, User.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
-        assertThat(response.getBody()).isNull();
+        assertNotFound(response);
     }
 
     @Test
     void updateUser_withNewFields_whenFound() {
         final var dto = new UserUpdateDto("bar");
 
-        ResponseEntity<User> response = restTemplate.exchange(
-                "http://localhost:" + port + "/users/" + userId.id(),
-                HttpMethod.PUT,
-                new HttpEntity<>(dto),
-                User.class
-        );
+        final var response = request(URL+ "/" + USER_ID.id(), HttpMethod.PUT, dto, User.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(response.getBody()).isNotNull();
+        assertHasContent(response);
 
-        final User user = response.getBody();
+        final var user = response.getBody();
+        final var expected = new User(USER_ID, "bar", USER_EMAIL);
 
-        assertEquals("foo@test.com", user.getEmail());
-        assertEquals("bar", user.getName());
-        assertEquals(userId, user.getId());
-        assertThat(user.getLastLogin()).isNotNull();
+        assertGetUserEquals(user, expected);
     }
 
     @Test
     void updateUser_withNewFields_whenNotFound() {
         final var dto = new UserUpdateDto("bar");
 
-        ResponseEntity<User> response = restTemplate.exchange(
-                "http://localhost:" + port + "/users/" + UserId.random().id(),
-                HttpMethod.PUT,
-                new HttpEntity<>(dto),
-                User.class
-        );
+        final var response = request(URL + "/" + UserId.random().id(), HttpMethod.PUT, dto, Void.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertNotFound(response);
     }
 
     @Test
     void deleteUser_whenFound() {
-        ResponseEntity<User> response = restTemplate.exchange(
-                "http://localhost:" + port + "/users/" + userId.id(),
-                HttpMethod.DELETE,
-                null,
-                User.class
-        );
+        final var response = request(URL + "/" + USER_ID.id(), HttpMethod.DELETE, null, Void.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NO_CONTENT);
-        assertThat(response.getBody()).isNull();
+        assertNoContent(response);
     }
 
     @Test
     void deleteUser_whenNotFound() {
-        ResponseEntity<User> response = restTemplate.exchange(
-                "http://localhost:" + port + "/users/" + UserId.random().id(),
-                HttpMethod.DELETE,
-                null,
-                User.class
-        );
+        final var response = request(URL + "/" + UserId.random().id(), HttpMethod.DELETE, null, Void.class);
 
-        assertThat(response.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+        assertNotFound(response);
     }
 }

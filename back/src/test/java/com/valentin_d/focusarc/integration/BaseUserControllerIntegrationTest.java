@@ -12,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class BaseUserControllerIntegrationTest extends BaseIntegrationTest{
     @Autowired
     protected UserRepository userRepository;
-    protected static final String URL = BASE_URL + "/users";
+    protected final String URL = "/users";
 
     protected static final String USER_NAME = "foobar";
     protected static final String USER_EMAIL = "foo@test.com";
@@ -24,10 +24,17 @@ public class BaseUserControllerIntegrationTest extends BaseIntegrationTest{
         userRepository.save(new User(USER_ID, USER_NAME, USER_EMAIL));
     }
 
-    protected void assertGetUserEquals(final User expected) {
-        assertEquals(USER_ID, expected.getId());
-        assertEquals(USER_NAME, expected.getName());
-        assertEquals(USER_EMAIL, expected.getEmail());
-        assertNotNull(expected.getLastLogin());
+    protected void assertGetUserEquals(final User actual) {
+        assertEquals(USER_ID, actual.getId());
+        assertEquals(USER_NAME, actual.getName());
+        assertEquals(USER_EMAIL, actual.getEmail());
+        assertNotNull(actual.getLastLogin());
+    }
+
+    protected void assertGetUserEquals(final User actual, final User expected) {
+        assertEquals(actual.getId(), expected.getId());
+        assertEquals(actual.getName(), expected.getName());
+        assertEquals(actual.getEmail(), expected.getEmail());
+        assertNotNull(actual.getLastLogin());
     }
 }
