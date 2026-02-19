@@ -23,6 +23,12 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      - name: Setup Mongo User
+        run: |
+          docker exec $(docker ps -q -f ancestor=mongo:latest) \
+            mongosh --eval "db.getSiblingDB('admin').createUser({user:'admin', pwd:'admin123', roles:[{role:'root', db:'admin'}]})"
+
       - name: Set up JDK 17
         uses: actions/setup-java@v3
         with:
