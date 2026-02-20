@@ -1,10 +1,9 @@
 package com.valentin_d.focusarc.controller;
 
-import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
-import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
+import com.valentin_d.focusarc.fixtures.arc.ArcBuilder;
+import com.valentin_d.focusarc.fixtures.arc.ArcCreationDtoBuilder;
+import com.valentin_d.focusarc.fixtures.arc.ArcUpdateDtoBuilder;
 import com.valentin_d.focusarc.model.Arc;
-import com.valentin_d.focusarc.model.id.ArcId;
-import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.ArcService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,89 +35,93 @@ class ArcControllerTest {
 
     private final static String ROOT = "/arcs";
 
-    private static final UserId USER_ID = UserId.random();
-    private static final ArcId ARC_ID = ArcId.random();
-    private static final String ARC_NAME = "Arc 1";
-    private static final int TOTAL_PLANNED_MINUTES = 120;
-
-    private static final Arc ARC = new Arc(ARC_ID, USER_ID, ARC_NAME, TOTAL_PLANNED_MINUTES);
-
-    private static final ArcCreationDto CREATION_DTO = new ArcCreationDto(USER_ID, ARC_NAME, TOTAL_PLANNED_MINUTES);
-    private static final ArcUpdateDto UPDATE_DTO = new ArcUpdateDto(ARC_NAME, TOTAL_PLANNED_MINUTES);
-
     @Test
     void shouldReturnArc_whenIdExists() throws Exception {
-        when(arcService.findById(ARC.getId())).thenReturn(Optional.of(ARC));
+        final var arc = ArcBuilder.builder().build().build();
+        when(arcService.findById(arc.getId())).thenReturn(Optional.of(arc));
 
-        final var actions = mockMvc.perform(get(ROOT + "/" + ARC.getId().id()))
+        final var actions = mockMvc.perform(get(ROOT + "/" + arc.getId().id()))
                 .andExpect(status().isOk());
 
-        assertArcJson(actions, ARC);
+        assertArcJson(actions, arc);
     }
 
     @Test
     void shouldReturnNotFound_whenIdDoesNotExists() throws Exception {
-        when(arcService.findById(ARC.getId())).thenReturn(Optional.empty());
+        final var arc = ArcBuilder.builder().build().build();
+        when(arcService.findById(arc.getId())).thenReturn(Optional.empty());
 
-        mockMvc.perform(get(ROOT + "/" + ARC.getId().id()))
+        mockMvc.perform(get(ROOT + "/" + arc.getId().id()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldReturnListOfArc_whenUserIdExists() throws Exception {
-        when(arcService.findAllForUser(USER_ID)).thenReturn(List.of(ARC));
+        final var arc = ArcBuilder.builder().build().build();
+        when(arcService.findAllForUser(arc.getOwner())).thenReturn(List.of(arc));
 
-        final var actions = mockMvc.perform(get(ROOT + "/users/" + USER_ID.id()))
+        final var actions = mockMvc.perform(get(ROOT + "/users/" + arc.getOwner().id()))
                 .andExpect(status().isOk());
 
-        assertArcListJson(actions, ARC);
+        assertArcListJson(actions, arc);
     }
 
     @Test
     void shouldReturnNotFound_whenUserIdDoesNotExists() throws Exception {
-        when(arcService.findAllForUser(USER_ID)).thenReturn(List.of());
+        final var arc = ArcBuilder.builder().build().build();
+        when(arcService.findAllForUser(arc.getOwner())).thenReturn(List.of());
 
-        mockMvc.perform(get(ROOT + "/users/" + USER_ID.id()))
+        mockMvc.perform(get(ROOT + "/users/" + arc.getOwner().id()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldCreateUser_whenDataIsValid() throws Exception {
-        when(arcService.create(any())).thenReturn(ARC);
+        final var arc = ArcBuilder.builder().build().build();
+        final var creationDto = ArcCreationDtoBuilder.builder().build().build();
 
-        final String json = objectMapper.writeValueAsString(CREATION_DTO);
+        when(arcService.create(any())).thenReturn(arc);
+
+        final var json = objectMapper.writeValueAsString(creationDto);
 
         final var actions = mockMvc.perform(post(ROOT)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isCreated());
 
-        assertArcJson(actions, ARC);
+        assertArcJson(actions, arc);
     }
 
     @Test
     void shouldReturnArc_whenUpdatingExistingArc() throws Exception {
-        when(arcService.update(eq(ARC_ID), any())).thenReturn(ARC);
+        final var arc = ArcBuilder.builder().build().build();
+        final var updateDto = ArcUpdateDtoBuilder.builder().build().build();
 
-        final String json = objectMapper.writeValueAsString(UPDATE_DTO);
+        when(arcService.update(eq(arc.getId()), any())).thenReturn(arc);
 
-        final var actions = mockMvc.perform(put(ROOT + "/" + ARC_ID.id())
+        final String json = objectMapper.writeValueAsString(updateDto);
+
+        final var actions = mockMvc.perform(put(ROOT + "/" + arc.getId().id())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(json))
                 .andExpect(status().isOk());
 
-        assertArcJson(actions, ARC);
+        assertArcJson(actions, arc);
     }
 
     @Test
     void shouldReturnNoContent_whenDeletingExistingArc() throws Exception {
-        mockMvc.perform(delete(ROOT + "/" + ARC_ID.id()))
+        final var arc = ArcBuilder.builder().build().build();
+
+        mockMvc.perform(delete(ROOT + "/" + arc.getId().id()))
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void shouldReturnNoContent_whenDeletingAllArcForExistingUser() throws Exception {
-        mockMvc.perform(delete(ROOT + "/users/" + USER_ID.id()))
+        final var arc = ArcBuilder.builder().build().build();
+
+        mockMvc.perform(delete(ROOT + "/users/" + arc.getOwner().id()))
                 .andExpect(status().isNoContent());
     }
 

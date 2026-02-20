@@ -1,9 +1,10 @@
 package com.valentin_d.focusarc.service;
 
-import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
-import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
+import com.valentin_d.focusarc.fixtures.arc.ArcBuilder;
+import com.valentin_d.focusarc.fixtures.arc.ArcCreationDtoBuilder;
+import com.valentin_d.focusarc.fixtures.arc.ArcUpdateDtoBuilder;
 import com.valentin_d.focusarc.model.Arc;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
@@ -31,31 +32,20 @@ class ArcServiceTest {
     @InjectMocks
     private ArcService service;
 
-    private static final UserId USER_ID = UserId.random();
-    private static final String ARC_NAME = "Arc 1";
-    private static final int TOTAL_PLANNED_MINUTES = 120;
-    private static final String ARC_NAME_UPDATE = "Arc foobar";
-    private static final int TOTAL_PLANNED_MINUTES_UPDATES = 150;
-
-    private static final ArcCreationDto CREATION_DTO = new ArcCreationDto(USER_ID, ARC_NAME, TOTAL_PLANNED_MINUTES);
-    private static final ArcUpdateDto UPDATE_DTO = new ArcUpdateDto(ARC_NAME_UPDATE, TOTAL_PLANNED_MINUTES_UPDATES);
-
-    private static final Arc ARC = new Arc(USER_ID, ARC_NAME, TOTAL_PLANNED_MINUTES);
-
     @Test
     void shouldCreateArc_whenUserDoesExist() {
+        final var creationDto = ArcCreationDtoBuilder.builder().build().build();
         when(userRepository.existsById(any())).thenReturn(true);
 
         when(arcRepository.save(any(Arc.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        final Arc result = service.create(CREATION_DTO);
+        final var result = service.create(creationDto);
 
-        assertEquals(CREATION_DTO.userId(), result.getOwner());
-        assertEquals(CREATION_DTO.name(), result.getName());
+        assertEquals(creationDto.userId(), result.getOwner());
+        assertEquals(creationDto.name(), result.getName());
         assertEquals(0, result.getTotalCompletedMinutes());
-        assertEquals(TOTAL_PLANNED_MINUTES, result.getTotalPlannedMinutes());
-
+        assertEquals(creationDto.totalPlannedMinutes(), result.getTotalPlannedMinutes());
 
         verify(userRepository).existsById(any(UserId.class));
         verify(arcRepository).save(any(Arc.class));
@@ -63,109 +53,129 @@ class ArcServiceTest {
 
     @Test
     void shouldThrowExceptionOnCreation_whenUserNotFound() {
+        final var creationDto = ArcCreationDtoBuilder.builder().build().build();
+
         when(userRepository.existsById(any())).thenReturn(false);
 
-        assertThatThrownBy(() -> service.create(CREATION_DTO))
+        assertThatThrownBy(() -> service.create(creationDto))
                 .isInstanceOf(UserDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(CREATION_DTO.userId().id().toString()));
+                .hasMessageContaining(String.valueOf(creationDto.userId().id().toString()));
 
-        verify(userRepository).existsById(CREATION_DTO.userId());
+        verify(userRepository).existsById(creationDto.userId());
         verify(arcRepository, never()).save(any(Arc.class));
     }
 
     @Test
     void shouldUpdate_whenArcExists() {
-        when(arcRepository.findById(ARC.getId())).thenReturn(Optional.of(ARC));
+        final var arc = ArcBuilder.builder().build().build();
+        final var updateDto = ArcUpdateDtoBuilder.builder().build().build();
+
+        when(arcRepository.findById(arc.getId())).thenReturn(Optional.of(arc));
 
         when(arcRepository.save(any(Arc.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        final Arc updated = service.update(ARC.getId(), UPDATE_DTO);
+        final Arc updated = service.update(arc.getId(), updateDto);
 
-        verify(arcRepository).save(ARC);
-        verify(arcRepository).findById(ARC.getId());
+        verify(arcRepository).save(arc);
+        verify(arcRepository).findById(arc.getId());
 
-        assertEquals(ARC_NAME_UPDATE, updated.getName());
-        assertEquals(TOTAL_PLANNED_MINUTES_UPDATES, updated.getTotalPlannedMinutes());
-        assertEquals(ARC.getId(), updated.getId());
-        assertEquals(ARC.getOwner(), updated.getOwner());
+        assertEquals(arc.getName(), updated.getName());
+        assertEquals(arc.getTotalPlannedMinutes(), updated.getTotalPlannedMinutes());
+        assertEquals(arc.getId(), updated.getId());
+        assertEquals(arc.getOwner(), updated.getOwner());
     }
 
     @Test
     void shouldThrowExceptionOnUpdate_whenArcDoesNotExists() {
-        when(arcRepository.findById(ARC.getId())).thenReturn(Optional.empty());
+        final var arc = ArcBuilder.builder().build().build();
+        final var updateDto = ArcUpdateDtoBuilder.builder().build().build();
 
-        assertThatThrownBy(() -> service.update(ARC.getId(), UPDATE_DTO))
+        when(arcRepository.findById(arc.getId())).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.update(arc.getId(), updateDto))
                 .isInstanceOf(ArcDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(ARC.getId().id()));
+                .hasMessageContaining(String.valueOf(arc.getId().id()));
 
         verify(arcRepository, never()).save(any(Arc.class));
-        verify(arcRepository).findById(ARC.getId());
+        verify(arcRepository).findById(arc.getId());
     }
 
     @Test
     void shouldDeleteArc_whenArcExists() {
-        when(arcRepository.findById(ARC.getId())).thenReturn(Optional.of(ARC));
+        final var arc = ArcBuilder.builder().build().build();
 
-        service.delete(ARC.getId());
+        when(arcRepository.findById(arc.getId())).thenReturn(Optional.of(arc));
 
-        verify(arcRepository).findById(ARC.getId());
-        verify(arcRepository).delete(ARC);
+        service.delete(arc.getId());
+
+        verify(arcRepository).findById(arc.getId());
+        verify(arcRepository).delete(arc);
     }
 
     @Test
     void shouldThrowExceptionOnDelete_whenArcDoesNotExists() {
-        when(arcRepository.findById(ARC.getId())).thenReturn(Optional.empty());
+        final var arc = ArcBuilder.builder().build().build();
 
-        assertThatThrownBy(() -> service.delete(ARC.getId()))
+        when(arcRepository.findById(arc.getId())).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.delete(arc.getId()))
                 .isInstanceOf(ArcDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(ARC.getId().id()));
+                .hasMessageContaining(String.valueOf(arc.getId().id()));
 
         verify(arcRepository, never()).delete(any(Arc.class));
-        verify(arcRepository).findById(ARC.getId());
+        verify(arcRepository).findById(arc.getId());
     }
 
     @Test
     void shouldDeleteAllArcs_whenUserExists() {
-        when(arcRepository.findById(ARC.getId())).thenReturn(Optional.of(ARC));
+        final var arc = ArcBuilder.builder().build().build();
 
-        service.delete(ARC.getId());
+        when(arcRepository.findById(arc.getId())).thenReturn(Optional.of(arc));
 
-        verify(arcRepository).findById(ARC.getId());
-        verify(arcRepository).delete(ARC);
+        service.delete(arc.getId());
+
+        verify(arcRepository).findById(arc.getId());
+        verify(arcRepository).delete(arc);
     }
 
     @Test
     void shouldThrowExceptionOnDeleteAllArcs_whenUserDoesNotExists() {
-        when(arcRepository.findById(ARC.getId())).thenReturn(Optional.empty());
+        final var arc = ArcBuilder.builder().build().build();
 
-        assertThatThrownBy(() -> service.delete(ARC.getId()))
+        when(arcRepository.findById(arc.getId())).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> service.delete(arc.getId()))
                 .isInstanceOf(ArcDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(ARC.getId().id()));
+                .hasMessageContaining(String.valueOf(arc.getId().id()));
 
         verify(arcRepository, never()).delete(any(Arc.class));
-        verify(arcRepository).findById(ARC.getId());
+        verify(arcRepository).findById(arc.getId());
     }
 
     @Test
     void shouldGetAllArcsForUser_whenUserExists() {
+        final var arc = ArcBuilder.builder().build().build();
+
         when(userRepository.existsById(any())).thenReturn(true);
 
-        service.findAllForUser(USER_ID);
+        service.findAllForUser(arc.getOwner());
 
-        verify(userRepository).existsById(USER_ID);
-        verify(arcRepository).findAllByOwner(USER_ID);
+        verify(userRepository).existsById(arc.getOwner());
+        verify(arcRepository).findAllByOwner(arc.getOwner());
     }
 
     @Test
     void shouldThrowExceptionOnGetAllArcsForUser_whenUserDoesNotExists() {
+        final var arc = ArcBuilder.builder().build().build();
+
         when(userRepository.existsById(any())).thenReturn(false);
 
-        assertThatThrownBy(() -> service.findAllForUser(USER_ID))
+        assertThatThrownBy(() -> service.findAllForUser(arc.getOwner()))
                 .isInstanceOf(UserDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(USER_ID.id()));
+                .hasMessageContaining(String.valueOf(arc.getOwner().id()));
 
-        verify(userRepository).existsById(USER_ID);
+        verify(userRepository).existsById(arc.getOwner());
         verify(arcRepository, never()).findAllByOwner(any(UserId.class));
     }
 }
