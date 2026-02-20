@@ -31,7 +31,7 @@ public class ArcController {
         return ResponseUtil.wrapOrNotFound(arc);
     }
 
-    @GetMapping("/user/{userId}")
+    @GetMapping("/users/{userId}")
     public ResponseEntity<List<Arc>> getAllForUser(@PathVariable UserId userId) {
         final var userArcs = service.findAllForUser(userId);
         return ResponseUtil.wrapOrNotFound(userArcs);
@@ -56,7 +56,7 @@ public class ArcController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/user/{userId}")
+    @DeleteMapping("/users/{userId}")
     public ResponseEntity<Void> deleteAllForUser(@PathVariable UserId userId) {
         service.deleteAllForUser(userId);
         return ResponseEntity.noContent().build();

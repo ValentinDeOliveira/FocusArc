@@ -95,7 +95,7 @@ class UserControllerTest {
         assertUserJson(actions);
         actions.andExpect(jsonPath("$.name").value(NAME))
                 .andExpect(jsonPath("$.email").value(EMAIL))
-                .andExpect(jsonPath("$.id.id").exists());
+                .andExpect(jsonPath("$.id").exists());
     }
 
     @Test
@@ -130,7 +130,7 @@ class UserControllerTest {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
                 .andExpect(jsonPath("$.name").value(NAME))
                 .andExpect(jsonPath("$.email").value(EMAIL))
-                .andExpect(jsonPath("$.id.id").exists())
+                .andExpect(jsonPath("$.id").exists())
                 .andExpect(jsonPath("$.lastLogin").exists());
     }
 }
