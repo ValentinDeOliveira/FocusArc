@@ -53,7 +53,7 @@ class UserServiceTest {
     }
 
     @Test
-    void shouldThrowException_whenEmailAlreadyExists() {
+    void shouldThrowExceptionOnCreation_whenEmailAlreadyExists() {
         when(repository.findByEmail(CREATION_DTO.email()))
                 .thenReturn(Optional.of(new User("Existing", CREATION_DTO.email())));
 
