@@ -2,6 +2,7 @@ package com.valentin_d.focusarc.util;
 
 import org.springframework.http.ResponseEntity;
 
+import java.util.List;
 import java.util.Optional;
 
 public class ResponseUtil {
@@ -10,5 +11,11 @@ public class ResponseUtil {
         return maybeEntity
                 .map(ResponseEntity::ok)
                 .orElseGet(() -> ResponseEntity.notFound().build());
+    }
+
+    public static <T> ResponseEntity<List<T>> wrapOrNotFound(final List<T> maybeEntity) {
+        return maybeEntity.isEmpty()
+                ? ResponseEntity.notFound().build()
+                : ResponseEntity.ok(maybeEntity);
     }
 }

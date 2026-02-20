@@ -1,6 +1,6 @@
 package com.valentin_d.focusarc.controller;
 
-import com.valentin_d.focusarc.exception.UserDoesNotExist;
+import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.UserService;
@@ -100,7 +100,7 @@ class UserControllerTest {
 
     @Test
     void shouldReturnNotFound_whenUpdatingNonExistingUser() throws Exception {
-        when(userService.update(any(), eq(USER.getId()))).thenThrow(new UserDoesNotExist(USER.getId()));
+        when(userService.update(any(), eq(USER.getId()))).thenThrow(new UserDoesNotExistException(USER.getId()));
 
         mockMvc.perform(put(ROOT + "/" + USER.getId().id())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -118,7 +118,7 @@ class UserControllerTest {
 
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingUser() throws Exception {
-        doThrow(new UserDoesNotExist(USER.getId())).when(userService).delete(USER.getId());
+        doThrow(new UserDoesNotExistException(USER.getId())).when(userService).delete(USER.getId());
 
         mockMvc.perform(delete(ROOT + "/" + USER.getId().id()))
                 .andExpect(status().isNotFound());

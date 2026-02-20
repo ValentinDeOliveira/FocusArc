@@ -3,7 +3,7 @@ package com.valentin_d.focusarc.service;
 import com.valentin_d.focusarc.dto.user.UserCreationDto;
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
 import com.valentin_d.focusarc.exception.EmailAlreadyExistsException;
-import com.valentin_d.focusarc.exception.UserDoesNotExist;
+import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.repository.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -86,7 +86,7 @@ class UserServiceTest {
         when(repository.findById(USER.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.update(UPDATE_DTO, USER.getId()))
-                .isInstanceOf(UserDoesNotExist.class)
+                .isInstanceOf(UserDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(USER.getId().id()));
 
         verify(repository, never()).save(USER);
@@ -108,7 +108,7 @@ class UserServiceTest {
         when(repository.findById(USER.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(USER.getId()))
-                .isInstanceOf(UserDoesNotExist.class)
+                .isInstanceOf(UserDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(USER.getId().id()));
 
         verify(repository, never()).delete(USER);
