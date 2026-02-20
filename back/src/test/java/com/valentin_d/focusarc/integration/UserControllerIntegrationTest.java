@@ -1,8 +1,8 @@
-package com.valentin_d.focusarc.controller;
+package com.valentin_d.focusarc.integration;
 
 import com.valentin_d.focusarc.dto.user.UserCreationDto;
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
-import com.valentin_d.focusarc.integration.BaseUserControllerIntegrationTest;
+import com.valentin_d.focusarc.integration.base.BaseUserControllerIntegrationTest;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
 import org.junit.jupiter.api.Test;
@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UserControllerIntegrationTest extends BaseUserControllerIntegrationTest {
     @Test
-    void createUser_returnsCreatedUser() {
+    void shouldCreateUser_whenDataIsValid() {
         final var dto = new UserCreationDto("Alice", "alice@example.com");
 
         final var response = request(URL, HttpMethod.POST, dto, User.class);
@@ -30,7 +30,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     }
 
     @Test
-    void createUser_withExistingMail_shouldFail() {
+    void shouldReturnConflict_whenEmailAlreadyExists() {
         final var dto = new UserCreationDto("foo", "foo@test.com");
 
         final var response = request(URL, HttpMethod.POST, dto, Void.class);
@@ -40,7 +40,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     }
 
     @Test
-    void getUserByEmail_returnsUser_whenFound() {
+    void shouldReturnUser_whenEmailExists() {
         final var response = request(URL + "/email?email="+ USER_EMAIL, HttpMethod.GET, null, User.class);
 
         assertHasContent(response);
@@ -51,14 +51,14 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     }
 
     @Test
-    void getUserByEmail_returnsNotFound_whenNotFound() {
+    void shouldReturnNotFound_whenEmailDoesNotExist() {
         final var response = request(URL + "/email?email=bar@test.com", HttpMethod.GET, null, User.class);
 
         assertNotFound(response);
     }
 
     @Test
-    void getUserById_returnsUser_whenFound() {
+    void shouldReturnUser_whenIdExists() {
         final var response = request(URL + "/" + USER_ID.id(), HttpMethod.GET, null, User.class);
 
         assertHasContent(response);
@@ -76,7 +76,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     }
 
     @Test
-    void updateUser_withNewFields_whenFound() {
+    void shouldReturnNotFound_whenIdDoesNotExist() {
         final var dto = new UserUpdateDto("bar");
 
         final var response = request(URL+ "/" + USER_ID.id(), HttpMethod.PUT, dto, User.class);
@@ -90,7 +90,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     }
 
     @Test
-    void updateUser_withNewFields_whenNotFound() {
+    void shouldUpdateUser_whenIdExists() {
         final var dto = new UserUpdateDto("bar");
 
         final var response = request(URL + "/" + UserId.random().id(), HttpMethod.PUT, dto, Void.class);
@@ -99,14 +99,14 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     }
 
     @Test
-    void deleteUser_whenFound() {
+    void shouldDeleteUser_whenIdExists() {
         final var response = request(URL + "/" + USER_ID.id(), HttpMethod.DELETE, null, Void.class);
 
         assertNoContent(response);
     }
 
     @Test
-    void deleteUser_whenNotFound() {
+    void shouldReturnNotFound_whenDeletingNonExistingUser() {
         final var response = request(URL + "/" + UserId.random().id(), HttpMethod.DELETE, null, Void.class);
 
         assertNotFound(response);

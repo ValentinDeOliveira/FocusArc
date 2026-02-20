@@ -1,4 +1,4 @@
-package com.valentin_d.focusarc.integration;
+package com.valentin_d.focusarc.integration.base;
 
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;

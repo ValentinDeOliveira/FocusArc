@@ -1,4 +1,4 @@
-package com.valentin_d.focusarc.integration;
+package com.valentin_d.focusarc.integration.base;
 
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
