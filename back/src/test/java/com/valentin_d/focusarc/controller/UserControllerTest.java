@@ -33,7 +33,7 @@ class UserControllerTest {
     private static final User USER = new User(NAME, EMAIL);
 
     @Test
-    void getUserByEmail_found() throws Exception {
+    void shouldReturnUser_whenEmailExists() throws Exception {
         when(userService.findByEmail(EMAIL))
                 .thenReturn(Optional.of(USER));
 
@@ -44,7 +44,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserByEmail_notFound() throws Exception {
+    void shouldReturnNotFound_whenEmailDoesNotExist() throws Exception {
         when(userService.findByEmail(EMAIL))
                 .thenReturn(Optional.empty());
 
@@ -53,7 +53,7 @@ class UserControllerTest {
     }
 
     @Test
-    void createUser_returnsCreated() throws Exception {
+    void shouldCreateUser_whenDataIsValid() throws Exception {
         when(userService.create(any())).thenReturn(USER);
 
         final var actions = mockMvc.perform(post(ROOT)
@@ -65,7 +65,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserById_found() throws Exception {
+    void shouldReturnUser_whenIdExists() throws Exception {
         when(userService.findById(USER.getId())).thenReturn(Optional.of(USER));
 
         final var actions = mockMvc.perform(get(ROOT + "/" + USER.getId().id()))
@@ -75,7 +75,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserById_notFound() throws Exception {
+    void shouldReturnNotFound_whenIdDoesNotExist() throws Exception {
         final var id = UserId.random();
         when(userService.findById(id)).thenReturn(Optional.empty());
 
@@ -84,7 +84,7 @@ class UserControllerTest {
     }
 
     @Test
-    void updateUser_returnsOk() throws Exception {
+    void shouldUpdateUser_whenIdExists() throws Exception {
         when(userService.update(any(), eq(USER.getId()))).thenReturn(USER);
 
         final var actions = mockMvc.perform(put(ROOT + "/" + USER.getId().id())
@@ -99,7 +99,7 @@ class UserControllerTest {
     }
 
     @Test
-    void updateUser_notFound() throws Exception {
+    void shouldReturnNotFound_whenUpdatingNonExistingUser() throws Exception {
         when(userService.update(any(), eq(USER.getId()))).thenThrow(new UserDoesNotExist(USER.getId()));
 
         mockMvc.perform(put(ROOT + "/" + USER.getId().id())
@@ -109,7 +109,7 @@ class UserControllerTest {
     }
 
     @Test
-    void deleteUser_returnsNoContent() throws Exception {
+    void shouldDeleteUser_whenIdExists() throws Exception {
         mockMvc.perform(delete(ROOT + "/" + USER.getId().id()))
                 .andExpect(status().isNoContent());
 
@@ -117,7 +117,7 @@ class UserControllerTest {
     }
 
     @Test
-    void deleteUser_notFound() throws Exception {
+    void shouldReturnNotFound_whenDeletingNonExistingUser() throws Exception {
         doThrow(new UserDoesNotExist(USER.getId())).when(userService).delete(USER.getId());
 
         mockMvc.perform(delete(ROOT + "/" + USER.getId().id()))

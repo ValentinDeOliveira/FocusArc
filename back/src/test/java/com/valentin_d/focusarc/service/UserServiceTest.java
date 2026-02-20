@@ -38,7 +38,7 @@ class UserServiceTest {
     private static final User USER = new User(USERNAME, EMAIL);
 
     @Test
-    void should_create_user_when_email_does_not_exist() {
+    void shouldCreateUser_whenEmailDoesNotExist() {
         when(repository.findByEmail(CREATION_DTO.email()))
                 .thenReturn(Optional.empty());
 
@@ -53,7 +53,7 @@ class UserServiceTest {
     }
 
     @Test
-    void should_throw_exception_when_email_already_exists() {
+    void shouldThrowException_whenEmailAlreadyExists() {
         when(repository.findByEmail(CREATION_DTO.email()))
                 .thenReturn(Optional.of(new User("Existing", CREATION_DTO.email())));
 
@@ -66,7 +66,7 @@ class UserServiceTest {
     }
 
     @Test
-    void should_update_user_when_id_exists() {
+    void shouldUpdateUser_whenIdExists() {
         when(repository.findById(USER.getId())).thenReturn(Optional.of(USER));
         when(repository.save(any(User.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -82,7 +82,7 @@ class UserServiceTest {
     }
 
     @Test
-    void should_throw_exception_in_update_when_id_does_not_exists() {
+    void shouldThrowException_whenUpdatingNonExistingUser() {
         when(repository.findById(USER.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.update(UPDATE_DTO, USER.getId()))
@@ -94,7 +94,7 @@ class UserServiceTest {
     }
 
     @Test
-    void should_delete_user_when_id_exists() {
+    void shouldDeleteUser_whenIdExists() {
         when(repository.findById(USER.getId())).thenReturn(Optional.of(USER));
 
         service.delete(USER.getId());
@@ -104,7 +104,7 @@ class UserServiceTest {
     }
 
     @Test
-    void should_throw_exception_in_delete_when_id_does_not_exists() {
+    void shouldThrowException_whenDeletingNonExistingUser() {
         when(repository.findById(USER.getId())).thenReturn(Optional.empty());
 
         assertThatThrownBy(() -> service.delete(USER.getId()))

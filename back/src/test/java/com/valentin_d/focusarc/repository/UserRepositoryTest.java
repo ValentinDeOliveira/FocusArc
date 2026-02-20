@@ -17,7 +17,7 @@ class UserRepositoryTest {
     private UserRepository repository;
 
     @Test
-    void should_find_user_by_email() {
+    void shouldReturnUser_whenEmailExists() {
         final User user = new User("foobar", "foobar@mail.com");
         repository.save(user);
 

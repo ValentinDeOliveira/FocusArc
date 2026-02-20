@@ -25,4 +25,8 @@ public class User {
     public User(final String name, final String email) {
         this(UserId.random(), name, email, LocalDateTime.now());
     }
+
+    public User(final UserId userId, final String name, final String email) {
+        this(userId, name, email, LocalDateTime.now());
+    }
 }
