@@ -52,7 +52,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
     @Test
     void shouldReturnNotFound_whenEmailDoesNotExist() {
-        final var response = request(URL + "/email?email=bar@test.com", HttpMethod.GET, null, User.class);
+        final var response = request(URL + "/email?email=bar@test.com", HttpMethod.GET, null, Void.class);
 
         assertNotFound(response);
     }
@@ -70,7 +70,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
     @Test
     void getUserById_returnsNotFound_whenNotFound() {
-        final var response = request(URL + "/" +  UserId.random().id(), HttpMethod.GET, null, User.class);
+        final var response = request(URL + "/" +  UserId.random().id(), HttpMethod.GET, null, Void.class);
 
         assertNotFound(response);
     }

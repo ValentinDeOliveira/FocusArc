@@ -30,6 +30,7 @@ public abstract class BaseIntegrationTest {
 
     protected <T> void assertNotFound(final ResponseEntity<T> response) {
         assertResponseEmpty(HttpStatus.NOT_FOUND, response);
+        assertNull(response.getBody());
     }
 
     protected <T> void assertNoContent(final ResponseEntity<T> response) {
