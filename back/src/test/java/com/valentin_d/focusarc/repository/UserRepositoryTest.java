@@ -17,10 +17,10 @@ class UserRepositoryTest {
     private UserRepository repository;
 
     @BeforeEach
-    void tearDown() {
+    void setUp() {
         repository.deleteAll();
     }
-    
+
     @Test
     void shouldReturnUser_whenEmailExists() {
         final var user = aUser();
