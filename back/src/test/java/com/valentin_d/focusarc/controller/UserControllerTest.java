@@ -8,27 +8,19 @@ import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.UserService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
-class UserControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
+class UserControllerTest extends BaseControllerTest {
     @MockitoBean
     private UserService userService;
 
@@ -40,7 +32,7 @@ class UserControllerTest {
         when(userService.findByEmail(user.getEmail()))
                 .thenReturn(Optional.of(user));
 
-        final var actions = mockMvc.perform(get(ROOT + "/email").param("email", user.getEmail()))
+        final var actions = mvcGet(ROOT + "/email?email=" + user.getEmail())
                 .andExpect(status().isOk());
 
         assertUserJson(actions, user);
@@ -52,7 +44,7 @@ class UserControllerTest {
         when(userService.findByEmail(user.getEmail()))
                 .thenReturn(Optional.empty());
 
-        mockMvc.perform(get(ROOT + "/email").param("email", user.getEmail()))
+        mvcGet(ROOT + "/email?email=" + user.getEmail())
                 .andExpect(status().isNotFound());
     }
 
@@ -61,13 +53,9 @@ class UserControllerTest {
         final var user = UserBuilder.builder().build().build();
         when(userService.create(any())).thenReturn(user);
 
-        final var json = objectMapper.writeValueAsString(
-                UserCreationDtoBuilder.builder().build().build()
-        );
+        final var json = toJson(UserCreationDtoBuilder.builder().build().build());
 
-        final var actions = mockMvc.perform(post(ROOT)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+        final var actions = mvcPost(ROOT, json)
                 .andExpect(status().isCreated());
 
         assertUserJson(actions, user);
@@ -78,7 +66,7 @@ class UserControllerTest {
         final var user = UserBuilder.builder().build().build();
         when(userService.findById(user.getId())).thenReturn(Optional.of(user));
 
-        final var actions = mockMvc.perform(get(ROOT + "/" + user.getId().id()))
+        final var actions = mvcGet(ROOT + "/" + user.getId().id())
                 .andExpect(status().isOk());
 
         assertUserJson(actions, user);
@@ -88,7 +76,7 @@ class UserControllerTest {
     void shouldReturnNotFound_whenIdDoesNotExist() throws Exception {
         when(userService.findById(any(UserId.class))).thenReturn(Optional.empty());
 
-        mockMvc.perform(get(ROOT + "/" + UserId.random().id()))
+        mvcGet(ROOT + "/" + UserId.random().id())
                 .andExpect(status().isNotFound());
     }
 
@@ -97,13 +85,9 @@ class UserControllerTest {
         final var user = UserBuilder.builder().build().build();
         when(userService.update(any(), eq(user.getId()))).thenReturn(user);
 
-        final var json = objectMapper.writeValueAsString(
-                UserUpdateDtoBuilder.builder().build().build()
-        );
+        final var json = toJson(UserUpdateDtoBuilder.builder().build().build());
 
-        final var actions = mockMvc.perform(put(ROOT + "/" + user.getId().id())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+        final var actions = mvcPut(ROOT + "/" + user.getId().id(), json)
                 .andExpect(status().isOk());
 
         assertUserJson(actions, user);
@@ -117,16 +101,14 @@ class UserControllerTest {
         final var user = UserBuilder.builder().build().build();
         when(userService.update(any(), eq(user.getId()))).thenThrow(new UserDoesNotExistException(user.getId()));
 
-        mockMvc.perform(put(ROOT + "/" + user.getId().id())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"NewName\"}"))
+        mvcPut(ROOT + "/" + user.getId().id(), toJson(UserUpdateDtoBuilder.builder().build().build()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldDeleteUser_whenIdExists() throws Exception {
         final var user = UserBuilder.builder().build().build();
-        mockMvc.perform(delete(ROOT + "/" + user.getId().id()))
+        mvcDelete(ROOT + "/" + user.getId().id())
                 .andExpect(status().isNoContent());
 
         verify(userService).delete(user.getId());
@@ -137,7 +119,7 @@ class UserControllerTest {
         final var user = UserBuilder.builder().build().build();
         doThrow(new UserDoesNotExistException(user.getId())).when(userService).delete(user.getId());
 
-        mockMvc.perform(delete(ROOT + "/" + user.getId().id()))
+        mvcDelete(ROOT + "/" + user.getId().id())
                 .andExpect(status().isNotFound());
     }
 

@@ -6,13 +6,9 @@ import com.valentin_d.focusarc.fixtures.arc.ArcUpdateDtoBuilder;
 import com.valentin_d.focusarc.model.Arc;
 import com.valentin_d.focusarc.service.ArcService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import tools.jackson.databind.ObjectMapper;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,16 +16,11 @@ import java.util.Optional;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ArcController.class)
-class ArcControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
-    @Autowired
-    private ObjectMapper objectMapper;
+class ArcControllerTest extends BaseControllerTest {
     @MockitoBean
     private ArcService arcService;
 
@@ -40,7 +31,7 @@ class ArcControllerTest {
         final var arc = ArcBuilder.builder().build().build();
         when(arcService.findById(arc.getId())).thenReturn(Optional.of(arc));
 
-        final var actions = mockMvc.perform(get(ROOT + "/" + arc.getId().id()))
+        final var actions = mvcGet(ROOT + "/" + arc.getId().id())
                 .andExpect(status().isOk());
 
         assertArcJson(actions, arc);
@@ -51,7 +42,7 @@ class ArcControllerTest {
         final var arc = ArcBuilder.builder().build().build();
         when(arcService.findById(arc.getId())).thenReturn(Optional.empty());
 
-        mockMvc.perform(get(ROOT + "/" + arc.getId().id()))
+        mvcGet(ROOT + "/" + arc.getId().id())
                 .andExpect(status().isNotFound());
     }
 
@@ -60,7 +51,7 @@ class ArcControllerTest {
         final var arc = ArcBuilder.builder().build().build();
         when(arcService.findAllForUser(arc.getOwner())).thenReturn(List.of(arc));
 
-        final var actions = mockMvc.perform(get(ROOT + "/users/" + arc.getOwner().id()))
+        final var actions = mvcGet(ROOT + "/users/" + arc.getOwner().id())
                 .andExpect(status().isOk());
 
         assertArcListJson(actions, arc);
@@ -71,7 +62,7 @@ class ArcControllerTest {
         final var arc = ArcBuilder.builder().build().build();
         when(arcService.findAllForUser(arc.getOwner())).thenReturn(List.of());
 
-        mockMvc.perform(get(ROOT + "/users/" + arc.getOwner().id()))
+        mvcGet(ROOT + "/users/" + arc.getOwner().id())
                 .andExpect(status().isNotFound());
     }
 
@@ -82,11 +73,9 @@ class ArcControllerTest {
 
         when(arcService.create(any())).thenReturn(arc);
 
-        final var json = objectMapper.writeValueAsString(creationDto);
+        final var json = toJson(creationDto);
 
-        final var actions = mockMvc.perform(post(ROOT)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+        final var actions = mvcPost(ROOT, json)
                 .andExpect(status().isCreated());
 
         assertArcJson(actions, arc);
@@ -99,11 +88,9 @@ class ArcControllerTest {
 
         when(arcService.update(eq(arc.getId()), any())).thenReturn(arc);
 
-        final String json = objectMapper.writeValueAsString(updateDto);
+        final String json = toJson(updateDto);
 
-        final var actions = mockMvc.perform(put(ROOT + "/" + arc.getId().id())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(json))
+        final var actions = mvcPut(ROOT + "/" + arc.getId().id(), json)
                 .andExpect(status().isOk());
 
         assertArcJson(actions, arc);
@@ -113,7 +100,7 @@ class ArcControllerTest {
     void shouldReturnNoContent_whenDeletingExistingArc() throws Exception {
         final var arc = ArcBuilder.builder().build().build();
 
-        mockMvc.perform(delete(ROOT + "/" + arc.getId().id()))
+        mvcDelete(ROOT + "/" + arc.getId().id())
                 .andExpect(status().isNoContent());
     }
 
@@ -121,7 +108,7 @@ class ArcControllerTest {
     void shouldReturnNoContent_whenDeletingAllArcForExistingUser() throws Exception {
         final var arc = ArcBuilder.builder().build().build();
 
-        mockMvc.perform(delete(ROOT + "/users/" + arc.getOwner().id()))
+        mvcDelete(ROOT + "/users/" + arc.getOwner().id())
                 .andExpect(status().isNoContent());
     }
 
