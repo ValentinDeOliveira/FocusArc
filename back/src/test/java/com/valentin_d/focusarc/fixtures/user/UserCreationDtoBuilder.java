@@ -1,8 +1,6 @@
 package com.valentin_d.focusarc.fixtures.user;
 
-import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.user.UserCreationDto;
-import com.valentin_d.focusarc.model.id.UserId;
 import lombok.Builder;
 
 @Builder

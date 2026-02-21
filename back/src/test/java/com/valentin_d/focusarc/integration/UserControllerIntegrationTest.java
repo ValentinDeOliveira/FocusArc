@@ -41,9 +41,9 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     @Test
     void shouldReturnUser_whenEmailExists() {
         final var user = createUser();
-        final var response = request(URL + "/email?email="+ user.getEmail(), HttpMethod.GET, null, User.class);
+        final var response = request(URL + "/email?email="+ user.getEmail(), HttpMethod.GET, User.class);
 
-        assertHasContent(response);
+        assertOk(response);
 
         final var result = response.getBody();
         assertNotNull(result);
@@ -52,7 +52,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
     @Test
     void shouldReturnNotFound_whenEmailDoesNotExist() {
-        final var response = request(URL + "/email?email=foobar@test.com", HttpMethod.GET, null, Void.class);
+        final var response = request(URL + "/email?email=foobar@test.com", HttpMethod.GET, Void.class);
 
         assertNotFound(response);
     }
@@ -60,9 +60,9 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     @Test
     void shouldReturnUser_whenIdExists() {
         final var user = createUser();
-        final var response = request(URL + "/" + user.getId().id(), HttpMethod.GET, null, User.class);
+        final var response = request(URL + "/" + user.getId().id(), HttpMethod.GET, User.class);
 
-        assertHasContent(response);
+        assertOk(response);
 
         final var result = response.getBody();
         assertNotNull(result);
@@ -71,7 +71,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
     @Test
     void getUserById_returnsNotFound_whenNotFound() {
-        final var response = request(URL + "/" +  UserId.random().id(), HttpMethod.GET, null, Void.class);
+        final var response = request(URL + "/" +  UserId.random().id(), HttpMethod.GET, Void.class);
 
         assertNotFound(response);
     }
@@ -83,7 +83,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
         final var response = request(URL+ "/" + user.getId().id(), HttpMethod.PUT, dto, User.class);
 
-        assertHasContent(response);
+        assertOk(response);
 
         final var result = response.getBody();
         assertNotNull(result);
@@ -104,14 +104,14 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     @Test
     void shouldDeleteUser_whenIdExists() {
         final var user = createUser();
-        final var response = request(URL + "/" + user.getId().id(), HttpMethod.DELETE, null, Void.class);
+        final var response = request(URL + "/" + user.getId().id(), HttpMethod.DELETE, Void.class);
 
         assertNoContent(response);
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingUser() {
-        final var response = request(URL + "/" + UserId.random().id(), HttpMethod.DELETE, null, Void.class);
+        final var response = request(URL + "/" + UserId.random().id(), HttpMethod.DELETE, Void.class);
 
         assertNotFound(response);
     }
