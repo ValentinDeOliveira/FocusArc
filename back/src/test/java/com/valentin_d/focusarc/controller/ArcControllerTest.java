@@ -1,8 +1,5 @@
 package com.valentin_d.focusarc.controller;
 
-import com.valentin_d.focusarc.fixtures.arc.ArcBuilder;
-import com.valentin_d.focusarc.fixtures.arc.ArcCreationDtoBuilder;
-import com.valentin_d.focusarc.fixtures.arc.ArcUpdateDtoBuilder;
 import com.valentin_d.focusarc.model.Arc;
 import com.valentin_d.focusarc.service.ArcService;
 import org.junit.jupiter.api.Test;
@@ -13,6 +10,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.List;
 import java.util.Optional;
 
+import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -28,7 +26,7 @@ class ArcControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnArc_whenIdExists() throws Exception {
-        final var arc = ArcBuilder.builder().build().build();
+        final var arc = anArc();
         when(arcService.findById(arc.getId())).thenReturn(Optional.of(arc));
 
         final var actions = mvcGet(ROOT + "/" + arc.getId().id())
@@ -39,7 +37,7 @@ class ArcControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnNotFound_whenIdDoesNotExists() throws Exception {
-        final var arc = ArcBuilder.builder().build().build();
+        final var arc = anArc();
         when(arcService.findById(arc.getId())).thenReturn(Optional.empty());
 
         mvcGet(ROOT + "/" + arc.getId().id())
@@ -48,7 +46,7 @@ class ArcControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnListOfArc_whenUserIdExists() throws Exception {
-        final var arc = ArcBuilder.builder().build().build();
+        final var arc = anArc();
         when(arcService.findAllForUser(arc.getOwner())).thenReturn(List.of(arc));
 
         final var actions = mvcGet(ROOT + "/users/" + arc.getOwner().id())
@@ -59,7 +57,7 @@ class ArcControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnNotFound_whenUserIdDoesNotExists() throws Exception {
-        final var arc = ArcBuilder.builder().build().build();
+        final var arc = anArc();
         when(arcService.findAllForUser(arc.getOwner())).thenReturn(List.of());
 
         mvcGet(ROOT + "/users/" + arc.getOwner().id())
@@ -68,8 +66,8 @@ class ArcControllerTest extends BaseControllerTest {
 
     @Test
     void shouldCreateUser_whenDataIsValid() throws Exception {
-        final var arc = ArcBuilder.builder().build().build();
-        final var creationDto = ArcCreationDtoBuilder.builder().build().build();
+        final var arc = anArc();
+        final var creationDto = anArcCreationDto();
 
         when(arcService.create(any())).thenReturn(arc);
 
@@ -83,8 +81,8 @@ class ArcControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnArc_whenUpdatingExistingArc() throws Exception {
-        final var arc = ArcBuilder.builder().build().build();
-        final var updateDto = ArcUpdateDtoBuilder.builder().build().build();
+        final var arc = anArc();
+        final var updateDto = anArcUpdateDto();
 
         when(arcService.update(eq(arc.getId()), any())).thenReturn(arc);
 
@@ -98,7 +96,7 @@ class ArcControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnNoContent_whenDeletingExistingArc() throws Exception {
-        final var arc = ArcBuilder.builder().build().build();
+        final var arc = anArc();
 
         mvcDelete(ROOT + "/" + arc.getId().id())
                 .andExpect(status().isNoContent());
@@ -106,7 +104,7 @@ class ArcControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnNoContent_whenDeletingAllArcForExistingUser() throws Exception {
-        final var arc = ArcBuilder.builder().build().build();
+        final var arc = anArc();
 
         mvcDelete(ROOT + "/users/" + arc.getOwner().id())
                 .andExpect(status().isNoContent());

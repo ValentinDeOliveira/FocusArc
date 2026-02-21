@@ -1,21 +1,20 @@
 package com.valentin_d.focusarc.integration;
 
 import com.valentin_d.focusarc.fixtures.user.UserBuilder;
-import com.valentin_d.focusarc.fixtures.user.UserCreationDtoBuilder;
-import com.valentin_d.focusarc.fixtures.user.UserUpdateDtoBuilder;
 import com.valentin_d.focusarc.integration.base.BaseUserControllerIntegrationTest;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UserControllerIntegrationTest extends BaseUserControllerIntegrationTest {
     @Test
     void shouldCreateUser_whenDataIsValid() {
-        final var dto = UserCreationDtoBuilder.builder().build().build();
+        final var dto = aUserCreationDto();
 
         final var response = request(URL, HttpMethod.POST, dto, User.class);
 
@@ -32,7 +31,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     @Test
     void shouldReturnConflict_whenEmailAlreadyExists() {
         final var user = createUser();
-        final var dto = UserCreationDtoBuilder.builder().email(user.getEmail()).build().build();
+        final var dto = aUserCreationDtoWithEmail(user.getEmail());
 
         final var response = request(URL, HttpMethod.POST, dto, Void.class);
 
@@ -80,7 +79,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     @Test
     void shouldReturnNotFound_whenIdDoesNotExist() {
         final var user = createUser();
-        final var dto = UserUpdateDtoBuilder.builder().build().build();
+        final var dto = aUserUpdateDto();
 
         final var response = request(URL+ "/" + user.getId().id(), HttpMethod.PUT, dto, User.class);
 
@@ -95,7 +94,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
     @Test
     void shouldReturnNotFoundOnUpdate_whenIdDoesNotExists() {
-        final var dto = UserUpdateDtoBuilder.builder().build().build();
+        final var dto = aUserUpdateDto();
 
         final var response = request(URL + "/" + UserId.random().id(), HttpMethod.PUT, dto, Void.class);
 

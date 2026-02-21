@@ -2,9 +2,6 @@ package com.valentin_d.focusarc.service;
 
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
-import com.valentin_d.focusarc.fixtures.arc.ArcBuilder;
-import com.valentin_d.focusarc.fixtures.arc.ArcCreationDtoBuilder;
-import com.valentin_d.focusarc.fixtures.arc.ArcUpdateDtoBuilder;
 import com.valentin_d.focusarc.model.Arc;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
@@ -17,6 +14,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.Optional;
 
+import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
@@ -34,7 +32,7 @@ class ArcServiceTest {
 
     @Test
     void shouldCreateArc_whenUserDoesExist() {
-        final var creationDto = ArcCreationDtoBuilder.builder().build().build();
+        final var creationDto = anArcCreationDto();
         when(userRepository.existsById(any())).thenReturn(true);
 
         when(arcRepository.save(any(Arc.class)))
@@ -53,7 +51,7 @@ class ArcServiceTest {
 
     @Test
     void shouldThrowExceptionOnCreation_whenUserNotFound() {
-        final var creationDto = ArcCreationDtoBuilder.builder().build().build();
+        final var creationDto = anArcCreationDto();
 
         when(userRepository.existsById(any())).thenReturn(false);
 
@@ -67,8 +65,8 @@ class ArcServiceTest {
 
     @Test
     void shouldUpdate_whenArcExists() {
-        final var arc = ArcBuilder.builder().build().build();
-        final var updateDto = ArcUpdateDtoBuilder.builder().build().build();
+        final var arc = anArc();
+        final var updateDto = anArcUpdateDto();
 
         when(arcRepository.findById(arc.getId())).thenReturn(Optional.of(arc));
 
@@ -88,8 +86,8 @@ class ArcServiceTest {
 
     @Test
     void shouldThrowExceptionOnUpdate_whenArcDoesNotExists() {
-        final var arc = ArcBuilder.builder().build().build();
-        final var updateDto = ArcUpdateDtoBuilder.builder().build().build();
+        final var arc = anArc();
+        final var updateDto = anArcUpdateDto();
 
         when(arcRepository.findById(arc.getId())).thenReturn(Optional.empty());
 
@@ -103,7 +101,7 @@ class ArcServiceTest {
 
     @Test
     void shouldDeleteArc_whenArcExists() {
-        final var arc = ArcBuilder.builder().build().build();
+        final var arc = anArc();
 
         when(arcRepository.findById(arc.getId())).thenReturn(Optional.of(arc));
 
@@ -115,7 +113,7 @@ class ArcServiceTest {
 
     @Test
     void shouldThrowExceptionOnDelete_whenArcDoesNotExists() {
-        final var arc = ArcBuilder.builder().build().build();
+        final var arc = anArc();
 
         when(arcRepository.findById(arc.getId())).thenReturn(Optional.empty());
 
@@ -129,7 +127,7 @@ class ArcServiceTest {
 
     @Test
     void shouldDeleteAllArcs_whenUserExists() {
-        final var arc = ArcBuilder.builder().build().build();
+        final var arc = anArc();
 
         when(arcRepository.findById(arc.getId())).thenReturn(Optional.of(arc));
 
@@ -141,7 +139,7 @@ class ArcServiceTest {
 
     @Test
     void shouldThrowExceptionOnDeleteAllArcs_whenUserDoesNotExists() {
-        final var arc = ArcBuilder.builder().build().build();
+        final var arc = anArc();
 
         when(arcRepository.findById(arc.getId())).thenReturn(Optional.empty());
 
@@ -155,7 +153,7 @@ class ArcServiceTest {
 
     @Test
     void shouldGetAllArcsForUser_whenUserExists() {
-        final var arc = ArcBuilder.builder().build().build();
+        final var arc = anArc();
 
         when(userRepository.existsById(any())).thenReturn(true);
 
@@ -167,7 +165,7 @@ class ArcServiceTest {
 
     @Test
     void shouldThrowExceptionOnGetAllArcsForUser_whenUserDoesNotExists() {
-        final var arc = ArcBuilder.builder().build().build();
+        final var arc = anArc();
 
         when(userRepository.existsById(any())).thenReturn(false);
 

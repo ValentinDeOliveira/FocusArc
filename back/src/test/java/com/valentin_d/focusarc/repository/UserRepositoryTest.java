@@ -1,12 +1,12 @@
 package com.valentin_d.focusarc.repository;
 
-import com.valentin_d.focusarc.fixtures.user.UserBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.mongodb.test.autoconfigure.DataMongoTest;
 import org.springframework.test.context.ActiveProfiles;
 
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -18,7 +18,7 @@ class UserRepositoryTest {
 
     @Test
     void shouldReturnUser_whenEmailExists() {
-        final var user = UserBuilder.builder().build().build();
+        final var user = aUser();
         repository.save(user);
 
         final var userOptional = repository.findByEmail(user.getEmail());

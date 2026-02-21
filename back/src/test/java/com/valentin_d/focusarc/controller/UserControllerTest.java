@@ -1,9 +1,6 @@
 package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
-import com.valentin_d.focusarc.fixtures.user.UserBuilder;
-import com.valentin_d.focusarc.fixtures.user.UserCreationDtoBuilder;
-import com.valentin_d.focusarc.fixtures.user.UserUpdateDtoBuilder;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.UserService;
@@ -15,6 +12,7 @@ import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Optional;
 
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -28,7 +26,7 @@ class UserControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnUser_whenEmailExists() throws Exception {
-        final var user = UserBuilder.builder().build().build();
+        final var user = aUser();
         when(userService.findByEmail(user.getEmail()))
                 .thenReturn(Optional.of(user));
 
@@ -40,7 +38,7 @@ class UserControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnNotFound_whenEmailDoesNotExist() throws Exception {
-        final var user = UserBuilder.builder().build().build();
+        final var user = aUser();
         when(userService.findByEmail(user.getEmail()))
                 .thenReturn(Optional.empty());
 
@@ -50,10 +48,10 @@ class UserControllerTest extends BaseControllerTest {
 
     @Test
     void shouldCreateUser_whenDataIsValid() throws Exception {
-        final var user = UserBuilder.builder().build().build();
+        final var user = aUser();
         when(userService.create(any())).thenReturn(user);
 
-        final var json = toJson(UserCreationDtoBuilder.builder().build().build());
+        final var json = toJson(aUserCreationDto());
 
         final var actions = mvcPost(ROOT, json)
                 .andExpect(status().isCreated());
@@ -63,7 +61,7 @@ class UserControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnUser_whenIdExists() throws Exception {
-        final var user = UserBuilder.builder().build().build();
+        final var user = aUser();
         when(userService.findById(user.getId())).thenReturn(Optional.of(user));
 
         final var actions = mvcGet(ROOT + "/" + user.getId().id())
@@ -82,10 +80,10 @@ class UserControllerTest extends BaseControllerTest {
 
     @Test
     void shouldUpdateUser_whenIdExists() throws Exception {
-        final var user = UserBuilder.builder().build().build();
+        final var user = aUser();
         when(userService.update(any(), eq(user.getId()))).thenReturn(user);
 
-        final var json = toJson(UserUpdateDtoBuilder.builder().build().build());
+        final var json = toJson(aUserUpdateDto());
 
         final var actions = mvcPut(ROOT + "/" + user.getId().id(), json)
                 .andExpect(status().isOk());
@@ -98,16 +96,16 @@ class UserControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnNotFound_whenUpdatingNonExistingUser() throws Exception {
-        final var user = UserBuilder.builder().build().build();
+        final var user = aUser();
         when(userService.update(any(), eq(user.getId()))).thenThrow(new UserDoesNotExistException(user.getId()));
 
-        mvcPut(ROOT + "/" + user.getId().id(), toJson(UserUpdateDtoBuilder.builder().build().build()))
+        mvcPut(ROOT + "/" + user.getId().id(), toJson(aUserUpdateDto()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldDeleteUser_whenIdExists() throws Exception {
-        final var user = UserBuilder.builder().build().build();
+        final var user = aUser();
         mvcDelete(ROOT + "/" + user.getId().id())
                 .andExpect(status().isNoContent());
 
@@ -116,7 +114,7 @@ class UserControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingUser() throws Exception {
-        final var user = UserBuilder.builder().build().build();
+        final var user = aUser();
         doThrow(new UserDoesNotExistException(user.getId())).when(userService).delete(user.getId());
 
         mvcDelete(ROOT + "/" + user.getId().id())

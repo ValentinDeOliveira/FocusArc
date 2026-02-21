@@ -18,6 +18,10 @@ public final class UserFactory {
         return UserCreationDtoBuilder.builder().build().build();
     }
 
+    public static UserCreationDto aUserCreationDtoWithEmail(final String email) {
+        return UserCreationDtoBuilder.builder().email(email).build().build();
+    }
+
     public static UserUpdateDto aUserUpdateDto() {
         return UserUpdateDtoBuilder.builder().build().build();
     }

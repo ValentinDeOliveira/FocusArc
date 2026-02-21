@@ -11,6 +11,10 @@ import com.valentin_d.focusarc.model.id.UserId;
 public final class ArcFactory {
     private ArcFactory() {}
 
+    public static Arc anArc() {
+        return ArcBuilder.builder().build().build();
+    }
+
     public static Arc anArcWithOwnerId(final UserId ownerId) {
         return ArcBuilder.builder().owner(ownerId).build().build();
     }
