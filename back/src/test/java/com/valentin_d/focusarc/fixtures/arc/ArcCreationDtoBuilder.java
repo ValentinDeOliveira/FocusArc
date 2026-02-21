@@ -8,10 +8,8 @@ import lombok.Builder;
 public class ArcCreationDtoBuilder {
     @Builder.Default
     private final UserId userId = UserId.random();
-
     @Builder.Default
     private final String name = "Default Arc";
-
     @Builder.Default
     private final int totalPlannedMinutes = 120;
 

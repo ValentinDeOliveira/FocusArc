@@ -9,13 +9,10 @@ import lombok.Builder;
 public class ArcBuilder {
     @Builder.Default
     private final ArcId id = ArcId.random();
-
     @Builder.Default
     private final UserId owner = UserId.random();
-
     @Builder.Default
     private final String name = "Arc 1";
-
     @Builder.Default
     private final int totalPlannedMinutes = 120;
 

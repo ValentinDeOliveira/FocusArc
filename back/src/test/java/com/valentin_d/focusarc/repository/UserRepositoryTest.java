@@ -1,6 +1,6 @@
 package com.valentin_d.focusarc.repository;
 
-import com.valentin_d.focusarc.model.User;
+import com.valentin_d.focusarc.fixtures.user.UserBuilder;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +18,7 @@ class UserRepositoryTest {
 
     @Test
     void shouldReturnUser_whenEmailExists() {
-        final User user = new User("foobar", "foobar@mail.com");
+        final var user = UserBuilder.builder().build().build();
         repository.save(user);
 
         final var userOptional = repository.findByEmail(user.getEmail());
