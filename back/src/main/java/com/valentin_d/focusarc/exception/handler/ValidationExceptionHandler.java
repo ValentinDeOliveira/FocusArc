@@ -14,7 +14,7 @@ import java.util.Map;
 public class ValidationExceptionHandler {
 
     @ExceptionHandler(ConstraintViolationException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationErrors(ConstraintViolationException ex) {
+    public ResponseEntity<Map<String, Object>> handleValidationErrors(final ConstraintViolationException ex) {
         Map<String, Object> response = new HashMap<>();
         List<Map<String, String>> errors = ex.getConstraintViolations()
                 .stream()
