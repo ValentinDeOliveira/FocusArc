@@ -1,13 +1,18 @@
 package com.valentin_d.focusarc.integration;
 
+import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseArcControllerIntegrationTest;
 import com.valentin_d.focusarc.model.Arc;
 import com.valentin_d.focusarc.model.id.UserId;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpMethod;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Stream;
 
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
 import static org.assertj.core.api.Assertions.assertThatCollection;
@@ -86,24 +91,32 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         assertNotFound(response);
     }
 
-    @Test
-    void shouldUpdateArc_whenIdExists() {
+    @ParameterizedTest
+    @MethodSource("provideArcUpdateDtos")
+    void shouldUpdateArc_withDifferentFields(final ArcUpdateDto dto) {
         final var arc = createArc();
-
-        final var dto = anArcUpdateDto();
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.PUT, dto, Arc.class);
 
         assertOk(response);
-
         final var result = response.getBody();
         assertNotNull(result);
 
-        assertEquals(result.getId(), arc.getId());
-        assertEquals(result.getName(), dto.name());
-        assertEquals(result.getOwner(), arc.getOwner());
-        assertEquals(result.getTotalPlannedMinutes(), dto.totalPlannedMinutes());
-        assertEquals(result.getTotalCompletedMinutes(), arc.getTotalCompletedMinutes());
+        assertEquals(arc.getId(), result.getId());
+        assertEquals(arc.getOwner(), result.getOwner());
+        assertEquals(expectedValue(dto.name(), arc.getName()), result.getName());
+        assertEquals(expectedValue(dto.totalPlannedMinutes(), arc.getTotalPlannedMinutes()),
+                result.getTotalPlannedMinutes());
+        assertEquals(arc.getTotalCompletedMinutes(), result.getTotalCompletedMinutes());
+    }
+
+    private static Stream<Arguments> provideArcUpdateDtos() {
+        return Stream.of(
+                Arguments.of(anArcUpdateDtoWithTotalPlannedMinutesAndName(200, "Updated Name")),
+                Arguments.of(anArcUpdateDtoWithName("Updated Name")),
+                Arguments.of(anArcUpdateDtoWithTotalPlannedMinutes(150)),
+                Arguments.of(anArcUpdateDtoWithNullFields())
+        );
     }
 
     @Test

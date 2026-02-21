@@ -25,4 +25,12 @@ public final class UserFactory {
     public static UserUpdateDto aUserUpdateDto() {
         return UserUpdateDtoBuilder.builder().build().build();
     }
+
+    public static UserUpdateDto aUserUpdateDtoWithName(final String name) {
+        return UserUpdateDtoBuilder.builder().name(name).build().build();
+    }
+
+    public static UserUpdateDto aUserUpdateDtoWithNullFields() {
+        return UserUpdateDtoBuilder.builder().name(null).build().build();
+    }
 }

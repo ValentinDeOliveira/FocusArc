@@ -1,6 +1,6 @@
 package com.valentin_d.focusarc.repository;
 
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.mongodb.test.autoconfigure.DataMongoTest;
@@ -16,6 +16,11 @@ class UserRepositoryTest {
     @Autowired
     private UserRepository repository;
 
+    @BeforeEach
+    void tearDown() {
+        repository.deleteAll();
+    }
+    
     @Test
     void shouldReturnUser_whenEmailExists() {
         final var user = aUser();
@@ -26,10 +31,5 @@ class UserRepositoryTest {
         final var foundUser = userOptional.get();
         assertEquals(foundUser.getEmail(), user.getEmail());
         assertEquals(foundUser.getName(), user.getName());
-    }
-
-    @AfterEach
-    void tearDown() {
-        repository.deleteAll();
     }
 }

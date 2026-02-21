@@ -57,4 +57,8 @@ public abstract class BaseIntegrationTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertNotNull(response.getBody());
     }
+
+    protected  <T> T expectedValue(T newValue, T originalValue) {
+        return newValue != null ? newValue : originalValue;
+    }
 }

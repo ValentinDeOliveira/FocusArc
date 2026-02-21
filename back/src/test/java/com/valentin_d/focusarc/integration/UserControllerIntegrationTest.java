@@ -1,11 +1,16 @@
 package com.valentin_d.focusarc.integration;
 
-import com.valentin_d.focusarc.fixtures.user.UserBuilder;
+import com.valentin_d.focusarc.dto.user.UserUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseUserControllerIntegrationTest;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpMethod;
+
+import java.util.stream.Stream;
 
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -76,10 +81,10 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
         assertNotFound(response);
     }
 
-    @Test
-    void shouldReturnNotFound_whenIdDoesNotExist() {
+    @ParameterizedTest
+    @MethodSource("provideUserUpdateDtos")
+    void shouldUpdateUser_withDifferentFields(final UserUpdateDto dto) {
         final var user = createUser();
-        final var dto = aUserUpdateDto();
 
         final var response = request(URL+ "/" + user.getId().id(), HttpMethod.PUT, dto, User.class);
 
@@ -87,9 +92,18 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
         final var result = response.getBody();
         assertNotNull(result);
-        final var expected = UserBuilder.from(user).name(dto.name()).build().build();
 
-        assertGetUserEquals(expected, result);
+        assertEquals(result.getId(), user.getId());
+        assertEquals(expectedValue(dto.name(), user.getName()), result.getName());
+        assertEquals(result.getEmail(), user.getEmail());
+        assertNotNull(result.getLastLogin());
+    }
+
+    private static Stream<Arguments> provideUserUpdateDtos() {
+        return Stream.of(
+                Arguments.of(aUserUpdateDtoWithName("Updated Name")),
+                Arguments.of(aUserUpdateDtoWithNullFields())
+        );
     }
 
     @Test

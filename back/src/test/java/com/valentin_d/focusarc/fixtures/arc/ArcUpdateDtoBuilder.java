@@ -8,7 +8,7 @@ public class ArcUpdateDtoBuilder {
     @Builder.Default
     private final String name = "Default Arc";
     @Builder.Default
-    private final int totalPlannedMinutes = 120;
+    private final Integer totalPlannedMinutes = 120;
 
     public ArcUpdateDto build() {
         return new ArcUpdateDto(name, totalPlannedMinutes);

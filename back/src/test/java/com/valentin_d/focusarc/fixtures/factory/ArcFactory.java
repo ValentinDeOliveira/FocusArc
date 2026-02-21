@@ -30,4 +30,20 @@ public final class ArcFactory {
     public static ArcUpdateDto anArcUpdateDto() {
         return ArcUpdateDtoBuilder.builder().build().build();
     }
+
+    public static ArcUpdateDto anArcUpdateDtoWithNullFields() {
+        return ArcUpdateDtoBuilder.builder().totalPlannedMinutes(null).name(null).build().build();
+    }
+
+    public static ArcUpdateDto anArcUpdateDtoWithTotalPlannedMinutes(final int totalPlannedMinutes) {
+        return ArcUpdateDtoBuilder.builder().totalPlannedMinutes(totalPlannedMinutes).build().build();
+    }
+
+    public static ArcUpdateDto anArcUpdateDtoWithName(final String name) {
+        return ArcUpdateDtoBuilder.builder().name(name).build().build();
+    }
+
+    public static ArcUpdateDto anArcUpdateDtoWithTotalPlannedMinutesAndName(final int totalPlannedMinutes, final String name) {
+        return ArcUpdateDtoBuilder.builder().totalPlannedMinutes(totalPlannedMinutes).name(name).build().build();
+    }
 }
