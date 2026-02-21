@@ -7,13 +7,13 @@ import lombok.Builder;
 @Builder
 public class ArcCreationDtoBuilder {
     @Builder.Default
-    private final UserId userId = UserId.random();
+    private final UserId ownerId = UserId.random();
     @Builder.Default
     private final String name = "Default Arc";
     @Builder.Default
     private final int totalPlannedMinutes = 120;
 
     public ArcCreationDto build() {
-        return new ArcCreationDto(userId, name, totalPlannedMinutes);
+        return new ArcCreationDto(ownerId, name, totalPlannedMinutes);
     }
 }

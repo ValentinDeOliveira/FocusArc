@@ -30,7 +30,10 @@ public abstract class BaseIntegrationTest {
 
     protected <T> void assertNotFound(final ResponseEntity<T> response) {
         assertResponseEmpty(HttpStatus.NOT_FOUND, response);
-        assertNull(response.getBody());
+    }
+
+    protected <T> void assertConflict(final ResponseEntity<T> response) {
+        assertResponseEmpty(HttpStatus.CONFLICT, response);
     }
 
     protected <T> void assertNoContent(final ResponseEntity<T> response) {
@@ -45,5 +48,10 @@ public abstract class BaseIntegrationTest {
     private  <T> void assertResponseEmpty(final HttpStatus status,final ResponseEntity<T> response) {
         assertEquals(status, response.getStatusCode());
         assertNull(response.getBody());
+    }
+
+    protected  <T> void assertCreated(final ResponseEntity<T> response) {
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
     }
 }

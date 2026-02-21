@@ -42,7 +42,7 @@ class ArcServiceTest {
 
         final var result = service.create(creationDto);
 
-        assertEquals(creationDto.userId(), result.getOwner());
+        assertEquals(creationDto.ownerId(), result.getOwner());
         assertEquals(creationDto.name(), result.getName());
         assertEquals(0, result.getTotalCompletedMinutes());
         assertEquals(creationDto.totalPlannedMinutes(), result.getTotalPlannedMinutes());
@@ -59,9 +59,9 @@ class ArcServiceTest {
 
         assertThatThrownBy(() -> service.create(creationDto))
                 .isInstanceOf(UserDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(creationDto.userId().id().toString()));
+                .hasMessageContaining(String.valueOf(creationDto.ownerId().id().toString()));
 
-        verify(userRepository).existsById(creationDto.userId());
+        verify(userRepository).existsById(creationDto.ownerId());
         verify(arcRepository, never()).save(any(Arc.class));
     }
 

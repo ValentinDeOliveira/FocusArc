@@ -1,7 +1,5 @@
 package com.valentin_d.focusarc.integration.base;
 
-import com.valentin_d.focusarc.fixtures.arc.ArcBuilder;
-import com.valentin_d.focusarc.fixtures.user.UserBuilder;
 import com.valentin_d.focusarc.model.Arc;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
@@ -10,6 +8,8 @@ import com.valentin_d.focusarc.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwnerId;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class BaseArcControllerIntegrationTest extends BaseIntegrationTest{
@@ -34,7 +34,7 @@ public class BaseArcControllerIntegrationTest extends BaseIntegrationTest{
     }
 
     protected User createUser() {
-        final var user = UserBuilder.builder().build().build();
+        final var user = aUser();
         return userRepository.save(user);
     }
 
@@ -43,11 +43,8 @@ public class BaseArcControllerIntegrationTest extends BaseIntegrationTest{
         return createArcForUser(user.getId());
     }
 
-    protected Arc createArcForUser(UserId ownerId) {
-        final var arc = ArcBuilder.builder()
-                .owner(ownerId)
-                .build()
-                .build();
+    protected Arc createArcForUser(final UserId ownerId) {
+        final var arc = anArcWithOwnerId(ownerId);
         return arcRepository.save(arc);
     }
 }

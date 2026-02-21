@@ -1,71 +1,73 @@
 package com.valentin_d.focusarc.integration;
 
-import com.valentin_d.focusarc.dto.user.UserCreationDto;
-import com.valentin_d.focusarc.dto.user.UserUpdateDto;
+import com.valentin_d.focusarc.fixtures.user.UserBuilder;
+import com.valentin_d.focusarc.fixtures.user.UserCreationDtoBuilder;
+import com.valentin_d.focusarc.fixtures.user.UserUpdateDtoBuilder;
 import com.valentin_d.focusarc.integration.base.BaseUserControllerIntegrationTest;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UserControllerIntegrationTest extends BaseUserControllerIntegrationTest {
     @Test
     void shouldCreateUser_whenDataIsValid() {
-        final var dto = new UserCreationDto("Alice", "alice@example.com");
+        final var dto = UserCreationDtoBuilder.builder().build().build();
 
         final var response = request(URL, HttpMethod.POST, dto, User.class);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
+        assertCreated(response);
 
-        final User user = response.getBody();
-
-        assertEquals("alice@example.com", user.getEmail());
-        assertEquals("Alice", user.getName());
-        assertNotNull(user.getId());
-        assertNotNull(user.getLastLogin());
+        final var result = response.getBody();
+        assertNotNull(result);
+        assertEquals(dto.email(), result.getEmail());
+        assertEquals(dto.name(), result.getName());
+        assertNotNull(result.getId());
+        assertNotNull(result.getLastLogin());
     }
 
     @Test
     void shouldReturnConflict_whenEmailAlreadyExists() {
-        final var dto = new UserCreationDto("foo", "foo@test.com");
+        final var user = createUser();
+        final var dto = UserCreationDtoBuilder.builder().email(user.getEmail()).build().build();
 
         final var response = request(URL, HttpMethod.POST, dto, Void.class);
 
-        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
-        assertNull(response.getBody());
+        assertConflict(response);
     }
 
     @Test
     void shouldReturnUser_whenEmailExists() {
-        final var response = request(URL + "/email?email="+ USER_EMAIL, HttpMethod.GET, null, User.class);
+        final var user = createUser();
+        final var response = request(URL + "/email?email="+ user.getEmail(), HttpMethod.GET, null, User.class);
 
         assertHasContent(response);
 
-        final User user = response.getBody();
-
-        assertGetUserEquals(user);
+        final var result = response.getBody();
+        assertNotNull(result);
+        assertGetUserEquals(result, user);
     }
 
     @Test
     void shouldReturnNotFound_whenEmailDoesNotExist() {
-        final var response = request(URL + "/email?email=bar@test.com", HttpMethod.GET, null, Void.class);
+        final var response = request(URL + "/email?email=foobar@test.com", HttpMethod.GET, null, Void.class);
 
         assertNotFound(response);
     }
 
     @Test
     void shouldReturnUser_whenIdExists() {
-        final var response = request(URL + "/" + USER_ID.id(), HttpMethod.GET, null, User.class);
+        final var user = createUser();
+        final var response = request(URL + "/" + user.getId().id(), HttpMethod.GET, null, User.class);
 
         assertHasContent(response);
 
-        final User user = response.getBody();
-
-        assertGetUserEquals(user);
+        final var result = response.getBody();
+        assertNotNull(result);
+        assertGetUserEquals(result, user);
     }
 
     @Test
@@ -77,21 +79,23 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
     @Test
     void shouldReturnNotFound_whenIdDoesNotExist() {
-        final var dto = new UserUpdateDto("bar");
+        final var user = createUser();
+        final var dto = UserUpdateDtoBuilder.builder().build().build();
 
-        final var response = request(URL+ "/" + USER_ID.id(), HttpMethod.PUT, dto, User.class);
+        final var response = request(URL+ "/" + user.getId().id(), HttpMethod.PUT, dto, User.class);
 
         assertHasContent(response);
 
-        final var user = response.getBody();
-        final var expected = new User(USER_ID, "bar", USER_EMAIL);
+        final var result = response.getBody();
+        assertNotNull(result);
+        final var expected = UserBuilder.from(user).name(dto.name()).build().build();
 
-        assertGetUserEquals(user, expected);
+        assertGetUserEquals(expected, result);
     }
 
     @Test
-    void shouldUpdateUser_whenIdExists() {
-        final var dto = new UserUpdateDto("bar");
+    void shouldReturnNotFoundOnUpdate_whenIdDoesNotExists() {
+        final var dto = UserUpdateDtoBuilder.builder().build().build();
 
         final var response = request(URL + "/" + UserId.random().id(), HttpMethod.PUT, dto, Void.class);
 
@@ -100,7 +104,8 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
     @Test
     void shouldDeleteUser_whenIdExists() {
-        final var response = request(URL + "/" + USER_ID.id(), HttpMethod.DELETE, null, Void.class);
+        final var user = createUser();
+        final var response = request(URL + "/" + user.getId().id(), HttpMethod.DELETE, null, Void.class);
 
         assertNoContent(response);
     }

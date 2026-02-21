@@ -33,9 +33,9 @@ public class ArcService {
     }
 
     public Arc create(@NotNull final ArcCreationDto arcCreationDto) {
-        assertUserExists(arcCreationDto.userId());
+        assertUserExists(arcCreationDto.ownerId());
 
-        final var arc = new Arc(arcCreationDto.userId(), arcCreationDto.name(), arcCreationDto.totalPlannedMinutes());
+        final var arc = new Arc(arcCreationDto.ownerId(), arcCreationDto.name(), arcCreationDto.totalPlannedMinutes());
         return arcRepository.save(arc);
     }
 

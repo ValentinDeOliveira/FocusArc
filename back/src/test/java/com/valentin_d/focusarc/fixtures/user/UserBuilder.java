@@ -16,4 +16,11 @@ public class UserBuilder {
     public User build() {
         return new User(id, name, email);
     }
+
+    public static UserBuilderBuilder from(User user) {
+        return UserBuilder.builder()
+                .id(user.getId())
+                .name(user.getName())
+                .email(user.getEmail());
+    }
 }

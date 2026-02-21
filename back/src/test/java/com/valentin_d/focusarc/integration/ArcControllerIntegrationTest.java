@@ -1,17 +1,15 @@
 package com.valentin_d.focusarc.integration;
 
-import com.valentin_d.focusarc.fixtures.arc.ArcCreationDtoBuilder;
-import com.valentin_d.focusarc.fixtures.arc.ArcUpdateDtoBuilder;
 import com.valentin_d.focusarc.integration.base.BaseArcControllerIntegrationTest;
 import com.valentin_d.focusarc.model.Arc;
 import com.valentin_d.focusarc.model.id.UserId;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
 import static org.assertj.core.api.Assertions.assertThatCollection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -21,14 +19,13 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     void shouldCreateArc_whenDataIsValid() {
         final var user = createUser();
 
-        final var dto = ArcCreationDtoBuilder.builder().userId(user.getId()).build().build();
+        final var dto = anArcCreationDtoWithOwnerId(user.getId());
         final var response = request(URL, HttpMethod.POST, dto, Arc.class);
 
-        assertEquals(HttpStatus.CREATED, response.getStatusCode());
-        assertNotNull(response.getBody());
+        assertCreated(response);
 
-        final Arc arc = response.getBody();
-
+        final var arc = response.getBody();
+        assertNotNull(arc);
         assertEquals(dto.totalPlannedMinutes(), arc.getTotalPlannedMinutes());
         assertEquals(arc.getOwner(), user.getId());
         assertEquals(dto.name(), arc.getName());
@@ -38,7 +35,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
     @Test
     void shouldReturnNotFoundOnCreate_whenUserDoesNotExists() {
-        final var dto = ArcCreationDtoBuilder.builder().build().build();
+        final var dto = anArcCreationDto();
 
         final var response = request(URL, HttpMethod.POST, dto, Void.class);
 
@@ -66,7 +63,6 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         final var arc2 = createArcForUser(user.getId());
 
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.GET, null, Arc[].class);
-
         assertHasContent(response);
         final List<Arc> arcs = Arrays.stream(response.getBody()).toList();
         assertNotNull(arcs);
@@ -93,7 +89,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     void shouldUpdateArc_whenIdExists() {
         final var arc = createArc();
 
-        final var dto = ArcUpdateDtoBuilder.builder().build().build();
+        final var dto = anArcUpdateDto();
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.PUT, dto, Arc.class);
 
@@ -111,7 +107,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
     @Test
     void shouldReturnNotFound_whenUpdatingNonExistingArc() {
-        final var dto = ArcUpdateDtoBuilder.builder().build().build();
+        final var dto = anArcUpdateDto();
 
         final var response = request(URL + "/" + UserId.random().id(), HttpMethod.PUT, dto, Void.class);
 
