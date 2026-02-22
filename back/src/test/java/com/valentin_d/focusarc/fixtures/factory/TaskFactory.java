@@ -23,6 +23,10 @@ public final class TaskFactory {
         return TaskCreationDtoBuilder.builder().build().build();
     }
 
+    public static TaskCreationDto aTaskCreationDtoWithChapterId(final ChapterId chapterId) {
+        return TaskCreationDtoBuilder.builder().chapterId(chapterId).build().build();
+    }
+
     public static TaskUpdateDto aTaskUpdateDto() {
         return TaskUpdateDtoBuilder.builder().build().build();
     }
