@@ -12,9 +12,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.util.List;
 import java.util.Optional;
 
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -126,28 +128,30 @@ class ArcServiceTest {
 
     @Test
     void shouldDeleteAllArcs_whenUserExists() {
-        final var arc = anArc();
+        final var user = aUser();
+        final var arc = anArcWithOwnerId(user.getId());
 
-        when(arcRepository.findById(arc.getId())).thenReturn(Optional.of(arc));
+        when(userRepository.existsById(user.getId())).thenReturn(true);
+        when(arcRepository.findAllByOwner(user.getId())).thenReturn(List.of(arc));
 
-        service.delete(arc.getId());
+        service.deleteAllForUser(user.getId());
 
-        verify(arcRepository).findById(arc.getId());
-        verify(arcRepository).delete(arc);
+        verify(userRepository).existsById(user.getId());
+        verify(arcRepository).deleteAll(List.of(arc));
     }
 
     @Test
     void shouldThrowExceptionOnDeleteAllArcs_whenUserDoesNotExists() {
-        final var arc = anArc();
+        final var userId = UserId.random();
 
-        when(arcRepository.findById(arc.getId())).thenReturn(Optional.empty());
+        when(userRepository.existsById(userId)).thenReturn(false);
 
-        assertThatThrownBy(() -> service.delete(arc.getId()))
-                .isInstanceOf(ArcDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(arc.getId().id()));
+        assertThatThrownBy(() -> service.deleteAllForUser(userId))
+                .isInstanceOf(UserDoesNotExistException.class)
+                .hasMessageContaining(String.valueOf(userId.id()));
 
-        verify(arcRepository, never()).delete(any(Arc.class));
-        verify(arcRepository).findById(arc.getId());
+        verify(arcRepository, never()).deleteAll(anyList());
+        verify(userRepository).existsById(userId);
     }
 
     @Test

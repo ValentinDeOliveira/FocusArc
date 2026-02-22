@@ -1,6 +1,7 @@
 package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.model.Arc;
+import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.service.ArcService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -57,10 +58,9 @@ class ArcControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnNotFound_whenUserIdDoesNotExists() throws Exception {
-        final var arc = anArc();
-        when(arcService.findAllForUser(arc.getOwner())).thenReturn(List.of());
+        when(arcService.findAllForUser(any())).thenReturn(List.of());
 
-        mvcGet(ROOT + "/users/" + arc.getOwner().id())
+        mvcGet(ROOT + "/users/" + ArcId.random().id())
                 .andExpect(status().isNotFound());
     }
 
