@@ -1,136 +1,132 @@
 package com.valentin_d.focusarc.controller;
 
-import com.valentin_d.focusarc.exception.UserDoesNotExist;
+import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.UserService;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Optional;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(UserController.class)
-class UserControllerTest {
-    @Autowired
-    private MockMvc mockMvc;
+class UserControllerTest extends BaseControllerTest {
     @MockitoBean
     private UserService userService;
 
     private final static String ROOT = "/users";
-    private final static String EMAIL = "test@mail.com";
-    private final static String NAME = "foobar";
-    private static final User USER = new User(NAME, EMAIL);
 
     @Test
     void shouldReturnUser_whenEmailExists() throws Exception {
-        when(userService.findByEmail(EMAIL))
-                .thenReturn(Optional.of(USER));
+        final var user = aUser();
+        when(userService.findByEmail(user.getEmail()))
+                .thenReturn(Optional.of(user));
 
-        final var actions = mockMvc.perform(get(ROOT + "/email").param("email", EMAIL))
+        final var actions = mvcGet(ROOT + "/email?email=" + user.getEmail())
                 .andExpect(status().isOk());
 
-        assertUserJson(actions);
+        assertUserJson(actions, user);
     }
 
     @Test
     void shouldReturnNotFound_whenEmailDoesNotExist() throws Exception {
-        when(userService.findByEmail(EMAIL))
+        final var user = aUser();
+        when(userService.findByEmail(user.getEmail()))
                 .thenReturn(Optional.empty());
 
-        mockMvc.perform(get(ROOT + "/email").param("email", EMAIL))
+        mvcGet(ROOT + "/email?email=" + user.getEmail())
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldCreateUser_whenDataIsValid() throws Exception {
-        when(userService.create(any())).thenReturn(USER);
+        final var user = aUser();
+        when(userService.create(any())).thenReturn(user);
 
-        final var actions = mockMvc.perform(post(ROOT)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"" + NAME + "\",\"email\":\"" + EMAIL + "\"}"))
+        final var json = toJson(aUserCreationDto());
+
+        final var actions = mvcPost(ROOT, json)
                 .andExpect(status().isCreated());
 
-        assertUserJson(actions);
+        assertUserJson(actions, user);
     }
 
     @Test
     void shouldReturnUser_whenIdExists() throws Exception {
-        when(userService.findById(USER.getId())).thenReturn(Optional.of(USER));
+        final var user = aUser();
+        when(userService.findById(user.getId())).thenReturn(Optional.of(user));
 
-        final var actions = mockMvc.perform(get(ROOT + "/" + USER.getId().id()))
+        final var actions = mvcGet(ROOT + "/" + user.getId().id())
                 .andExpect(status().isOk());
 
-        assertUserJson(actions);
+        assertUserJson(actions, user);
     }
 
     @Test
     void shouldReturnNotFound_whenIdDoesNotExist() throws Exception {
-        final var id = UserId.random();
-        when(userService.findById(id)).thenReturn(Optional.empty());
+        when(userService.findById(any(UserId.class))).thenReturn(Optional.empty());
 
-        mockMvc.perform(get(ROOT + "/" + id.id()))
+        mvcGet(ROOT + "/" + UserId.random().id())
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldUpdateUser_whenIdExists() throws Exception {
-        when(userService.update(any(), eq(USER.getId()))).thenReturn(USER);
+        final var user = aUser();
+        when(userService.update(any(), eq(user.getId()))).thenReturn(user);
 
-        final var actions = mockMvc.perform(put(ROOT + "/" + USER.getId().id())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"" + NAME + "\"}"))
+        final var json = toJson(aUserUpdateDto());
+
+        final var actions = mvcPut(ROOT + "/" + user.getId().id(), json)
                 .andExpect(status().isOk());
 
-        assertUserJson(actions);
-        actions.andExpect(jsonPath("$.name").value(NAME))
-                .andExpect(jsonPath("$.email").value(EMAIL))
-                .andExpect(jsonPath("$.id.id").exists());
+        assertUserJson(actions, user);
+        actions.andExpect(jsonPath("$.name").value(user.getName()))
+                .andExpect(jsonPath("$.email").value(user.getEmail()))
+                .andExpect(jsonPath("$.id").exists());
     }
 
     @Test
     void shouldReturnNotFound_whenUpdatingNonExistingUser() throws Exception {
-        when(userService.update(any(), eq(USER.getId()))).thenThrow(new UserDoesNotExist(USER.getId()));
+        final var user = aUser();
+        when(userService.update(any(), eq(user.getId()))).thenThrow(new UserDoesNotExistException(user.getId()));
 
-        mockMvc.perform(put(ROOT + "/" + USER.getId().id())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content("{\"name\":\"NewName\"}"))
+        mvcPut(ROOT + "/" + user.getId().id(), toJson(aUserUpdateDto()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldDeleteUser_whenIdExists() throws Exception {
-        mockMvc.perform(delete(ROOT + "/" + USER.getId().id()))
+        final var user = aUser();
+        mvcDelete(ROOT + "/" + user.getId().id())
                 .andExpect(status().isNoContent());
 
-        verify(userService).delete(USER.getId());
+        verify(userService).delete(user.getId());
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingUser() throws Exception {
-        doThrow(new UserDoesNotExist(USER.getId())).when(userService).delete(USER.getId());
+        final var user = aUser();
+        doThrow(new UserDoesNotExistException(user.getId())).when(userService).delete(user.getId());
 
-        mockMvc.perform(delete(ROOT + "/" + USER.getId().id()))
+        mvcDelete(ROOT + "/" + user.getId().id())
                 .andExpect(status().isNotFound());
     }
 
 
-    private void assertUserJson(ResultActions actions) throws Exception {
+    private void assertUserJson(final ResultActions actions, final User expected) throws Exception {
         actions
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.name").value(NAME))
-                .andExpect(jsonPath("$.email").value(EMAIL))
-                .andExpect(jsonPath("$.id.id").exists())
+                .andExpect(jsonPath("$.name").value(expected.getName()))
+                .andExpect(jsonPath("$.email").value(expected.getEmail()))
+                .andExpect(jsonPath("$.id").value(expected.getId().id().toString()))
                 .andExpect(jsonPath("$.lastLogin").exists());
     }
 }

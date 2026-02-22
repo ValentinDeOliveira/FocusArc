@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonValue;
 
 import java.util.UUID;
 
-public record UserId(UUID id) {
-    public static UserId random() {
-        return new UserId(UUID.randomUUID());
+public record ArcId(UUID id) {
+    public static ArcId random() {
+        return new ArcId(UUID.randomUUID());
     }
 
     @JsonValue

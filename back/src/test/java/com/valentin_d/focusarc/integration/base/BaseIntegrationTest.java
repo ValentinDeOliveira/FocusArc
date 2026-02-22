@@ -24,25 +24,41 @@ public abstract class BaseIntegrationTest {
     }
 
     protected <T> ResponseEntity<T> request(final String url, final HttpMethod method, final Object body, final Class<T> responseType) {
-        var requestEntity = body != null ? new HttpEntity<>(body) : null;
+        var requestEntity = new HttpEntity<>(body);
         return restTemplate.exchange(buildUrl(url), method, requestEntity, responseType);
+    }
+
+    protected <T> ResponseEntity<T> request(final String url, final HttpMethod method, final Class<T> responseType) {
+        return restTemplate.exchange(buildUrl(url), method, HttpEntity.EMPTY, responseType);
     }
 
     protected <T> void assertNotFound(final ResponseEntity<T> response) {
         assertResponseEmpty(HttpStatus.NOT_FOUND, response);
     }
 
+    protected <T> void assertConflict(final ResponseEntity<T> response) {
+        assertResponseEmpty(HttpStatus.CONFLICT, response);
+    }
+
     protected <T> void assertNoContent(final ResponseEntity<T> response) {
         assertResponseEmpty(HttpStatus.NO_CONTENT, response);
     }
 
-    protected <T> void assertHasContent(final ResponseEntity<T> response) {
+    protected <T> void assertOk(final ResponseEntity<T> response) {
         assertEquals(HttpStatus.OK, response.getStatusCode());
-        assertNotNull(response.getBody());
     }
 
     private  <T> void assertResponseEmpty(final HttpStatus status,final ResponseEntity<T> response) {
         assertEquals(status, response.getStatusCode());
         assertNull(response.getBody());
+    }
+
+    protected  <T> void assertCreated(final ResponseEntity<T> response) {
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertNotNull(response.getBody());
+    }
+
+    protected  <T> T expectedValue(T newValue, T originalValue) {
+        return newValue != null ? newValue : originalValue;
     }
 }

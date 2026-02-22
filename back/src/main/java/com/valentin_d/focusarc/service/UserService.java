@@ -3,7 +3,7 @@ package com.valentin_d.focusarc.service;
 import com.valentin_d.focusarc.dto.user.UserCreationDto;
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
 import com.valentin_d.focusarc.exception.EmailAlreadyExistsException;
-import com.valentin_d.focusarc.exception.UserDoesNotExist;
+import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.UserRepository;
@@ -39,7 +39,7 @@ public class UserService {
     }
 
     public User update(@NotNull final UserUpdateDto dto, @NotBlank final UserId id) {
-        final var user = findById(id).orElseThrow(() -> new UserDoesNotExist(id));
+        final var user = findById(id).orElseThrow(() -> new UserDoesNotExistException(id));
 
         if (dto.name() != null) user.setName(dto.name());
 
@@ -47,7 +47,7 @@ public class UserService {
     }
 
     public void delete(@NotBlank final UserId id) {
-        final var user = findById(id).orElseThrow(() -> new UserDoesNotExist(id));
+        final var user = findById(id).orElseThrow(() -> new UserDoesNotExistException(id));
         repository.delete(user);
     }
 }

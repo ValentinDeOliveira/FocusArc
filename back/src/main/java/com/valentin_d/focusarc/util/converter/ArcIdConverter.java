@@ -1,21 +1,21 @@
 package com.valentin_d.focusarc.util.converter;
 
-import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.id.ArcId;
 import org.springframework.core.convert.converter.Converter;
 import org.springframework.stereotype.Component;
 
 import java.util.UUID;
 
 @Component
-public class UserIdConverter implements Converter<String, UserId> {
+public class ArcIdConverter implements Converter<String, ArcId> {
 
     @Override
-    public UserId convert(final String source) {
+    public ArcId convert(final String source) {
         try {
             final var uuid = UUID.fromString(source);
-            return new UserId(uuid);
+            return new ArcId(uuid);
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("Invalid UserId: " + source);
+            throw new IllegalArgumentException("Invalid ArcId: " + source);
         }
     }
 }
