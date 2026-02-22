@@ -12,9 +12,9 @@ public class TaskCreationDtoBuilder {
     @Builder.Default
     private final ChapterId chapterId = ChapterId.random();
     @Builder.Default
-    private final short estimatedMinutes = 120;
+    private final int estimatedMinutes = 120;
     @Builder.Default
-    private final Instant scheduledAt = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private final Instant scheduledAt = Instant.now().truncatedTo(ChronoUnit.MILLIS).plusSeconds(120);
 
     public TaskCreationDto build() {
         return new TaskCreationDto(chapterId, estimatedMinutes, scheduledAt);

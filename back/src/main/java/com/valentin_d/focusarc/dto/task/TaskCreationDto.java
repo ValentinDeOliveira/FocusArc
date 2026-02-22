@@ -7,5 +7,5 @@ import jakarta.validation.constraints.Positive;
 
 import java.time.Instant;
 
-public record TaskCreationDto(@NotNull ChapterId chapterId, @Positive short estimatedMinutes, @FutureOrPresent Instant scheduledAt) {
+public record TaskCreationDto(@NotNull ChapterId chapterId, @Positive int estimatedMinutes, @FutureOrPresent Instant scheduledAt) {
 }

@@ -46,6 +46,7 @@ public class TaskService {
         if (chapterUpdateDto.completedMinutes() != null) task.setCompletedMinutes(chapterUpdateDto.completedMinutes());
         if (chapterUpdateDto.estimatedMinutes() != null) task.setEstimatedMinutes(chapterUpdateDto.estimatedMinutes());
         if (chapterUpdateDto.scheduledAt() != null) task.setScheduledAt(chapterUpdateDto.scheduledAt());
+        if (chapterUpdateDto.taskStatus() != null) task.setStatus(chapterUpdateDto.taskStatus());
 
         return taskRepository.save(task);
     }

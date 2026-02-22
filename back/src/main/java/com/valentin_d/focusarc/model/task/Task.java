@@ -18,19 +18,16 @@ public class Task {
     @Id
     private TaskId id;
     private ChapterId chapter;
-    private short estimatedMinutes;
-    private short completedMinutes;
+    private int estimatedMinutes;
+    private int completedMinutes;
     private Instant scheduledAt;
+    private TaskStatus status;
 
-    public Task(final TaskId taskId, final ChapterId chapterId, final short estimatedMinutes, final Instant scheduledAt) {
-        this(taskId, chapterId, estimatedMinutes, (short) 0, scheduledAt);
+    public Task(final TaskId taskId, final ChapterId chapterId, final int estimatedMinutes, final Instant scheduledAt) {
+        this(taskId, chapterId, estimatedMinutes, 0, scheduledAt, TaskStatus.PLANNED);
     }
 
-    public Task(final ChapterId chapterId, final short estimatedMinutes, final Instant scheduledAt) {
+    public Task(final ChapterId chapterId, final int estimatedMinutes, final Instant scheduledAt) {
         this(TaskId.random(), chapterId, estimatedMinutes, scheduledAt);
-    }
-
-    public Task(final ChapterId chapterId, final short estimatedMinutes) {
-        this(TaskId.random(), chapterId, estimatedMinutes, Instant.now());
     }
 }
