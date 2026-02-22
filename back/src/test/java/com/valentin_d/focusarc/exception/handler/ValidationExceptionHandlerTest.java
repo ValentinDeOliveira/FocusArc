@@ -49,8 +49,7 @@ class ValidationExceptionHandlerTest {
         assertSingleError(response, "notNullField", "null");
     }
 
-    // Helper that builds a ValidatorFactory in a try-with-resources and returns the handler response
-    private ResponseEntity<Map<String, Object>> validateAndHandle(TestDto dto) {
+    private ResponseEntity<Map<String, Object>> validateAndHandle(final TestDto dto) {
         try (final var factory = Validation.buildDefaultValidatorFactory()) {
             final var validator = factory.getValidator();
 

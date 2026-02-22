@@ -12,9 +12,9 @@ public class ArcIdConverter implements Converter<String, ArcId> {
     @Override
     public ArcId convert(final String source) {
         try {
-            final UUID uuid = UUID.fromString(source);
+            final var uuid = UUID.fromString(source);
             return new ArcId(uuid);
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid ArcId: " + source);
         }
     }

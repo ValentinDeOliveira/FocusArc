@@ -12,9 +12,9 @@ public class UserIdConverter implements Converter<String, UserId> {
     @Override
     public UserId convert(final String source) {
         try {
-            final UUID uuid = UUID.fromString(source);
+            final var uuid = UUID.fromString(source);
             return new UserId(uuid);
-        } catch (NumberFormatException e) {
+        } catch (IllegalArgumentException e) {
             throw new IllegalArgumentException("Invalid UserId: " + source);
         }
     }
