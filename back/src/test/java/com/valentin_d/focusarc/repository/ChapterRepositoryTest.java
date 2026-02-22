@@ -16,21 +16,22 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 class ChapterRepositoryTest {
     @Autowired
     private ChapterRepository repository;
-    private static final ArcId ARC_ID = ArcId.random();
 
     @BeforeEach
-    void tearDown() {
+    void setUp() {
         repository.deleteAll();
     }
 
     @Test
     void shouldReturnAllChapter_whenArcExists() {
-        final var chapter1 = aChapterWithArcId(ARC_ID);
-        final var chapter2 = aChapterWithArcId(ARC_ID);
+        final var arcId = ArcId.random();
+
+        final var chapter1 = aChapterWithArcId(arcId);
+        final var chapter2 = aChapterWithArcId(arcId);
         repository.save(chapter1);
         repository.save(chapter2);
 
-        final var arcsLists = repository.findAllByArc(ARC_ID);
+        final var arcsLists = repository.findAllByArc(arcId);
         assertEquals(2, arcsLists.size());
         assertThatCollection(arcsLists).containsExactly(chapter1, chapter2);
     }
