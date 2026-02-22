@@ -20,7 +20,9 @@ public class User {
     private String name;
     @Indexed(unique = true)
     private String email;
+    // TODO: change this field to Instant
     private LocalDateTime lastLogin;
+    // TODO: add field for timezone
 
     public User(final UserId userId, final String name, final String email) {
         this(userId, name, email, LocalDateTime.now());

@@ -5,6 +5,7 @@ import com.valentin_d.focusarc.model.id.ChapterId;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Data
@@ -12,6 +13,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Document("chapters")
 public class Chapter {
+    @Id
     private ChapterId id;
     private ArcId arc;
     private int plannedMinutes;
