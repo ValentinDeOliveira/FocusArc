@@ -1,0 +1,27 @@
+package com.valentin_d.focusarc.model;
+
+import com.valentin_d.focusarc.model.id.ArcId;
+import com.valentin_d.focusarc.model.id.ChapterId;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.springframework.data.mongodb.core.mapping.Document;
+
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
+@Document("chapters")
+public class Chapter {
+    private ChapterId id;
+    private ArcId arc;
+    private int plannedMinutes;
+    private int completedMinutes;
+
+    public Chapter(final ChapterId chapterId, final ArcId arc, final int plannedMinutes) {
+        this(chapterId, arc, plannedMinutes, 0);
+    }
+
+    public Chapter(final ArcId arc, final int plannedMinutes) {
+        this(ChapterId.random(), arc, plannedMinutes);
+    }
+}
