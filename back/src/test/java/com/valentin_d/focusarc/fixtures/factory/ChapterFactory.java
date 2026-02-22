@@ -1,17 +1,12 @@
 package com.valentin_d.focusarc.fixtures.factory;
 
-import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
-import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.dto.chapter.ChapterCreationDto;
 import com.valentin_d.focusarc.dto.chapter.ChapterUpdateDto;
-import com.valentin_d.focusarc.fixtures.arc.ArcCreationDtoBuilder;
-import com.valentin_d.focusarc.fixtures.arc.ArcUpdateDtoBuilder;
 import com.valentin_d.focusarc.fixtures.chapter.ChapterBuilder;
 import com.valentin_d.focusarc.fixtures.chapter.ChapterCreationDtoBuilder;
 import com.valentin_d.focusarc.fixtures.chapter.ChapterUpdateDtoBuilder;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
-import com.valentin_d.focusarc.model.id.UserId;
 
 public final class ChapterFactory {
     private ChapterFactory() {}
@@ -28,27 +23,27 @@ public final class ChapterFactory {
         return ChapterCreationDtoBuilder.builder().build().build();
     }
 
-    public static ArcCreationDto anArcCreationDtoWithOwnerId(final UserId ownerId) {
-        return ArcCreationDtoBuilder.builder().ownerId(ownerId).build().build();
+    public static ChapterCreationDto aChapterCreationDtoWithArcId(final ArcId arcId) {
+        return ChapterCreationDtoBuilder.builder().arcId(arcId).build().build();
     }
 
     public static ChapterUpdateDto aChapterUpdateDto() {
         return ChapterUpdateDtoBuilder.builder().build().build();
     }
 
-    public static ArcUpdateDto anArcUpdateDtoWithNullFields() {
-        return ArcUpdateDtoBuilder.builder().totalPlannedMinutes(null).name(null).build().build();
+    public static ChapterUpdateDto aChapterUpdateDtoWithCompletedMinutes(final int completedMinutes) {
+        return ChapterUpdateDtoBuilder.builder().completedMinutes(completedMinutes).build().build();
     }
 
-    public static ArcUpdateDto anArcUpdateDtoWithTotalPlannedMinutes(final int totalPlannedMinutes) {
-        return ArcUpdateDtoBuilder.builder().totalPlannedMinutes(totalPlannedMinutes).build().build();
+    public static ChapterUpdateDto aChapterUpdateDtoWithPlannedMinutes(final int plannedMinutes) {
+        return ChapterUpdateDtoBuilder.builder().plannedMinutes(plannedMinutes).build().build();
     }
 
-    public static ArcUpdateDto anArcUpdateDtoWithName(final String name) {
-        return ArcUpdateDtoBuilder.builder().name(name).build().build();
+    public static ChapterUpdateDto aChapterUpdateDtoWithCompletedMinutesAndPlannedMinutes(final int completedMinutes, final int plannedMinutes) {
+        return ChapterUpdateDtoBuilder.builder().completedMinutes(completedMinutes).plannedMinutes(plannedMinutes).build().build();
     }
 
-    public static ArcUpdateDto anArcUpdateDtoWithTotalPlannedMinutesAndName(final int totalPlannedMinutes, final String name) {
-        return ArcUpdateDtoBuilder.builder().totalPlannedMinutes(totalPlannedMinutes).name(name).build().build();
+    public static ChapterUpdateDto aChapterUpdateDtoWithNullFields() {
+        return ChapterUpdateDtoBuilder.builder().plannedMinutes(null).completedMinutes(null).build().build();
     }
 }
