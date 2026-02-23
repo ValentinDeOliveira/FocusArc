@@ -1,7 +1,7 @@
 package com.valentin_d.focusarc.service;
 
 import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
-import com.valentin_d.focusarc.exception.TaskDoesNotExistException;
+import com.valentin_d.focusarc.exception.task.TaskDoesNotExistException;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.repository.ChapterRepository;

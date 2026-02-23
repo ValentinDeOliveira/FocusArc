@@ -8,6 +8,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.util.List;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -26,5 +28,9 @@ public class Arc {
 
     public Arc(final UserId userId, final String name, final int totalPlannedMinutes) {
         this(ArcId.random(), userId, name, totalPlannedMinutes);
+    }
+
+    public void recalculateCompletedMinutes(final List<Chapter> chapters) {
+        this.totalCompletedMinutes = chapters.stream().mapToInt(Chapter::getCompletedMinutes).sum();
     }
 }

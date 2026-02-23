@@ -9,6 +9,7 @@ import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.repository.ChapterRepository;
+import com.valentin_d.focusarc.repository.TaskRepository;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,6 +22,8 @@ import java.util.Optional;
 public class ChapterService {
     private final ArcRepository arcRepository;
     private final ChapterRepository chapterRepository;
+    private final TaskRepository taskRepository;
+    private final ArcService arcService;
 
     public Optional<Chapter> findById(final ChapterId chapterId) {
         return chapterRepository.findById(chapterId);
@@ -40,7 +43,7 @@ public class ChapterService {
     }
 
     public Chapter update(@NotNull final ChapterId chapterId, @NotNull final ChapterUpdateDto chapterUpdateDto) {
-        final var chapter = findById(chapterId).orElseThrow(() -> new ChapterDoesNotExistException(chapterId));
+        final var chapter = getChapterIfExists(chapterId);
 
         if (chapterUpdateDto.completedMinutes() != null) chapter.setCompletedMinutes(chapterUpdateDto.completedMinutes());
         if (chapterUpdateDto.plannedMinutes() != null) chapter.setPlannedMinutes(chapterUpdateDto.plannedMinutes());
@@ -49,7 +52,7 @@ public class ChapterService {
     }
 
     public void delete(@NotNull final ChapterId chapterId) {
-        final var chapter = findById(chapterId).orElseThrow(() -> new ChapterDoesNotExistException(chapterId));
+        final var chapter = getChapterIfExists(chapterId);
         chapterRepository.delete(chapter);
     }
 
@@ -60,9 +63,23 @@ public class ChapterService {
         chapterRepository.deleteAll(chapters);
     }
 
+    void recalculateCompletedMinutes(@NotNull final ChapterId chapterId) {
+        final var chapter = getChapterIfExists(chapterId);
+
+        final var tasks = taskRepository.findAllByChapter(chapterId);
+        chapter.recalculateCompletedMinutes(tasks);
+
+        chapterRepository.save(chapter);
+        arcService.recalculateCompletedMinutes(chapter.getArc());
+    }
+
     private void assertArcExists(final ArcId arcId) {
         if (!arcRepository.existsById(arcId)) {
             throw new ArcDoesNotExistException(arcId);
         }
+    }
+
+    private Chapter getChapterIfExists(@NotNull final ChapterId chapterId) {
+        return findById(chapterId).orElseThrow(() -> new ChapterDoesNotExistException(chapterId));
     }
 }

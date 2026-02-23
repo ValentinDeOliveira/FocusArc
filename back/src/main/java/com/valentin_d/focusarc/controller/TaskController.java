@@ -1,5 +1,6 @@
 package com.valentin_d.focusarc.controller;
 
+import com.valentin_d.focusarc.dto.task.TaskCompleteDto;
 import com.valentin_d.focusarc.dto.task.TaskCreationDto;
 import com.valentin_d.focusarc.dto.task.TaskUpdateDto;
 import com.valentin_d.focusarc.model.id.ChapterId;
@@ -60,5 +61,12 @@ public class TaskController {
     public ResponseEntity<Void> deleteAllForUser(@PathVariable ChapterId chapterId) {
         service.deleteAllForChapter(chapterId);
         return ResponseEntity.noContent().build();
+    }
+
+    @PatchMapping("/{taskId}/complete")
+    public ResponseEntity<Void> completeTask(@PathVariable @NotNull final TaskId taskId,
+                                             @Valid @RequestBody final TaskCompleteDto taskCompleteDto) {
+        service.completeTask(taskId, taskCompleteDto);
+        return ResponseEntity.ok().build();
     }
 }

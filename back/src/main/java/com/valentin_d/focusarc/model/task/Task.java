@@ -30,4 +30,8 @@ public class Task {
     public Task(final ChapterId chapterId, final int estimatedMinutes, final Instant scheduledAt) {
         this(TaskId.random(), chapterId, estimatedMinutes, scheduledAt);
     }
+
+    public boolean isDone() {
+        return status == TaskStatus.DONE;
+    }
 }

@@ -8,6 +8,7 @@ import com.valentin_d.focusarc.model.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
+import com.valentin_d.focusarc.repository.ChapterRepository;
 import com.valentin_d.focusarc.repository.UserRepository;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,7 @@ import java.util.Optional;
 public class ArcService {
     private final ArcRepository arcRepository;
     private final UserRepository userRepository;
+    private final ChapterRepository chapterRepository;
 
     public Optional<Arc> findById(final ArcId arcId) {
         return arcRepository.findById(arcId);
@@ -40,7 +42,7 @@ public class ArcService {
     }
 
     public Arc update(@NotNull final ArcId arcId, @NotNull final ArcUpdateDto arcUpdateDto) {
-        final var arc = findById(arcId).orElseThrow(() -> new ArcDoesNotExistException(arcId));
+        final var arc = getArcIfExists(arcId);
 
         if (arcUpdateDto.name() != null) arc.setName(arcUpdateDto.name());
         if (arcUpdateDto.totalPlannedMinutes() != null) arc.setTotalPlannedMinutes(arcUpdateDto.totalPlannedMinutes());
@@ -49,7 +51,7 @@ public class ArcService {
     }
 
     public void delete(@NotNull final ArcId arcId) {
-        final var arc = findById(arcId).orElseThrow(() -> new ArcDoesNotExistException(arcId));
+        final var arc = getArcIfExists(arcId);
         arcRepository.delete(arc);
     }
 
@@ -60,9 +62,22 @@ public class ArcService {
         arcRepository.deleteAll(arcs);
     }
 
+    void recalculateCompletedMinutes(@NotNull final ArcId arcId) {
+        final var arc = getArcIfExists(arcId);
+
+        final var chapters = chapterRepository.findAllByArc(arcId);
+        arc.recalculateCompletedMinutes(chapters);
+
+        arcRepository.save(arc);
+    }
+
     private void assertUserExists(final UserId userId) {
         if (!userRepository.existsById(userId)) {
             throw new UserDoesNotExistException(userId);
         }
+    }
+
+    private Arc getArcIfExists(@NotNull final ArcId arcId) {
+        return findById(arcId).orElseThrow(() -> new ArcDoesNotExistException(arcId));
     }
 }
