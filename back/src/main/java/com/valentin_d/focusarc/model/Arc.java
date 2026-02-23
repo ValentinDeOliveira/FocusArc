@@ -19,18 +19,22 @@ public class Arc {
     private ArcId id;
     private UserId owner;
     private String name;
-    private int totalPlannedMinutes;
+    private int totalEstimatedMinutes;
     private int totalCompletedMinutes;
 
-    public Arc(final ArcId arcId, final UserId userId, final String name, final int totalPlannedMinutes) {
-        this(arcId, userId, name, totalPlannedMinutes, 0);
+    public Arc(final ArcId arcId, final UserId userId, final String name, final int totalEstimatedMinutes) {
+        this(arcId, userId, name, totalEstimatedMinutes, 0);
     }
 
-    public Arc(final UserId userId, final String name, final int totalPlannedMinutes) {
-        this(ArcId.random(), userId, name, totalPlannedMinutes);
+    public Arc(final UserId userId, final String name, final int totalEstimatedMinutes) {
+        this(ArcId.random(), userId, name, totalEstimatedMinutes);
     }
 
     public void recalculateCompletedMinutes(final List<Chapter> chapters) {
         this.totalCompletedMinutes = chapters.stream().mapToInt(Chapter::getCompletedMinutes).sum();
+    }
+
+    public void recalculateEstimatedMinutes(final List<Chapter> chapters) {
+        this.totalCompletedMinutes = chapters.stream().mapToInt(Chapter::getPlannedMinutes).sum();
     }
 }

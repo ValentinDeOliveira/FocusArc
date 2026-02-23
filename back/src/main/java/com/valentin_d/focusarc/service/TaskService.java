@@ -42,9 +42,14 @@ public class TaskService {
     public Task create(@NotNull final TaskCreationDto taskCreationDto) {
         assertChapterExists(taskCreationDto.chapterId());
 
-        final var chapter = new Task(taskCreationDto.chapterId(),
+        assertMinutes(taskCreationDto.estimatedMinutes());
+
+        final var task = new Task(taskCreationDto.chapterId(),
                 taskCreationDto.estimatedMinutes(), taskCreationDto.scheduledAt());
-        return taskRepository.save(chapter);
+
+        chapterService.recalculateEstimatedMinutes(taskCreationDto.chapterId());
+
+        return taskRepository.save(task);
     }
 
     public Task update(@NotNull final TaskId taskId, @NotNull final TaskUpdateDto chapterUpdateDto) {
@@ -93,6 +98,12 @@ public class TaskService {
     private void assertChapterExists(final ChapterId chapterId) {
         if (!chapterRepository.existsById(chapterId)) {
             throw new ChapterDoesNotExistException(chapterId);
+        }
+    }
+
+    private void assertMinutes(final int minutes) {
+        if (minutes < 0 || minutes > MINUTES_PER_DAY) {
+            throw new TaskInvalidMinuteException(minutes);
         }
     }
 

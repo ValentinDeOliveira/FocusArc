@@ -11,9 +11,9 @@ public class ArcCreationDtoBuilder {
     @Builder.Default
     private final String name = "Default Arc";
     @Builder.Default
-    private final int totalPlannedMinutes = 120;
+    private final int totalEstimatedMinutes = 120;
 
     public ArcCreationDto build() {
-        return new ArcCreationDto(ownerId, name, totalPlannedMinutes);
+        return new ArcCreationDto(ownerId, name, totalEstimatedMinutes);
     }
 }

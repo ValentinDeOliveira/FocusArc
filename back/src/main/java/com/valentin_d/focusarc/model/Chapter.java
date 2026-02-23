@@ -33,4 +33,8 @@ public class Chapter {
     public void recalculateCompletedMinutes(final List<Task> tasks) {
         this.completedMinutes = tasks.stream().mapToInt(Task::getCompletedMinutes).sum();
     }
+
+    public void recalculateEstimatedMinutes(final List<Task> tasks) {
+        this.completedMinutes = tasks.stream().mapToInt(Task::getEstimatedMinutes).sum();
+    }
 }

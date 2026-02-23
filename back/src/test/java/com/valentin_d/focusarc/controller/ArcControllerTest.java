@@ -123,7 +123,7 @@ class ArcControllerTest extends BaseControllerTest {
                 .andExpect(jsonPath(path + ".id").value(expected.getId().id().toString()))
                 .andExpect(jsonPath(path + ".owner").value(expected.getOwner().id().toString()))
                 .andExpect(jsonPath(path + ".name").value(expected.getName()))
-                .andExpect(jsonPath(path + ".totalPlannedMinutes").value(expected.getTotalPlannedMinutes()))
+                .andExpect(jsonPath(path + ".totalEstimatedMinutes").value(expected.getTotalEstimatedMinutes()))
                 .andExpect(jsonPath(path + ".totalCompletedMinutes").value(expected.getTotalCompletedMinutes()));
     }
 }

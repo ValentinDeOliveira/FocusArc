@@ -73,6 +73,16 @@ public class ChapterService {
         arcService.recalculateCompletedMinutes(chapter.getArc());
     }
 
+    void recalculateEstimatedMinutes(@NotNull final ChapterId chapterId) {
+        final var chapter = getChapterIfExists(chapterId);
+
+        final var tasks = taskRepository.findAllByChapter(chapterId);
+        chapter.recalculateEstimatedMinutes(tasks);
+
+        chapterRepository.save(chapter);
+        arcService.recalculateEstimatedMinutes(chapter.getArc());
+    }
+
     private void assertArcExists(final ArcId arcId) {
         if (!arcRepository.existsById(arcId)) {
             throw new ArcDoesNotExistException(arcId);

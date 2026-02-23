@@ -31,7 +31,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
         final var arc = response.getBody();
         assertNotNull(arc);
-        assertEquals(dto.totalPlannedMinutes(), arc.getTotalPlannedMinutes());
+        assertEquals(dto.totalEstimatedMinutes(), arc.getTotalEstimatedMinutes());
         assertEquals(arc.getOwner(), user.getId());
         assertEquals(dto.name(), arc.getName());
         assertEquals(0, arc.getTotalCompletedMinutes());
@@ -105,16 +105,16 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         assertEquals(arc.getId(), result.getId());
         assertEquals(arc.getOwner(), result.getOwner());
         assertEquals(expectedValue(dto.name(), arc.getName()), result.getName());
-        assertEquals(expectedValue(dto.totalPlannedMinutes(), arc.getTotalPlannedMinutes()),
-                result.getTotalPlannedMinutes());
+        assertEquals(expectedValue(dto.totalEstimatedMinutes(), arc.getTotalEstimatedMinutes()),
+                result.getTotalEstimatedMinutes());
         assertEquals(arc.getTotalCompletedMinutes(), result.getTotalCompletedMinutes());
     }
 
     private static Stream<Arguments> provideArcUpdateDtos() {
         return Stream.of(
-                Arguments.of(anArcUpdateDtoWithTotalPlannedMinutesAndName(200, "Updated Name")),
+                Arguments.of(anArcUpdateDtoWithTotalEstimatedMinutesAndName(200, "Updated Name")),
                 Arguments.of(anArcUpdateDtoWithName("Updated Name")),
-                Arguments.of(anArcUpdateDtoWithTotalPlannedMinutes(150)),
+                Arguments.of(anArcUpdateDtoWithTotalEstimatedMinutes(150)),
                 Arguments.of(anArcUpdateDtoWithNullFields())
         );
     }

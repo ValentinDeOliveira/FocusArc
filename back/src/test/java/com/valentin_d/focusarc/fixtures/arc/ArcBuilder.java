@@ -14,9 +14,9 @@ public class ArcBuilder {
     @Builder.Default
     private final String name = "Arc 1";
     @Builder.Default
-    private final int totalPlannedMinutes = 120;
+    private final int totalEstimatedMinutes = 120;
 
     public Arc build() {
-        return new Arc(id, owner, name, totalPlannedMinutes);
+        return new Arc(id, owner, name, totalEstimatedMinutes);
     }
 }

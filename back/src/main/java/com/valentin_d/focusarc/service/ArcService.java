@@ -37,7 +37,7 @@ public class ArcService {
     public Arc create(@NotNull final ArcCreationDto arcCreationDto) {
         assertUserExists(arcCreationDto.ownerId());
 
-        final var arc = new Arc(arcCreationDto.ownerId(), arcCreationDto.name(), arcCreationDto.totalPlannedMinutes());
+        final var arc = new Arc(arcCreationDto.ownerId(), arcCreationDto.name(), arcCreationDto.totalEstimatedMinutes());
         return arcRepository.save(arc);
     }
 
@@ -45,7 +45,7 @@ public class ArcService {
         final var arc = getArcIfExists(arcId);
 
         if (arcUpdateDto.name() != null) arc.setName(arcUpdateDto.name());
-        if (arcUpdateDto.totalPlannedMinutes() != null) arc.setTotalPlannedMinutes(arcUpdateDto.totalPlannedMinutes());
+        if (arcUpdateDto.totalEstimatedMinutes() != null) arc.setTotalEstimatedMinutes(arcUpdateDto.totalEstimatedMinutes());
 
         return arcRepository.save(arc);
     }
@@ -67,6 +67,15 @@ public class ArcService {
 
         final var chapters = chapterRepository.findAllByArc(arcId);
         arc.recalculateCompletedMinutes(chapters);
+
+        arcRepository.save(arc);
+    }
+
+    void recalculateEstimatedMinutes(@NotNull final ArcId arcId) {
+        final var arc = getArcIfExists(arcId);
+
+        final var chapters = chapterRepository.findAllByArc(arcId);
+        arc.recalculateEstimatedMinutes(chapters);
 
         arcRepository.save(arc);
     }

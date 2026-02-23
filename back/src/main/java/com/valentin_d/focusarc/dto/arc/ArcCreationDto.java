@@ -5,5 +5,5 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 
-public record ArcCreationDto(@NotNull UserId ownerId, @NotBlank String name, @Positive int totalPlannedMinutes) {
+public record ArcCreationDto(@NotNull UserId ownerId, @NotBlank String name, @Positive int totalEstimatedMinutes) {
 }

@@ -29,7 +29,7 @@ public class BaseArcControllerIntegrationTest extends BaseIntegrationTest{
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getName(), actual.getName());
         assertEquals(expected.getOwner(), actual.getOwner());
-        assertEquals(expected.getTotalPlannedMinutes(), actual.getTotalPlannedMinutes());
+        assertEquals(expected.getTotalEstimatedMinutes(), actual.getTotalEstimatedMinutes());
         assertEquals(expected.getTotalCompletedMinutes(), actual.getTotalCompletedMinutes());
     }
 
