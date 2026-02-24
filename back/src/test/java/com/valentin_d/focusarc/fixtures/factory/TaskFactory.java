@@ -38,6 +38,10 @@ public final class TaskFactory {
         return TaskUpdateDtoBuilder.builder().build().build();
     }
 
+    public static TaskUpdateDto aTaskUpdateDtoWithEstimatedMinutes(final int estimatedMinutes) {
+        return TaskUpdateDtoBuilder.builder().estimatedMinutes(estimatedMinutes).build().build();
+    }
+
     public static TaskCompleteDto aTaskCompleteDto() {
         return TaskCompleteDtoBuilder.builder().build().build();
     }

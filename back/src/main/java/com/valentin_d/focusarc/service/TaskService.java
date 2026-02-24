@@ -53,21 +53,22 @@ public class TaskService {
         return savedTask;
     }
 
-    public Task update(@NotNull final TaskId taskId, @NotNull final TaskUpdateDto chapterUpdateDto) {
+    public Task update(@NotNull final TaskId taskId, @NotNull final TaskUpdateDto taskUpdateDto) {
         final var task = getTaskIfExists(taskId);
+        final var beforeUpdateTask = task.snapshot();
 
-        if (chapterUpdateDto.completedMinutes() != null) {
-            assertMinutes(taskId, chapterUpdateDto.completedMinutes());
-            task.setCompletedMinutes(chapterUpdateDto.completedMinutes());
-        }
-        if (chapterUpdateDto.estimatedMinutes() != null) {
-            assertMinutes(taskId, chapterUpdateDto.estimatedMinutes());
-            task.setEstimatedMinutes(chapterUpdateDto.estimatedMinutes());
-        }
-        if (chapterUpdateDto.scheduledAt() != null) task.setScheduledAt(chapterUpdateDto.scheduledAt());
-        if (chapterUpdateDto.taskStatus() != null) task.setStatus(chapterUpdateDto.taskStatus());
+        updateTask(task, taskUpdateDto);
 
-        return taskRepository.save(task);
+        final var savedTask = taskRepository.save(task);
+
+        if (beforeUpdateTask.isEstimatedMinutesChanged(savedTask)) {
+            chapterService.recalculateEstimatedMinutes(task.getChapter());
+        }
+        if (beforeUpdateTask.isCompletedMinutesChanged(savedTask)) {
+            chapterService.recalculateCompletedMinutes(task.getChapter());
+        }
+
+        return savedTask;
     }
 
     public void delete(@NotNull final TaskId taskId) {
@@ -116,5 +117,18 @@ public class TaskService {
 
     private Task getTaskIfExists(final TaskId taskId) {
         return findById(taskId).orElseThrow(() -> new TaskDoesNotExistException(taskId));
+    }
+
+    private void updateTask(final Task task, final TaskUpdateDto dto) {
+        if (dto.completedMinutes() != null) {
+            assertMinutes(task.getId(), dto.completedMinutes());
+            task.setCompletedMinutes(dto.completedMinutes());
+        }
+        if (dto.estimatedMinutes() != null) {
+            assertMinutes(task.getId(), dto.estimatedMinutes());
+            task.setEstimatedMinutes(dto.estimatedMinutes());
+        }
+        if (dto.scheduledAt() != null) task.setScheduledAt(dto.scheduledAt());
+        if (dto.taskStatus() != null) task.setStatus(dto.taskStatus());
     }
 }

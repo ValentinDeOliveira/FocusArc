@@ -23,6 +23,15 @@ public class Task {
     private Instant scheduledAt;
     private TaskStatus status;
 
+    public Task(final Task task){
+        this.id = task.getId();
+        this.chapter = task.getChapter();
+        this.estimatedMinutes = task.getEstimatedMinutes();
+        this.completedMinutes = task.getCompletedMinutes();
+        this.scheduledAt = task.getScheduledAt();
+        this.status = task.getStatus();
+    }
+
     public Task(final TaskId taskId, final ChapterId chapterId, final int estimatedMinutes, final Instant scheduledAt) {
         this(taskId, chapterId, estimatedMinutes, 0, scheduledAt, TaskStatus.PLANNED);
     }
@@ -33,5 +42,17 @@ public class Task {
 
     public boolean isDone() {
         return status == TaskStatus.DONE;
+    }
+
+    public boolean isEstimatedMinutesChanged(final Task other) {
+        return estimatedMinutes != other.estimatedMinutes;
+    }
+
+    public boolean isCompletedMinutesChanged(final Task other) {
+        return completedMinutes != other.completedMinutes;
+    }
+
+    public Task snapshot() {
+        return new Task(this);
     }
 }
