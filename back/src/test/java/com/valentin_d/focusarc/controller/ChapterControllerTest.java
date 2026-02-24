@@ -122,7 +122,7 @@ class ChapterControllerTest extends BaseControllerTest {
         actions
                 .andExpect(jsonPath(path + ".id").value(expected.getId().id().toString()))
                 .andExpect(jsonPath(path + ".arc").value(expected.getArc().id().toString()))
-                .andExpect(jsonPath(path + ".plannedMinutes").value(expected.getPlannedMinutes()))
+                .andExpect(jsonPath(path + ".estimatedMinutes").value(expected.getEstimatedMinutes()))
                 .andExpect(jsonPath(path + ".completedMinutes").value(expected.getCompletedMinutes()));
     }
 }

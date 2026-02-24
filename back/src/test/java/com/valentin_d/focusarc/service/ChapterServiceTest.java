@@ -43,7 +43,7 @@ class ChapterServiceTest {
         final var result = service.create(creationDto);
 
         assertEquals(creationDto.arcId(), result.getArc());
-        assertEquals(creationDto.plannedMinutes(), result.getPlannedMinutes());
+        assertEquals(creationDto.estimatedMinutes(), result.getEstimatedMinutes());
         assertEquals(0, result.getCompletedMinutes());
         assertNotNull(result.getId());
 
@@ -81,7 +81,7 @@ class ChapterServiceTest {
         verify(chapterRepository).findById(chapter.getId());
 
         assertEquals(updated.getId(), chapter.getId());
-        assertEquals(updated.getPlannedMinutes(), updateDto.plannedMinutes());
+        assertEquals(updated.getEstimatedMinutes(), updateDto.estimatedMinutes());
         assertEquals(updated.getCompletedMinutes(), updateDto.completedMinutes());
         assertEquals(updated.getArc(), chapter.getArc());
     }

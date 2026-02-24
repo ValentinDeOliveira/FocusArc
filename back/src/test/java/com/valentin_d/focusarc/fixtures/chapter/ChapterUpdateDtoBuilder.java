@@ -8,9 +8,9 @@ public class ChapterUpdateDtoBuilder {
     @Builder.Default
     private final Integer completedMinutes = 100;
     @Builder.Default
-    private final Integer plannedMinutes = 180;
+    private final Integer estimatedMinutes = 180;
 
     public ChapterUpdateDto build() {
-        return new ChapterUpdateDto(completedMinutes, plannedMinutes);
+        return new ChapterUpdateDto(completedMinutes, estimatedMinutes);
     }
 }

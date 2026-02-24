@@ -5,9 +5,11 @@ import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.Arc;
+import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
+import com.valentin_d.focusarc.repository.ChapterRepository;
 import com.valentin_d.focusarc.repository.UserRepository;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -15,12 +17,14 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 @Service
 @RequiredArgsConstructor
 public class ArcService {
     private final ArcRepository arcRepository;
     private final UserRepository userRepository;
+    private final ChapterRepository chapterRepository;
 
     public Optional<Arc> findById(final ArcId arcId) {
         return arcRepository.findById(arcId);
@@ -35,21 +39,21 @@ public class ArcService {
     public Arc create(@NotNull final ArcCreationDto arcCreationDto) {
         assertUserExists(arcCreationDto.ownerId());
 
-        final var arc = new Arc(arcCreationDto.ownerId(), arcCreationDto.name(), arcCreationDto.totalPlannedMinutes());
+        final var arc = new Arc(arcCreationDto.ownerId(), arcCreationDto.name(), arcCreationDto.totalEstimatedMinutes());
         return arcRepository.save(arc);
     }
 
     public Arc update(@NotNull final ArcId arcId, @NotNull final ArcUpdateDto arcUpdateDto) {
-        final var arc = findById(arcId).orElseThrow(() -> new ArcDoesNotExistException(arcId));
+        final var arc = getArcIfExists(arcId);
 
         if (arcUpdateDto.name() != null) arc.setName(arcUpdateDto.name());
-        if (arcUpdateDto.totalPlannedMinutes() != null) arc.setTotalPlannedMinutes(arcUpdateDto.totalPlannedMinutes());
+        if (arcUpdateDto.totalEstimatedMinutes() != null) arc.setTotalEstimatedMinutes(arcUpdateDto.totalEstimatedMinutes());
 
         return arcRepository.save(arc);
     }
 
     public void delete(@NotNull final ArcId arcId) {
-        final var arc = findById(arcId).orElseThrow(() -> new ArcDoesNotExistException(arcId));
+        final var arc = getArcIfExists(arcId);
         arcRepository.delete(arc);
     }
 
@@ -60,9 +64,31 @@ public class ArcService {
         arcRepository.deleteAll(arcs);
     }
 
+    void recalculateCompletedMinutes(@NotNull final ArcId arcId) {
+        recalculateMinutes(arcId, Arc::recalculateCompletedMinutes);
+    }
+
+    void recalculateEstimatedMinutes(@NotNull final ArcId arcId) {
+        recalculateMinutes(arcId, Arc::recalculateEstimatedMinutes);
+    }
+
+    private void recalculateMinutes(@NotNull final ArcId arcId,
+                                    final BiConsumer<Arc, List<Chapter>> arcRecalculator) {
+        final var arc = getArcIfExists(arcId);
+
+        final var chapters = chapterRepository.findAllByArc(arcId);
+        arcRecalculator.accept(arc, chapters);
+
+        arcRepository.save(arc);
+    }
+
     private void assertUserExists(final UserId userId) {
         if (!userRepository.existsById(userId)) {
             throw new UserDoesNotExistException(userId);
         }
+    }
+
+    private Arc getArcIfExists(@NotNull final ArcId arcId) {
+        return findById(arcId).orElseThrow(() -> new ArcDoesNotExistException(arcId));
     }
 }

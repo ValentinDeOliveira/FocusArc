@@ -32,18 +32,18 @@ public final class ArcFactory {
     }
 
     public static ArcUpdateDto anArcUpdateDtoWithNullFields() {
-        return ArcUpdateDtoBuilder.builder().totalPlannedMinutes(null).name(null).build().build();
+        return ArcUpdateDtoBuilder.builder().totalEstimatedMinutes(null).name(null).build().build();
     }
 
-    public static ArcUpdateDto anArcUpdateDtoWithTotalPlannedMinutes(final int totalPlannedMinutes) {
-        return ArcUpdateDtoBuilder.builder().totalPlannedMinutes(totalPlannedMinutes).build().build();
+    public static ArcUpdateDto anArcUpdateDtoWithTotalEstimatedMinutes(final int totalEstimatedMinutes) {
+        return ArcUpdateDtoBuilder.builder().totalEstimatedMinutes(totalEstimatedMinutes).build().build();
     }
 
     public static ArcUpdateDto anArcUpdateDtoWithName(final String name) {
         return ArcUpdateDtoBuilder.builder().name(name).build().build();
     }
 
-    public static ArcUpdateDto anArcUpdateDtoWithTotalPlannedMinutesAndName(final int totalPlannedMinutes, final String name) {
-        return ArcUpdateDtoBuilder.builder().totalPlannedMinutes(totalPlannedMinutes).name(name).build().build();
+    public static ArcUpdateDto anArcUpdateDtoWithTotalEstimatedMinutesAndName(final int totalEstimatedMinutes, final String name) {
+        return ArcUpdateDtoBuilder.builder().totalEstimatedMinutes(totalEstimatedMinutes).name(name).build().build();
     }
 }

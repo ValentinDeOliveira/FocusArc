@@ -9,14 +9,14 @@ class User {
 class Arc {
     UUID id
     String name
-    int totalPlannedMinutes
+    int totalEstimatedMinutes
     int totalCompletedMinutes
 }
 
 class Chapter {
     UUID id
     String date
-    int plannedMinutes
+    int estimatedMinutes
     int completedMinutes
 }
 
