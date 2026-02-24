@@ -47,9 +47,10 @@ public class TaskService {
         final var task = new Task(taskCreationDto.chapterId(),
                 taskCreationDto.estimatedMinutes(), taskCreationDto.scheduledAt());
 
+        final var savedTask = taskRepository.save(task);
         chapterService.recalculateEstimatedMinutes(taskCreationDto.chapterId());
 
-        return taskRepository.save(task);
+        return savedTask;
     }
 
     public Task update(@NotNull final TaskId taskId, @NotNull final TaskUpdateDto chapterUpdateDto) {

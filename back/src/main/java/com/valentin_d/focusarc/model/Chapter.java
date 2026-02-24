@@ -19,6 +19,7 @@ public class Chapter {
     @Id
     private ChapterId id;
     private ArcId arc;
+    // TODO planned or estimated?
     private int plannedMinutes;
     private int completedMinutes;
 
@@ -35,6 +36,6 @@ public class Chapter {
     }
 
     public void recalculateEstimatedMinutes(final List<Task> tasks) {
-        this.completedMinutes = tasks.stream().mapToInt(Task::getEstimatedMinutes).sum();
+        this.plannedMinutes = tasks.stream().mapToInt(Task::getEstimatedMinutes).sum();
     }
 }
