@@ -7,6 +7,7 @@ import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.repository.ChapterRepository;
 import com.valentin_d.focusarc.repository.TaskRepository;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 @Service
 @RequiredArgsConstructor
@@ -64,23 +67,31 @@ public class ChapterService {
     }
 
     void recalculateCompletedMinutes(@NotNull final ChapterId chapterId) {
-        final var chapter = getChapterIfExists(chapterId);
-
-        final var tasks = taskRepository.findAllByChapter(chapterId);
-        chapter.recalculateCompletedMinutes(tasks);
-
-        chapterRepository.save(chapter);
-        arcService.recalculateCompletedMinutes(chapter.getArc());
+        recalculateMinutes(
+                chapterId,
+                Chapter::recalculateCompletedMinutes,
+                arcService::recalculateCompletedMinutes
+        );
     }
 
     void recalculateEstimatedMinutes(@NotNull final ChapterId chapterId) {
+        recalculateMinutes(
+                chapterId,
+                Chapter::recalculateEstimatedMinutes,
+                arcService::recalculateEstimatedMinutes
+        );
+    }
+
+    private void recalculateMinutes(@NotNull final ChapterId chapterId,
+                            final BiConsumer<Chapter, List<Task>> chapterRecalculator,
+                            final Consumer<ArcId> arcRecalculator) {
         final var chapter = getChapterIfExists(chapterId);
 
         final var tasks = taskRepository.findAllByChapter(chapterId);
-        chapter.recalculateEstimatedMinutes(tasks);
+        chapterRecalculator.accept(chapter, tasks);
 
         chapterRepository.save(chapter);
-        arcService.recalculateEstimatedMinutes(chapter.getArc());
+        arcRecalculator.accept(chapter.getArc());
     }
 
     private void assertArcExists(final ArcId arcId) {

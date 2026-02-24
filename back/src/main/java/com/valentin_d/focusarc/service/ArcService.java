@@ -5,6 +5,7 @@ import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.Arc;
+import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
@@ -16,6 +17,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.function.BiConsumer;
 
 @Service
 @RequiredArgsConstructor
@@ -63,19 +65,19 @@ public class ArcService {
     }
 
     void recalculateCompletedMinutes(@NotNull final ArcId arcId) {
-        final var arc = getArcIfExists(arcId);
-
-        final var chapters = chapterRepository.findAllByArc(arcId);
-        arc.recalculateCompletedMinutes(chapters);
-
-        arcRepository.save(arc);
+        recalculateMinutes(arcId, Arc::recalculateCompletedMinutes);
     }
 
     void recalculateEstimatedMinutes(@NotNull final ArcId arcId) {
+        recalculateMinutes(arcId, Arc::recalculateEstimatedMinutes);
+    }
+
+    private void recalculateMinutes(@NotNull final ArcId arcId,
+                                    final BiConsumer<Arc, List<Chapter>> arcRecalculator) {
         final var arc = getArcIfExists(arcId);
 
         final var chapters = chapterRepository.findAllByArc(arcId);
-        arc.recalculateEstimatedMinutes(chapters);
+        arcRecalculator.accept(arc, chapters);
 
         arcRepository.save(arc);
     }
