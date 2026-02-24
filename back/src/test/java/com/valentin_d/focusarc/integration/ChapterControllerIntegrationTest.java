@@ -32,7 +32,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
         final Chapter chapter = response.getBody();
         assertNotNull(chapter);
-        assertEquals(dto.plannedMinutes(), chapter.getPlannedMinutes());
+        assertEquals(dto.estimatedMinutes(), chapter.getEstimatedMinutes());
         assertEquals(dto.arcId(), chapter.getArc());
         assertEquals(0, chapter.getCompletedMinutes());
         assertNotNull(chapter.getId());
@@ -105,13 +105,13 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         assertEquals(chapter.getId(), result.getId());
         assertEquals(chapter.getArc(), result.getArc());
         assertEquals(expectedValue(dto.completedMinutes(), chapter.getCompletedMinutes()), result.getCompletedMinutes());
-        assertEquals(expectedValue(dto.plannedMinutes(), chapter.getPlannedMinutes()), result.getPlannedMinutes());
+        assertEquals(expectedValue(dto.estimatedMinutes(), chapter.getEstimatedMinutes()), result.getEstimatedMinutes());
     }
 
     private static Stream<Arguments> provideChapterUpdateDtos() {
         return Stream.of(
-                Arguments.of(aChapterUpdateDtoWithCompletedMinutesAndPlannedMinutes(200, 250)),
-                Arguments.of(aChapterUpdateDtoWithPlannedMinutes(240)),
+                Arguments.of(aChapterUpdateDtoWithCompletedMinutesAndEstimatedMinutes(200, 250)),
+                Arguments.of(aChapterUpdateDtoWithEstimatedMinutes(240)),
                 Arguments.of(aChapterUpdateDtoWithCompletedMinutes(50)),
                 Arguments.of(aChapterUpdateDtoWithNullFields())
         );

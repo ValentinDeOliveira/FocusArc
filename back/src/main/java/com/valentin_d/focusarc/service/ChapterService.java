@@ -38,7 +38,7 @@ public class ChapterService {
     public Chapter create(@NotNull final ChapterCreationDto chapterCreationDto) {
         assertArcExists(chapterCreationDto.arcId());
 
-        final var chapter = new Chapter(chapterCreationDto.arcId(), chapterCreationDto.plannedMinutes());
+        final var chapter = new Chapter(chapterCreationDto.arcId(), chapterCreationDto.estimatedMinutes());
         return chapterRepository.save(chapter);
     }
 
@@ -46,7 +46,7 @@ public class ChapterService {
         final var chapter = getChapterIfExists(chapterId);
 
         if (chapterUpdateDto.completedMinutes() != null) chapter.setCompletedMinutes(chapterUpdateDto.completedMinutes());
-        if (chapterUpdateDto.plannedMinutes() != null) chapter.setPlannedMinutes(chapterUpdateDto.plannedMinutes());
+        if (chapterUpdateDto.estimatedMinutes() != null) chapter.setEstimatedMinutes(chapterUpdateDto.estimatedMinutes());
 
         return chapterRepository.save(chapter);
     }

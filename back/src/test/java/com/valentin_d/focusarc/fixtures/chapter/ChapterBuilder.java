@@ -12,11 +12,11 @@ public class ChapterBuilder {
     @Builder.Default
     private final ArcId arc = ArcId.random();
     @Builder.Default
-    private final int plannedMinutes = 220;
+    private final int estimatedMinutes = 220;
     @Builder.Default
     private final int completedMinutes = 130;
 
     public Chapter build() {
-        return new Chapter(id, arc, plannedMinutes, completedMinutes);
+        return new Chapter(id, arc, estimatedMinutes, completedMinutes);
     }
 }

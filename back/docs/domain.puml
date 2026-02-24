@@ -16,7 +16,7 @@ class Arc {
 class Chapter {
     UUID id
     String date
-    int plannedMinutes
+    int estimatedMinutes
     int completedMinutes
 }
 

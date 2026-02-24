@@ -35,6 +35,6 @@ public class Arc {
     }
 
     public void recalculateEstimatedMinutes(final List<Chapter> chapters) {
-        this.totalEstimatedMinutes = chapters.stream().mapToInt(Chapter::getPlannedMinutes).sum();
+        this.totalEstimatedMinutes = chapters.stream().mapToInt(Chapter::getEstimatedMinutes).sum();
     }
 }

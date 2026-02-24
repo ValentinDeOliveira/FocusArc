@@ -9,9 +9,9 @@ public class ChapterCreationDtoBuilder {
     @Builder.Default
     private final ArcId arcId = ArcId.random();
     @Builder.Default
-    private final int plannedMinutes = 120;
+    private final int estimatedMinutes = 120;
 
     public ChapterCreationDto build() {
-        return new ChapterCreationDto(arcId, plannedMinutes);
+        return new ChapterCreationDto(arcId, estimatedMinutes);
     }
 }

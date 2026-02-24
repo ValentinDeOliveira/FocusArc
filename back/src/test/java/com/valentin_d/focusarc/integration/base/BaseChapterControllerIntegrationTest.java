@@ -28,7 +28,7 @@ public class BaseChapterControllerIntegrationTest extends BaseIntegrationTest{
     protected void assertChaptersEquals(final Chapter expected, final Chapter actual) {
         assertEquals(expected.getId(), actual.getId());
         assertEquals(expected.getCompletedMinutes(), actual.getCompletedMinutes());
-        assertEquals(expected.getPlannedMinutes(), actual.getPlannedMinutes());
+        assertEquals(expected.getEstimatedMinutes(), actual.getEstimatedMinutes());
         assertEquals(expected.getArc(), actual.getArc());
     }
 

@@ -13,7 +13,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTest {
     @Test
-    public void shouldCreateTaskAndRecalculatePlannedMinutes_whenDataIsValid() {
+    public void shouldCreateTaskAndRecalculateEstimatedMinutes_whenDataIsValid() {
         final var arc = anArc();
         final var chapter = aChapterWithArcId(arc.getId());
         final var task = aTaskWithChapterId(chapter.getId());
@@ -30,8 +30,8 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
 
         final var totalEstimatedMinutes = task.getEstimatedMinutes() + dto.estimatedMinutes();
 
-        assertEquals(totalEstimatedMinutes, savedChapter.getPlannedMinutes());
+        assertEquals(totalEstimatedMinutes, savedChapter.getEstimatedMinutes());
         assertEquals(totalEstimatedMinutes, savedArc.getTotalEstimatedMinutes());
-        assertEquals(savedChapter.getPlannedMinutes(), savedArc.getTotalEstimatedMinutes());
+        assertEquals(savedChapter.getEstimatedMinutes(), savedArc.getTotalEstimatedMinutes());
     }
 }

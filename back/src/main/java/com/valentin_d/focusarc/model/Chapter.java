@@ -19,16 +19,15 @@ public class Chapter {
     @Id
     private ChapterId id;
     private ArcId arc;
-    // TODO planned or estimated?
-    private int plannedMinutes;
+    private int estimatedMinutes;
     private int completedMinutes;
 
-    public Chapter(final ChapterId chapterId, final ArcId arc, final int plannedMinutes) {
-        this(chapterId, arc, plannedMinutes, 0);
+    public Chapter(final ChapterId chapterId, final ArcId arc, final int estimatedMinutes) {
+        this(chapterId, arc, estimatedMinutes, 0);
     }
 
-    public Chapter(final ArcId arc, final int plannedMinutes) {
-        this(ChapterId.random(), arc, plannedMinutes);
+    public Chapter(final ArcId arc, final int estimatedMinutes) {
+        this(ChapterId.random(), arc, estimatedMinutes);
     }
 
     public void recalculateCompletedMinutes(final List<Task> tasks) {
@@ -36,6 +35,6 @@ public class Chapter {
     }
 
     public void recalculateEstimatedMinutes(final List<Task> tasks) {
-        this.plannedMinutes = tasks.stream().mapToInt(Task::getEstimatedMinutes).sum();
+        this.estimatedMinutes = tasks.stream().mapToInt(Task::getEstimatedMinutes).sum();
     }
 }
