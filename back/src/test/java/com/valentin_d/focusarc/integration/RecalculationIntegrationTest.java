@@ -2,8 +2,13 @@ package com.valentin_d.focusarc.integration;
 
 import com.valentin_d.focusarc.dto.task.TaskUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseRecalculationIntegrationTest;
+import com.valentin_d.focusarc.model.Arc;
+import com.valentin_d.focusarc.model.Chapter;
+import com.valentin_d.focusarc.model.task.Task;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
+
+import java.util.function.Function;
 
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskCreationDtoWithChapterId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -16,14 +21,10 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
         final var dto = aTaskCreationDtoWithChapterId(task.getChapter());
         request(URL, HttpMethod.POST, dto, Void.class);
 
-        final var savedChapter = chapterRepository.findById(task.getChapter()).orElseThrow();
-        final var savedArc = arcRepository.findById(savedChapter.getArc()).orElseThrow();
-
         final var totalEstimatedMinutes = task.getEstimatedMinutes() + dto.estimatedMinutes();
 
-        assertEquals(totalEstimatedMinutes, savedChapter.getEstimatedMinutes());
-        assertEquals(totalEstimatedMinutes, savedArc.getTotalEstimatedMinutes());
-        assertEquals(savedChapter.getEstimatedMinutes(), savedArc.getTotalEstimatedMinutes());
+        assertCorrectRecalculation(task, totalEstimatedMinutes, Chapter::getEstimatedMinutes,
+                Arc::getTotalEstimatedMinutes);
     }
 
     @Test
@@ -33,12 +34,8 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
         final var dto = TaskUpdateDto.builder().estimatedMinutes(50).build();
         request(URL  + "/" + task.getId().id(), HttpMethod.PUT, dto, Void.class);
 
-        final var savedChapter = chapterRepository.findById(task.getChapter()).orElseThrow();
-        final var savedArc = arcRepository.findById(savedChapter.getArc()).orElseThrow();
-
-        assertEquals(dto.estimatedMinutes(), savedChapter.getEstimatedMinutes());
-        assertEquals(dto.estimatedMinutes(), savedArc.getTotalEstimatedMinutes());
-        assertEquals(savedChapter.getEstimatedMinutes(), savedArc.getTotalEstimatedMinutes());
+        assertCorrectRecalculation(task, dto.estimatedMinutes(), Chapter::getEstimatedMinutes,
+                Arc::getTotalEstimatedMinutes);
     }
 
     @Test
@@ -48,11 +45,18 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
         final var dto = TaskUpdateDto.builder().completedMinutes(50).build();
         request(URL  + "/" + task.getId().id(), HttpMethod.PUT, dto, Void.class);
 
+        assertCorrectRecalculation(task, dto.completedMinutes(), Chapter::getCompletedMinutes,
+                Arc::getTotalCompletedMinutes);
+    }
+
+    private void assertCorrectRecalculation(final Task task, final int expectedValue,
+                               final Function<Chapter, Integer> chapterField,
+                               final Function<Arc, Integer> arcField) {
         final var savedChapter = chapterRepository.findById(task.getChapter()).orElseThrow();
         final var savedArc = arcRepository.findById(savedChapter.getArc()).orElseThrow();
 
-        assertEquals(dto.completedMinutes(), savedChapter.getCompletedMinutes());
-        assertEquals(dto.completedMinutes(), savedArc.getTotalCompletedMinutes());
-        assertEquals(savedChapter.getCompletedMinutes(), savedArc.getTotalCompletedMinutes());
+        assertEquals(expectedValue, chapterField.apply(savedChapter));
+        assertEquals(expectedValue, arcField.apply(savedArc));
+        assertEquals(chapterField.apply(savedChapter), arcField.apply(savedArc));
     }
 }
