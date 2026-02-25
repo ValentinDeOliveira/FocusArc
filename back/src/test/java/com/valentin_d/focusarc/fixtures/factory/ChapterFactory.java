@@ -8,6 +8,8 @@ import com.valentin_d.focusarc.fixtures.chapter.ChapterUpdateDtoBuilder;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 
+import java.time.LocalDate;
+
 public final class ChapterFactory {
     private ChapterFactory() {}
 
@@ -19,12 +21,24 @@ public final class ChapterFactory {
         return ChapterBuilder.builder().arc(arcId).build().build();
     }
 
+    public static Chapter aChapterWithScheduledDate(final LocalDate date) {
+        return ChapterBuilder.builder().scheduledDate(date).build().build();
+    }
+
+    public static Chapter aChapterWithScheduledDateAndArcId(final LocalDate date, final ArcId arcId) {
+        return ChapterBuilder.builder().scheduledDate(date).arc(arcId).build().build();
+    }
+
     public static ChapterCreationDto aChapterCreationDto() {
         return ChapterCreationDtoBuilder.builder().build().build();
     }
 
     public static ChapterCreationDto aChapterCreationDtoWithArcId(final ArcId arcId) {
         return ChapterCreationDtoBuilder.builder().arcId(arcId).build().build();
+    }
+
+    public static ChapterCreationDto aChapterCreationDtoWithArcIdAndScheduledDate(final ArcId arcId, final LocalDate date) {
+        return ChapterCreationDtoBuilder.builder().arcId(arcId).scheduledDate(date).build().build();
     }
 
     public static ChapterUpdateDto aChapterUpdateDto() {

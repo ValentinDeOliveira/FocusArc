@@ -5,6 +5,7 @@ import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.repository.ChapterRepository;
+import com.valentin_d.focusarc.service.chapter.ChapterLoader;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -17,6 +18,8 @@ public class BaseChapterControllerIntegrationTest extends BaseIntegrationTest{
     protected ChapterRepository chapterRepository;
     @Autowired
     protected ArcRepository arcRepository;
+    @Autowired
+    protected ChapterLoader chapterLoader;
     protected final String URL = "/chapters";
 
     @BeforeEach

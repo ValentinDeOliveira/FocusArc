@@ -13,6 +13,7 @@ import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.repository.TaskRepository;
 import com.valentin_d.focusarc.service.chapter.ChapterLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterRecalculationService;
+import com.valentin_d.focusarc.service.user.UserLoader;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,7 @@ public class TaskService {
     private final ChapterRecalculationService chapterRecalculationService;
     private final TaskLoader taskLoader;
     private final ChapterLoader chapterLoader;
+    private final UserLoader userLoader;
 
     public Optional<Task> findById(final TaskId taskId) {
         return taskRepository.findById(taskId);
@@ -99,6 +101,8 @@ public class TaskService {
     }
 
     public List<Task> getTodaysTasks(@NotNull final UserId userId) {
+        userLoader.assertUserExists(userId);
+
 
 
         return null;

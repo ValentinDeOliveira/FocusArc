@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDate;
@@ -16,6 +18,10 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document("chapters")
+@CompoundIndexes({
+        // enforce invariant to assert only ONE CHAPTER per day AT MOST
+        @CompoundIndex(name = "arc_date_unique", def = "{'arc.id': 1, 'scheduledDate': 1}", unique = true)
+})
 public class Chapter {
     @Id
     private ChapterId id;

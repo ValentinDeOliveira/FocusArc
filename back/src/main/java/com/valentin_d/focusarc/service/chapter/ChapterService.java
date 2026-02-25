@@ -34,6 +34,7 @@ public class ChapterService extends BaseService {
 
     public Chapter create(@NotNull final ChapterCreationDto chapterCreationDto) {
         arcLoader.assertArcExists(chapterCreationDto.arcId());
+        chapterLoader.assertNotAlreadyExists(chapterCreationDto.arcId(), chapterCreationDto.scheduledDate());
 
         final var chapter = new Chapter(chapterCreationDto.arcId(), chapterCreationDto.estimatedMinutes());
         return chapterRepository.save(chapter);

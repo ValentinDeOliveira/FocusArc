@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpMethod;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -45,6 +46,19 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         final var response = request(URL, HttpMethod.POST, dto, Void.class);
 
         assertNotFound(response);
+    }
+
+    @Test
+    void shouldReturnBadRequestOnCreate_whenArcChapterAlreadyExistForDate() {
+        final var date = LocalDate.now().plusDays(5);
+        final var arc = createArc();
+        chapterRepository.save(aChapterWithScheduledDateAndArcId(date, arc.getId()));
+
+        final var dto = aChapterCreationDtoWithArcIdAndScheduledDate(arc.getId(), date);
+
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+
+        assertBadRequest(response);
     }
 
     @Test

@@ -36,6 +36,10 @@ public abstract class BaseIntegrationTest {
         assertResponseEmpty(HttpStatus.NOT_FOUND, response);
     }
 
+    protected <T> void assertBadRequest(final ResponseEntity<T> response) {
+        assertResponseEmpty(HttpStatus.BAD_REQUEST, response);
+    }
+
     protected <T> void assertConflict(final ResponseEntity<T> response) {
         assertResponseEmpty(HttpStatus.CONFLICT, response);
     }
