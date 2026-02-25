@@ -7,7 +7,7 @@ import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.TaskId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.task.Task;
-import com.valentin_d.focusarc.service.TaskService;
+import com.valentin_d.focusarc.service.task.TaskService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

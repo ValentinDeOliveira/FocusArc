@@ -2,7 +2,7 @@ package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ChapterId;
-import com.valentin_d.focusarc.service.ChapterService;
+import com.valentin_d.focusarc.service.chapter.ChapterService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;

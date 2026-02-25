@@ -1,4 +1,4 @@
-package com.valentin_d.focusarc.service;
+package com.valentin_d.focusarc.service.chapter;
 
 import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
 import com.valentin_d.focusarc.model.Chapter;
@@ -7,6 +7,7 @@ import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.repository.ChapterRepository;
 import com.valentin_d.focusarc.repository.TaskRepository;
+import com.valentin_d.focusarc.service.arc.ArcRecalculationService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,7 +23,7 @@ public class ChapterRecalculationService {
     private final TaskRepository taskRepository;
     private final ArcRecalculationService arcRecalculationService;
 
-    void recalculateCompletedMinutes(@NotNull final ChapterId chapterId) {
+    public void recalculateCompletedMinutes(@NotNull final ChapterId chapterId) {
         recalculateMinutes(
                 chapterId,
                 Chapter::recalculateCompletedMinutes,
@@ -30,7 +31,7 @@ public class ChapterRecalculationService {
         );
     }
 
-    void recalculateEstimatedMinutes(@NotNull final ChapterId chapterId) {
+    public void recalculateEstimatedMinutes(@NotNull final ChapterId chapterId) {
         recalculateMinutes(
                 chapterId,
                 Chapter::recalculateEstimatedMinutes,

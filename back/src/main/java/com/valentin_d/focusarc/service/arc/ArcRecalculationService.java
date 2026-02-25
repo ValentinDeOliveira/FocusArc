@@ -1,4 +1,4 @@
-package com.valentin_d.focusarc.service;
+package com.valentin_d.focusarc.service.arc;
 
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
 import com.valentin_d.focusarc.model.Arc;
@@ -19,11 +19,11 @@ public class ArcRecalculationService {
     private final ArcRepository arcRepository;
     private final ChapterRepository chapterRepository;
 
-    void recalculateCompletedMinutes(@NotNull final ArcId arcId) {
+    public void recalculateCompletedMinutes(@NotNull final ArcId arcId) {
         recalculateMinutes(arcId, Arc::recalculateCompletedMinutes);
     }
 
-    void recalculateEstimatedMinutes(@NotNull final ArcId arcId) {
+    public void recalculateEstimatedMinutes(@NotNull final ArcId arcId) {
         recalculateMinutes(arcId, Arc::recalculateEstimatedMinutes);
     }
 

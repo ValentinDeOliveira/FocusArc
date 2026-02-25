@@ -6,7 +6,7 @@ import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.TaskId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
-import com.valentin_d.focusarc.service.ChapterRecalculationService;
+import com.valentin_d.focusarc.service.chapter.ChapterRecalculationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

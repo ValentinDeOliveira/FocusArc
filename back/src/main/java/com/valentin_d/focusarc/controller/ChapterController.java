@@ -5,7 +5,7 @@ import com.valentin_d.focusarc.dto.chapter.ChapterUpdateDto;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
-import com.valentin_d.focusarc.service.ChapterService;
+import com.valentin_d.focusarc.service.chapter.ChapterService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;

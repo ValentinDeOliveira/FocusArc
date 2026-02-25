@@ -1,4 +1,4 @@
-package com.valentin_d.focusarc.service;
+package com.valentin_d.focusarc.service.user;
 
 import com.valentin_d.focusarc.dto.user.UserCreationDto;
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
