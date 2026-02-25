@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -21,9 +22,14 @@ public class Chapter {
     private ArcId arc;
     private int estimatedMinutes;
     private int completedMinutes;
+    private LocalDate scheduledDate;
+
+    public Chapter(final ChapterId chapterId, final ArcId arc, final int estimatedMinutes,  final LocalDate scheduledDate) {
+        this(chapterId, arc, estimatedMinutes, 0, scheduledDate);
+    }
 
     public Chapter(final ChapterId chapterId, final ArcId arc, final int estimatedMinutes) {
-        this(chapterId, arc, estimatedMinutes, 0);
+        this(chapterId, arc, estimatedMinutes, 0, LocalDate.now());
     }
 
     public Chapter(final ArcId arc, final int estimatedMinutes) {

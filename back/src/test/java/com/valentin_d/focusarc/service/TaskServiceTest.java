@@ -1,14 +1,11 @@
 package com.valentin_d.focusarc.service;
 
 import com.valentin_d.focusarc.dto.task.TaskCompleteDto;
-import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
 import com.valentin_d.focusarc.exception.task.TaskAlreadyDoneException;
 import com.valentin_d.focusarc.exception.task.TaskDoesNotExistException;
 import com.valentin_d.focusarc.exception.task.TaskInvalidMinuteException;
-import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
-import com.valentin_d.focusarc.repository.ChapterRepository;
 import com.valentin_d.focusarc.repository.TaskRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -36,17 +33,15 @@ class TaskServiceTest {
     @Mock
     private TaskRepository taskRepository;
     @Mock
-    private ChapterRepository chapterRepository;
-    @Mock
     private ChapterService chapterService;
-
+    @Mock
+    private ChapterRecalculationService chapterRecalculationService;
     @InjectMocks
     private TaskService service;
 
     @Test
     void shouldCreateTask_whenChapterExist() {
         final var creationDto = aTaskCreationDto();
-        when(chapterRepository.existsById(any())).thenReturn(true);
 
         when(taskRepository.save(any(Task.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -58,23 +53,8 @@ class TaskServiceTest {
         assertEquals(0, result.getCompletedMinutes());
         assertEquals(creationDto.scheduledAt(), result.getScheduledAt());
 
-        verify(chapterRepository).existsById(any(ChapterId.class));
         verify(taskRepository).save(any(Task.class));
-        verify(chapterService).recalculateEstimatedMinutes(creationDto.chapterId());
-    }
-
-    @Test
-    void shouldThrowExceptionOnCreation_whenChapterNotFound() {
-        final var creationDto = aTaskCreationDto();
-
-        when(chapterRepository.existsById(any())).thenReturn(false);
-
-        assertThatThrownBy(() -> service.create(creationDto))
-                .isInstanceOf(ChapterDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(creationDto.chapterId().id().toString()));
-
-        verify(chapterRepository).existsById(creationDto.chapterId());
-        verify(taskRepository, never()).save(any(Task.class));
+        verify(chapterRecalculationService).recalculateEstimatedMinutes(creationDto.chapterId());
     }
 
     @Test
@@ -145,53 +125,20 @@ class TaskServiceTest {
         final var chapter = aChapter();
         final var task = aTaskWithChapterId(chapter.getId());
 
-        when(chapterRepository.existsById(chapter.getId())).thenReturn(true);
         when(taskRepository.findAllByChapter(chapter.getId())).thenReturn(List.of(task));
 
         service.deleteAllForChapter(chapter.getId());
 
-        verify(chapterRepository).existsById(chapter.getId());
         verify(taskRepository).deleteAll(List.of(task));
-    }
-
-    @Test
-    void shouldThrowExceptionOnDeleteAllTask_whenChapterDoesNotExists() {
-        final var chapter = aChapter();
-
-        when(chapterRepository.existsById(chapter.getId())).thenReturn(false);
-
-        assertThatThrownBy(() -> service.deleteAllForChapter(chapter.getId()))
-                .isInstanceOf(ChapterDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(chapter.getId().id()));
-
-        verify(taskRepository, never()).deleteAll(anyList());
-        verify(chapterRepository).existsById(chapter.getId());
     }
 
     @Test
     void shouldGetAllTasksForChapter_whenChapterExists() {
         final var chapter = aChapter();
 
-        when(chapterRepository.existsById(chapter.getId())).thenReturn(true);
-
         service.findAllForChapter(chapter.getId());
 
-        verify(chapterRepository).existsById(chapter.getId());
         verify(taskRepository).findAllByChapter(chapter.getId());
-    }
-
-    @Test
-    void shouldThrowExceptionOnGetAllTaskForChapter_whenChapterDoesNotExists() {
-        final var chapter = aChapter();
-
-        when(chapterRepository.existsById(chapter.getId())).thenReturn(false);
-
-        assertThatThrownBy(() -> service.findAllForChapter(chapter.getId()))
-                .isInstanceOf(ChapterDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(chapter.getId().id()));
-
-        verify(chapterRepository).existsById(chapter.getId());
-        verify(taskRepository, never()).findAllByChapter(chapter.getId());
     }
 
     @Test
@@ -213,7 +160,7 @@ class TaskServiceTest {
         assertEquals(TaskStatus.DONE, savedTask.getStatus());
         assertEquals(dto.completedMinutes(), savedTask.getCompletedMinutes());
 
-        verify(chapterService).recalculateCompletedMinutes(task.getChapter());
+        verify(chapterRecalculationService).recalculateCompletedMinutes(task.getChapter());
     }
 
     @Test
@@ -228,7 +175,7 @@ class TaskServiceTest {
                 .hasMessageContaining(String.valueOf(task.getId().id()));
 
         verify(taskRepository, never()).save(any());
-        verify(chapterService, never()).recalculateCompletedMinutes(any());
+        verify(chapterRecalculationService, never()).recalculateCompletedMinutes(any());
     }
 
     @ParameterizedTest
@@ -244,7 +191,7 @@ class TaskServiceTest {
                 .hasMessageContaining(String.valueOf(dto.completedMinutes()));
 
         verify(taskRepository, never()).save(any());
-        verify(chapterService, never()).recalculateCompletedMinutes(any());
+        verify(chapterRecalculationService, never()).recalculateCompletedMinutes(any());
     }
 
     private static Stream<Arguments> provideTaskCompleteDtos() {

@@ -6,7 +6,7 @@ import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.TaskId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
-import com.valentin_d.focusarc.service.ChapterService;
+import com.valentin_d.focusarc.service.ChapterRecalculationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -27,7 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class TaskControllerIntegrationTest extends BaseTaskControllerIntegrationTest {
     @MockitoBean
-    protected ChapterService chapterService;
+    private ChapterRecalculationService chapterRecalculationService;
 
     @Test
     void shouldCreateTask_whenDataIsValid() {

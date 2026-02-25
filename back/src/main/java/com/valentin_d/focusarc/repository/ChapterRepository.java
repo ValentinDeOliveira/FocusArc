@@ -9,4 +9,6 @@ import java.util.List;
 
 public interface ChapterRepository extends MongoRepository<Chapter, ChapterId> {
     List<Chapter> findAllByArc(ArcId arcId);
+
+    List<Chapter> arc(ArcId arc);
 }
