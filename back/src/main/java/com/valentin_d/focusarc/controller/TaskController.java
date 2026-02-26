@@ -10,7 +10,6 @@ import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.service.task.TaskService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -75,7 +74,7 @@ public class TaskController {
     }
 
     @GetMapping("/today")
-    public ResponseEntity<List<Task>> getTodayTask(@RequestParam("userId") @NotBlank final UserId userId) {
+    public ResponseEntity<List<Task>> getTodayTask(@RequestParam("userId") @NotNull final UserId userId) {
         return wrapOrNoContent(service.getTodaysTasks(userId));
     }
 }

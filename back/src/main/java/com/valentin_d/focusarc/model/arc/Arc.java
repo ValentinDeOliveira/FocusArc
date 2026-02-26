@@ -24,6 +24,10 @@ public class Arc {
     private int totalCompletedMinutes;
     private ArcStatus status;
 
+    public Arc(final ArcId arcId, final UserId userId, final String name, final int totalEstimatedMinutes, final ArcStatus status) {
+        this(arcId, userId, name, totalEstimatedMinutes, 0, status);
+    }
+
     public Arc(final ArcId arcId, final UserId userId, final String name, final int totalEstimatedMinutes) {
         this(arcId, userId, name, totalEstimatedMinutes, 0, ArcStatus.ACTIVE);
     }

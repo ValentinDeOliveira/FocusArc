@@ -20,6 +20,6 @@ public class ArcBuilder {
     private final ArcStatus status = ArcStatus.ACTIVE;
 
     public Arc build() {
-        return new Arc(id, owner, name, totalEstimatedMinutes);
+        return new Arc(id, owner, name, totalEstimatedMinutes, status);
     }
 }
