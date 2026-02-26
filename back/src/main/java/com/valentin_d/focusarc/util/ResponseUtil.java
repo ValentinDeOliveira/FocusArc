@@ -18,4 +18,10 @@ public class ResponseUtil {
                 ? ResponseEntity.notFound().build()
                 : ResponseEntity.ok(maybeEntity);
     }
+
+    public static <T> ResponseEntity<List<T>> wrapOrNoContent(final List<T> maybeEntity) {
+        return maybeEntity.isEmpty()
+                ? ResponseEntity.noContent().build()
+                : ResponseEntity.ok(maybeEntity);
+    }
 }

@@ -42,7 +42,7 @@ public class ChapterService extends BaseService {
 
     public Chapter update(@NotNull final ChapterId chapterId, @NotNull final ChapterUpdateDto chapterUpdateDto) {
         final var chapter = chapterLoader.getChapterIfExists(chapterId);
-
+        // TODO: add recalculation
         if (chapterUpdateDto.completedMinutes() != null) chapter.setCompletedMinutes(chapterUpdateDto.completedMinutes());
         if (chapterUpdateDto.estimatedMinutes() != null) chapter.setEstimatedMinutes(chapterUpdateDto.estimatedMinutes());
 

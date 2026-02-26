@@ -1,7 +1,7 @@
 package com.valentin_d.focusarc.integration.base;
 
-import com.valentin_d.focusarc.model.Arc;
 import com.valentin_d.focusarc.model.User;
+import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.repository.UserRepository;

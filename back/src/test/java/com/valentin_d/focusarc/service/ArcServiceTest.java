@@ -1,8 +1,9 @@
 package com.valentin_d.focusarc.service;
 
+import com.valentin_d.focusarc.exception.ArcAlreadyExistsException;
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
-import com.valentin_d.focusarc.model.Arc;
+import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.service.arc.ArcLoader;
@@ -59,6 +60,21 @@ class ArcServiceTest {
 
         assertThatThrownBy(() -> service.create(creationDto))
                 .isInstanceOf(UserDoesNotExistException.class)
+                .hasMessageContaining(String.valueOf(creationDto.ownerId().id().toString()));
+
+        verify(arcRepository, never()).save(any(Arc.class));
+    }
+
+    @Test
+    void shouldThrowExceptionOnCreation_whenAnotherActiveArcExist() {
+        final var creationDto = anArcCreationDto();
+
+        doThrow(new ArcAlreadyExistsException(creationDto.ownerId()))
+                .when(arcLoader)
+                .assertNotAnotherActiveArc(eq(creationDto.ownerId()));
+
+        assertThatThrownBy(() -> service.create(creationDto))
+                .isInstanceOf(ArcAlreadyExistsException.class)
                 .hasMessageContaining(String.valueOf(creationDto.ownerId().id().toString()));
 
         verify(arcRepository, never()).save(any(Arc.class));

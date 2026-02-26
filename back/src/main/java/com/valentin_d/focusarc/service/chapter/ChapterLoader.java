@@ -2,6 +2,7 @@ package com.valentin_d.focusarc.service.chapter;
 
 import com.valentin_d.focusarc.exception.ChapterAlreadyExistsException;
 import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
+import com.valentin_d.focusarc.exception.NoChapterForArcException;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
@@ -30,5 +31,10 @@ public class ChapterLoader extends BaseService {
         if (chapterRepository.existsByArcAndScheduledDate(arcId, scheduledDate)) {
             throw new ChapterAlreadyExistsException(arcId, scheduledDate);
         }
+    }
+
+    public Chapter findByDate(@NotNull final ArcId arcId, @NotNull final LocalDate scheduledDate) {
+        return chapterRepository.findByArcAndScheduledDate(arcId, scheduledDate)
+                .orElseThrow(() -> new NoChapterForArcException(arcId, scheduledDate));
     }
 }

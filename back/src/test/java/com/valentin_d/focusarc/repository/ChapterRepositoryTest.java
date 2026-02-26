@@ -30,8 +30,9 @@ class ChapterRepositoryTest {
     void shouldReturnAllChapter_whenArcExists() {
         final var arcId = ArcId.random();
 
-        final var chapter1 = aChapterWithArcId(arcId);
-        final var chapter2 = aChapterWithArcId(arcId);
+        final var now = LocalDate.now();
+        final var chapter1 = aChapterWithScheduledDateAndArcId(now.plusDays(5), arcId);
+        final var chapter2 = aChapterWithScheduledDateAndArcId(now.plusDays(9), arcId);
         repository.save(chapter1);
         repository.save(chapter2);
 

@@ -1,8 +1,8 @@
 package com.valentin_d.focusarc.service.arc;
 
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
-import com.valentin_d.focusarc.model.Arc;
 import com.valentin_d.focusarc.model.Chapter;
+import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.repository.ChapterRepository;

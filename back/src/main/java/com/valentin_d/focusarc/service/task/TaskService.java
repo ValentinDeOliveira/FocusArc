@@ -11,6 +11,7 @@ import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.repository.TaskRepository;
+import com.valentin_d.focusarc.service.arc.ArcLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterRecalculationService;
 import com.valentin_d.focusarc.service.user.UserLoader;
@@ -18,6 +19,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -31,6 +33,7 @@ public class TaskService {
     private final TaskLoader taskLoader;
     private final ChapterLoader chapterLoader;
     private final UserLoader userLoader;
+    private final ArcLoader arcLoader;
 
     public Optional<Task> findById(final TaskId taskId) {
         return taskRepository.findById(taskId);
@@ -103,9 +106,10 @@ public class TaskService {
     public List<Task> getTodaysTasks(@NotNull final UserId userId) {
         userLoader.assertUserExists(userId);
 
+        final var arc = arcLoader.getActiveArcForUser(userId);
+        final var chapter = chapterLoader.findByDate(arc.getId(), LocalDate.now());
 
-
-        return null;
+        return taskLoader.getTasksForChapter(chapter.getId());
     }
 
     private void assertMinutes(final int minutes) {

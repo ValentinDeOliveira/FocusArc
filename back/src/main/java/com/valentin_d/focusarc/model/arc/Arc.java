@@ -1,5 +1,6 @@
-package com.valentin_d.focusarc.model;
+package com.valentin_d.focusarc.model.arc;
 
+import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
 import lombok.AllArgsConstructor;
@@ -21,9 +22,10 @@ public class Arc {
     private String name;
     private int totalEstimatedMinutes;
     private int totalCompletedMinutes;
+    private ArcStatus status;
 
     public Arc(final ArcId arcId, final UserId userId, final String name, final int totalEstimatedMinutes) {
-        this(arcId, userId, name, totalEstimatedMinutes, 0);
+        this(arcId, userId, name, totalEstimatedMinutes, 0, ArcStatus.ACTIVE);
     }
 
     public Arc(final UserId userId, final String name, final int totalEstimatedMinutes) {

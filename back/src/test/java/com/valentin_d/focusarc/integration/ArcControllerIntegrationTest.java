@@ -2,7 +2,8 @@ package com.valentin_d.focusarc.integration;
 
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseArcControllerIntegrationTest;
-import com.valentin_d.focusarc.model.Arc;
+import com.valentin_d.focusarc.model.arc.Arc;
+import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.UserId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -45,6 +46,17 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         final var response = request(URL, HttpMethod.POST, dto, Void.class);
 
         assertNotFound(response);
+    }
+
+    @Test
+    void shouldReturnNotFoundOnCreate_whenActiveArcAlreadyExists() {
+        final var user = createUser();
+        arcRepository.save(anArcWithOwnerIdAndStatus(user.getId(), ArcStatus.ACTIVE));
+        final var dto = anArcCreationDtoWithOwnerId(user.getId());
+
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+
+        assertBadRequest(response);
     }
 
     @Test

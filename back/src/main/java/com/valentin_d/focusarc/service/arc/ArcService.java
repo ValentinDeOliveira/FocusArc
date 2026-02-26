@@ -2,7 +2,7 @@ package com.valentin_d.focusarc.service.arc;
 
 import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
-import com.valentin_d.focusarc.model.Arc;
+import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
@@ -33,6 +33,7 @@ public class ArcService {
 
     public Arc create(@NotNull final ArcCreationDto arcCreationDto) {
         userLoader.assertUserExists(arcCreationDto.ownerId());
+        arcLoader.assertNotAnotherActiveArc(arcCreationDto.ownerId());
 
         final var arc = new Arc(arcCreationDto.ownerId(), arcCreationDto.name(), arcCreationDto.totalEstimatedMinutes());
         return arcRepository.save(arc);
