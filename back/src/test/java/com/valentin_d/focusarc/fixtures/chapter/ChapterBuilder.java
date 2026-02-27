@@ -5,6 +5,8 @@ import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import lombok.Builder;
 
+import java.time.LocalDate;
+
 @Builder
 public class ChapterBuilder {
     @Builder.Default
@@ -15,8 +17,10 @@ public class ChapterBuilder {
     private final int estimatedMinutes = 220;
     @Builder.Default
     private final int completedMinutes = 130;
+    @Builder.Default
+    private final LocalDate scheduledDate = LocalDate.now();
 
     public Chapter build() {
-        return new Chapter(id, arc, estimatedMinutes, completedMinutes);
+        return new Chapter(id, arc, estimatedMinutes, completedMinutes, scheduledDate);
     }
 }

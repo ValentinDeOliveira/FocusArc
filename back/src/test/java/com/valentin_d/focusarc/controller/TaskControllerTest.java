@@ -1,8 +1,9 @@
 package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.task.Task;
-import com.valentin_d.focusarc.service.TaskService;
+import com.valentin_d.focusarc.service.task.TaskService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -107,6 +108,26 @@ class TaskControllerTest extends BaseControllerTest {
         final var task = aTask();
 
         mvcDelete(ROOT + "/chapters/" + task.getChapter().id())
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldReturnTasks_whenGettingTodayTask() throws Exception {
+        final var task = aTask();
+
+        when(taskService.getTodaysTasks(any())).thenReturn(List.of(task));
+
+        final var actions = mvcGet(ROOT + "/today?userId=" + UserId.random().id())
+                .andExpect(status().isOk());
+
+        assertTaskListJson(actions, task);
+    }
+
+    @Test
+    void shouldReturnNoContent_whenGettingTodayTaskWhenNoTask() throws Exception {
+        when(taskService.getTodaysTasks(any())).thenReturn(List.of());
+
+        mvcGet(ROOT + "/today?userId=" + UserId.random().id())
                 .andExpect(status().isNoContent());
     }
 

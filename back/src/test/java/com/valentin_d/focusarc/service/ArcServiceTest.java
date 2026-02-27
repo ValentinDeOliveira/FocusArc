@@ -1,11 +1,14 @@
 package com.valentin_d.focusarc.service;
 
+import com.valentin_d.focusarc.exception.ArcAlreadyExistsException;
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
-import com.valentin_d.focusarc.model.Arc;
+import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
-import com.valentin_d.focusarc.repository.UserRepository;
+import com.valentin_d.focusarc.service.arc.ArcLoader;
+import com.valentin_d.focusarc.service.arc.ArcService;
+import com.valentin_d.focusarc.service.user.UserLoader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -13,7 +16,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.util.List;
-import java.util.Optional;
 
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
@@ -24,9 +26,11 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class ArcServiceTest {
     @Mock
-    private UserRepository userRepository;
-    @Mock
     private ArcRepository arcRepository;
+    @Mock
+    private ArcLoader arcLoader;
+    @Mock
+    private UserLoader userLoader;
 
     @InjectMocks
     private ArcService service;
@@ -34,7 +38,6 @@ class ArcServiceTest {
     @Test
     void shouldCreateArc_whenUserDoesExist() {
         final var creationDto = anArcCreationDto();
-        when(userRepository.existsById(any())).thenReturn(true);
 
         when(arcRepository.save(any(Arc.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -46,7 +49,6 @@ class ArcServiceTest {
         assertEquals(0, result.getTotalCompletedMinutes());
         assertEquals(creationDto.totalEstimatedMinutes(), result.getTotalEstimatedMinutes());
 
-        verify(userRepository).existsById(any(UserId.class));
         verify(arcRepository).save(any(Arc.class));
     }
 
@@ -54,13 +56,27 @@ class ArcServiceTest {
     void shouldThrowExceptionOnCreation_whenUserNotFound() {
         final var creationDto = anArcCreationDto();
 
-        when(userRepository.existsById(any())).thenReturn(false);
+        doThrowUserDoesNotExist(creationDto.ownerId());
 
         assertThatThrownBy(() -> service.create(creationDto))
                 .isInstanceOf(UserDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(creationDto.ownerId().id().toString()));
 
-        verify(userRepository).existsById(creationDto.ownerId());
+        verify(arcRepository, never()).save(any(Arc.class));
+    }
+
+    @Test
+    void shouldThrowExceptionOnCreation_whenAnotherActiveArcExist() {
+        final var creationDto = anArcCreationDto();
+
+        doThrow(new ArcAlreadyExistsException(creationDto.ownerId()))
+                .when(arcLoader)
+                .assertNotAnotherActiveArc(eq(creationDto.ownerId()));
+
+        assertThatThrownBy(() -> service.create(creationDto))
+                .isInstanceOf(ArcAlreadyExistsException.class)
+                .hasMessageContaining(String.valueOf(creationDto.ownerId().id().toString()));
+
         verify(arcRepository, never()).save(any(Arc.class));
     }
 
@@ -69,7 +85,7 @@ class ArcServiceTest {
         final var arc = anArc();
         final var updateDto = anArcUpdateDto();
 
-        when(arcRepository.findById(arc.getId())).thenReturn(Optional.of(arc));
+        when(arcLoader.getArcIfExists(eq(arc.getId()))).thenReturn(arc);
 
         when(arcRepository.save(any(Arc.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -77,7 +93,6 @@ class ArcServiceTest {
         final Arc updated = service.update(arc.getId(), updateDto);
 
         verify(arcRepository).save(arc);
-        verify(arcRepository).findById(arc.getId());
 
         assertEquals(arc.getName(), updated.getName());
         assertEquals(arc.getTotalEstimatedMinutes(), updated.getTotalEstimatedMinutes());
@@ -90,25 +105,24 @@ class ArcServiceTest {
         final var arc = anArc();
         final var updateDto = anArcUpdateDto();
 
-        when(arcRepository.findById(arc.getId())).thenReturn(Optional.empty());
+        when(arcLoader.getArcIfExists(eq(arc.getId())))
+                .thenThrow((new ArcDoesNotExistException(arc.getId())));
 
         assertThatThrownBy(() -> service.update(arc.getId(), updateDto))
                 .isInstanceOf(ArcDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
         verify(arcRepository, never()).save(any(Arc.class));
-        verify(arcRepository).findById(arc.getId());
     }
 
     @Test
     void shouldDeleteArc_whenArcExists() {
         final var arc = anArc();
 
-        when(arcRepository.findById(arc.getId())).thenReturn(Optional.of(arc));
+        when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
 
         service.delete(arc.getId());
 
-        verify(arcRepository).findById(arc.getId());
         verify(arcRepository).delete(arc);
     }
 
@@ -116,14 +130,14 @@ class ArcServiceTest {
     void shouldThrowExceptionOnDelete_whenArcDoesNotExists() {
         final var arc = anArc();
 
-        when(arcRepository.findById(arc.getId())).thenReturn(Optional.empty());
+        when(arcLoader.getArcIfExists(eq(arc.getId())))
+                .thenThrow((new ArcDoesNotExistException(arc.getId())));
 
         assertThatThrownBy(() -> service.delete(arc.getId()))
                 .isInstanceOf(ArcDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
         verify(arcRepository, never()).delete(any(Arc.class));
-        verify(arcRepository).findById(arc.getId());
     }
 
     @Test
@@ -131,12 +145,10 @@ class ArcServiceTest {
         final var user = aUser();
         final var arc = anArcWithOwnerId(user.getId());
 
-        when(userRepository.existsById(user.getId())).thenReturn(true);
         when(arcRepository.findAllByOwner(user.getId())).thenReturn(List.of(arc));
 
         service.deleteAllForUser(user.getId());
 
-        verify(userRepository).existsById(user.getId());
         verify(arcRepository).deleteAll(List.of(arc));
     }
 
@@ -144,25 +156,21 @@ class ArcServiceTest {
     void shouldThrowExceptionOnDeleteAllArcs_whenUserDoesNotExists() {
         final var userId = UserId.random();
 
-        when(userRepository.existsById(userId)).thenReturn(false);
+        doThrowUserDoesNotExist(userId);
 
         assertThatThrownBy(() -> service.deleteAllForUser(userId))
                 .isInstanceOf(UserDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(userId.id()));
 
         verify(arcRepository, never()).deleteAll(anyList());
-        verify(userRepository).existsById(userId);
     }
 
     @Test
     void shouldGetAllArcsForUser_whenUserExists() {
         final var arc = anArc();
 
-        when(userRepository.existsById(any())).thenReturn(true);
-
         service.findAllForUser(arc.getOwner());
 
-        verify(userRepository).existsById(arc.getOwner());
         verify(arcRepository).findAllByOwner(arc.getOwner());
     }
 
@@ -170,13 +178,18 @@ class ArcServiceTest {
     void shouldThrowExceptionOnGetAllArcsForUser_whenUserDoesNotExists() {
         final var arc = anArc();
 
-        when(userRepository.existsById(any())).thenReturn(false);
+        doThrowUserDoesNotExist(arc.getOwner());
 
         assertThatThrownBy(() -> service.findAllForUser(arc.getOwner()))
                 .isInstanceOf(UserDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(arc.getOwner().id()));
 
-        verify(userRepository).existsById(arc.getOwner());
         verify(arcRepository, never()).findAllByOwner(any(UserId.class));
+    }
+
+    private void doThrowUserDoesNotExist(final UserId userId) {
+        doThrow(new UserDoesNotExistException(userId))
+                .when(userLoader)
+                .assertUserExists(eq(userId));
     }
 }

@@ -5,8 +5,9 @@ import com.valentin_d.focusarc.dto.task.TaskCreationDto;
 import com.valentin_d.focusarc.dto.task.TaskUpdateDto;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.TaskId;
+import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.task.Task;
-import com.valentin_d.focusarc.service.TaskService;
+import com.valentin_d.focusarc.service.task.TaskService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
@@ -17,6 +18,8 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
+import static com.valentin_d.focusarc.util.ResponseUtil.wrapOrNoContent;
 
 @RestController
 @RequestMapping("/tasks")
@@ -68,5 +71,10 @@ public class TaskController {
                                              @Valid @RequestBody final TaskCompleteDto taskCompleteDto) {
         service.completeTask(taskId, taskCompleteDto);
         return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/today")
+    public ResponseEntity<List<Task>> getTodayTask(@RequestParam("userId") @NotNull final UserId userId) {
+        return wrapOrNoContent(service.getTodaysTasks(userId));
     }
 }

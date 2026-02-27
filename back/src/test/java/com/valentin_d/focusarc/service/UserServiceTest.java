@@ -4,6 +4,7 @@ import com.valentin_d.focusarc.exception.EmailAlreadyExistsException;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.repository.UserRepository;
+import com.valentin_d.focusarc.service.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

@@ -11,6 +11,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpMethod;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
@@ -48,6 +49,19 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     }
 
     @Test
+    void shouldReturnBadRequestOnCreate_whenArcChapterAlreadyExistForDate() {
+        final var date = LocalDate.now().plusDays(5);
+        final var arc = createArc();
+        chapterRepository.save(aChapterWithScheduledDateAndArcId(date, arc.getId()));
+
+        final var dto = aChapterCreationDtoWithArcIdAndScheduledDate(arc.getId(), date);
+
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+
+        assertBadRequest(response);
+    }
+
+    @Test
     void shouldReturnChapter_whenIdExists() {
         final var chapter = createChapter();
 
@@ -63,8 +77,9 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     @Test
     void shouldReturnAllChapter_whenArcIdExists() {
         final var arc = createArc();
-        final var chapter1 = createChapterForArc(arc.getId());
-        final var chapter2 = createChapterForArc(arc.getId());
+        final var now = LocalDate.now();
+        final var chapter1 = createChapterForArcWithDate(arc.getId(), now.plusDays(5));
+        final var chapter2 = createChapterForArcWithDate(arc.getId(), now.plusDays(9));
 
         final var response = request(URL + "/arcs/" + arc.getId().id(), HttpMethod.GET, Chapter[].class);
         assertOk(response);
@@ -145,8 +160,9 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     @Test
     void shouldDeleteAllChaptersForArc_whenArcIdExists() {
         final var arc = createArc();
-        createChapterForArc(arc.getId());
-        createChapterForArc(arc.getId());
+        final var now = LocalDate.now();
+        createChapterForArcWithDate(arc.getId(), now.plusDays(5));
+        createChapterForArcWithDate(arc.getId(), now.plusDays(9));
 
         final var response = request(URL + "/arcs/" + arc.getId().id(), HttpMethod.DELETE, Void.class);
 

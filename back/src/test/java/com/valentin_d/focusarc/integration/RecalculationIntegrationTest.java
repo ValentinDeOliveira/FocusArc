@@ -2,8 +2,8 @@ package com.valentin_d.focusarc.integration;
 
 import com.valentin_d.focusarc.dto.task.TaskUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseRecalculationIntegrationTest;
-import com.valentin_d.focusarc.model.Arc;
 import com.valentin_d.focusarc.model.Chapter;
+import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 import org.junit.jupiter.api.Test;

@@ -1,8 +1,8 @@
 package com.valentin_d.focusarc.controller;
 
-import com.valentin_d.focusarc.model.Arc;
+import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
-import com.valentin_d.focusarc.service.ArcService;
+import com.valentin_d.focusarc.service.arc.ArcService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;

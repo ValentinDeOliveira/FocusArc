@@ -2,14 +2,23 @@ package com.valentin_d.focusarc.service;
 
 import com.valentin_d.focusarc.dto.task.TaskCompleteDto;
 import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
+import com.valentin_d.focusarc.exception.NoActiveArcException;
+import com.valentin_d.focusarc.exception.NoChapterForArcException;
 import com.valentin_d.focusarc.exception.task.TaskAlreadyDoneException;
 import com.valentin_d.focusarc.exception.task.TaskDoesNotExistException;
 import com.valentin_d.focusarc.exception.task.TaskInvalidMinuteException;
+import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
-import com.valentin_d.focusarc.repository.ChapterRepository;
 import com.valentin_d.focusarc.repository.TaskRepository;
+import com.valentin_d.focusarc.service.arc.ArcLoader;
+import com.valentin_d.focusarc.service.chapter.ChapterLoader;
+import com.valentin_d.focusarc.service.chapter.ChapterRecalculationService;
+import com.valentin_d.focusarc.service.task.TaskLoader;
+import com.valentin_d.focusarc.service.task.TaskService;
+import com.valentin_d.focusarc.service.user.UserLoader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -20,11 +29,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Stream;
 
+import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArc;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapter;
+import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapterWithArcId;
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.*;
 import static com.valentin_d.focusarc.shared.TimeConstraints.MINUTES_PER_DAY;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -36,17 +47,21 @@ class TaskServiceTest {
     @Mock
     private TaskRepository taskRepository;
     @Mock
-    private ChapterRepository chapterRepository;
+    private ChapterRecalculationService chapterRecalculationService;
     @Mock
-    private ChapterService chapterService;
-
+    private TaskLoader taskLoader;
+    @Mock
+    private ChapterLoader chapterLoader;
+    @Mock
+    private ArcLoader arcLoader;
+    @Mock
+    private UserLoader userLoader;
     @InjectMocks
     private TaskService service;
 
     @Test
     void shouldCreateTask_whenChapterExist() {
         final var creationDto = aTaskCreationDto();
-        when(chapterRepository.existsById(any())).thenReturn(true);
 
         when(taskRepository.save(any(Task.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -58,22 +73,20 @@ class TaskServiceTest {
         assertEquals(0, result.getCompletedMinutes());
         assertEquals(creationDto.scheduledAt(), result.getScheduledAt());
 
-        verify(chapterRepository).existsById(any(ChapterId.class));
         verify(taskRepository).save(any(Task.class));
-        verify(chapterService).recalculateEstimatedMinutes(creationDto.chapterId());
+        verify(chapterRecalculationService).recalculateEstimatedMinutes(creationDto.chapterId());
     }
 
     @Test
-    void shouldThrowExceptionOnCreation_whenChapterNotFound() {
+    void shouldThrowExceptionOnCreate_whenChapterDoesNotExist() {
         final var creationDto = aTaskCreationDto();
 
-        when(chapterRepository.existsById(any())).thenReturn(false);
+        doThrowChapterDoesNotExist(creationDto.chapterId());
 
         assertThatThrownBy(() -> service.create(creationDto))
                 .isInstanceOf(ChapterDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(creationDto.chapterId().id().toString()));
 
-        verify(chapterRepository).existsById(creationDto.chapterId());
         verify(taskRepository, never()).save(any(Task.class));
     }
 
@@ -82,7 +95,7 @@ class TaskServiceTest {
         final var task = aTask();
         final var updateDto = aTaskUpdateDto();
 
-        when(taskRepository.findById(task.getId())).thenReturn(Optional.of(task));
+        when(taskLoader.getTaskIfExists(task.getId())).thenReturn(task);
 
         when(taskRepository.save(any(Task.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -90,7 +103,6 @@ class TaskServiceTest {
         final var updated = service.update(task.getId(), updateDto);
 
         verify(taskRepository).save(task);
-        verify(taskRepository).findById(task.getId());
 
         assertEquals(updated.getId(), task.getId());
         assertEquals(updated.getEstimatedMinutes(), updateDto.estimatedMinutes());
@@ -104,25 +116,24 @@ class TaskServiceTest {
         final var task = aTask();
         final var updateDto = aTaskUpdateDto();
 
-        when(taskRepository.findById(eq(task.getId()))).thenReturn(Optional.empty());
+        when(taskLoader.getTaskIfExists(eq(task.getId())))
+                .thenThrow((new TaskDoesNotExistException(task.getId())));
 
         assertThatThrownBy(() -> service.update(task.getId(), updateDto))
                 .isInstanceOf(TaskDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(task.getId().id()));
 
         verify(taskRepository, never()).save(any(Task.class));
-        verify(taskRepository).findById(task.getId());
     }
 
     @Test
     void shouldDeleteTask_whenTaskExists() {
         final var task = aTask();
 
-        when(taskRepository.findById(task.getId())).thenReturn(Optional.of(task));
+        when(taskLoader.getTaskIfExists(task.getId())).thenReturn(task);
 
         service.delete(task.getId());
 
-        verify(taskRepository).findById(task.getId());
         verify(taskRepository).delete(task);
     }
 
@@ -130,14 +141,14 @@ class TaskServiceTest {
     void shouldThrowExceptionOnDelete_whenTaskDoesNotExists() {
         final var task = aTask();
 
-        when(taskRepository.findById(task.getId())).thenReturn(Optional.empty());
+        when(taskLoader.getTaskIfExists(eq(task.getId())))
+                .thenThrow((new TaskDoesNotExistException(task.getId())));
 
         assertThatThrownBy(() -> service.delete(task.getId()))
                 .isInstanceOf(TaskDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(task.getId().id()));
 
         verify(taskRepository, never()).delete(any(Task.class));
-        verify(taskRepository).findById(task.getId());
     }
 
     @Test
@@ -145,52 +156,45 @@ class TaskServiceTest {
         final var chapter = aChapter();
         final var task = aTaskWithChapterId(chapter.getId());
 
-        when(chapterRepository.existsById(chapter.getId())).thenReturn(true);
         when(taskRepository.findAllByChapter(chapter.getId())).thenReturn(List.of(task));
 
         service.deleteAllForChapter(chapter.getId());
 
-        verify(chapterRepository).existsById(chapter.getId());
         verify(taskRepository).deleteAll(List.of(task));
     }
 
     @Test
-    void shouldThrowExceptionOnDeleteAllTask_whenChapterDoesNotExists() {
+    void shouldThrowExceptionOnDeleteAllTasks_whenChapterDoesNotExists() {
         final var chapter = aChapter();
 
-        when(chapterRepository.existsById(chapter.getId())).thenReturn(false);
+        doThrowChapterDoesNotExist(chapter.getId());
 
         assertThatThrownBy(() -> service.deleteAllForChapter(chapter.getId()))
                 .isInstanceOf(ChapterDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(chapter.getId().id()));
+                .hasMessageContaining(String.valueOf(chapter.getId().id().toString()));
 
-        verify(taskRepository, never()).deleteAll(anyList());
-        verify(chapterRepository).existsById(chapter.getId());
+        verify(taskRepository, never()).save(any(Task.class));
     }
 
     @Test
     void shouldGetAllTasksForChapter_whenChapterExists() {
         final var chapter = aChapter();
 
-        when(chapterRepository.existsById(chapter.getId())).thenReturn(true);
-
         service.findAllForChapter(chapter.getId());
 
-        verify(chapterRepository).existsById(chapter.getId());
         verify(taskRepository).findAllByChapter(chapter.getId());
     }
 
     @Test
-    void shouldThrowExceptionOnGetAllTaskForChapter_whenChapterDoesNotExists() {
+    void shouldThrowExceptionOnGetAllTasksForChapter_whenChapterDoesNotExists() {
         final var chapter = aChapter();
 
-        when(chapterRepository.existsById(chapter.getId())).thenReturn(false);
+        doThrowChapterDoesNotExist(chapter.getId());
 
         assertThatThrownBy(() -> service.findAllForChapter(chapter.getId()))
                 .isInstanceOf(ChapterDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(chapter.getId().id()));
+                .hasMessageContaining(String.valueOf(chapter.getId().id().toString()));
 
-        verify(chapterRepository).existsById(chapter.getId());
         verify(taskRepository, never()).findAllByChapter(chapter.getId());
     }
 
@@ -199,7 +203,7 @@ class TaskServiceTest {
         final var task = aTask();
         final var dto = aTaskCompleteDto();
 
-        when(taskRepository.findById(task.getId())).thenReturn(Optional.of(task));
+        when(taskLoader.getTaskIfExists(task.getId())).thenReturn(task);
         when(taskRepository.save(any(Task.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -213,7 +217,7 @@ class TaskServiceTest {
         assertEquals(TaskStatus.DONE, savedTask.getStatus());
         assertEquals(dto.completedMinutes(), savedTask.getCompletedMinutes());
 
-        verify(chapterService).recalculateCompletedMinutes(task.getChapter());
+        verify(chapterRecalculationService).recalculateCompletedMinutes(task.getChapter());
     }
 
     @Test
@@ -221,14 +225,14 @@ class TaskServiceTest {
         final var task = aTaskWithStatus(TaskStatus.DONE);
         final var dto = aTaskCompleteDto();
 
-        when(taskRepository.findById(task.getId())).thenReturn(Optional.of(task));
+        when(taskLoader.getTaskIfExists(task.getId())).thenReturn(task);
 
         assertThatThrownBy(() -> service.completeTask(task.getId(), dto))
                 .isInstanceOf(TaskAlreadyDoneException.class)
                 .hasMessageContaining(String.valueOf(task.getId().id()));
 
         verify(taskRepository, never()).save(any());
-        verify(chapterService, never()).recalculateCompletedMinutes(any());
+        verify(chapterRecalculationService, never()).recalculateCompletedMinutes(any());
     }
 
     @ParameterizedTest
@@ -236,7 +240,7 @@ class TaskServiceTest {
     void shouldThrowExceptionOnComplete_whenDtoDataIsInvalid(final TaskCompleteDto dto) {
         final var task = aTask();
 
-        when(taskRepository.findById(task.getId())).thenReturn(Optional.of(task));
+        when(taskLoader.getTaskIfExists(task.getId())).thenReturn(task);
 
         assertThatThrownBy(() -> service.completeTask(task.getId(), dto))
                 .isInstanceOf(TaskInvalidMinuteException.class)
@@ -244,7 +248,65 @@ class TaskServiceTest {
                 .hasMessageContaining(String.valueOf(dto.completedMinutes()));
 
         verify(taskRepository, never()).save(any());
-        verify(chapterService, never()).recalculateCompletedMinutes(any());
+        verify(chapterRecalculationService, never()).recalculateCompletedMinutes(any());
+    }
+
+    @Test
+    void shouldReturnTodayTasks_whenArcIsValidAndChapterExists() {
+        final var userId = UserId.random();
+        final var arc = anArc();
+        final var chapter = aChapterWithArcId(arc.getId());
+        final var tasks = List.of(aTaskWithChapterId(chapter.getId()));
+
+        when(arcLoader.getActiveArcForUser(userId)).thenReturn(arc);
+        when(chapterLoader.findByDate(eq(arc.getId()), any())).thenReturn(chapter);
+        when(taskLoader.getTasksForChapter(chapter.getId())).thenReturn(tasks);
+
+        final var result = service.getTodaysTasks(userId);
+
+        assertEquals(tasks, result);
+
+        verify(userLoader).assertUserExists(userId);
+        verify(arcLoader).getActiveArcForUser(userId);
+        verify(chapterLoader).findByDate(eq(arc.getId()), any(LocalDate.class));
+        verify(taskLoader).getTasksForChapter(chapter.getId());
+    }
+
+    @Test
+    void shouldThrowErrorOnTodayTasks_whenArcIsValidAndChapterDoesNotExists() {
+        final var userId = UserId.random();
+        final var arc = anArc();
+
+        when(arcLoader.getActiveArcForUser(userId)).thenReturn(arc);
+
+        when(chapterLoader.findByDate(eq(arc.getId()), any(LocalDate.class)))
+                .thenThrow(new NoChapterForArcException(arc.getId(), LocalDate.now()));
+
+        assertThatThrownBy(() -> service.getTodaysTasks(userId))
+                .isInstanceOf(NoChapterForArcException.class)
+                .hasMessageContaining(String.valueOf(arc.getId().id()));
+
+        verify(userLoader).assertUserExists(userId);
+        verify(arcLoader).getActiveArcForUser(userId);
+        verify(chapterLoader).findByDate(eq(arc.getId()), any(LocalDate.class));
+        verify(taskLoader, never()).getTasksForChapter(any(ChapterId.class));
+    }
+
+    @Test
+    void shouldThrowErrorOnTodayTasks_whenArcIsInValid() {
+        final var userId = UserId.random();
+
+        when(arcLoader.getActiveArcForUser(userId))
+                .thenThrow(new NoActiveArcException(userId));
+
+        assertThatThrownBy(() -> service.getTodaysTasks(userId))
+                .isInstanceOf(NoActiveArcException.class)
+                .hasMessageContaining(String.valueOf(userId.id()));
+
+        verify(userLoader).assertUserExists(userId);
+        verify(arcLoader).getActiveArcForUser(userId);
+        verify(chapterLoader, never()).findByDate(any(ArcId.class), any(LocalDate.class));
+        verify(taskLoader, never()).getTasksForChapter(any(ChapterId.class));
     }
 
     private static Stream<Arguments> provideTaskCompleteDtos() {
@@ -252,5 +314,11 @@ class TaskServiceTest {
                 Arguments.of(aTaskCompleteDtoWithMinutes(-10)),
                 Arguments.of(aTaskCompleteDtoWithMinutes(MINUTES_PER_DAY + 1))
             );
+    }
+
+    private void doThrowChapterDoesNotExist(final ChapterId chapterId) {
+        doThrow(new ChapterDoesNotExistException(chapterId))
+                .when(chapterLoader)
+                .assertChapterExists(eq(chapterId));
     }
 }

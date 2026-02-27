@@ -2,7 +2,8 @@ package com.valentin_d.focusarc.integration;
 
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseArcControllerIntegrationTest;
-import com.valentin_d.focusarc.model.Arc;
+import com.valentin_d.focusarc.model.arc.Arc;
+import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.UserId;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -48,6 +49,17 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     }
 
     @Test
+    void shouldReturnNotFoundOnCreate_whenActiveArcAlreadyExists() {
+        final var user = createUser();
+        arcRepository.save(anArcWithOwnerIdAndStatus(user.getId(), ArcStatus.ACTIVE));
+        final var dto = anArcCreationDtoWithOwnerId(user.getId());
+
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+
+        assertBadRequest(response);
+    }
+
+    @Test
     void shouldReturnArc_whenIdExists() {
         final var arc = createArc();
 
@@ -64,7 +76,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     void shouldReturnAllArc_whenUserIdExists() {
         final var user = createUser();
         final var arc1 = createArcForUser(user.getId());
-        final var arc2 = createArcForUser(user.getId());
+        final var arc2 = createArcForUser(user.getId(), ArcStatus.COMPLETED);
 
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.GET, Arc[].class);
         assertOk(response);
@@ -148,7 +160,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     void shouldDeleteAllArcForUser_whenUserIdExists() {
         final var user = createUser();
         createArcForUser(user.getId());
-        createArcForUser(user.getId());
+        createArcForUser(user.getId(), ArcStatus.COMPLETED);
 
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.DELETE, Void.class);
 

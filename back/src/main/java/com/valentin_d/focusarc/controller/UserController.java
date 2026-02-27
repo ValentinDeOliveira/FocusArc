@@ -4,7 +4,7 @@ import com.valentin_d.focusarc.dto.user.UserCreationDto;
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
-import com.valentin_d.focusarc.service.UserService;
+import com.valentin_d.focusarc.service.user.UserService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;

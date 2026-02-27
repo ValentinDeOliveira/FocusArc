@@ -1,22 +1,25 @@
-package com.valentin_d.focusarc.service;
+package com.valentin_d.focusarc.service.task;
 
 import com.valentin_d.focusarc.dto.task.TaskCompleteDto;
 import com.valentin_d.focusarc.dto.task.TaskCreationDto;
 import com.valentin_d.focusarc.dto.task.TaskUpdateDto;
-import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
 import com.valentin_d.focusarc.exception.task.TaskAlreadyDoneException;
-import com.valentin_d.focusarc.exception.task.TaskDoesNotExistException;
 import com.valentin_d.focusarc.exception.task.TaskInvalidMinuteException;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.TaskId;
+import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
-import com.valentin_d.focusarc.repository.ChapterRepository;
 import com.valentin_d.focusarc.repository.TaskRepository;
+import com.valentin_d.focusarc.service.arc.ArcLoader;
+import com.valentin_d.focusarc.service.chapter.ChapterLoader;
+import com.valentin_d.focusarc.service.chapter.ChapterRecalculationService;
+import com.valentin_d.focusarc.service.user.UserLoader;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,21 +29,24 @@ import static com.valentin_d.focusarc.shared.TimeConstraints.MINUTES_PER_DAY;
 @RequiredArgsConstructor
 public class TaskService {
     private final TaskRepository taskRepository;
-    private final ChapterRepository chapterRepository;
-    private final ChapterService chapterService;
+    private final ChapterRecalculationService chapterRecalculationService;
+    private final TaskLoader taskLoader;
+    private final ChapterLoader chapterLoader;
+    private final UserLoader userLoader;
+    private final ArcLoader arcLoader;
 
     public Optional<Task> findById(final TaskId taskId) {
         return taskRepository.findById(taskId);
     }
 
     public List<Task> findAllForChapter(final ChapterId chapterId) {
-        assertChapterExists(chapterId);
+        chapterLoader.assertChapterExists(chapterId);
 
         return taskRepository.findAllByChapter(chapterId);
     }
 
     public Task create(@NotNull final TaskCreationDto taskCreationDto) {
-        assertChapterExists(taskCreationDto.chapterId());
+        chapterLoader.assertChapterExists(taskCreationDto.chapterId());
 
         assertMinutes(taskCreationDto.estimatedMinutes());
 
@@ -48,13 +54,13 @@ public class TaskService {
                 taskCreationDto.estimatedMinutes(), taskCreationDto.scheduledAt());
 
         final var savedTask = taskRepository.save(task);
-        chapterService.recalculateEstimatedMinutes(taskCreationDto.chapterId());
+        chapterRecalculationService.recalculateEstimatedMinutes(taskCreationDto.chapterId());
 
         return savedTask;
     }
 
     public Task update(@NotNull final TaskId taskId, @NotNull final TaskUpdateDto taskUpdateDto) {
-        final var task = getTaskIfExists(taskId);
+        final var task = taskLoader.getTaskIfExists(taskId);
         final var beforeUpdateTask = task.snapshot();
 
         updateTask(task, taskUpdateDto);
@@ -62,29 +68,29 @@ public class TaskService {
         final var savedTask = taskRepository.save(task);
 
         if (beforeUpdateTask.isEstimatedMinutesChanged(savedTask)) {
-            chapterService.recalculateEstimatedMinutes(task.getChapter());
+            chapterRecalculationService.recalculateEstimatedMinutes(task.getChapter());
         }
         if (beforeUpdateTask.isCompletedMinutesChanged(savedTask)) {
-            chapterService.recalculateCompletedMinutes(task.getChapter());
+            chapterRecalculationService.recalculateCompletedMinutes(task.getChapter());
         }
 
         return savedTask;
     }
 
     public void delete(@NotNull final TaskId taskId) {
-        final var task = getTaskIfExists(taskId);
+        final var task = taskLoader.getTaskIfExists(taskId);
         taskRepository.delete(task);
     }
 
     public void deleteAllForChapter(@NotNull final ChapterId chapterId) {
-        assertChapterExists(chapterId);
+        chapterLoader.assertChapterExists(chapterId);
 
         final var chapters = taskRepository.findAllByChapter(chapterId);
         taskRepository.deleteAll(chapters);
     }
 
     public void completeTask(@NotNull final TaskId taskId, @NotNull final TaskCompleteDto taskCompleteDto) {
-        final var task = getTaskIfExists(taskId);
+        final var task = taskLoader.getTaskIfExists(taskId);
 
         if (task.isDone()) {
             throw new TaskAlreadyDoneException(taskId);
@@ -94,13 +100,16 @@ public class TaskService {
         task.setStatus(TaskStatus.DONE);
         task.setCompletedMinutes(taskCompleteDto.completedMinutes());
         taskRepository.save(task);
-        chapterService.recalculateCompletedMinutes(task.getChapter());
+        chapterRecalculationService.recalculateCompletedMinutes(task.getChapter());
     }
 
-    private void assertChapterExists(final ChapterId chapterId) {
-        if (!chapterRepository.existsById(chapterId)) {
-            throw new ChapterDoesNotExistException(chapterId);
-        }
+    public List<Task> getTodaysTasks(@NotNull final UserId userId) {
+        userLoader.assertUserExists(userId);
+
+        final var arc = arcLoader.getActiveArcForUser(userId);
+        final var chapter = chapterLoader.findByDate(arc.getId(), LocalDate.now());
+
+        return taskLoader.getTasksForChapter(chapter.getId());
     }
 
     private void assertMinutes(final int minutes) {
@@ -113,10 +122,6 @@ public class TaskService {
         if (minutes < 0 || minutes > MINUTES_PER_DAY) {
             throw new TaskInvalidMinuteException(taskId, minutes);
         }
-    }
-
-    private Task getTaskIfExists(final TaskId taskId) {
-        return findById(taskId).orElseThrow(() -> new TaskDoesNotExistException(taskId));
     }
 
     private void updateTask(final Task task, final TaskUpdateDto dto) {
