@@ -76,7 +76,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     void shouldReturnAllArc_whenUserIdExists() {
         final var user = createUser();
         final var arc1 = createArcForUser(user.getId());
-        final var arc2 = createArcForUser(user.getId());
+        final var arc2 = createArcForUser(user.getId(), ArcStatus.COMPLETED);
 
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.GET, Arc[].class);
         assertOk(response);
@@ -160,7 +160,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     void shouldDeleteAllArcForUser_whenUserIdExists() {
         final var user = createUser();
         createArcForUser(user.getId());
-        createArcForUser(user.getId());
+        createArcForUser(user.getId(), ArcStatus.COMPLETED);
 
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.DELETE, Void.class);
 

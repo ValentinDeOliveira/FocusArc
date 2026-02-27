@@ -2,13 +2,14 @@ package com.valentin_d.focusarc.integration.base;
 
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.arc.Arc;
+import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwnerId;
+import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwnerIdAndStatus;
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -44,7 +45,11 @@ public class BaseArcControllerIntegrationTest extends BaseIntegrationTest{
     }
 
     protected Arc createArcForUser(final UserId ownerId) {
-        final var arc = anArcWithOwnerId(ownerId);
+        return createArcForUser(ownerId, ArcStatus.ACTIVE);
+    }
+
+    protected Arc createArcForUser(final UserId ownerId, final ArcStatus status) {
+        final var arc = anArcWithOwnerIdAndStatus(ownerId, status);
         return arcRepository.save(arc);
     }
 }

@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.util.List;
@@ -15,6 +17,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Document("arcs")
+@CompoundIndexes({
+        @CompoundIndex(
+                name = "one_active_arc_per_user",
+                def = "{'owner.id': 1, 'status': 1}",
+                unique = true,
+                partialFilter = "{'status': {'$eq': 'ACTIVE'}}"
+        )
+})
 public class Arc {
     @Id
     private ArcId id;
