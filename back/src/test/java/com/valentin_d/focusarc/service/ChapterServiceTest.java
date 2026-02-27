@@ -80,8 +80,9 @@ class ChapterServiceTest {
         verify(chapterRepository).save(chapter);
 
         assertEquals(updated.getId(), chapter.getId());
-        assertEquals(updated.getEstimatedMinutes(), updateDto.estimatedMinutes());
-        assertEquals(updated.getCompletedMinutes(), updateDto.completedMinutes());
+        assertEquals(updated.getScheduledDate(), updateDto.scheduledDate());
+        assertEquals(updated.getCompletedMinutes(), chapter.getCompletedMinutes());
+        assertEquals(updated.getEstimatedMinutes(), chapter.getEstimatedMinutes());
         assertEquals(updated.getArc(), chapter.getArc());
     }
 

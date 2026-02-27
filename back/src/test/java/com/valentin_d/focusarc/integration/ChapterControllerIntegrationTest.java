@@ -119,15 +119,14 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
         assertEquals(chapter.getId(), result.getId());
         assertEquals(chapter.getArc(), result.getArc());
-        assertEquals(expectedValue(dto.completedMinutes(), chapter.getCompletedMinutes()), result.getCompletedMinutes());
-        assertEquals(expectedValue(dto.estimatedMinutes(), chapter.getEstimatedMinutes()), result.getEstimatedMinutes());
+        assertEquals(chapter.getEstimatedMinutes(), result.getEstimatedMinutes());
+        assertEquals(chapter.getCompletedMinutes(), result.getCompletedMinutes());
+        assertEquals(expectedValue(dto.scheduledDate(), chapter.getScheduledDate()), result.getScheduledDate());
     }
 
     private static Stream<Arguments> provideChapterUpdateDtos() {
         return Stream.of(
-                Arguments.of(aChapterUpdateDtoWithCompletedMinutesAndEstimatedMinutes(200, 250)),
-                Arguments.of(aChapterUpdateDtoWithEstimatedMinutes(240)),
-                Arguments.of(aChapterUpdateDtoWithCompletedMinutes(50)),
+                Arguments.of(aChapterUpdateDtoWithScheduledDate(LocalDate.now().plusDays(10))),
                 Arguments.of(aChapterUpdateDtoWithNullFields())
         );
     }

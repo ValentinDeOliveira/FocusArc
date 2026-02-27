@@ -45,19 +45,11 @@ public final class ChapterFactory {
         return ChapterUpdateDtoBuilder.builder().build().build();
     }
 
-    public static ChapterUpdateDto aChapterUpdateDtoWithCompletedMinutes(final int completedMinutes) {
-        return ChapterUpdateDtoBuilder.builder().completedMinutes(completedMinutes).build().build();
-    }
-
-    public static ChapterUpdateDto aChapterUpdateDtoWithEstimatedMinutes(final int estimatedMinutes) {
-        return ChapterUpdateDtoBuilder.builder().estimatedMinutes(estimatedMinutes).build().build();
-    }
-
-    public static ChapterUpdateDto aChapterUpdateDtoWithCompletedMinutesAndEstimatedMinutes(final int completedMinutes, final int estimatedMinutes) {
-        return ChapterUpdateDtoBuilder.builder().completedMinutes(completedMinutes).estimatedMinutes(estimatedMinutes).build().build();
+    public static ChapterUpdateDto aChapterUpdateDtoWithScheduledDate(final LocalDate date) {
+        return ChapterUpdateDtoBuilder.builder().scheduledDate(date).build().build();
     }
 
     public static ChapterUpdateDto aChapterUpdateDtoWithNullFields() {
-        return ChapterUpdateDtoBuilder.builder().estimatedMinutes(null).completedMinutes(null).build().build();
+        return ChapterUpdateDtoBuilder.builder().scheduledDate(null).build().build();
     }
 }
