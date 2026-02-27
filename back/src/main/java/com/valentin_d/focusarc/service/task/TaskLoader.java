@@ -4,6 +4,7 @@ import com.valentin_d.focusarc.exception.task.TaskDoesNotExistException;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.TaskId;
 import com.valentin_d.focusarc.model.task.Task;
+import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.repository.TaskRepository;
 import com.valentin_d.focusarc.service.BaseService;
 import lombok.RequiredArgsConstructor;
@@ -22,5 +23,9 @@ public class TaskLoader extends BaseService {
 
     public List<Task> getTasksForChapter(final ChapterId chapterId) {
         return taskRepository.findAllByChapter(chapterId);
+    }
+
+    public List<Task> getNotCompletedTaskForChapter(final ChapterId chapterId) {
+        return taskRepository.findAllByChapterAndStatusIn(chapterId, TaskStatus.PENDING);
     }
 }
