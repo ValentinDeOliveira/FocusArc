@@ -1,6 +1,8 @@
 package com.valentin_d.focusarc.dto.chapter;
 
-import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Future;
 
-public record ChapterUpdateDto(@Positive Integer completedMinutes, @Positive Integer estimatedMinutes) {
+import java.time.LocalDate;
+
+public record ChapterUpdateDto(@Future LocalDate scheduledDate) {
 }
