@@ -1,14 +1,20 @@
 package com.valentin_d.focusarc.integration;
 
+import com.valentin_d.focusarc.dto.chapter.ChapterSummaryResponseDto;
 import com.valentin_d.focusarc.dto.chapter.ChapterUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseChapterControllerIntegrationTest;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.task.TaskStatus;
+import com.valentin_d.focusarc.repository.UserRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 
 import java.time.LocalDate;
@@ -16,12 +22,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
+import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwnerId;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.assertj.core.api.CollectionAssert.assertThatCollection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class ChapterControllerIntegrationTest extends BaseChapterControllerIntegrationTest {
+    @Autowired
+    private UserRepository userRepository;
+
     @Test
     void shouldCreateChapter_whenDataIsValid() {
         final var arc = createArc();
@@ -173,5 +184,59 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         final var response = request(URL + "/arcs/" + ChapterId.random().id(), HttpMethod.DELETE, Void.class);
 
         assertNotFound(response);
+    }
+
+    @BeforeEach
+    void setup() {
+        userRepository.deleteAll();
+    }
+
+    @Test
+    void shouldReturnChapterSummary_whenChapterExists() {
+        final var user = userRepository.save(aUser());
+        final var arc = arcRepository.save(anArcWithOwnerId(user.getId()));
+        final var chapter = createChapterForArcWithDate(arc.getId(), LocalDate.now());
+        final var task1 = createTaskForChapterWithStatus(chapter.getId(), TaskStatus.PLANNED);
+        final var task2 = createTaskForChapterWithStatus(chapter.getId(), TaskStatus.IN_PROGRESS);
+        createTaskForChapterWithStatus(chapter.getId(), TaskStatus.DONE);
+        createTaskForChapterWithStatus(chapter.getId(), TaskStatus.DONE);
+
+        final var response = request(URL + "/summary?userId=" + user.getId().id(), HttpMethod.GET, ChapterSummaryResponseDto.class);
+
+        assertOk(response);
+        final var result = response.getBody();
+        assertNotNull(result);
+
+        assertThatCollection(result.tasksToComplete()).containsExactly(task1, task2);
+        assertEquals(result.estimatedMinutes(), chapter.getEstimatedMinutes());
+        final var completedMinutes = task1.getCompletedMinutes() +  task2.getCompletedMinutes();
+        assertEquals(result.completedMinutes(), completedMinutes);
+        assertEquals(result.remainingTime(),  chapter.getEstimatedMinutes() - completedMinutes);
+    }
+
+    @Test
+    void shouldThrowErrorOnChapterSummary_whenUserDoesNotExist() {
+        final var response = request(URL + "/summary?userId=" + UserId.random().id(), HttpMethod.GET, Void.class);
+        assertNotFound(response);
+    }
+
+    @Test
+    void shouldReturnChapterSummary_whenNoTaskScheduled() {
+        final var user = userRepository.save(aUser());
+        final var arc = arcRepository.save(anArcWithOwnerId(user.getId()));
+        final var chapter = createChapterForArcWithDate(arc.getId(), LocalDate.now());
+        createTaskForChapterWithStatus(chapter.getId(), TaskStatus.DONE);
+        createTaskForChapterWithStatus(chapter.getId(), TaskStatus.DONE);
+
+        final var response = request(URL + "/summary?userId=" + user.getId().id(), HttpMethod.GET, ChapterSummaryResponseDto.class);
+
+        assertOk(response);
+        final var result = response.getBody();
+        assertNotNull(result);
+
+        assertEquals(0, result.tasksToComplete().size());
+        assertEquals(result.estimatedMinutes(), chapter.getEstimatedMinutes());
+        assertEquals(0, result.completedMinutes());
+        assertEquals(result.remainingTime(),  chapter.getEstimatedMinutes());
     }
 }
