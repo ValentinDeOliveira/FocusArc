@@ -1,12 +1,11 @@
 package com.valentin_d.focusarc.controller;
 
-import com.valentin_d.focusarc.model.arc.Arc;
+import com.valentin_d.focusarc.controller.assertions.ArcAssertion;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.service.arc.ArcService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,15 +14,14 @@ import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ArcController.class)
 class ArcControllerTest extends BaseControllerTest {
     @MockitoBean
     private ArcService arcService;
-
     private final static String ROOT = "/arcs";
+    private final ArcAssertion arcAssertion = new ArcAssertion();
 
     @Test
     void shouldReturnArc_whenIdExists() throws Exception {
@@ -33,7 +31,8 @@ class ArcControllerTest extends BaseControllerTest {
         final var actions = mvcGet(ROOT + "/" + arc.getId().id())
                 .andExpect(status().isOk());
 
-        assertArcJson(actions, arc);
+        arcAssertion.assertSingleJson(actions, arc);
+        arcAssertion.assertSingleJson(actions, arc);
     }
 
     @Test
@@ -53,7 +52,7 @@ class ArcControllerTest extends BaseControllerTest {
         final var actions = mvcGet(ROOT + "/users/" + arc.getOwner().id())
                 .andExpect(status().isOk());
 
-        assertArcListJson(actions, arc);
+        arcAssertion.assertListJson(actions, arc);
     }
 
     @Test
@@ -76,7 +75,7 @@ class ArcControllerTest extends BaseControllerTest {
         final var actions = mvcPost(ROOT, json)
                 .andExpect(status().isCreated());
 
-        assertArcJson(actions, arc);
+        arcAssertion.assertSingleJson(actions, arc);
     }
 
     @Test
@@ -91,7 +90,7 @@ class ArcControllerTest extends BaseControllerTest {
         final var actions = mvcPut(ROOT + "/" + arc.getId().id(), json)
                 .andExpect(status().isOk());
 
-        assertArcJson(actions, arc);
+        arcAssertion.assertSingleJson(actions, arc);
     }
 
     @Test
@@ -108,22 +107,5 @@ class ArcControllerTest extends BaseControllerTest {
 
         mvcDelete(ROOT + "/users/" + arc.getOwner().id())
                 .andExpect(status().isNoContent());
-    }
-
-    private void assertArcJson(final ResultActions actions, final Arc expected) throws Exception {
-        assertArcJson(actions, "$", expected);
-    }
-
-    private void assertArcListJson(final ResultActions actions, final Arc expected) throws Exception {
-        assertArcJson(actions, "$[0]", expected);
-    }
-
-    private void assertArcJson(final ResultActions actions, final String path, final Arc expected) throws Exception {
-        actions
-                .andExpect(jsonPath(path + ".id").value(expected.getId().id().toString()))
-                .andExpect(jsonPath(path + ".owner").value(expected.getOwner().id().toString()))
-                .andExpect(jsonPath(path + ".name").value(expected.getName()))
-                .andExpect(jsonPath(path + ".totalEstimatedMinutes").value(expected.getTotalEstimatedMinutes()))
-                .andExpect(jsonPath(path + ".totalCompletedMinutes").value(expected.getTotalCompletedMinutes()));
     }
 }

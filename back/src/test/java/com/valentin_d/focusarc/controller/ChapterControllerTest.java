@@ -1,30 +1,31 @@
 package com.valentin_d.focusarc.controller;
 
-import com.valentin_d.focusarc.model.Chapter;
+import com.valentin_d.focusarc.controller.assertions.ChapterAssertion;
+import com.valentin_d.focusarc.controller.assertions.ChapterSummaryResponseAssertion;
 import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.List;
 import java.util.Optional;
 
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTask;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ChapterController.class)
 class ChapterControllerTest extends BaseControllerTest {
     @MockitoBean
     private ChapterService chapterService;
-
     private final static String ROOT = "/chapters";
-
+    private final ChapterAssertion chapterAssertion = new ChapterAssertion();
+    private final ChapterSummaryResponseAssertion chapterSummaryResponseAssertion = new ChapterSummaryResponseAssertion();
     @Test
     void shouldReturnChapter_whenIdExists() throws Exception {
         final var chapter = aChapter();
@@ -33,7 +34,7 @@ class ChapterControllerTest extends BaseControllerTest {
         final var actions = mvcGet(ROOT + "/" + chapter.getId().id())
                 .andExpect(status().isOk());
 
-        assertChapterJson(actions, chapter);
+        chapterAssertion.assertSingleJson(actions, chapter);
     }
 
     @Test
@@ -53,7 +54,7 @@ class ChapterControllerTest extends BaseControllerTest {
         final var actions = mvcGet(ROOT + "/arcs/" + chapter.getArc().id())
                 .andExpect(status().isOk());
 
-        assertChapterListJson(actions, chapter);
+        chapterAssertion.assertListJson(actions, chapter);
     }
 
     @Test
@@ -76,7 +77,7 @@ class ChapterControllerTest extends BaseControllerTest {
         final var actions = mvcPost(ROOT, json)
                 .andExpect(status().isCreated());
 
-        assertChapterJson(actions, chapter);
+        chapterAssertion.assertSingleJson(actions, chapter);
     }
 
     @Test
@@ -91,7 +92,7 @@ class ChapterControllerTest extends BaseControllerTest {
         final var actions = mvcPut(ROOT + "/" + chapter.getId().id(), json)
                 .andExpect(status().isOk());
 
-        assertChapterJson(actions, chapter);
+        chapterAssertion.assertSingleJson(actions, chapter);
     }
 
     @Test
@@ -110,19 +111,16 @@ class ChapterControllerTest extends BaseControllerTest {
                 .andExpect(status().isNoContent());
     }
 
-    private void assertChapterJson(final ResultActions actions, final Chapter expected) throws Exception {
-        assertChapterJson(actions, "$", expected);
-    }
+    @Test
+    void shouldReturnSummary_whenGettingSummary() throws Exception {
+        final var task = aTask();
+        final var summary = aChapterSummaryResponseDtoWithTasks(List.of(task));
+        final var userId = UserId.random();
 
-    private void assertChapterListJson(final ResultActions actions, final Chapter expected) throws Exception {
-        assertChapterJson(actions, "$[0]", expected);
-    }
+        when(chapterService.getChapterSummary(userId)).thenReturn(summary);
+        final var actions = mvcGet(ROOT + "/summary?userId=" + userId.id())
+                .andExpect(status().isOk());
 
-    private void assertChapterJson(final ResultActions actions, final String path, final Chapter expected) throws Exception {
-        actions
-                .andExpect(jsonPath(path + ".id").value(expected.getId().id().toString()))
-                .andExpect(jsonPath(path + ".arc").value(expected.getArc().id().toString()))
-                .andExpect(jsonPath(path + ".estimatedMinutes").value(expected.getEstimatedMinutes()))
-                .andExpect(jsonPath(path + ".completedMinutes").value(expected.getCompletedMinutes()));
+        chapterSummaryResponseAssertion.assertSingleJson(actions, summary);
     }
 }

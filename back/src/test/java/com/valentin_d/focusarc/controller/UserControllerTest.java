@@ -1,27 +1,25 @@
 package com.valentin_d.focusarc.controller;
 
+import com.valentin_d.focusarc.controller.assertions.UserAssertion;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
-import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
-import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.ResultActions;
 
 import java.util.Optional;
 
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.*;
 import static org.mockito.Mockito.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
 class UserControllerTest extends BaseControllerTest {
     @MockitoBean
     private UserService userService;
-
     private final static String ROOT = "/users";
+    private final UserAssertion userAssertion = new UserAssertion();
 
     @Test
     void shouldReturnUser_whenEmailExists() throws Exception {
@@ -32,7 +30,7 @@ class UserControllerTest extends BaseControllerTest {
         final var actions = mvcGet(ROOT + "/email?email=" + user.getEmail())
                 .andExpect(status().isOk());
 
-        assertUserJson(actions, user);
+        userAssertion.assertSingleJson(actions, user);
     }
 
     @Test
@@ -55,7 +53,7 @@ class UserControllerTest extends BaseControllerTest {
         final var actions = mvcPost(ROOT, json)
                 .andExpect(status().isCreated());
 
-        assertUserJson(actions, user);
+        userAssertion.assertSingleJson(actions, user);
     }
 
     @Test
@@ -66,7 +64,7 @@ class UserControllerTest extends BaseControllerTest {
         final var actions = mvcGet(ROOT + "/" + user.getId().id())
                 .andExpect(status().isOk());
 
-        assertUserJson(actions, user);
+        userAssertion.assertSingleJson(actions, user);
     }
 
     @Test
@@ -87,10 +85,7 @@ class UserControllerTest extends BaseControllerTest {
         final var actions = mvcPut(ROOT + "/" + user.getId().id(), json)
                 .andExpect(status().isOk());
 
-        assertUserJson(actions, user);
-        actions.andExpect(jsonPath("$.name").value(user.getName()))
-                .andExpect(jsonPath("$.email").value(user.getEmail()))
-                .andExpect(jsonPath("$.id").exists());
+        userAssertion.assertSingleJson(actions, user);
     }
 
     @Test
@@ -118,15 +113,5 @@ class UserControllerTest extends BaseControllerTest {
 
         mvcDelete(ROOT + "/" + user.getId().id())
                 .andExpect(status().isNotFound());
-    }
-
-
-    private void assertUserJson(final ResultActions actions, final User expected) throws Exception {
-        actions
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-                .andExpect(jsonPath("$.name").value(expected.getName()))
-                .andExpect(jsonPath("$.email").value(expected.getEmail()))
-                .andExpect(jsonPath("$.id").value(expected.getId().id().toString()))
-                .andExpect(jsonPath("$.lastLogin").exists());
     }
 }

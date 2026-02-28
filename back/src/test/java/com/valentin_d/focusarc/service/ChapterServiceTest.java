@@ -2,12 +2,15 @@ package com.valentin_d.focusarc.service;
 
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
 import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
+import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
+import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ChapterRepository;
 import com.valentin_d.focusarc.service.arc.ArcLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
+import com.valentin_d.focusarc.service.task.TaskLoader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -18,6 +21,9 @@ import java.util.List;
 
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArc;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTask;
+import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskWithEstimatedAndCompletedMinutes;
+import static org.assertj.core.api.Assertions.assertThatCollection;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -31,7 +37,10 @@ class ChapterServiceTest {
     private ChapterLoader chapterLoader;
     @Mock
     private ArcLoader arcLoader;
-
+    @Mock
+    private TaskLoader taskLoader;
+    @Mock
+    private ContextLoader contextLoader;
     @InjectMocks
     private ChapterService service;
 
@@ -171,6 +180,38 @@ class ChapterServiceTest {
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
         verify(chapterRepository, never()).findAllByArc(arc.getId());
+    }
+
+    @Test
+    void shouldReturnSummary_whenChapterExists() {
+        final var userId = UserId.random();
+        final var chapter = aChapter();
+        final var task1 = aTask();
+        final var task2 = aTaskWithEstimatedAndCompletedMinutes(40, 80);
+
+        when(contextLoader.getChapterFromUserId(userId)).thenReturn(chapter);
+        when(taskLoader.getNotCompletedTaskForChapter(chapter.getId())).thenReturn(List.of(task1, task2));
+
+        final var dto = service.getChapterSummary(userId);
+
+        final var completedMinutes = task1.getCompletedMinutes() + task2.getCompletedMinutes();
+        assertEquals(dto.completedMinutes(), completedMinutes);
+        assertEquals(dto.estimatedMinutes(), chapter.getEstimatedMinutes());
+        assertThatCollection(dto.tasksToComplete()).containsExactly(task1, task2);
+        assertEquals(dto.remainingTime(), chapter.getEstimatedMinutes() - completedMinutes);
+    }
+
+    @Test
+    void shouldThrowExceptionOnGetSummary_whenChapterNotFound() {
+        final var userId = UserId.random();
+
+        doThrow(new UserDoesNotExistException(userId))
+                .when(contextLoader)
+                .getChapterFromUserId(eq(userId));
+
+        assertThatThrownBy(() -> service.getChapterSummary(userId))
+                .isInstanceOf(UserDoesNotExistException.class)
+                .hasMessageContaining(String.valueOf(userId.id()));
     }
 
     private void doThrowArcDoesNotExist(final ArcId arcId) {

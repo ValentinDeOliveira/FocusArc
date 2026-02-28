@@ -1,14 +1,18 @@
 package com.valentin_d.focusarc.fixtures.factory;
 
 import com.valentin_d.focusarc.dto.chapter.ChapterCreationDto;
+import com.valentin_d.focusarc.dto.chapter.ChapterSummaryResponseDto;
 import com.valentin_d.focusarc.dto.chapter.ChapterUpdateDto;
 import com.valentin_d.focusarc.fixtures.chapter.ChapterBuilder;
 import com.valentin_d.focusarc.fixtures.chapter.ChapterCreationDtoBuilder;
+import com.valentin_d.focusarc.fixtures.chapter.ChapterSummaryResponseDtoBuilder;
 import com.valentin_d.focusarc.fixtures.chapter.ChapterUpdateDtoBuilder;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
+import com.valentin_d.focusarc.model.task.Task;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public final class ChapterFactory {
     private ChapterFactory() {}
@@ -51,5 +55,13 @@ public final class ChapterFactory {
 
     public static ChapterUpdateDto aChapterUpdateDtoWithNullFields() {
         return ChapterUpdateDtoBuilder.builder().scheduledDate(null).build().build();
+    }
+
+    public static ChapterSummaryResponseDto aChapterSummaryResponseDto() {
+        return ChapterSummaryResponseDtoBuilder.builder().build().build();
+    }
+
+    public static ChapterSummaryResponseDto aChapterSummaryResponseDtoWithTasks(final List<Task> tasks) {
+        return ChapterSummaryResponseDtoBuilder.builder().tasksToComplete(tasks).build().build();
     }
 }

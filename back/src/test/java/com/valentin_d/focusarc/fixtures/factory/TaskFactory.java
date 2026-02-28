@@ -26,6 +26,10 @@ public final class TaskFactory {
         return TaskBuilder.builder().taskStatus(status).build().build();
     }
 
+    public static Task aTaskWithEstimatedAndCompletedMinutes(final int estimated, final int completed) {
+        return TaskBuilder.builder().estimatedMinutes(estimated).completedMinutes(completed).build().build();
+    }
+
     public static TaskCreationDto aTaskCreationDto() {
         return TaskCreationDtoBuilder.builder().build().build();
     }
