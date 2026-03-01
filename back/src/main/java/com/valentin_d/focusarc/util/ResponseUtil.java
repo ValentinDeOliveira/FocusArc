@@ -13,12 +13,6 @@ public class ResponseUtil {
                 .orElseGet(() -> ResponseEntity.notFound().build());
     }
 
-    public static <T> ResponseEntity<List<T>> wrapOrNotFound(final List<T> maybeEntity) {
-        return maybeEntity.isEmpty()
-                ? ResponseEntity.notFound().build()
-                : ResponseEntity.ok(maybeEntity);
-    }
-
     public static <T> ResponseEntity<List<T>> wrapOrNoContent(final List<T> maybeEntity) {
         return maybeEntity.isEmpty()
                 ? ResponseEntity.noContent().build()

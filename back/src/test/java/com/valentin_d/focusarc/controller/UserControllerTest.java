@@ -78,7 +78,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     void shouldUpdateUser_whenIdExists() throws Exception {
         final var user = aUser();
-        when(userService.update(any(), eq(user.getId()))).thenReturn(user);
+        when(userService.update(eq(user.getId()), any())).thenReturn(user);
 
         final var json = toJson(aUserUpdateDto());
 
@@ -91,7 +91,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     void shouldReturnNotFound_whenUpdatingNonExistingUser() throws Exception {
         final var user = aUser();
-        when(userService.update(any(), eq(user.getId()))).thenThrow(new UserDoesNotExistException(user.getId()));
+        when(userService.update(eq(user.getId()), any())).thenThrow(new UserDoesNotExistException(user.getId()));
 
         mvcPut(ROOT + "/" + user.getId().id(), toJson(aUserUpdateDto()))
                 .andExpect(status().isNotFound());

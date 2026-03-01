@@ -31,14 +31,14 @@ public class TaskController {
 
     @GetMapping("/{taskId}")
     public ResponseEntity<Task> getById(@PathVariable TaskId taskId) {
-        final var arc = service.findById(taskId);
-        return ResponseUtil.wrapOrNotFound(arc);
+        final var task = service.findById(taskId);
+        return ResponseUtil.wrapOrNotFound(task);
     }
 
     @GetMapping("/chapters/{chapterId}")
     public ResponseEntity<List<Task>> getAllForChapter(@PathVariable ChapterId chapterId) {
         final var chapterTasks = service.findAllForChapter(chapterId);
-        return ResponseUtil.wrapOrNotFound(chapterTasks);
+        return ResponseUtil.wrapOrNoContent(chapterTasks);
     }
 
     @PostMapping
@@ -48,26 +48,26 @@ public class TaskController {
     }
 
     @PutMapping("/{taskId}")
-    public ResponseEntity<Task> update(@PathVariable @NotNull final TaskId taskId,
+    public ResponseEntity<Task> update(@PathVariable final TaskId taskId,
                                        @Valid @RequestBody final TaskUpdateDto taskUpdateDto) {
-        final var arc = service.update(taskId, taskUpdateDto);
-        return ResponseEntity.ok(arc);
+        final var task = service.update(taskId, taskUpdateDto);
+        return ResponseEntity.ok(task);
     }
 
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> delete(@PathVariable @NotNull final TaskId taskId) {
+    public ResponseEntity<Void> delete(@PathVariable final TaskId taskId) {
         service.delete(taskId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/chapters/{chapterId}")
-    public ResponseEntity<Void> deleteAllForUser(@PathVariable ChapterId chapterId) {
+    public ResponseEntity<Void> deleteAllForChapter(@PathVariable ChapterId chapterId) {
         service.deleteAllForChapter(chapterId);
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{taskId}/complete")
-    public ResponseEntity<Void> completeTask(@PathVariable @NotNull final TaskId taskId,
+    public ResponseEntity<Void> completeTask(@PathVariable final TaskId taskId,
                                              @Valid @RequestBody final TaskCompleteDto taskCompleteDto) {
         service.completeTask(taskId, taskCompleteDto);
         return ResponseEntity.ok().build();

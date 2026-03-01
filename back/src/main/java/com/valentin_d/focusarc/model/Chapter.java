@@ -38,6 +38,10 @@ public class Chapter {
         this(chapterId, arc, estimatedMinutes, 0, LocalDate.now());
     }
 
+    public Chapter(final ArcId arc, final int estimatedMinutes, final LocalDate scheduledDate) {
+        this(ChapterId.random(), arc, estimatedMinutes, 0, scheduledDate);
+    }
+
     public Chapter(final ArcId arc, final int estimatedMinutes) {
         this(ChapterId.random(), arc, estimatedMinutes);
     }

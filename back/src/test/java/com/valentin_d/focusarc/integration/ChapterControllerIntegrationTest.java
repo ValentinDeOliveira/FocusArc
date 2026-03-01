@@ -110,11 +110,11 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     }
 
     @Test
-    void shouldReturnNotFound_whenArcIdExistsWithoutChapter() {
+    void shouldReturnNoContent_whenArcHasNoChapters() {
         final var arc = createArc();
         final var response = request(URL + "/arcs/" + arc.getId().id(), HttpMethod.GET, Void.class);
 
-        assertNotFound(response);
+        assertNoContent(response);
     }
 
     @ParameterizedTest

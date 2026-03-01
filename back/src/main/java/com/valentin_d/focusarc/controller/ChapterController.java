@@ -28,15 +28,15 @@ public class ChapterController {
     private final ChapterService service;
 
     @GetMapping("/{chapterId}")
-    public ResponseEntity<Chapter> getById(@PathVariable ChapterId chapterId) {
+    public ResponseEntity<Chapter> getById(@PathVariable final ChapterId chapterId) {
         final var chapter = service.findById(chapterId);
         return ResponseUtil.wrapOrNotFound(chapter);
     }
 
     @GetMapping("/arcs/{arcId}")
-    public ResponseEntity<List<Chapter>> getAllForArc(@PathVariable ArcId arcId) {
+    public ResponseEntity<List<Chapter>> getAllForArc(@PathVariable final ArcId arcId) {
         final var arcChapters = service.findAllForArc(arcId);
-        return ResponseUtil.wrapOrNotFound(arcChapters);
+        return ResponseUtil.wrapOrNoContent(arcChapters);
     }
 
     @PostMapping
@@ -46,20 +46,20 @@ public class ChapterController {
     }
 
     @PutMapping("/{chapterId}")
-    public ResponseEntity<Chapter> update(@PathVariable @NotNull final ChapterId chapterId,
+    public ResponseEntity<Chapter> update(@PathVariable final ChapterId chapterId,
                                        @Valid @RequestBody final ChapterUpdateDto chapterUpdateDto) {
         final var chapter = service.update(chapterId, chapterUpdateDto);
         return ResponseEntity.ok(chapter);
     }
 
     @DeleteMapping("/{chapterId}")
-    public ResponseEntity<Void> delete(@PathVariable @NotNull final ChapterId chapterId) {
+    public ResponseEntity<Void> delete(@PathVariable final ChapterId chapterId) {
         service.delete(chapterId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/arcs/{arcId}")
-    public ResponseEntity<Void> deleteAllForArc(@PathVariable ArcId arcId) {
+    public ResponseEntity<Void> deleteAllForArc(@PathVariable final ArcId arcId) {
         service.deleteAllForArc(arcId);
         return ResponseEntity.noContent().build();
     }

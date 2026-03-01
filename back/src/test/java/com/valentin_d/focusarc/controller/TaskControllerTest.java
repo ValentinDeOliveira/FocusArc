@@ -56,11 +56,11 @@ class TaskControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldReturnNotFound_whenArcIdDoesNotExists() throws Exception {
+    void shouldReturnNoContent_whenChapterHasNoTasks() throws Exception {
         when(taskService.findAllForChapter(any())).thenReturn(List.of());
 
         mvcGet(ROOT + "/chapters/" + ChapterId.random().id())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNoContent());
     }
 
     @Test
