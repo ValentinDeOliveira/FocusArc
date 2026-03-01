@@ -1,10 +1,12 @@
 package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.dto.chapter.ChapterCreationDto;
+import com.valentin_d.focusarc.dto.chapter.ChapterSummaryResponseDto;
 import com.valentin_d.focusarc.dto.chapter.ChapterUpdateDto;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;
@@ -60,5 +62,10 @@ public class ChapterController {
     public ResponseEntity<Void> deleteAllForArc(@PathVariable ArcId arcId) {
         service.deleteAllForArc(arcId);
         return ResponseEntity.noContent().build();
+    }
+
+    @GetMapping("/summary")
+    public ResponseEntity<ChapterSummaryResponseDto> getChapterSummary(@RequestParam("userId") @NotNull final UserId userId) {
+        return ResponseEntity.ok(service.getChapterSummary(userId));
     }
 }
