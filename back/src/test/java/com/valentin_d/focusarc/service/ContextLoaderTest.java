@@ -19,8 +19,6 @@ import java.time.LocalDate;
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArc;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapterWithArcId;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)

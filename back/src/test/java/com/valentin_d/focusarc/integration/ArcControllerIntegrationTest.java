@@ -96,11 +96,11 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     }
 
     @Test
-    void shouldReturnNotFound_whenUserIdExistsWithoutArc() {
+    void shouldReturnNoContent_whenUserHasNoArcs() {
         final var user = createUser();
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.GET, Void.class);
 
-        assertNotFound(response);
+        assertNoContent(response);
     }
 
     @ParameterizedTest

@@ -8,6 +8,7 @@ import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.service.arc.ArcLoader;
 import com.valentin_d.focusarc.service.arc.ArcService;
+import com.valentin_d.focusarc.service.chapter.ChapterService;
 import com.valentin_d.focusarc.service.user.UserLoader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -31,9 +32,10 @@ class ArcServiceTest {
     private ArcLoader arcLoader;
     @Mock
     private UserLoader userLoader;
-
+    @Mock
+    private ChapterService chapterService;
     @InjectMocks
-    private ArcService service;
+    private ArcService arcService;
 
     @Test
     void shouldCreateArc_whenUserDoesExist() {
@@ -42,7 +44,7 @@ class ArcServiceTest {
         when(arcRepository.save(any(Arc.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        final var result = service.create(creationDto);
+        final var result = arcService.create(creationDto);
 
         assertEquals(creationDto.ownerId(), result.getOwner());
         assertEquals(creationDto.name(), result.getName());
@@ -58,7 +60,7 @@ class ArcServiceTest {
 
         doThrowUserDoesNotExist(creationDto.ownerId());
 
-        assertThatThrownBy(() -> service.create(creationDto))
+        assertThatThrownBy(() -> arcService.create(creationDto))
                 .isInstanceOf(UserDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(creationDto.ownerId().id().toString()));
 
@@ -73,7 +75,7 @@ class ArcServiceTest {
                 .when(arcLoader)
                 .assertNotAnotherActiveArc(eq(creationDto.ownerId()));
 
-        assertThatThrownBy(() -> service.create(creationDto))
+        assertThatThrownBy(() -> arcService.create(creationDto))
                 .isInstanceOf(ArcAlreadyExistsException.class)
                 .hasMessageContaining(String.valueOf(creationDto.ownerId().id().toString()));
 
@@ -90,7 +92,7 @@ class ArcServiceTest {
         when(arcRepository.save(any(Arc.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        final Arc updated = service.update(arc.getId(), updateDto);
+        final Arc updated = arcService.update(arc.getId(), updateDto);
 
         verify(arcRepository).save(arc);
 
@@ -108,7 +110,7 @@ class ArcServiceTest {
         when(arcLoader.getArcIfExists(eq(arc.getId())))
                 .thenThrow((new ArcDoesNotExistException(arc.getId())));
 
-        assertThatThrownBy(() -> service.update(arc.getId(), updateDto))
+        assertThatThrownBy(() -> arcService.update(arc.getId(), updateDto))
                 .isInstanceOf(ArcDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
@@ -121,9 +123,10 @@ class ArcServiceTest {
 
         when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
 
-        service.delete(arc.getId());
+        arcService.delete(arc.getId());
 
         verify(arcRepository).delete(arc);
+        verify(chapterService).deleteAllForArc(arc.getId());
     }
 
     @Test
@@ -133,7 +136,7 @@ class ArcServiceTest {
         when(arcLoader.getArcIfExists(eq(arc.getId())))
                 .thenThrow((new ArcDoesNotExistException(arc.getId())));
 
-        assertThatThrownBy(() -> service.delete(arc.getId()))
+        assertThatThrownBy(() -> arcService.delete(arc.getId()))
                 .isInstanceOf(ArcDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
@@ -147,9 +150,10 @@ class ArcServiceTest {
 
         when(arcRepository.findAllByOwner(user.getId())).thenReturn(List.of(arc));
 
-        service.deleteAllForUser(user.getId());
+        arcService.deleteAllForUser(user.getId());
 
         verify(arcRepository).deleteAll(List.of(arc));
+        verify(chapterService).deleteAllForArc(arc.getId());
     }
 
     @Test
@@ -158,7 +162,7 @@ class ArcServiceTest {
 
         doThrowUserDoesNotExist(userId);
 
-        assertThatThrownBy(() -> service.deleteAllForUser(userId))
+        assertThatThrownBy(() -> arcService.deleteAllForUser(userId))
                 .isInstanceOf(UserDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(userId.id()));
 
@@ -169,7 +173,7 @@ class ArcServiceTest {
     void shouldGetAllArcsForUser_whenUserExists() {
         final var arc = anArc();
 
-        service.findAllForUser(arc.getOwner());
+        arcService.findAllForUser(arc.getOwner());
 
         verify(arcRepository).findAllByOwner(arc.getOwner());
     }
@@ -180,7 +184,7 @@ class ArcServiceTest {
 
         doThrowUserDoesNotExist(arc.getOwner());
 
-        assertThatThrownBy(() -> service.findAllForUser(arc.getOwner()))
+        assertThatThrownBy(() -> arcService.findAllForUser(arc.getOwner()))
                 .isInstanceOf(UserDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(arc.getOwner().id()));
 

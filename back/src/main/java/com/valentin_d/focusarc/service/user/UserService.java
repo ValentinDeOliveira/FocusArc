@@ -3,7 +3,6 @@ package com.valentin_d.focusarc.service.user;
 import com.valentin_d.focusarc.dto.user.UserCreationDto;
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
 import com.valentin_d.focusarc.exception.EmailAlreadyExistsException;
-import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.UserRepository;
@@ -12,13 +11,16 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.Optional;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class UserService {
     private final UserRepository repository;
+    private final UserLoader userLoader;
 
     public User create(@NotNull final UserCreationDto userDto) {
         findByEmail(userDto.email()).ifPresent(user -> {
@@ -38,16 +40,16 @@ public class UserService {
         return repository.findById(id);
     }
 
-    public User update(@NotNull final UserUpdateDto dto, @NotBlank final UserId id) {
-        final var user = findById(id).orElseThrow(() -> new UserDoesNotExistException(id));
+    public User update(@NotNull final UserId id, @NotNull final UserUpdateDto dto) {
+        final var user = userLoader.getUserIfExists(id);
 
         if (dto.name() != null) user.setName(dto.name());
 
         return repository.save(user);
     }
 
-    public void delete(@NotBlank final UserId id) {
-        final var user = findById(id).orElseThrow(() -> new UserDoesNotExistException(id));
+    public void delete(@NotNull final UserId id) {
+        final var user = userLoader.getUserIfExists(id);
         repository.delete(user);
     }
 }

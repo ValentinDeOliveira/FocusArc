@@ -116,11 +116,11 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
     }
 
     @Test
-    void shouldReturnNotFound_whenChapterIdExistsWithoutTasks() {
+    void shouldReturnNoContent_whenChapterHasNoTasks() {
         final var chapter = createChapter();
         final var response = request(URL + "/chapters/" + chapter.getId().id(), HttpMethod.GET, Void.class);
 
-        assertNotFound(response);
+        assertNoContent(response);
     }
 
     @ParameterizedTest

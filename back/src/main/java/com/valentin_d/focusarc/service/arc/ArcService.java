@@ -6,20 +6,24 @@ import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
+import com.valentin_d.focusarc.service.chapter.ChapterService;
 import com.valentin_d.focusarc.service.user.UserLoader;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.Optional;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class ArcService {
     private final ArcRepository arcRepository;
     private final ArcLoader arcLoader;
     private final UserLoader userLoader;
+    private final ChapterService chapterService;
 
     public Optional<Arc> findById(final ArcId arcId) {
         return arcRepository.findById(arcId);
@@ -50,6 +54,7 @@ public class ArcService {
 
     public void delete(@NotNull final ArcId arcId) {
         final var arc = arcLoader.getArcIfExists(arcId);
+        chapterService.deleteAllForArc(arcId);
         arcRepository.delete(arc);
     }
 
@@ -57,6 +62,7 @@ public class ArcService {
         userLoader.assertUserExists(userId);
 
         final var arcs = arcRepository.findAllByOwner(userId);
+        arcs.forEach(arc -> chapterService.deleteAllForArc(arc.getId()));
         arcRepository.deleteAll(arcs);
     }
 }

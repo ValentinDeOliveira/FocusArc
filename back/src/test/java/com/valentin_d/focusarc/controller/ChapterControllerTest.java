@@ -2,6 +2,8 @@ package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.controller.assertions.ChapterAssertion;
 import com.valentin_d.focusarc.controller.assertions.ChapterSummaryResponseAssertion;
+import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
+import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
@@ -58,10 +60,18 @@ class ChapterControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldReturnNotFound_whenArcIdDoesNotExists() throws Exception {
+    void shouldReturnNoContent_whenArcHasNoChapters() throws Exception {
         when(chapterService.findAllForArc(any())).thenReturn(List.of());
 
         mvcGet(ROOT + "/arcs/" + ChapterId.random().id())
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldReturnNotFound_whenArcDoesNotExist() throws Exception {
+        when(chapterService.findAllForArc(any())).thenThrow(new ArcDoesNotExistException(ArcId.random()));
+
+        mvcGet(ROOT + "/arcs/" + ArcId.random().id())
                 .andExpect(status().isNotFound());
     }
 
