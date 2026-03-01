@@ -56,11 +56,11 @@ class ArcControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldReturnNotFound_whenUserIdDoesNotExists() throws Exception {
+    void shouldReturnNoContent_whenUserHasNoArcs() throws Exception {
         when(arcService.findAllForUser(any())).thenReturn(List.of());
 
         mvcGet(ROOT + "/users/" + ArcId.random().id())
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNoContent());
     }
 
     @Test

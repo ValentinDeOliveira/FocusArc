@@ -4,6 +4,7 @@ import com.valentin_d.focusarc.exception.EmailAlreadyExistsException;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.repository.UserRepository;
+import com.valentin_d.focusarc.service.user.UserLoader;
 import com.valentin_d.focusarc.service.user.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -22,6 +23,8 @@ import static org.mockito.Mockito.*;
 class UserServiceTest {
     @Mock
     private UserRepository repository;
+    @Mock
+    private UserLoader userLoader;
     @InjectMocks
     private UserService service;
 
@@ -59,14 +62,13 @@ class UserServiceTest {
     void shouldUpdateUser_whenIdExists() {
         final var user = aUser();
         final var updateDto = aUserUpdateDto();
-        when(repository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userLoader.getUserIfExists(user.getId())).thenReturn(user);
         when(repository.save(any(User.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        final User updated = service.update(updateDto, user.getId());
+        final User updated = service.update(user.getId(), updateDto);
 
         verify(repository).save(user);
-        verify(repository).findById(user.getId());
 
         assertEquals(updateDto.name(), updated.getName());
         assertEquals(user.getEmail(), updated.getEmail());
@@ -77,37 +79,32 @@ class UserServiceTest {
     void shouldThrowException_whenUpdatingNonExistingUser() {
         final var user = aUser();
         final var updateDto = aUserUpdateDto();
-        when(repository.findById(user.getId())).thenReturn(Optional.empty());
+        when(userLoader.getUserIfExists(user.getId())).thenThrow(UserDoesNotExistException.class);
 
-        assertThatThrownBy(() -> service.update(updateDto, user.getId()))
-                .isInstanceOf(UserDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(user.getId().id()));
+        assertThatThrownBy(() -> service.update(user.getId(), updateDto))
+                .isInstanceOf(UserDoesNotExistException.class);
 
         verify(repository, never()).save(user);
-        verify(repository).findById(user.getId());
     }
 
     @Test
     void shouldDeleteUser_whenIdExists() {
         final var user = aUser();
-        when(repository.findById(user.getId())).thenReturn(Optional.of(user));
+        when(userLoader.getUserIfExists(user.getId())).thenReturn(user);
 
         service.delete(user.getId());
 
-        verify(repository).findById(user.getId());
         verify(repository).delete(user);
     }
 
     @Test
     void shouldThrowException_whenDeletingNonExistingUser() {
         final var user = aUser();
-        when(repository.findById(user.getId())).thenReturn(Optional.empty());
+        when(userLoader.getUserIfExists(user.getId())).thenThrow(UserDoesNotExistException.class);
 
         assertThatThrownBy(() -> service.delete(user.getId()))
-                .isInstanceOf(UserDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(user.getId().id()));
+                .isInstanceOf(UserDoesNotExistException.class);
 
         verify(repository, never()).delete(user);
-        verify(repository).findById(user.getId());
     }
 }

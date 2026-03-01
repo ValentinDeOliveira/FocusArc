@@ -17,6 +17,7 @@ import com.valentin_d.focusarc.service.chapter.ChapterRecalculationService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.annotation.Validated;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +25,7 @@ import java.util.Optional;
 import static com.valentin_d.focusarc.shared.TimeConstraints.MINUTES_PER_DAY;
 
 @Service
+@Validated
 @RequiredArgsConstructor
 public class TaskService {
     private final TaskRepository taskRepository;
@@ -77,13 +79,19 @@ public class TaskService {
     public void delete(@NotNull final TaskId taskId) {
         final var task = taskLoader.getTaskIfExists(taskId);
         taskRepository.delete(task);
+
+        chapterRecalculationService.recalculateEstimatedMinutes(task.getChapter());
+        chapterRecalculationService.recalculateCompletedMinutes(task.getChapter());
     }
 
     public void deleteAllForChapter(@NotNull final ChapterId chapterId) {
         chapterLoader.assertChapterExists(chapterId);
 
-        final var chapters = taskRepository.findAllByChapter(chapterId);
-        taskRepository.deleteAll(chapters);
+        final var tasks = taskRepository.findAllByChapter(chapterId);
+        taskRepository.deleteAll(tasks);
+
+        chapterRecalculationService.recalculateEstimatedMinutes(chapterId);
+        chapterRecalculationService.recalculateCompletedMinutes(chapterId);
     }
 
     public void completeTask(@NotNull final TaskId taskId, @NotNull final TaskCompleteDto taskCompleteDto) {

@@ -1,9 +1,11 @@
 package com.valentin_d.focusarc.service.user;
 
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
+import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.UserRepository;
 import com.valentin_d.focusarc.service.BaseService;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -12,7 +14,11 @@ import org.springframework.stereotype.Component;
 public class UserLoader extends BaseService {
     private final UserRepository userRepository;
 
-    public void assertUserExists(final UserId userId) {
+    public User getUserIfExists(@NotNull final UserId userId) {
+        return fetchOrThrow(userRepository, userId, () -> new UserDoesNotExistException(userId));
+    }
+
+    public void assertUserExists(@NotNull final UserId userId) {
         existsOrThrow(userRepository, userId, () -> new UserDoesNotExistException(userId));
     }
 }

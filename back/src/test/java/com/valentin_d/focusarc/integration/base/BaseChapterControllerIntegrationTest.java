@@ -49,6 +49,7 @@ public class BaseChapterControllerIntegrationTest extends BaseIntegrationTest{
         assertEquals(expected.getCompletedMinutes(), actual.getCompletedMinutes());
         assertEquals(expected.getEstimatedMinutes(), actual.getEstimatedMinutes());
         assertEquals(expected.getArc(), actual.getArc());
+        assertEquals(expected.getScheduledDate(), actual.getScheduledDate());
     }
 
     protected Arc createArc() {

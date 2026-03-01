@@ -5,12 +5,15 @@ import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
+import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ChapterRepository;
 import com.valentin_d.focusarc.service.arc.ArcLoader;
+import com.valentin_d.focusarc.service.arc.ArcRecalculationService;
 import com.valentin_d.focusarc.service.chapter.ChapterLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
 import com.valentin_d.focusarc.service.task.TaskLoader;
+import com.valentin_d.focusarc.service.task.TaskService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -40,7 +43,11 @@ class ChapterServiceTest {
     @Mock
     private TaskLoader taskLoader;
     @Mock
+    private TaskService taskService;
+    @Mock
     private ContextLoader contextLoader;
+    @Mock
+    private ArcRecalculationService arcRecalculationService;
     @InjectMocks
     private ChapterService service;
 
@@ -119,6 +126,9 @@ class ChapterServiceTest {
         service.delete(chapter.getId());
 
         verify(chapterRepository).delete(chapter);
+        verify(taskService).deleteAllForChapter(chapter.getId());
+        verify(arcRecalculationService).recalculateCompletedMinutes(chapter.getArc());
+        verify(arcRecalculationService).recalculateEstimatedMinutes(chapter.getArc());
     }
 
     @Test
@@ -132,7 +142,10 @@ class ChapterServiceTest {
                 .isInstanceOf(ChapterDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(chapter.getId().id()));
 
+        verify(taskService, never()).deleteAllForChapter(any(ChapterId.class));
         verify(chapterRepository, never()).delete(any(Chapter.class));
+        verify(arcRecalculationService, never()).recalculateCompletedMinutes(any(ArcId.class));
+        verify(arcRecalculationService, never()).recalculateEstimatedMinutes(any(ArcId.class));
     }
 
     @Test
@@ -144,7 +157,10 @@ class ChapterServiceTest {
 
         service.deleteAllForArc(arc.getId());
 
+        verify(taskService).deleteAllForChapter(chapter.getId());
         verify(chapterRepository).deleteAll(List.of(chapter));
+        verify(arcRecalculationService).recalculateCompletedMinutes(chapter.getArc());
+        verify(arcRecalculationService).recalculateEstimatedMinutes(chapter.getArc());
     }
 
     @Test
@@ -157,7 +173,10 @@ class ChapterServiceTest {
                 .isInstanceOf(ArcDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
+        verify(taskService, never()).deleteAllForChapter(any(ChapterId.class));
         verify(chapterRepository, never()).deleteAll(anyList());
+        verify(arcRecalculationService, never()).recalculateCompletedMinutes(any(ArcId.class));
+        verify(arcRecalculationService, never()).recalculateEstimatedMinutes(any(ArcId.class));
     }
 
     @Test

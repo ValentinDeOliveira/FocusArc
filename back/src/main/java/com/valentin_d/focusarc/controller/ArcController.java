@@ -8,7 +8,6 @@ import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.arc.ArcService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,15 +25,15 @@ public class ArcController {
     private final ArcService service;
 
     @GetMapping("/{arcId}")
-    public ResponseEntity<Arc> getById(@PathVariable ArcId arcId) {
+    public ResponseEntity<Arc> getById(@PathVariable final ArcId arcId) {
         final var arc = service.findById(arcId);
         return ResponseUtil.wrapOrNotFound(arc);
     }
 
     @GetMapping("/users/{userId}")
-    public ResponseEntity<List<Arc>> getAllForUser(@PathVariable UserId userId) {
+    public ResponseEntity<List<Arc>> getAllForUser(@PathVariable final UserId userId) {
         final var userArcs = service.findAllForUser(userId);
-        return ResponseUtil.wrapOrNotFound(userArcs);
+        return ResponseUtil.wrapOrNoContent(userArcs);
     }
 
     @PostMapping
@@ -44,20 +43,20 @@ public class ArcController {
     }
 
     @PutMapping("/{arcId}")
-    public ResponseEntity<Arc> update(@PathVariable @NotNull final ArcId arcId,
+    public ResponseEntity<Arc> update(@PathVariable final ArcId arcId,
                                        @Valid @RequestBody final ArcUpdateDto arcUpdateDto) {
         final var arc = service.update(arcId, arcUpdateDto);
         return ResponseEntity.ok(arc);
     }
 
     @DeleteMapping("/{arcId}")
-    public ResponseEntity<Void> delete(@PathVariable @NotNull final ArcId arcId) {
+    public ResponseEntity<Void> delete(@PathVariable final ArcId arcId) {
         service.delete(arcId);
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/users/{userId}")
-    public ResponseEntity<Void> deleteAllForUser(@PathVariable UserId userId) {
+    public ResponseEntity<Void> deleteAllForUser(@PathVariable final UserId userId) {
         service.deleteAllForUser(userId);
         return ResponseEntity.noContent().build();
     }
