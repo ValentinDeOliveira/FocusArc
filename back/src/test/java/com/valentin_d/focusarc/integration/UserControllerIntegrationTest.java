@@ -2,8 +2,8 @@ package com.valentin_d.focusarc.integration;
 
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseUserControllerIntegrationTest;
-import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.user.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;

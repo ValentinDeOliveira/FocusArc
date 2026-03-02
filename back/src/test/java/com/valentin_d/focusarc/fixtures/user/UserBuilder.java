@@ -1,7 +1,7 @@
 package com.valentin_d.focusarc.fixtures.user;
 
-import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.user.User;
 import lombok.Builder;
 
 import java.time.LocalDateTime;

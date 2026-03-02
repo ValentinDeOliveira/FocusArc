@@ -2,10 +2,10 @@ package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
-import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.arc.ArcService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;

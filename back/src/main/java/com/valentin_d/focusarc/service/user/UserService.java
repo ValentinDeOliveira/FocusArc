@@ -1,9 +1,9 @@
 package com.valentin_d.focusarc.service.user;
 
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
-import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.auth.RegisterRequestDto;
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.repository.UserRepository;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;

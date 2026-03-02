@@ -3,7 +3,7 @@ package com.valentin_d.focusarc.fixtures.factory;
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
 import com.valentin_d.focusarc.fixtures.user.UserBuilder;
 import com.valentin_d.focusarc.fixtures.user.UserUpdateDtoBuilder;
-import com.valentin_d.focusarc.model.User;
+import com.valentin_d.focusarc.model.user.User;
 
 public final class UserFactory {
     private UserFactory() {}

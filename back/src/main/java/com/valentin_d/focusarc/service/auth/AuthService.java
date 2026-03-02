@@ -2,11 +2,11 @@ package com.valentin_d.focusarc.service.auth;
 
 import com.valentin_d.focusarc.exception.InvalidCredentialsException;
 import com.valentin_d.focusarc.exception.InvalidTokenException;
-import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.auth.AuthResponseDto;
 import com.valentin_d.focusarc.model.auth.LoginDto;
 import com.valentin_d.focusarc.model.auth.RefreshRequestDto;
 import com.valentin_d.focusarc.model.auth.RegisterRequestDto;
+import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.user.UserLoader;
 import com.valentin_d.focusarc.service.user.UserService;
 import lombok.RequiredArgsConstructor;

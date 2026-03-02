@@ -1,6 +1,6 @@
 package com.valentin_d.focusarc.controller.assertions;
 
-import com.valentin_d.focusarc.model.User;
+import com.valentin_d.focusarc.model.user.User;
 import org.springframework.test.web.servlet.ResultActions;
 
 public class UserAssertion extends BaseAssertion<User> {

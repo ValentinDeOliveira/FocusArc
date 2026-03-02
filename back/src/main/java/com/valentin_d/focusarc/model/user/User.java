@@ -1,4 +1,4 @@
-package com.valentin_d.focusarc.model;
+package com.valentin_d.focusarc.model.user;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.valentin_d.focusarc.model.id.UserId;

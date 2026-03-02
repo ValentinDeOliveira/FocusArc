@@ -4,9 +4,9 @@ import com.valentin_d.focusarc.dto.chapter.ChapterCreationDto;
 import com.valentin_d.focusarc.dto.chapter.ChapterSummaryResponseDto;
 import com.valentin_d.focusarc.dto.chapter.ChapterUpdateDto;
 import com.valentin_d.focusarc.model.Chapter;
-import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;
@@ -65,7 +65,8 @@ public class ChapterController {
     }
 
     @GetMapping("/summary")
-    public ResponseEntity<ChapterSummaryResponseDto> getChapterSummary(@AuthenticationPrincipal User user) {
-        return ResponseEntity.ok(service.getChapterSummary(user.getId()));
+    public ResponseEntity<ChapterSummaryResponseDto> getChapterSummary(@AuthenticationPrincipal final User user) {
+        final var summary = service.getChapterSummary(user.getId());
+        return ResponseEntity.ok(summary);
     }
 }

@@ -1,6 +1,6 @@
 package com.valentin_d.focusarc.integration.base;
 
-import com.valentin_d.focusarc.model.User;
+import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;

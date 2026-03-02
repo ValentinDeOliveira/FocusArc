@@ -16,6 +16,7 @@ import java.util.Optional;
 
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTask;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -28,6 +29,7 @@ class ChapterControllerTest extends BaseControllerTest {
     private final static String ROOT = "/chapters";
     private final ChapterAssertion chapterAssertion = new ChapterAssertion();
     private final ChapterSummaryResponseAssertion chapterSummaryResponseAssertion = new ChapterSummaryResponseAssertion();
+
     @Test
     void shouldReturnChapter_whenIdExists() throws Exception {
         final var chapter = aChapter();
@@ -123,12 +125,12 @@ class ChapterControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnSummary_whenGettingSummary() throws Exception {
+        final var user = aUser();
         final var task = aTask();
         final var summary = aChapterSummaryResponseDtoWithTasks(List.of(task));
-        final var userId = UserId.random();
 
-        when(chapterService.getChapterSummary(userId)).thenReturn(summary);
-        final var actions = mvcGet(ROOT + "/summary?userId=" + userId.id())
+        when(chapterService.getChapterSummary(any())).thenReturn(summary);
+        final var actions = mvcGetWith(ROOT + "/summary", user)
                 .andExpect(status().isOk());
 
         chapterSummaryResponseAssertion.assertSingleJson(actions, summary);
