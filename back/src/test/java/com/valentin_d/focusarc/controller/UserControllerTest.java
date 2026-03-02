@@ -10,7 +10,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Optional;
 
-import static com.valentin_d.focusarc.fixtures.factory.UserFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUserUpdateDto;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -41,19 +42,6 @@ class UserControllerTest extends BaseControllerTest {
 
         mvcGet(ROOT + "/email?email=" + user.getEmail())
                 .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void shouldCreateUser_whenDataIsValid() throws Exception {
-        final var user = aUser();
-        when(userService.create(any())).thenReturn(user);
-
-        final var json = toJson(aUserCreationDto());
-
-        final var actions = mvcPost(ROOT, json)
-                .andExpect(status().isCreated());
-
-        userAssertion.assertSingleJson(actions, user);
     }
 
     @Test

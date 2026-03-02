@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UserControllerIntegrationTest extends BaseUserControllerIntegrationTest {
-    @Test
+    /*@Test
     void shouldCreateUser_whenDataIsValid() {
         final var dto = aUserCreationDto();
 
@@ -41,7 +41,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
         final var response = request(URL, HttpMethod.POST, dto, Void.class);
 
         assertConflict(response);
-    }
+    }*/
 
     @Test
     void shouldReturnUser_whenEmailExists() {

@@ -11,10 +11,11 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
-import java.util.Optional;
-
-import static com.valentin_d.focusarc.fixtures.factory.UserFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUserUpdateDto;
+import static com.valentin_d.focusarc.fixtures.factory.auth.RegisterRequestDtoFactory.aRegisterRequestDto;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -25,14 +26,14 @@ class UserServiceTest {
     private UserRepository repository;
     @Mock
     private UserLoader userLoader;
+    @Mock
+    private PasswordEncoder passwordEncoder;
     @InjectMocks
     private UserService service;
 
     @Test
     void shouldCreateUser_whenEmailDoesNotExist() {
-        final var creationDto = aUserCreationDto();
-        when(repository.findByEmail(creationDto.email()))
-                .thenReturn(Optional.empty());
+        final var creationDto = aRegisterRequestDto();
 
         when(repository.save(any(User.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -40,21 +41,23 @@ class UserServiceTest {
         final var result = service.create(creationDto);
 
         assertEquals(result.getEmail(), creationDto.email());
-        verify(repository).findByEmail(creationDto.email());
+        verify(userLoader).assertEmailDoNotExist(creationDto.email());
         verify(repository).save(any(User.class));
     }
 
     @Test
     void shouldThrowExceptionOnCreation_whenEmailAlreadyExists() {
-        final var creationDto = aUserCreationDto();
-        when(repository.findByEmail(creationDto.email()))
-                .thenReturn(Optional.of(new User("Existing", creationDto.email())));
+        final var creationDto = aRegisterRequestDto();
+
+        doThrow(new EmailAlreadyExistsException(creationDto.email()))
+                .when(userLoader)
+                .assertEmailDoNotExist(creationDto.email());
 
         assertThatThrownBy(() -> service.create(creationDto))
                 .isInstanceOf(EmailAlreadyExistsException.class)
                 .hasMessageContaining(creationDto.email());
 
-        verify(repository).findByEmail(creationDto.email());
+        verify(userLoader).assertEmailDoNotExist(creationDto.email());
         verify(repository, never()).save(any(User.class));
     }
 

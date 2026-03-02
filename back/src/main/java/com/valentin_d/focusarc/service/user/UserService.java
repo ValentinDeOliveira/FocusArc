@@ -1,8 +1,8 @@
 package com.valentin_d.focusarc.service.user;
 
-import com.valentin_d.focusarc.dto.user.UserCreationDto;
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
 import com.valentin_d.focusarc.model.User;
+import com.valentin_d.focusarc.model.auth.RegisterRequestDto;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.UserRepository;
 import jakarta.validation.constraints.Email;
@@ -23,10 +23,11 @@ public class UserService {
     private final UserLoader userLoader;
     private final PasswordEncoder passwordEncoder;
 
-    public User create(@NotNull final UserCreationDto userDto) {
-        userLoader.assertEmailDoNotExist(userDto.email());
+    public User create(@NotNull final RegisterRequestDto registerDto) {
+        userLoader.assertEmailDoNotExist(registerDto.email());
 
-        final var user = new User(userDto.name(), userDto.email(), passwordEncoder.encode(userDto.password()));
+        final var user = new User(registerDto.name(), registerDto.email(),
+                passwordEncoder.encode(registerDto.password()));
 
         return repository.save(user);
     }
