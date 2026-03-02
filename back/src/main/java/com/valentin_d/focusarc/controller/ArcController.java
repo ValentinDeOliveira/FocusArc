@@ -2,6 +2,7 @@ package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
+import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
@@ -11,6 +12,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -37,9 +39,10 @@ public class ArcController {
     }
 
     @PostMapping
-    public ResponseEntity<Arc> create(@Valid @RequestBody final ArcCreationDto arcCreationDto) {
-        final var arc = service.create(arcCreationDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(arc);
+    public ResponseEntity<Arc> create(@AuthenticationPrincipal User user,
+                                      @Valid @RequestBody final ArcCreationDto arcCreationDto) {
+        final var dto = new ArcCreationDto(user.getId(), arcCreationDto.name(), arcCreationDto.totalEstimatedMinutes());
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
     }
 
     @PutMapping("/{arcId}")

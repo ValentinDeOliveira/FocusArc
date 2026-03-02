@@ -4,16 +4,16 @@ import com.valentin_d.focusarc.dto.chapter.ChapterCreationDto;
 import com.valentin_d.focusarc.dto.chapter.ChapterSummaryResponseDto;
 import com.valentin_d.focusarc.dto.chapter.ChapterUpdateDto;
 import com.valentin_d.focusarc.model.Chapter;
+import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
-import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -65,7 +65,7 @@ public class ChapterController {
     }
 
     @GetMapping("/summary")
-    public ResponseEntity<ChapterSummaryResponseDto> getChapterSummary(@RequestParam("userId") @NotNull final UserId userId) {
-        return ResponseEntity.ok(service.getChapterSummary(userId));
+    public ResponseEntity<ChapterSummaryResponseDto> getChapterSummary(@AuthenticationPrincipal User user) {
+        return ResponseEntity.ok(service.getChapterSummary(user.getId()));
     }
 }
