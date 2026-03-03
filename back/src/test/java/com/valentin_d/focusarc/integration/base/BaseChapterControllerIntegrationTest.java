@@ -28,7 +28,7 @@ import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapterWi
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskWithChapterIdAndStatus;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BaseChapterControllerIntegrationTest extends BaseIntegrationTest{
+public class BaseChapterControllerIntegrationTest extends SecuredIntegrationTest {
     @Autowired
     protected ChapterRepository chapterRepository;
     @Autowired

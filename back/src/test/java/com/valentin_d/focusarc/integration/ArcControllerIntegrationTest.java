@@ -34,7 +34,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
         final var response = request(URL, HttpMethod.POST, requestEntity, Arc.class);
 
-        assertCreated(response);
+        assertionHelper.assertCreated(response);
 
         final var arc = response.getBody();
         assertNotNull(arc);
@@ -57,7 +57,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
         final var response = request(URL, HttpMethod.POST, requestEntity, Void.class);
 
-        assertBadRequest(response);
+        assertionHelper.assertBadRequest(response);
     }
 
     @Test
@@ -65,7 +65,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         final var arc = createArc();
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.GET, Arc.class);
-        assertOk(response);
+        assertionHelper.assertOk(response);
 
         final var result = response.getBody();
         assertNotNull(result);
@@ -80,7 +80,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         final var arc2 = createArcForUser(user.getId(), ArcStatus.COMPLETED);
 
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.GET, Arc[].class);
-        assertOk(response);
+        assertionHelper.assertOk(response);
         assertNotNull(response.getBody());
 
         final List<Arc> arcs = Arrays.stream(response.getBody()).toList();
@@ -93,7 +93,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     void shouldReturnNotFound_whenUserIdDoesNotExists() {
         final var response = request(URL + "/users/" + UserId.random().id(), HttpMethod.GET, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
@@ -101,7 +101,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         final var user = createUser();
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.GET, Void.class);
 
-        assertNoContent(response);
+        assertionHelper.assertNoContent(response);
     }
 
     @ParameterizedTest
@@ -111,14 +111,14 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.PUT, dto, Arc.class);
 
-        assertOk(response);
+        assertionHelper.assertOk(response);
         final var result = response.getBody();
         assertNotNull(result);
 
         assertEquals(arc.getId(), result.getId());
         assertEquals(arc.getOwner(), result.getOwner());
-        assertEquals(expectedValue(dto.name(), arc.getName()), result.getName());
-        assertEquals(expectedValue(dto.totalEstimatedMinutes(), arc.getTotalEstimatedMinutes()),
+        assertEquals(assertionHelper.expectedValue(dto.name(), arc.getName()), result.getName());
+        assertEquals(assertionHelper.expectedValue(dto.totalEstimatedMinutes(), arc.getTotalEstimatedMinutes()),
                 result.getTotalEstimatedMinutes());
         assertEquals(arc.getTotalCompletedMinutes(), result.getTotalCompletedMinutes());
     }
@@ -138,7 +138,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
         final var response = request(URL + "/" + UserId.random().id(), HttpMethod.PUT, dto, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
@@ -147,14 +147,14 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.DELETE, Void.class);
 
-        assertNoContent(response);
+        assertionHelper.assertNoContent(response);
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingArc() {
         final var response = request(URL + "/" + UserId.random().id(), HttpMethod.DELETE, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
@@ -165,13 +165,13 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.DELETE, Void.class);
 
-        assertNoContent(response);
+        assertionHelper.assertNoContent(response);
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingAllArcForNonExistingUser() {
         final var response = request(URL + "/users/" + UserId.random().id(), HttpMethod.DELETE, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 }

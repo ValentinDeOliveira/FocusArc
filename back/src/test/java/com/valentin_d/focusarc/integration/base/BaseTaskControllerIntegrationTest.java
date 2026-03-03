@@ -16,7 +16,7 @@ import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapter;
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskWithChapterId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BaseTaskControllerIntegrationTest extends BaseIntegrationTest{
+public class BaseTaskControllerIntegrationTest extends SecuredIntegrationTest {
     @Autowired
     protected TaskRepository taskRepository;
     @Autowired

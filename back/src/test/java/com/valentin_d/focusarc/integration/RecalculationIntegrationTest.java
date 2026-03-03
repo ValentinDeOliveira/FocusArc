@@ -15,6 +15,7 @@ import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskComplete
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskCreationDtoWithChapterId;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+//TODO: not sure about inheritence
 public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTest {
     @Test
     public void shouldCreateTaskAndRecalculateEstimatedMinutes_whenDataIsValid() {

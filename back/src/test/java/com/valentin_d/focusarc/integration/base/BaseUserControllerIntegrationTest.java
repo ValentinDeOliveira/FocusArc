@@ -9,7 +9,7 @@ import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class BaseUserControllerIntegrationTest extends BaseIntegrationTest{
+public class BaseUserControllerIntegrationTest extends SecuredIntegrationTest {
     @Autowired
     protected UserRepository userRepository;
     protected final String URL = "/users";

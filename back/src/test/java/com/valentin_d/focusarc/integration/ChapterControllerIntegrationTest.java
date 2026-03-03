@@ -38,7 +38,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         final var dto = aChapterCreationDtoWithArcId(arc.getId());
         final var response = request(URL, HttpMethod.POST, dto, Chapter.class);
 
-        assertCreated(response);
+        assertionHelper.assertCreated(response);
 
         final Chapter chapter = response.getBody();
         assertNotNull(chapter);
@@ -54,7 +54,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
         final var response = request(URL, HttpMethod.POST, dto, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
@@ -67,7 +67,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
         final var response = request(URL, HttpMethod.POST, dto, Void.class);
 
-        assertBadRequest(response);
+        assertionHelper.assertBadRequest(response);
     }
 
     @Test
@@ -75,7 +75,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         final var chapter = createChapter();
 
         final var response = request(URL + "/" + chapter.getId().id(), HttpMethod.GET, Chapter.class);
-        assertOk(response);
+        assertionHelper.assertOk(response);
 
         final var result = response.getBody();
         assertNotNull(result);
@@ -91,7 +91,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         final var chapter2 = createChapterForArcWithDate(arc.getId(), now.plusDays(9));
 
         final var response = request(URL + "/arcs/" + arc.getId().id(), HttpMethod.GET, Chapter[].class);
-        assertOk(response);
+        assertionHelper.assertOk(response);
         assertNotNull(response.getBody());
 
         final List<Chapter> arcs = Arrays.stream(response.getBody()).toList();
@@ -104,7 +104,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     void shouldReturnNotFound_whenArcIdDoesNotExists() {
         final var response = request(URL + "/arcs/" + ArcId.random().id(), HttpMethod.GET, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
@@ -112,7 +112,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         final var arc = createArc();
         final var response = request(URL + "/arcs/" + arc.getId().id(), HttpMethod.GET, Void.class);
 
-        assertNoContent(response);
+        assertionHelper.assertNoContent(response);
     }
 
     @ParameterizedTest
@@ -122,7 +122,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
         final var response = request(URL + "/" + chapter.getId().id(), HttpMethod.PUT, dto, Chapter.class);
 
-        assertOk(response);
+        assertionHelper.assertOk(response);
         final var result = response.getBody();
         assertNotNull(result);
 
@@ -130,7 +130,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         assertEquals(chapter.getArc(), result.getArc());
         assertEquals(chapter.getEstimatedMinutes(), result.getEstimatedMinutes());
         assertEquals(chapter.getCompletedMinutes(), result.getCompletedMinutes());
-        assertEquals(expectedValue(dto.scheduledDate(), chapter.getScheduledDate()), result.getScheduledDate());
+        assertEquals(assertionHelper.expectedValue(dto.scheduledDate(), chapter.getScheduledDate()), result.getScheduledDate());
     }
 
     private static Stream<Arguments> provideChapterUpdateDtos() {
@@ -146,7 +146,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
         final var response = request(URL + "/" + ChapterId.random().id(), HttpMethod.PUT, dto, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
@@ -155,14 +155,14 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
         final var response = request(URL + "/" + chapter.getId().id(), HttpMethod.DELETE, Void.class);
 
-        assertNoContent(response);
+        assertionHelper.assertNoContent(response);
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingChapter() {
         final var response = request(URL + "/" + ChapterId.random().id(), HttpMethod.DELETE, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
@@ -174,14 +174,14 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
         final var response = request(URL + "/arcs/" + arc.getId().id(), HttpMethod.DELETE, Void.class);
 
-        assertNoContent(response);
+        assertionHelper.assertNoContent(response);
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingAllChaptersForNonExistingArc() {
         final var response = request(URL + "/arcs/" + ChapterId.random().id(), HttpMethod.DELETE, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @BeforeEach
@@ -201,7 +201,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
         final var response = exchangeSummaryForUser(user);
 
-        assertOk(response);
+        assertionHelper.assertOk(response);
         final var result = response.getBody();
         assertNotNull(result);
 
@@ -222,7 +222,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
         final var response = exchangeSummaryForUser(user);
 
-        assertOk(response);
+        assertionHelper.assertOk(response);
         final var result = response.getBody();
         assertNotNull(result);
 

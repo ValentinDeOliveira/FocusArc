@@ -13,7 +13,7 @@ import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwner
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class BaseArcControllerIntegrationTest extends BaseIntegrationTest{
+public class BaseArcControllerIntegrationTest extends SecuredIntegrationTest {
     @Autowired
     protected UserRepository userRepository;
     @Autowired

@@ -56,7 +56,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
         final var dto = aTaskCreationDtoWithChapterId(chapter.getId());
         final var response = request(URL, HttpMethod.POST, dto, Task.class);
 
-        assertCreated(response);
+        assertionHelper.assertCreated(response);
 
         final var task = response.getBody();
         assertNotNull(task);
@@ -76,7 +76,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
         final var response = request(URL, HttpMethod.POST, dto, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
@@ -84,7 +84,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
         final var task = createTask();
 
         final var response = request(URL + "/" + task.getId().id(), HttpMethod.GET, Task.class);
-        assertOk(response);
+        assertionHelper.assertOk(response);
 
         final var result = response.getBody();
         assertNotNull(result);
@@ -99,7 +99,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
         final var task2 = createTaskForChapter(chapter.getId());
 
         final var response = request(URL + "/chapters/" + chapter.getId().id(), HttpMethod.GET, Task[].class);
-        assertOk(response);
+        assertionHelper.assertOk(response);
         assertNotNull(response.getBody());
 
         final List<Task> arcs = Arrays.stream(response.getBody()).toList();
@@ -112,7 +112,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
     void shouldReturnNotFound_whenChapterIdDoesNotExists() {
         final var response = request(URL + "/chapters/" + ChapterId.random().id(), HttpMethod.GET, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
@@ -120,7 +120,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
         final var chapter = createChapter();
         final var response = request(URL + "/chapters/" + chapter.getId().id(), HttpMethod.GET, Void.class);
 
-        assertNoContent(response);
+        assertionHelper.assertNoContent(response);
     }
 
     @ParameterizedTest
@@ -130,17 +130,17 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
         final var response = request(URL + "/" + task.getId().id(), HttpMethod.PUT, dto, Task.class);
 
-        assertOk(response);
+        assertionHelper.assertOk(response);
         final var result = response.getBody();
         assertNotNull(result);
 
         assertEquals(task.getId(), result.getId());
         assertEquals(task.getChapter(), result.getChapter());
 
-        assertEquals(expectedValue(dto.estimatedMinutes(), task.getEstimatedMinutes()), result.getEstimatedMinutes());
-        assertEquals(expectedValue(dto.completedMinutes(), task.getCompletedMinutes()), result.getCompletedMinutes());
-        assertEquals(expectedValue(dto.scheduledAt(), task.getScheduledAt()), result.getScheduledAt());
-        assertEquals(expectedValue(dto.taskStatus(), task.getStatus()), result.getStatus());
+        assertEquals(assertionHelper.expectedValue(dto.estimatedMinutes(), task.getEstimatedMinutes()), result.getEstimatedMinutes());
+        assertEquals(assertionHelper.expectedValue(dto.completedMinutes(), task.getCompletedMinutes()), result.getCompletedMinutes());
+        assertEquals(assertionHelper.expectedValue(dto.scheduledAt(), task.getScheduledAt()), result.getScheduledAt());
+        assertEquals(assertionHelper.expectedValue(dto.taskStatus(), task.getStatus()), result.getStatus());
     }
 
     private static Stream<Arguments> provideTaskUpdateDtos() {
@@ -159,7 +159,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
         final var response = request(URL + "/" + TaskId.random().id(), HttpMethod.PUT, dto, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
@@ -168,14 +168,14 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
         final var response = request(URL + "/" + task.getId().id(), HttpMethod.DELETE, Void.class);
 
-        assertNoContent(response);
+        assertionHelper.assertNoContent(response);
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingTask() {
         final var response = request(URL + "/" + TaskId.random().id(), HttpMethod.DELETE, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
@@ -186,14 +186,14 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
         final var response = request(URL + "/chapters/" + chapter.getId().id(), HttpMethod.DELETE, Void.class);
 
-        assertNoContent(response);
+        assertionHelper.assertNoContent(response);
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingAllTasksForNonExistingChapter() {
         final var response = request(URL + "/chapters/" + ChapterId.random().id(), HttpMethod.DELETE, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
@@ -206,7 +206,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
         final var response = exchangeTodayForUser(user, Task[].class);
 
-        assertOk(response);
+        assertionHelper.assertOk(response);
         assertNotNull(response.getBody());
 
         final List<Task> tasks = Arrays.stream(response.getBody()).toList();
@@ -220,7 +220,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
         final var response = exchangeTodayForUser(user, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
@@ -231,6 +231,6 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
         final var response = exchangeTodayForUser(user, Void.class);
 
-        assertBadRequest(response);
+        assertionHelper.assertBadRequest(response);
     }
 }
