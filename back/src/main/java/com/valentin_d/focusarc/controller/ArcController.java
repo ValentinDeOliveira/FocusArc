@@ -23,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 public class ArcController {
-
     private final ArcService service;
 
     @GetMapping("/{arcId}")

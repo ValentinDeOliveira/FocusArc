@@ -7,15 +7,11 @@ import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.TaskId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
-import com.valentin_d.focusarc.repository.ArcRepository;
-import com.valentin_d.focusarc.repository.UserRepository;
 import com.valentin_d.focusarc.service.chapter.ChapterRecalculationService;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpMethod;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
@@ -26,11 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwnerId;
-import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwnerIdAndStatus;
-import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapterWithScheduledDateAndArcId;
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.*;
-import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.assertj.core.api.CollectionAssert.assertThatCollection;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -38,20 +30,10 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class TaskControllerIntegrationTest extends BaseTaskControllerIntegrationTest {
     @MockitoBean
     private ChapterRecalculationService chapterRecalculationService;
-    @Autowired
-    private ArcRepository arcRepository;
-    @Autowired
-    private UserRepository userRepository;
-
-    @BeforeEach
-    public void setup() {
-        arcRepository.deleteAll();
-        userRepository.deleteAll();
-    }
 
     @Test
     void shouldCreateTask_whenDataIsValid() {
-        final var chapter = createChapter();
+        final var chapter = domainFixture.chapter();
 
         final var dto = aTaskCreationDtoWithChapterId(chapter.getId());
         final var response = request(URL, HttpMethod.POST, dto, Task.class);
@@ -81,7 +63,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
     @Test
     void shouldReturnTask_whenIdExists() {
-        final var task = createTask();
+        final var task = domainFixture.taskWithChapter();
 
         final var response = request(URL + "/" + task.getId().id(), HttpMethod.GET, Task.class);
         assertionHelper.assertOk(response);
@@ -94,9 +76,9 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
     @Test
     void shouldReturnAllTask_whenArcChapterExists() {
-        final var chapter = createChapter();
-        final var task1 = createTaskForChapter(chapter.getId());
-        final var task2 = createTaskForChapter(chapter.getId());
+        final var chapter = domainFixture.chapter();
+        final var task1 = domainFixture.taskForChapter(chapter.getId());
+        final var task2 = domainFixture.taskForChapter(chapter.getId());
 
         final var response = request(URL + "/chapters/" + chapter.getId().id(), HttpMethod.GET, Task[].class);
         assertionHelper.assertOk(response);
@@ -117,7 +99,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
     @Test
     void shouldReturnNoContent_whenChapterHasNoTasks() {
-        final var chapter = createChapter();
+        final var chapter = domainFixture.chapter();
         final var response = request(URL + "/chapters/" + chapter.getId().id(), HttpMethod.GET, Void.class);
 
         assertionHelper.assertNoContent(response);
@@ -126,7 +108,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
     @ParameterizedTest
     @MethodSource("provideTaskUpdateDtos")
     void shouldUpdateArc_withDifferentFields(final TaskUpdateDto dto) {
-        final var task = createTask();
+        final var task = domainFixture.taskWithChapter();
 
         final var response = request(URL + "/" + task.getId().id(), HttpMethod.PUT, dto, Task.class);
 
@@ -164,7 +146,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
     @Test
     void shouldDeleteTask_whenIdExists() {
-        final var task = createTask();
+        final var task = domainFixture.taskWithChapter();
 
         final var response = request(URL + "/" + task.getId().id(), HttpMethod.DELETE, Void.class);
 
@@ -180,9 +162,9 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
     @Test
     void shouldDeleteAllTasksForChapter_whenChapterIdExists() {
-        final var chapter = createChapter();
-        createTaskForChapter(chapter.getId());
-        createTaskForChapter(chapter.getId());
+        final var chapter = domainFixture.chapter();
+        domainFixture.taskForChapter(chapter.getId());
+        domainFixture.taskForChapter(chapter.getId());
 
         final var response = request(URL + "/chapters/" + chapter.getId().id(), HttpMethod.DELETE, Void.class);
 
@@ -198,11 +180,12 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
     @Test
     void shouldReturnTodayTask_whenArcIsValidAndChapterExists() {
-        final var user = userRepository.save(aUser());
-        final var arc = arcRepository.save(anArcWithOwnerId(user.getId()));
-        final var chapter = chapterRepository.save(aChapterWithScheduledDateAndArcId(LocalDate.now(), arc.getId()));
-        final var task1 = createTaskForChapter(chapter.getId());
-        final var task2 = createTaskForChapter(chapter.getId());
+        final var user = domainFixture.user();
+        final var arc = domainFixture.arcForUser(user.getId());
+        final var chapter = domainFixture.chapterForArcWithDate(arc.getId(), LocalDate.now());
+        final var task1 = domainFixture.taskForChapter(chapter.getId());
+        final var task2 = domainFixture.taskForChapter(chapter.getId());
+
 
         final var response = exchangeTodayForUser(user, Task[].class);
 
@@ -215,8 +198,8 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
     @Test
     void shouldThrowExceptionOnTodayTask_whenArcIsValidAndChapterDoesNotExists() {
-        final var user = userRepository.save(aUser());
-        arcRepository.save(anArcWithOwnerId(user.getId()));
+        final var user = domainFixture.user();
+        domainFixture.arcForUser(user.getId());
 
         final var response = exchangeTodayForUser(user, Void.class);
 
@@ -225,9 +208,8 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
     @Test
     void shouldThrowExceptionOnTodayTask_whenArcExistButNotActive() {
-        final var user = userRepository.save(aUser());
-        final var arc = anArcWithOwnerIdAndStatus(user.getId(), ArcStatus.COMPLETED);
-        arcRepository.save(arc);
+        final var user = domainFixture.user();
+        domainFixture.arcForUser(user.getId(), ArcStatus.COMPLETED);
 
         final var response = exchangeTodayForUser(user, Void.class);
 

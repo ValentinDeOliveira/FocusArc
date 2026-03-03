@@ -35,7 +35,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
     @Test
     void shouldReturnConflict_whenEmailAlreadyExists() {
-        final var user = createUser();
+        final var user = domainFixture.user();
         final var dto = aUserCreationDtoWithEmail(user.getEmail());
 
         final var response = request(URL, HttpMethod.POST, dto, Void.class);
@@ -45,7 +45,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
     @Test
     void shouldReturnUser_whenEmailExists() {
-        final var user = createUser();
+        final var user = domainFixture.user();
         final var response = request(URL + "/email?email="+ user.getEmail(), HttpMethod.GET, User.class);
 
         assertionHelper.assertOk(response);
@@ -64,7 +64,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
     @Test
     void shouldReturnUser_whenIdExists() {
-        final var user = createUser();
+        final var user = domainFixture.user();
         final var response = request(URL + "/" + user.getId().id(), HttpMethod.GET, User.class);
 
         assertionHelper.assertOk(response);
@@ -84,7 +84,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     @ParameterizedTest
     @MethodSource("provideUserUpdateDtos")
     void shouldUpdateUser_withDifferentFields(final UserUpdateDto dto) {
-        final var user = createUser();
+        final var user = domainFixture.user();
 
         final var response = request(URL+ "/" + user.getId().id(), HttpMethod.PUT, dto, User.class);
 
@@ -117,7 +117,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
     @Test
     void shouldDeleteUser_whenIdExists() {
-        final var user = createUser();
+        final var user = domainFixture.user();
         final var response = request(URL + "/" + user.getId().id(), HttpMethod.DELETE, Void.class);
 
         assertionHelper.assertNoContent(response);

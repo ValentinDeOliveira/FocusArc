@@ -25,7 +25,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTest {
     @Test
     void shouldCreateArc_whenDataIsValid() {
-        final var user = createUser();
+        final var user = domainFixture.user();
         final var dto = anArcCreationDto();
 
         final var headers = getHeadersForUser(user);
@@ -47,8 +47,8 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
     @Test
     void shouldReturnNotFoundOnCreate_whenActiveArcAlreadyExists() {
-        final var user = createUser();
-        arcRepository.save(anArcWithOwnerIdAndStatus(user.getId(), ArcStatus.ACTIVE));
+        final var user = domainFixture.user();
+        domainFixture.arcForUser(user.getId());
         final var dto = anArcCreationDto();
 
         final var headers = getHeadersForUser(user);
@@ -62,7 +62,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
     @Test
     void shouldReturnArc_whenIdExists() {
-        final var arc = createArc();
+        final var arc = domainFixture.arcWithUser();
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.GET, Arc.class);
         assertionHelper.assertOk(response);
@@ -75,9 +75,9 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
     @Test
     void shouldReturnAllArc_whenUserIdExists() {
-        final var user = createUser();
-        final var arc1 = createArcForUser(user.getId());
-        final var arc2 = createArcForUser(user.getId(), ArcStatus.COMPLETED);
+        final var user = domainFixture.user();
+        final var arc1 = domainFixture.arcForUser(user.getId());
+        final var arc2 = domainFixture.arcForUser(user.getId(), ArcStatus.COMPLETED);
 
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.GET, Arc[].class);
         assertionHelper.assertOk(response);
@@ -98,7 +98,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
     @Test
     void shouldReturnNoContent_whenUserHasNoArcs() {
-        final var user = createUser();
+        final var user = domainFixture.user();
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.GET, Void.class);
 
         assertionHelper.assertNoContent(response);
@@ -107,7 +107,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     @ParameterizedTest
     @MethodSource("provideArcUpdateDtos")
     void shouldUpdateArc_withDifferentFields(final ArcUpdateDto dto) {
-        final var arc = createArc();
+        final var arc = domainFixture.arcWithUser();
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.PUT, dto, Arc.class);
 
@@ -143,7 +143,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
     @Test
     void shouldDeleteArc_whenIdExists() {
-        final var arc = createArc();
+        final var arc = domainFixture.arcWithUser();
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.DELETE, Void.class);
 
@@ -159,9 +159,9 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
     @Test
     void shouldDeleteAllArcForUser_whenUserIdExists() {
-        final var user = createUser();
-        createArcForUser(user.getId());
-        createArcForUser(user.getId(), ArcStatus.COMPLETED);
+        final var user = domainFixture.user();
+        domainFixture.arcForUser(user.getId());
+        domainFixture.arcForUser(user.getId(), ArcStatus.COMPLETED);
 
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.DELETE, Void.class);
 

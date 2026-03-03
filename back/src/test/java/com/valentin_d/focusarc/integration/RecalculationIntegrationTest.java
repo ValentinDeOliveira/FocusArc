@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTest {
     @Test
     public void shouldCreateTaskAndRecalculateEstimatedMinutes_whenDataIsValid() {
-        final var task = createTaskForArc();
+        final var task = domainFixture.taskForArc();
 
         final var dto = aTaskCreationDtoWithChapterId(task.getChapter());
         request(URL, HttpMethod.POST, dto, Void.class);
@@ -32,7 +32,7 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
 
     @Test
     public void shouldUpdateTaskAndRecalculateEstimatedMinutes_whenDataChangedEstimatedMinutes() {
-        final var task = createTaskForArc();
+        final var task = domainFixture.taskForArc();
 
         final var dto = TaskUpdateDto.builder().estimatedMinutes(50).build();
         request(URL  + "/" + task.getId().id(), HttpMethod.PUT, dto, Void.class);
@@ -43,7 +43,7 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
 
     @Test
     public void shouldUpdateTaskAndRecalculateCompletedMinutes_whenDataChangedCompletedMinutes() {
-        final var task = createTaskForArc();
+        final var task = domainFixture.taskForArc();
 
         final var dto = TaskUpdateDto.builder().completedMinutes(50).build();
         request(URL  + "/" + task.getId().id(), HttpMethod.PUT, dto, Void.class);
@@ -54,7 +54,7 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
 
     @Test
     public void shouldRecalculateCompletedMinutes_whenTaskIsCompleted() {
-        final var task = createTaskForArc();
+        final var task = domainFixture.taskForArc();
 
         final var dto = aTaskCompleteDto();
         request(URL  + "/" + task.getId().id() + "/complete" , HttpMethod.PATCH, dto, Void.class);
