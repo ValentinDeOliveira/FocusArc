@@ -25,6 +25,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     void shouldReturnUser_whenEmailExists() throws Exception {
         final var user = aUser();
+
         when(userService.findByEmail(user.getEmail()))
                 .thenReturn(Optional.of(user));
 
@@ -66,6 +67,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     void shouldUpdateUser_whenIdExists() throws Exception {
         final var user = aUser();
+
         when(userService.update(eq(user.getId()), any())).thenReturn(user);
 
         final var json = toJson(aUserUpdateDto());
@@ -79,6 +81,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     void shouldReturnNotFound_whenUpdatingNonExistingUser() throws Exception {
         final var user = aUser();
+
         when(userService.update(eq(user.getId()), any())).thenThrow(new UserDoesNotExistException(user.getId()));
 
         mvcPut(ROOT + "/" + user.getId().id(), toJson(aUserUpdateDto()))
@@ -88,6 +91,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     void shouldDeleteUser_whenIdExists() throws Exception {
         final var user = aUser();
+
         mvcDelete(ROOT + "/" + user.getId().id())
                 .andExpect(status().isNoContent());
 
@@ -97,6 +101,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingUser() throws Exception {
         final var user = aUser();
+
         doThrow(new UserDoesNotExistException(user.getId())).when(userService).delete(user.getId());
 
         mvcDelete(ROOT + "/" + user.getId().id())

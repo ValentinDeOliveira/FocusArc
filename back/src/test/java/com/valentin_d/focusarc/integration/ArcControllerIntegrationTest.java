@@ -30,14 +30,9 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
         final var headers = getHeadersForUser(user);
 
-        final HttpEntity<ArcCreationDto> requestEntity = new HttpEntity<>(dto, headers);
+        final var requestEntity = new HttpEntity<>(dto, headers);
 
-        final var response = restTemplate.exchange(
-                buildUrl(URL),
-                HttpMethod.POST,
-                requestEntity,
-                Arc.class
-        );
+        final var response = request(URL, HttpMethod.POST, requestEntity, Arc.class);
 
         assertCreated(response);
 
@@ -60,12 +55,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
         final HttpEntity<ArcCreationDto> requestEntity = new HttpEntity<>(dto, headers);
 
-        final var response = restTemplate.exchange(
-                buildUrl(URL),
-                HttpMethod.POST,
-                requestEntity,
-                Void.class
-        );
+        final var response = request(URL, HttpMethod.POST, requestEntity, Void.class);
 
         assertBadRequest(response);
     }

@@ -32,7 +32,6 @@ class ArcControllerTest extends BaseControllerTest {
                 .andExpect(status().isOk());
 
         arcAssertion.assertSingleJson(actions, arc);
-        arcAssertion.assertSingleJson(actions, arc);
     }
 
     @Test

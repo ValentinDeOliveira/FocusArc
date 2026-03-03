@@ -58,8 +58,8 @@ public abstract class BaseIntegrationTest {
 
     @LocalServerPort
     private int port;
-    protected final TestRestTemplate restTemplate = new TestRestTemplate();
-    protected static final String BASE_URL = "http://localhost:";
+    private final TestRestTemplate restTemplate = new TestRestTemplate();
+    private static final String BASE_URL = "http://localhost:";
 
     protected String buildUrl(final String path) {
         return BASE_URL + port + path;
@@ -74,16 +74,17 @@ public abstract class BaseIntegrationTest {
         return restTemplate.exchange(buildUrl(url), method, HttpEntity.EMPTY, responseType);
     }
 
+    protected <T> ResponseEntity<T> request(final String url, final HttpMethod method,
+                                            final HttpEntity<?> requestEntity ,final Class<T> responseType) {
+        return restTemplate.exchange(buildUrl(url), method, requestEntity, responseType);
+    }
+
     protected <T> void assertNotFound(final ResponseEntity<T> response) {
         assertResponseEmpty(HttpStatus.NOT_FOUND, response);
     }
 
     protected <T> void assertBadRequest(final ResponseEntity<T> response) {
         assertResponseEmpty(HttpStatus.BAD_REQUEST, response);
-    }
-
-    protected <T> void assertConflict(final ResponseEntity<T> response) {
-        assertResponseEmpty(HttpStatus.CONFLICT, response);
     }
 
     protected <T> void assertNoContent(final ResponseEntity<T> response) {

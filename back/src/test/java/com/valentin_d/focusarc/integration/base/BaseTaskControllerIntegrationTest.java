@@ -56,11 +56,6 @@ public class BaseTaskControllerIntegrationTest extends BaseIntegrationTest{
     protected <T> ResponseEntity<T> exchangeTodayForUser(final User user, Class<T> responseType) {
         final var headers = getHeadersForUser(user);
 
-        return restTemplate.exchange(
-                buildUrl(URL + "/today"),
-                HttpMethod.GET,
-                new HttpEntity<>(headers),
-                responseType
-        );
+        return request(URL + "/today", HttpMethod.GET, new HttpEntity<>(headers), responseType);
     }
 }

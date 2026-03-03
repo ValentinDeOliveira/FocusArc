@@ -85,11 +85,7 @@ public class BaseChapterControllerIntegrationTest extends BaseIntegrationTest{
     protected ResponseEntity<ChapterSummaryResponseDto> exchangeSummaryForUser(final User user) {
         final var headers = getHeadersForUser(user);
 
-        return restTemplate.exchange(
-                buildUrl(URL + "/summary"),
-                HttpMethod.GET,
-                new HttpEntity<>(headers),
-                ChapterSummaryResponseDto.class
-        );
+        return request(URL + "/summary", HttpMethod.GET, new HttpEntity<>(headers),
+                ChapterSummaryResponseDto.class);
     }
 }
