@@ -35,11 +35,11 @@ public class ArcService {
         return arcRepository.findAllByOwner(userId);
     }
 
-    public Arc create(@NotNull final ArcCreationDto arcCreationDto) {
-        userLoader.assertUserExists(arcCreationDto.ownerId());
-        arcLoader.assertNotAnotherActiveArc(arcCreationDto.ownerId());
+    public Arc create(@NotNull final UserId userId, @NotNull final ArcCreationDto arcCreationDto) {
+        userLoader.assertUserExists(userId);
+        arcLoader.assertNotAnotherActiveArc(userId);
 
-        final var arc = new Arc(arcCreationDto.ownerId(), arcCreationDto.name(), arcCreationDto.totalEstimatedMinutes());
+        final var arc = new Arc(userId, arcCreationDto.name(), arcCreationDto.totalEstimatedMinutes());
         return arcRepository.save(arc);
     }
 

@@ -18,9 +18,11 @@ public class UserBuilder {
     private final String email = "test@test.com";
     @Builder.Default
     private final LocalDateTime lastLogin = NOW;
+    @Builder.Default
+    private String password = "password123";
 
     public User build() {
-        return new User(id, name, email, lastLogin);
+        return new User(id, name, email, lastLogin, password);
     }
 
     public static UserBuilderBuilder from(User user) {

@@ -39,10 +39,10 @@ public class ArcController {
     }
 
     @PostMapping
-    public ResponseEntity<Arc> create(@AuthenticationPrincipal User user,
+    public ResponseEntity<Arc> create(@AuthenticationPrincipal final User user,
                                       @Valid @RequestBody final ArcCreationDto arcCreationDto) {
-        final var dto = new ArcCreationDto(user.getId(), arcCreationDto.name(), arcCreationDto.totalEstimatedMinutes());
-        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(dto));
+        final var arc = service.create(user.getId(), arcCreationDto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(arc);
     }
 
     @PutMapping("/{arcId}")

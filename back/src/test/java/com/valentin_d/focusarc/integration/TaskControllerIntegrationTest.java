@@ -5,7 +5,6 @@ import com.valentin_d.focusarc.integration.base.BaseTaskControllerIntegrationTes
 import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.TaskId;
-import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.repository.ArcRepository;
@@ -62,6 +61,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
         final var task = response.getBody();
         assertNotNull(task);
 
+        // TODO: create assertion class for DTO
         assertEquals(dto.scheduledAt(), task.getScheduledAt());
         assertEquals(dto.chapterId(), task.getChapter());
         assertEquals(dto.estimatedMinutes(), task.getEstimatedMinutes());
@@ -204,7 +204,8 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
         final var task1 = createTaskForChapter(chapter.getId());
         final var task2 = createTaskForChapter(chapter.getId());
 
-        final var response = request(URL + "/today?userId=" + user.getId().id(), HttpMethod.GET, Task[].class);
+        final var response = exchangeTodayForUser(user, Task[].class);
+
         assertOk(response);
         assertNotNull(response.getBody());
 
@@ -217,7 +218,8 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
         final var user = userRepository.save(aUser());
         arcRepository.save(anArcWithOwnerId(user.getId()));
 
-        final var response = request(URL + "/today?userId=" + user.getId().id(), HttpMethod.GET, Void.class);
+        final var response = exchangeTodayForUser(user, Void.class);
+
         assertNotFound(response);
     }
 
@@ -227,13 +229,8 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
         final var arc = anArcWithOwnerIdAndStatus(user.getId(), ArcStatus.COMPLETED);
         arcRepository.save(arc);
 
-        final var response = request(URL + "/today?userId=" + user.getId().id(), HttpMethod.GET, Void.class);
-        assertBadRequest(response);
-    }
+        final var response = exchangeTodayForUser(user, Void.class);
 
-    @Test
-    void shouldThrowExceptionOnTodayTask_whenUserDoesNotExist() {
-        final var response = request(URL + "/today?userId=" + UserId.random().id(), HttpMethod.GET, Void.class);
-        assertNotFound(response);
+        assertBadRequest(response);
     }
 }

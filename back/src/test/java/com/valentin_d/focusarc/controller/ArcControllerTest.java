@@ -68,7 +68,7 @@ class ArcControllerTest extends BaseControllerTest {
         final var arc = anArc();
         final var creationDto = anArcCreationDto();
 
-        when(arcService.create(any())).thenReturn(arc);
+        when(arcService.create(any(), any())).thenReturn(arc);
 
         final var json = toJson(creationDto);
 

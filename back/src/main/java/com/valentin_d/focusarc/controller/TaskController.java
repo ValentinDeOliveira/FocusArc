@@ -74,7 +74,8 @@ public class TaskController {
     }
 
     @GetMapping("/today")
-    public ResponseEntity<List<Task>> getTodayTask(@AuthenticationPrincipal User user) {
-        return wrapOrNoContent(service.getTodaysTasks(user.getId()));
+    public ResponseEntity<List<Task>> getTodayTask(@AuthenticationPrincipal final User user) {
+        final var task = service.getTodaysTasks(user.getId());
+        return wrapOrNoContent(task);
     }
 }

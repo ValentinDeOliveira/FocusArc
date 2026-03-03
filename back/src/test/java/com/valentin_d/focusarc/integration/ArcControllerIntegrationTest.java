@@ -1,5 +1,6 @@
 package com.valentin_d.focusarc.integration;
 
+import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseArcControllerIntegrationTest;
 import com.valentin_d.focusarc.model.arc.Arc;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 
 import java.util.Arrays;
@@ -24,9 +26,18 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     @Test
     void shouldCreateArc_whenDataIsValid() {
         final var user = createUser();
+        final var dto = anArcCreationDto();
 
-        final var dto = anArcCreationDtoWithOwnerId(user.getId());
-        final var response = request(URL, HttpMethod.POST, dto, Arc.class);
+        final var headers = getHeadersForUser(user);
+
+        final HttpEntity<ArcCreationDto> requestEntity = new HttpEntity<>(dto, headers);
+
+        final var response = restTemplate.exchange(
+                buildUrl(URL),
+                HttpMethod.POST,
+                requestEntity,
+                Arc.class
+        );
 
         assertCreated(response);
 
@@ -40,21 +51,21 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     }
 
     @Test
-    void shouldReturnNotFoundOnCreate_whenUserDoesNotExists() {
-        final var dto = anArcCreationDto();
-
-        final var response = request(URL, HttpMethod.POST, dto, Void.class);
-
-        assertNotFound(response);
-    }
-
-    @Test
     void shouldReturnNotFoundOnCreate_whenActiveArcAlreadyExists() {
         final var user = createUser();
         arcRepository.save(anArcWithOwnerIdAndStatus(user.getId(), ArcStatus.ACTIVE));
-        final var dto = anArcCreationDtoWithOwnerId(user.getId());
+        final var dto = anArcCreationDto();
 
-        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+        final var headers = getHeadersForUser(user);
+
+        final HttpEntity<ArcCreationDto> requestEntity = new HttpEntity<>(dto, headers);
+
+        final var response = restTemplate.exchange(
+                buildUrl(URL),
+                HttpMethod.POST,
+                requestEntity,
+                Void.class
+        );
 
         assertBadRequest(response);
     }

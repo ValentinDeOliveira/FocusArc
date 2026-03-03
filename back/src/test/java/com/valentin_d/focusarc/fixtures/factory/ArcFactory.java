@@ -28,10 +28,6 @@ public final class ArcFactory {
         return ArcCreationDtoBuilder.builder().build().build();
     }
 
-    public static ArcCreationDto anArcCreationDtoWithOwnerId(final UserId ownerId) {
-        return ArcCreationDtoBuilder.builder().ownerId(ownerId).build().build();
-    }
-
     public static ArcUpdateDto anArcUpdateDto() {
         return ArcUpdateDtoBuilder.builder().build().build();
     }

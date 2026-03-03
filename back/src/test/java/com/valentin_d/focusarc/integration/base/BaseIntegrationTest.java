@@ -1,15 +1,16 @@
 package com.valentin_d.focusarc.integration.base;
 
+import com.valentin_d.focusarc.filter.JwtAuthFilter;
+import com.valentin_d.focusarc.model.user.User;
+import com.valentin_d.focusarc.service.auth.JwtService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.resttestclient.TestRestTemplate;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -17,6 +18,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.test.context.ActiveProfiles;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -25,15 +27,19 @@ import static org.junit.jupiter.api.Assertions.*;
 @ActiveProfiles("test")
 @Import(BaseIntegrationTest.TestSecurityConfig.class)
 public abstract class BaseIntegrationTest {
+    @Autowired
+    private JwtService jwtService;
 
     @TestConfiguration
     static class TestSecurityConfig {
         @Bean
-        public SecurityFilterChain securityFilterChain(final HttpSecurity http) {
+        public SecurityFilterChain securityFilterChain(final HttpSecurity http,
+                                                       final JwtAuthFilter jwtAuthFilter) throws Exception {
             http
                     .csrf(AbstractHttpConfigurer::disable)
                     .authorizeHttpRequests(auth -> auth.anyRequest().permitAll())
-                    .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                    .sessionManagement(s -> s.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
             return http.build();
         }
 
@@ -98,7 +104,16 @@ public abstract class BaseIntegrationTest {
         assertNotNull(response.getBody());
     }
 
-    protected  <T> T expectedValue(T newValue, T originalValue) {
+    protected <T> T expectedValue(T newValue, T originalValue) {
         return newValue != null ? newValue : originalValue;
+    }
+
+    protected HttpHeaders getHeadersForUser(final User user) {
+        final var token = jwtService.generateToken(user);
+
+        final var headers = new HttpHeaders();
+        headers.setBearerAuth(token);
+
+        return headers;
     }
 }

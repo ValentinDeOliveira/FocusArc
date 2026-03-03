@@ -1,12 +1,10 @@
 package com.valentin_d.focusarc.integration;
 
-import com.valentin_d.focusarc.dto.chapter.ChapterSummaryResponseDto;
 import com.valentin_d.focusarc.dto.chapter.ChapterUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseChapterControllerIntegrationTest;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
-import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -201,7 +199,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         createTaskForChapterWithStatus(chapter.getId(), TaskStatus.DONE);
         createTaskForChapterWithStatus(chapter.getId(), TaskStatus.DONE);
 
-        final var response = request(URL + "/summary?userId=" + user.getId().id(), HttpMethod.GET, ChapterSummaryResponseDto.class);
+        final var response = exchangeSummaryForUser(user);
 
         assertOk(response);
         final var result = response.getBody();
@@ -215,12 +213,6 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     }
 
     @Test
-    void shouldThrowErrorOnChapterSummary_whenUserDoesNotExist() {
-        final var response = request(URL + "/summary?userId=" + UserId.random().id(), HttpMethod.GET, Void.class);
-        assertNotFound(response);
-    }
-
-    @Test
     void shouldReturnChapterSummary_whenNoTaskScheduled() {
         final var user = userRepository.save(aUser());
         final var arc = arcRepository.save(anArcWithOwnerId(user.getId()));
@@ -228,7 +220,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         createTaskForChapterWithStatus(chapter.getId(), TaskStatus.DONE);
         createTaskForChapterWithStatus(chapter.getId(), TaskStatus.DONE);
 
-        final var response = request(URL + "/summary?userId=" + user.getId().id(), HttpMethod.GET, ChapterSummaryResponseDto.class);
+        final var response = exchangeSummaryForUser(user);
 
         assertOk(response);
         final var result = response.getBody();
