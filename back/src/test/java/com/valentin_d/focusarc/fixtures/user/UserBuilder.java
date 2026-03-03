@@ -19,7 +19,7 @@ public class UserBuilder {
     @Builder.Default
     private final LocalDateTime lastLogin = NOW;
     @Builder.Default
-    private String password = "password123";
+    private final String password = "password123";
 
     public User build() {
         return new User(id, name, email, lastLogin, password);
