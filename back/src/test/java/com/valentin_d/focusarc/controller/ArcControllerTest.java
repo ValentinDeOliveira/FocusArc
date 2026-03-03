@@ -64,7 +64,7 @@ class ArcControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldCreateUser_whenDataIsValid() throws Exception {
+    void shouldCreateArc_whenDataIsValid() throws Exception {
         final var arc = anArc();
         final var creationDto = anArcCreationDto();
 
