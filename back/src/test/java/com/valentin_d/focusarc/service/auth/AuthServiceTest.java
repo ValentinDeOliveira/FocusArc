@@ -2,6 +2,7 @@ package com.valentin_d.focusarc.service.auth;
 
 import com.valentin_d.focusarc.service.user.UserLoader;
 import com.valentin_d.focusarc.service.user.UserService;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -21,4 +22,8 @@ class AuthServiceTest {
     @InjectMocks
     private AuthService authService;
 
+    @Test
+    void shouldRegister_whenCreationSucess() {
+
+    }
 }

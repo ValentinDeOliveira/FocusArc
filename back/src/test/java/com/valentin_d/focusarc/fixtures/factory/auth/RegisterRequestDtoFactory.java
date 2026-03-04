@@ -9,4 +9,8 @@ public final class RegisterRequestDtoFactory {
     public static RegisterRequestDto aRegisterRequestDto() {
         return RegisterRequestDtoBuilder.builder().build().build();
     }
+
+    public static RegisterRequestDto aRegisterRequestDtoWithMail(final String email) {
+        return RegisterRequestDtoBuilder.builder().email(email).build().build();
+    }
 }

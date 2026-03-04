@@ -25,6 +25,14 @@ public final class IntegrationAssertionHelper {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
+    public <T> void assertConflict(final ResponseEntity<T> response) {
+        assertEquals(HttpStatus.CONFLICT, response.getStatusCode());
+    }
+
+    public <T> void assertUnauthorized(final ResponseEntity<T> response) {
+        assertEquals(HttpStatus.UNAUTHORIZED, response.getStatusCode());
+    }
+
     private  <T> void assertResponseEmpty(final HttpStatus status,final ResponseEntity<T> response) {
         assertEquals(status, response.getStatusCode());
         assertNull(response.getBody());
