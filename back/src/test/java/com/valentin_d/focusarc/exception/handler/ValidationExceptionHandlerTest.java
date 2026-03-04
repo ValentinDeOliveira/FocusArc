@@ -1,5 +1,6 @@
 package com.valentin_d.focusarc.exception.handler;
 
+import com.valentin_d.focusarc.filter.JwtAuthFilter;
 import jakarta.validation.ConstraintViolationException;
 import jakarta.validation.Validation;
 import jakarta.validation.constraints.NotBlank;
@@ -7,6 +8,7 @@ import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.http.ResponseEntity;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 import java.util.Map;
@@ -17,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 @WebMvcTest(ValidationExceptionHandler.class)
 class ValidationExceptionHandlerTest {
+    @MockitoBean
+    private JwtAuthFilter jwtAuthFilter;
 
     private final ValidationExceptionHandler handler = new ValidationExceptionHandler();
 

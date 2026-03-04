@@ -1,7 +1,7 @@
 package com.valentin_d.focusarc.fixtures.user;
 
-import com.valentin_d.focusarc.model.User;
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.user.User;
 import lombok.Builder;
 
 import java.time.LocalDateTime;
@@ -18,9 +18,11 @@ public class UserBuilder {
     private final String email = "test@test.com";
     @Builder.Default
     private final LocalDateTime lastLogin = NOW;
+    @Builder.Default
+    private final String password = "password123";
 
     public User build() {
-        return new User(id, name, email, lastLogin);
+        return new User(id, name, email, lastLogin, password);
     }
 
     public static UserBuilderBuilder from(User user) {

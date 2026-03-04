@@ -2,7 +2,6 @@ package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.controller.assertions.TaskAssertion;
 import com.valentin_d.focusarc.model.id.ChapterId;
-import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.task.TaskService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -25,7 +24,7 @@ class TaskControllerTest extends BaseControllerTest {
     private final TaskAssertion taskAssertion = new TaskAssertion();
 
     @Test
-    void shouldReturnChapter_whenIdExists() throws Exception {
+    void shouldReturnTask_whenIdExists() throws Exception {
         final var task = aTask();
         when(taskService.findById(task.getId())).thenReturn(Optional.of(task));
 
@@ -45,7 +44,7 @@ class TaskControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldReturnListOfChapter_whenArcIdExists() throws Exception {
+    void shouldReturnListOfTasks_whenChapterIdExists() throws Exception {
         final var task = aTask();
         when(taskService.findAllForChapter(task.getChapter())).thenReturn(List.of(task));
 
@@ -64,7 +63,7 @@ class TaskControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldCreateChapter_whenDataIsValid() throws Exception {
+    void shouldCreateTask_whenDataIsValid() throws Exception {
         final var task = aTask();
         final var creationDto = aTaskCreationDto();
 
@@ -79,7 +78,7 @@ class TaskControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldReturnChapter_whenUpdatingExistingChapter() throws Exception {
+    void shouldReturnTask_whenUpdatingExistingTask() throws Exception {
         final var task = aTask();
         final var updateDto = aTaskUpdateDto();
 
@@ -94,7 +93,7 @@ class TaskControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldReturnNoContent_whenDeletingExistingChapter() throws Exception {
+    void shouldReturnNoContent_whenDeletingExistingTask() throws Exception {
         final var task = aTask();
 
         mvcDelete(ROOT + "/" + task.getId().id())
@@ -102,11 +101,20 @@ class TaskControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldReturnNoContent_whenDeletingAllChapterForExistingArc() throws Exception {
+    void shouldReturnNoContent_whenDeletingAllTasksForExistingChapter() throws Exception {
         final var task = aTask();
 
         mvcDelete(ROOT + "/chapters/" + task.getChapter().id())
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldReturnOk_whenCompletingExistingTask() throws Exception {
+        final var task = aTask();
+        final var completeDto = aTaskCompleteDto();
+
+        mvcPatch(ROOT + "/" + task.getId().id() + "/complete", toJson(completeDto))
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -115,7 +123,7 @@ class TaskControllerTest extends BaseControllerTest {
 
         when(taskService.getTodaysTasks(any())).thenReturn(List.of(task));
 
-        final var actions = mvcGet(ROOT + "/today?userId=" + UserId.random().id())
+        final var actions = mvcGet(ROOT + "/today")
                 .andExpect(status().isOk());
 
         taskAssertion.assertListJson(actions, task);
@@ -125,7 +133,7 @@ class TaskControllerTest extends BaseControllerTest {
     void shouldReturnNoContent_whenGettingTodayTaskWhenNoTask() throws Exception {
         when(taskService.getTodaysTasks(any())).thenReturn(List.of());
 
-        mvcGet(ROOT + "/today?userId=" + UserId.random().id())
+        mvcGet(ROOT + "/today")
                 .andExpect(status().isNoContent());
     }
 }

@@ -10,7 +10,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Optional;
 
-import static com.valentin_d.focusarc.fixtures.factory.UserFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUserUpdateDto;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -24,6 +25,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     void shouldReturnUser_whenEmailExists() throws Exception {
         final var user = aUser();
+
         when(userService.findByEmail(user.getEmail()))
                 .thenReturn(Optional.of(user));
 
@@ -41,19 +43,6 @@ class UserControllerTest extends BaseControllerTest {
 
         mvcGet(ROOT + "/email?email=" + user.getEmail())
                 .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void shouldCreateUser_whenDataIsValid() throws Exception {
-        final var user = aUser();
-        when(userService.create(any())).thenReturn(user);
-
-        final var json = toJson(aUserCreationDto());
-
-        final var actions = mvcPost(ROOT, json)
-                .andExpect(status().isCreated());
-
-        userAssertion.assertSingleJson(actions, user);
     }
 
     @Test
@@ -78,6 +67,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     void shouldUpdateUser_whenIdExists() throws Exception {
         final var user = aUser();
+
         when(userService.update(eq(user.getId()), any())).thenReturn(user);
 
         final var json = toJson(aUserUpdateDto());
@@ -91,6 +81,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     void shouldReturnNotFound_whenUpdatingNonExistingUser() throws Exception {
         final var user = aUser();
+
         when(userService.update(eq(user.getId()), any())).thenThrow(new UserDoesNotExistException(user.getId()));
 
         mvcPut(ROOT + "/" + user.getId().id(), toJson(aUserUpdateDto()))
@@ -100,6 +91,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     void shouldDeleteUser_whenIdExists() throws Exception {
         final var user = aUser();
+
         mvcDelete(ROOT + "/" + user.getId().id())
                 .andExpect(status().isNoContent());
 
@@ -109,6 +101,7 @@ class UserControllerTest extends BaseControllerTest {
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingUser() throws Exception {
         final var user = aUser();
+
         doThrow(new UserDoesNotExistException(user.getId())).when(userService).delete(user.getId());
 
         mvcDelete(ROOT + "/" + user.getId().id())

@@ -5,7 +5,6 @@ import com.valentin_d.focusarc.controller.assertions.ChapterSummaryResponseAsser
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
-import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -28,6 +27,7 @@ class ChapterControllerTest extends BaseControllerTest {
     private final static String ROOT = "/chapters";
     private final ChapterAssertion chapterAssertion = new ChapterAssertion();
     private final ChapterSummaryResponseAssertion chapterSummaryResponseAssertion = new ChapterSummaryResponseAssertion();
+
     @Test
     void shouldReturnChapter_whenIdExists() throws Exception {
         final var chapter = aChapter();
@@ -125,10 +125,9 @@ class ChapterControllerTest extends BaseControllerTest {
     void shouldReturnSummary_whenGettingSummary() throws Exception {
         final var task = aTask();
         final var summary = aChapterSummaryResponseDtoWithTasks(List.of(task));
-        final var userId = UserId.random();
 
-        when(chapterService.getChapterSummary(userId)).thenReturn(summary);
-        final var actions = mvcGet(ROOT + "/summary?userId=" + userId.id())
+        when(chapterService.getChapterSummary(any())).thenReturn(summary);
+        final var actions = mvcGet(ROOT + "/summary")
                 .andExpect(status().isOk());
 
         chapterSummaryResponseAssertion.assertSingleJson(actions, summary);

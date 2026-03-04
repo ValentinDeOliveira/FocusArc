@@ -32,7 +32,6 @@ class ArcControllerTest extends BaseControllerTest {
                 .andExpect(status().isOk());
 
         arcAssertion.assertSingleJson(actions, arc);
-        arcAssertion.assertSingleJson(actions, arc);
     }
 
     @Test
@@ -64,11 +63,11 @@ class ArcControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldCreateUser_whenDataIsValid() throws Exception {
+    void shouldCreateArc_whenDataIsValid() throws Exception {
         final var arc = anArc();
         final var creationDto = anArcCreationDto();
 
-        when(arcService.create(any())).thenReturn(arc);
+        when(arcService.create(any(), any())).thenReturn(arc);
 
         final var json = toJson(creationDto);
 

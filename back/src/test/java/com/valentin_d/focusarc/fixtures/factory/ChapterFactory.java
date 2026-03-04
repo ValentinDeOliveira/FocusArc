@@ -41,6 +41,11 @@ public final class ChapterFactory {
         return ChapterCreationDtoBuilder.builder().arcId(arcId).build().build();
     }
 
+    public static ChapterCreationDto aChapterCreationDtoWithArcIdAndEstimatedMinutes(final ArcId arcId,
+                                                                                     final int estimatedMinutes) {
+        return ChapterCreationDtoBuilder.builder().arcId(arcId).estimatedMinutes(estimatedMinutes).build().build();
+    }
+
     public static ChapterCreationDto aChapterCreationDtoWithArcIdAndScheduledDate(final ArcId arcId, final LocalDate date) {
         return ChapterCreationDtoBuilder.builder().arcId(arcId).scheduledDate(date).build().build();
     }

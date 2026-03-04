@@ -5,12 +5,14 @@ import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.arc.ArcService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +23,6 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 public class ArcController {
-
     private final ArcService service;
 
     @GetMapping("/{arcId}")
@@ -37,8 +38,9 @@ public class ArcController {
     }
 
     @PostMapping
-    public ResponseEntity<Arc> create(@Valid @RequestBody final ArcCreationDto arcCreationDto) {
-        final var arc = service.create(arcCreationDto);
+    public ResponseEntity<Arc> create(@AuthenticationPrincipal final User user,
+                                      @Valid @RequestBody final ArcCreationDto arcCreationDto) {
+        final var arc = service.create(user.getId(), arcCreationDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(arc);
     }
 

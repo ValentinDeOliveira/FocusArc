@@ -172,10 +172,12 @@ class TaskServiceTest {
     @Test
     void shouldGetAllTasksForChapter_whenChapterExists() {
         final var chapter = aChapter();
+        final var task = aTaskWithChapterId(chapter.getId());
+        when(taskRepository.findAllByChapter(chapter.getId())).thenReturn(List.of(task));
 
-        service.findAllForChapter(chapter.getId());
+        final var result = service.findAllForChapter(chapter.getId());
 
-        verify(taskRepository).findAllByChapter(chapter.getId());
+        assertEquals(List.of(task), result);
     }
 
     @Test
@@ -257,9 +259,6 @@ class TaskServiceTest {
         final var result = service.getTodaysTasks(userId);
 
         assertEquals(tasks, result);
-
-        verify(contextLoader).getChapterFromUserId(userId);
-        verify(taskLoader).getTasksForChapter(chapter.getId());
     }
 
     @Test

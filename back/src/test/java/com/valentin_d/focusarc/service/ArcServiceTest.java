@@ -39,14 +39,15 @@ class ArcServiceTest {
 
     @Test
     void shouldCreateArc_whenUserDoesExist() {
+        final var userId = UserId.random();
         final var creationDto = anArcCreationDto();
 
         when(arcRepository.save(any(Arc.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        final var result = arcService.create(creationDto);
+        final var result = arcService.create(userId, creationDto);
 
-        assertEquals(creationDto.ownerId(), result.getOwner());
+        assertEquals(userId, result.getOwner());
         assertEquals(creationDto.name(), result.getName());
         assertEquals(0, result.getTotalCompletedMinutes());
         assertEquals(creationDto.totalEstimatedMinutes(), result.getTotalEstimatedMinutes());
@@ -56,28 +57,30 @@ class ArcServiceTest {
 
     @Test
     void shouldThrowExceptionOnCreation_whenUserNotFound() {
+        final var userId = UserId.random();
         final var creationDto = anArcCreationDto();
 
-        doThrowUserDoesNotExist(creationDto.ownerId());
+        doThrowUserDoesNotExist(userId);
 
-        assertThatThrownBy(() -> arcService.create(creationDto))
+        assertThatThrownBy(() -> arcService.create(userId, creationDto))
                 .isInstanceOf(UserDoesNotExistException.class)
-                .hasMessageContaining(String.valueOf(creationDto.ownerId().id().toString()));
+                .hasMessageContaining(String.valueOf(userId.id().toString()));
 
         verify(arcRepository, never()).save(any(Arc.class));
     }
 
     @Test
     void shouldThrowExceptionOnCreation_whenAnotherActiveArcExist() {
+        final var userId = UserId.random();
         final var creationDto = anArcCreationDto();
 
-        doThrow(new ArcAlreadyExistsException(creationDto.ownerId()))
+        doThrow(new ArcAlreadyExistsException(userId))
                 .when(arcLoader)
-                .assertNotAnotherActiveArc(eq(creationDto.ownerId()));
+                .assertNotAnotherActiveArc(eq(userId));
 
-        assertThatThrownBy(() -> arcService.create(creationDto))
+        assertThatThrownBy(() -> arcService.create(userId, creationDto))
                 .isInstanceOf(ArcAlreadyExistsException.class)
-                .hasMessageContaining(String.valueOf(creationDto.ownerId().id().toString()));
+                .hasMessageContaining(String.valueOf(userId.id().toString()));
 
         verify(arcRepository, never()).save(any(Arc.class));
     }
@@ -172,10 +175,11 @@ class ArcServiceTest {
     @Test
     void shouldGetAllArcsForUser_whenUserExists() {
         final var arc = anArc();
+        when(arcRepository.findAllByOwner(arc.getOwner())).thenReturn(List.of(arc));
 
-        arcService.findAllForUser(arc.getOwner());
+        final var result = arcService.findAllForUser(arc.getOwner());
 
-        verify(arcRepository).findAllByOwner(arc.getOwner());
+        assertEquals(List.of(arc), result);
     }
 
     @Test

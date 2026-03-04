@@ -1,5 +1,6 @@
 package com.valentin_d.focusarc.integration;
 
+import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseArcControllerIntegrationTest;
 import com.valentin_d.focusarc.model.arc.Arc;
@@ -9,6 +10,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 
 import java.util.Arrays;
@@ -23,12 +25,16 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTest {
     @Test
     void shouldCreateArc_whenDataIsValid() {
-        final var user = createUser();
+        final var user = domainFixture.user();
+        final var dto = anArcCreationDto();
 
-        final var dto = anArcCreationDtoWithOwnerId(user.getId());
-        final var response = request(URL, HttpMethod.POST, dto, Arc.class);
+        final var headers = getHeadersForUser(user);
 
-        assertCreated(response);
+        final var requestEntity = new HttpEntity<>(dto, headers);
+
+        final var response = request(URL, HttpMethod.POST, requestEntity, Arc.class);
+
+        assertionHelper.assertCreated(response);
 
         final var arc = response.getBody();
         assertNotNull(arc);
@@ -40,31 +46,26 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     }
 
     @Test
-    void shouldReturnNotFoundOnCreate_whenUserDoesNotExists() {
+    void shouldReturnNotFoundOnCreate_whenActiveArcAlreadyExists() {
+        final var user = domainFixture.user();
+        domainFixture.arcForUser(user.getId());
         final var dto = anArcCreationDto();
 
-        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+        final var headers = getHeadersForUser(user);
 
-        assertNotFound(response);
-    }
+        final HttpEntity<ArcCreationDto> requestEntity = new HttpEntity<>(dto, headers);
 
-    @Test
-    void shouldReturnNotFoundOnCreate_whenActiveArcAlreadyExists() {
-        final var user = createUser();
-        arcRepository.save(anArcWithOwnerIdAndStatus(user.getId(), ArcStatus.ACTIVE));
-        final var dto = anArcCreationDtoWithOwnerId(user.getId());
+        final var response = request(URL, HttpMethod.POST, requestEntity, Void.class);
 
-        final var response = request(URL, HttpMethod.POST, dto, Void.class);
-
-        assertBadRequest(response);
+        assertionHelper.assertBadRequest(response);
     }
 
     @Test
     void shouldReturnArc_whenIdExists() {
-        final var arc = createArc();
+        final var arc = domainFixture.arcWithUser();
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.GET, Arc.class);
-        assertOk(response);
+        assertionHelper.assertOk(response);
 
         final var result = response.getBody();
         assertNotNull(result);
@@ -74,12 +75,12 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
     @Test
     void shouldReturnAllArc_whenUserIdExists() {
-        final var user = createUser();
-        final var arc1 = createArcForUser(user.getId());
-        final var arc2 = createArcForUser(user.getId(), ArcStatus.COMPLETED);
+        final var user = domainFixture.user();
+        final var arc1 = domainFixture.arcForUser(user.getId());
+        final var arc2 = domainFixture.arcForUser(user.getId(), ArcStatus.COMPLETED);
 
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.GET, Arc[].class);
-        assertOk(response);
+        assertionHelper.assertOk(response);
         assertNotNull(response.getBody());
 
         final List<Arc> arcs = Arrays.stream(response.getBody()).toList();
@@ -92,32 +93,32 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     void shouldReturnNotFound_whenUserIdDoesNotExists() {
         final var response = request(URL + "/users/" + UserId.random().id(), HttpMethod.GET, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
     void shouldReturnNoContent_whenUserHasNoArcs() {
-        final var user = createUser();
+        final var user = domainFixture.user();
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.GET, Void.class);
 
-        assertNoContent(response);
+        assertionHelper.assertNoContent(response);
     }
 
     @ParameterizedTest
     @MethodSource("provideArcUpdateDtos")
     void shouldUpdateArc_withDifferentFields(final ArcUpdateDto dto) {
-        final var arc = createArc();
+        final var arc = domainFixture.arcWithUser();
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.PUT, dto, Arc.class);
 
-        assertOk(response);
+        assertionHelper.assertOk(response);
         final var result = response.getBody();
         assertNotNull(result);
 
         assertEquals(arc.getId(), result.getId());
         assertEquals(arc.getOwner(), result.getOwner());
-        assertEquals(expectedValue(dto.name(), arc.getName()), result.getName());
-        assertEquals(expectedValue(dto.totalEstimatedMinutes(), arc.getTotalEstimatedMinutes()),
+        assertEquals(assertionHelper.expectedValue(dto.name(), arc.getName()), result.getName());
+        assertEquals(assertionHelper.expectedValue(dto.totalEstimatedMinutes(), arc.getTotalEstimatedMinutes()),
                 result.getTotalEstimatedMinutes());
         assertEquals(arc.getTotalCompletedMinutes(), result.getTotalCompletedMinutes());
     }
@@ -137,40 +138,57 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
         final var response = request(URL + "/" + UserId.random().id(), HttpMethod.PUT, dto, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
     void shouldDeleteArc_whenIdExists() {
-        final var arc = createArc();
+        final var arc = domainFixture.arcWithUser();
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.DELETE, Void.class);
 
-        assertNoContent(response);
+        assertionHelper.assertNoContent(response);
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingArc() {
         final var response = request(URL + "/" + UserId.random().id(), HttpMethod.DELETE, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
     }
 
     @Test
     void shouldDeleteAllArcForUser_whenUserIdExists() {
-        final var user = createUser();
-        createArcForUser(user.getId());
-        createArcForUser(user.getId(), ArcStatus.COMPLETED);
+        final var user = domainFixture.user();
+        domainFixture.arcForUser(user.getId());
+        domainFixture.arcForUser(user.getId(), ArcStatus.COMPLETED);
 
         final var response = request(URL + "/users/" + user.getId().id(), HttpMethod.DELETE, Void.class);
 
-        assertNoContent(response);
+        assertionHelper.assertNoContent(response);
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingAllArcForNonExistingUser() {
         final var response = request(URL + "/users/" + UserId.random().id(), HttpMethod.DELETE, Void.class);
 
-        assertNotFound(response);
+        assertionHelper.assertNotFound(response);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidTotalEstimatedMinutes")
+    void shouldReturnBadRequestOnCreate_whenTotalEstimatedMinutesIsNotPositive(final int minutes) {
+        final var user = domainFixture.user();
+        final var dto = anArcCreationDtoWithEstimatedMinutes(minutes);
+        final var headers = getHeadersForUser(user);
+        final var response = request(URL, HttpMethod.POST, new HttpEntity<>(dto, headers), Void.class);
+        assertionHelper.assertBadRequest(response);
+    }
+
+    private static Stream<Arguments> provideInvalidTotalEstimatedMinutes() {
+        return Stream.of(
+                Arguments.of(0),
+                Arguments.of(-1)
+        );
     }
 }

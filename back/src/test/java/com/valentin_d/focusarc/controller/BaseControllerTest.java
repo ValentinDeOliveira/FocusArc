@@ -1,7 +1,10 @@
 package com.valentin_d.focusarc.controller;
 
+import com.valentin_d.focusarc.service.auth.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import tools.jackson.databind.ObjectMapper;
@@ -9,6 +12,11 @@ import tools.jackson.databind.ObjectMapper;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 abstract class BaseControllerTest {
+    @MockitoBean
+    private JwtService jwtService;
+    @MockitoBean
+    private UserDetailsService userDetailsService;
+
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -30,6 +38,12 @@ abstract class BaseControllerTest {
 
     protected ResultActions mvcPost(final String url, final String json) throws Exception {
         return mockMvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json));
+    }
+
+    protected ResultActions mvcPatch(final String url, final String json) throws Exception {
+        return mockMvc.perform(patch(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json));
     }
