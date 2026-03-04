@@ -24,7 +24,7 @@ class TaskControllerTest extends BaseControllerTest {
     private final TaskAssertion taskAssertion = new TaskAssertion();
 
     @Test
-    void shouldReturnChapter_whenIdExists() throws Exception {
+    void shouldReturnTask_whenIdExists() throws Exception {
         final var task = aTask();
         when(taskService.findById(task.getId())).thenReturn(Optional.of(task));
 
@@ -44,7 +44,7 @@ class TaskControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldReturnListOfChapter_whenArcIdExists() throws Exception {
+    void shouldReturnListOfTasks_whenChapterIdExists() throws Exception {
         final var task = aTask();
         when(taskService.findAllForChapter(task.getChapter())).thenReturn(List.of(task));
 
@@ -63,7 +63,7 @@ class TaskControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldCreateChapter_whenDataIsValid() throws Exception {
+    void shouldCreateTask_whenDataIsValid() throws Exception {
         final var task = aTask();
         final var creationDto = aTaskCreationDto();
 
@@ -78,7 +78,7 @@ class TaskControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldReturnChapter_whenUpdatingExistingChapter() throws Exception {
+    void shouldReturnTask_whenUpdatingExistingTask() throws Exception {
         final var task = aTask();
         final var updateDto = aTaskUpdateDto();
 
@@ -93,7 +93,7 @@ class TaskControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldReturnNoContent_whenDeletingExistingChapter() throws Exception {
+    void shouldReturnNoContent_whenDeletingExistingTask() throws Exception {
         final var task = aTask();
 
         mvcDelete(ROOT + "/" + task.getId().id())
@@ -101,11 +101,20 @@ class TaskControllerTest extends BaseControllerTest {
     }
 
     @Test
-    void shouldReturnNoContent_whenDeletingAllChapterForExistingArc() throws Exception {
+    void shouldReturnNoContent_whenDeletingAllTasksForExistingChapter() throws Exception {
         final var task = aTask();
 
         mvcDelete(ROOT + "/chapters/" + task.getChapter().id())
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldReturnOk_whenCompletingExistingTask() throws Exception {
+        final var task = aTask();
+        final var completeDto = aTaskCompleteDto();
+
+        mvcPatch(ROOT + "/" + task.getId().id() + "/complete", toJson(completeDto))
+                .andExpect(status().isOk());
     }
 
     @Test

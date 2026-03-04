@@ -175,10 +175,11 @@ class ArcServiceTest {
     @Test
     void shouldGetAllArcsForUser_whenUserExists() {
         final var arc = anArc();
+        when(arcRepository.findAllByOwner(arc.getOwner())).thenReturn(List.of(arc));
 
-        arcService.findAllForUser(arc.getOwner());
+        final var result = arcService.findAllForUser(arc.getOwner());
 
-        verify(arcRepository).findAllByOwner(arc.getOwner());
+        assertEquals(List.of(arc), result);
     }
 
     @Test

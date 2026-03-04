@@ -182,10 +182,12 @@ class ChapterServiceTest {
     @Test
     void shouldGetAllChapterForArc_whenArcExists() {
         final var arc = anArc();
+        final var chapter = aChapterWithArcId(arc.getId());
+        when(chapterRepository.findAllByArc(arc.getId())).thenReturn(List.of(chapter));
 
-        service.findAllForArc(arc.getId());
+        final var result = service.findAllForArc(arc.getId());
 
-        verify(chapterRepository).findAllByArc(arc.getId());
+        assertEquals(List.of(chapter), result);
     }
 
     @Test

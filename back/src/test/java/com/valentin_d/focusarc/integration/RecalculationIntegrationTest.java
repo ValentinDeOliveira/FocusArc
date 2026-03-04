@@ -67,6 +67,17 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
                 Arc::getTotalCompletedMinutes);
     }
 
+    @Test
+    public void shouldDeleteTaskAndRecalculateEstimatedMinutes_whenTaskIsDeleted() {
+        final var task1 = domainFixture.taskForArc();
+        final var task2 = domainFixture.taskForChapter(task1.getChapter());
+
+        request(URL + "/" + task1.getId().id(), HttpMethod.DELETE, Void.class);
+
+        assertCorrectRecalculation(task2, task2.getEstimatedMinutes(), Chapter::getEstimatedMinutes,
+                Arc::getTotalEstimatedMinutes);
+    }
+
     private void assertCorrectRecalculation(final Task task, final int expectedValue,
                                final Function<Chapter, Integer> chapterField,
                                final Function<Arc, Integer> arcField) {

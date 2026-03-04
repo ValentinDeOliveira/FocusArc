@@ -42,6 +42,12 @@ abstract class BaseControllerTest {
                 .content(json));
     }
 
+    protected ResultActions mvcPatch(final String url, final String json) throws Exception {
+        return mockMvc.perform(patch(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json));
+    }
+
     protected ResultActions mvcGet(final String url) throws Exception {
         return mockMvc.perform(get(url));
     }

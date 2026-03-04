@@ -15,7 +15,6 @@ import com.valentin_d.focusarc.repository.TaskRepository;
 import com.valentin_d.focusarc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
 
@@ -27,7 +26,6 @@ import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskWithChap
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 
 @Component
-@Transactional
 @RequiredArgsConstructor
 public class DomainFixture {
     private final UserRepository userRepository;
