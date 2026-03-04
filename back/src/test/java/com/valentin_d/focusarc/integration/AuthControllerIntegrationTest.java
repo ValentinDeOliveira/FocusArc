@@ -90,4 +90,11 @@ public class AuthControllerIntegrationTest extends BaseAuthIntegrationTest {
         assertionHelper.assertUnauthorized(response);
         assertNull(response.getBody());
     }
+
+    @Test
+    void shouldReturnBadRequestOnRegister_whenEmailIsInvalid() {
+        final var dto = aRegisterRequestDtoWithMail("not-an-email");
+        final var response = request(URL + "/register", HttpMethod.POST, dto, Void.class);
+        assertionHelper.assertBadRequest(response);
+    }
 }

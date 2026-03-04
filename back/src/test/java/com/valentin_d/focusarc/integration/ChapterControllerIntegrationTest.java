@@ -200,6 +200,31 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         assertEquals(result.remainingTime(),  chapter.getEstimatedMinutes() - completedMinutes);
     }
 
+    @ParameterizedTest
+    @MethodSource("provideInvalidEstimatedMinutes")
+    void shouldReturnBadRequestOnCreate_whenEstimatedMinutesIsNotPositive(final int minutes) {
+        final var arc = domainFixture.arc();
+        final var dto = aChapterCreationDtoWithArcIdAndEstimatedMinutes(arc.getId(), minutes);
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+        assertionHelper.assertBadRequest(response);
+    }
+
+    private static Stream<Arguments> provideInvalidEstimatedMinutes() {
+        return Stream.of(
+                Arguments.of(0),
+                Arguments.of(-1)
+        );
+    }
+
+    @Test
+    void shouldReturnBadRequestOnCreate_whenScheduledDateIsInPast() {
+        final var arc = domainFixture.arc();
+        final var dto = aChapterCreationDtoWithArcIdAndScheduledDate(arc.getId(),
+                LocalDate.now().minusDays(1));
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+        assertionHelper.assertBadRequest(response);
+    }
+
     @Test
     void shouldReturnChapterSummary_whenNoTaskScheduled() {
         final var user = domainFixture.user();

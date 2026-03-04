@@ -11,6 +11,8 @@ import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 
+import java.time.Instant;
+
 public final class TaskFactory {
     private TaskFactory() {}
 
@@ -40,6 +42,16 @@ public final class TaskFactory {
 
     public static TaskCreationDto aTaskCreationDtoWithChapterId(final ChapterId chapterId) {
         return TaskCreationDtoBuilder.builder().chapterId(chapterId).build().build();
+    }
+
+    public static TaskCreationDto aTaskCreationDtoWithChapterIdAndEstimatedMinutes(final ChapterId chapterId,
+                                                                                   final int estimated) {
+        return TaskCreationDtoBuilder.builder().chapterId(chapterId).estimatedMinutes(estimated).build().build();
+    }
+
+    public static TaskCreationDto aTaskCreationDtoWithChapterIdAndScheduled(final ChapterId chapterId,
+                                                                            final Instant scheduled) {
+        return TaskCreationDtoBuilder.builder().chapterId(chapterId).scheduledAt(scheduled).build().build();
     }
 
     public static TaskUpdateDto aTaskUpdateDto() {

@@ -215,4 +215,46 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
         assertionHelper.assertBadRequest(response);
     }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidTaskEstimatedMinutes")
+    void shouldReturnBadRequestOnCreate_whenEstimatedMinutesIsInvalid(final int minutes) {
+        final var chapter = domainFixture.chapter();
+        final var dto = aTaskCreationDtoWithChapterIdAndEstimatedMinutes(chapter.getId(), minutes);
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+        assertionHelper.assertBadRequest(response);
+    }
+
+    @Test
+    void shouldReturnBadRequestOnCreate_whenScheduledAtIsInPast() {
+        final var chapter = domainFixture.chapter();
+        final var dto = aTaskCreationDtoWithChapterIdAndScheduled(chapter.getId(),
+                Instant.now().minusSeconds(60));
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+        assertionHelper.assertBadRequest(response);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidCompleteMinutes")
+    void shouldReturnBadRequestOnComplete_whenCompletedMinutesIsInvalid(final int minutes) {
+        final var task = domainFixture.taskWithChapter();
+        final var dto = aTaskCompleteDtoWithMinutes(minutes);
+        final var response = request(URL + "/" + task.getId().id() + "/complete", HttpMethod.PATCH, dto, Void.class);
+        assertionHelper.assertBadRequest(response);
+    }
+
+    private static Stream<Arguments> provideInvalidTaskEstimatedMinutes() {
+        return Stream.of(
+                Arguments.of(0),
+                Arguments.of(-1),
+                Arguments.of(1441)
+        );
+    }
+
+    private static Stream<Arguments> provideInvalidCompleteMinutes() {
+        return Stream.of(
+                Arguments.of(-1),
+                Arguments.of(1441)
+        );
+    }
 }

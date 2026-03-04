@@ -174,4 +174,21 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
         assertionHelper.assertNotFound(response);
     }
+
+    @ParameterizedTest
+    @MethodSource("provideInvalidTotalEstimatedMinutes")
+    void shouldReturnBadRequestOnCreate_whenTotalEstimatedMinutesIsNotPositive(final int minutes) {
+        final var user = domainFixture.user();
+        final var dto = anArcCreationDtoWithEstimatedMinutes(minutes);
+        final var headers = getHeadersForUser(user);
+        final var response = request(URL, HttpMethod.POST, new HttpEntity<>(dto, headers), Void.class);
+        assertionHelper.assertBadRequest(response);
+    }
+
+    private static Stream<Arguments> provideInvalidTotalEstimatedMinutes() {
+        return Stream.of(
+                Arguments.of(0),
+                Arguments.of(-1)
+        );
+    }
 }
