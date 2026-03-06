@@ -13,11 +13,16 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
 public class ChapterLoader extends BaseService {
     private final ChapterRepository chapterRepository;
+
+    public Optional<Chapter> getChapter(@NotNull final ChapterId chapterId) {
+        return chapterRepository.findById(chapterId);
+    }
 
     public Chapter getChapterIfExists(@NotNull final ChapterId chapterId) {
         return fetchOrThrow(chapterRepository, chapterId, () -> new ChapterDoesNotExistException(chapterId));

@@ -56,7 +56,7 @@ public class ArcService {
     public void delete(@NotNull final UserId userId, @NotNull final ArcId arcId) {
         final var arc = arcLoader.getArcIfExists(arcId);
         arcLoader.assertOwnership(arc, userId);
-        chapterService.deleteAllForArc(arcId);
+        chapterService.deleteAllForArc(arcId, userId);
         arcRepository.delete(arc);
     }
 
@@ -64,7 +64,7 @@ public class ArcService {
         userLoader.assertUserExists(userId);
 
         final var arcs = arcRepository.findAllByOwner(userId);
-        arcs.forEach(arc -> chapterService.deleteAllForArc(arc.getId()));
+        arcs.forEach(arc -> chapterService.deleteAllForArc(arc.getId(), userId));
         arcRepository.deleteAll(arcs);
     }
 }

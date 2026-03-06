@@ -24,43 +24,48 @@ import java.util.List;
 @RequiredArgsConstructor
 @Validated
 public class ChapterController {
-
     private final ChapterService service;
 
     @GetMapping("/{chapterId}")
-    public ResponseEntity<Chapter> getById(@PathVariable final ChapterId chapterId) {
-        final var chapter = service.findById(chapterId);
+    public ResponseEntity<Chapter> getById(@AuthenticationPrincipal final User user,
+                                           @PathVariable final ChapterId chapterId) {
+        final var chapter = service.findById(chapterId, user.getId());
         return ResponseUtil.wrapOrNotFound(chapter);
     }
 
     @GetMapping("/arcs/{arcId}")
-    public ResponseEntity<List<Chapter>> getAllForArc(@PathVariable final ArcId arcId) {
-        final var arcChapters = service.findAllForArc(arcId);
+    public ResponseEntity<List<Chapter>> getAllForArc(@AuthenticationPrincipal final User user,
+                                                      @PathVariable final ArcId arcId) {
+        final var arcChapters = service.findAllForArc(arcId, user.getId());
         return ResponseUtil.wrapOrNoContent(arcChapters);
     }
 
     @PostMapping
-    public ResponseEntity<Chapter> create(@Valid @RequestBody final ChapterCreationDto chapterCreationDto) {
-        final var chapter = service.create(chapterCreationDto);
+    public ResponseEntity<Chapter> create(@AuthenticationPrincipal final User user,
+                                          @Valid @RequestBody final ChapterCreationDto chapterCreationDto) {
+        final var chapter = service.create(chapterCreationDto, user.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(chapter);
     }
 
     @PutMapping("/{chapterId}")
-    public ResponseEntity<Chapter> update(@PathVariable final ChapterId chapterId,
-                                       @Valid @RequestBody final ChapterUpdateDto chapterUpdateDto) {
-        final var chapter = service.update(chapterId, chapterUpdateDto);
+    public ResponseEntity<Chapter> update(@AuthenticationPrincipal final User user,
+                                          @PathVariable final ChapterId chapterId,
+                                          @Valid @RequestBody final ChapterUpdateDto chapterUpdateDto) {
+        final var chapter = service.update(chapterId, user.getId(), chapterUpdateDto);
         return ResponseEntity.ok(chapter);
     }
 
     @DeleteMapping("/{chapterId}")
-    public ResponseEntity<Void> delete(@PathVariable final ChapterId chapterId) {
-        service.delete(chapterId);
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal final User user,
+                                       @PathVariable final ChapterId chapterId) {
+        service.delete(chapterId, user.getId());
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/arcs/{arcId}")
-    public ResponseEntity<Void> deleteAllForArc(@PathVariable final ArcId arcId) {
-        service.deleteAllForArc(arcId);
+    public ResponseEntity<Void> deleteAllForArc(@AuthenticationPrincipal final User user,
+                                                @PathVariable final ArcId arcId) {
+        service.deleteAllForArc(arcId, user.getId());
         return ResponseEntity.noContent().build();
     }
 

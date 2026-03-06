@@ -132,7 +132,7 @@ class ArcServiceTest {
         arcService.delete(user.getId(), arc.getId());
 
         verify(arcRepository).delete(arc);
-        verify(chapterService).deleteAllForArc(arc.getId());
+        verify(chapterService).deleteAllForArc(arc.getId(), user.getId());
     }
 
     @Test
@@ -160,7 +160,7 @@ class ArcServiceTest {
         arcService.deleteAllForUser(user.getId());
 
         verify(arcRepository).deleteAll(List.of(arc));
-        verify(chapterService).deleteAllForArc(arc.getId());
+        verify(chapterService).deleteAllForArc(arc.getId(), user.getId());
     }
 
     @Test
