@@ -21,16 +21,16 @@ public class ArcRecalculationService {
     private final ChapterRepository chapterRepository;
     private final ArcLoader arcLoader;
 
-    public void recalculateCompletedMinutes(@NotNull final ArcId arcId) {
+    public void recalculateCompletedMinutes(@NotNull ArcId arcId) {
         recalculateMinutes(arcId, Arc::recalculateCompletedMinutes);
     }
 
-    public void recalculateEstimatedMinutes(@NotNull final ArcId arcId) {
+    public void recalculateEstimatedMinutes(@NotNull ArcId arcId) {
         recalculateMinutes(arcId, Arc::recalculateEstimatedMinutes);
     }
 
-    private void recalculateMinutes(@NotNull final ArcId arcId,
-                                    final BiConsumer<Arc, List<Chapter>> arcRecalculator) {
+    private void recalculateMinutes(ArcId arcId,
+                                    BiConsumer<Arc, List<Chapter>> arcRecalculator) {
         final var arc = arcLoader.getArcIfExists(arcId);
 
         final var chapters = chapterRepository.findAllByArc(arcId);

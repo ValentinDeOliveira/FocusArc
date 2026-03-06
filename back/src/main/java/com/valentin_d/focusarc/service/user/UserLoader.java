@@ -6,8 +6,6 @@ import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.repository.UserRepository;
 import com.valentin_d.focusarc.service.BaseService;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -18,19 +16,19 @@ import java.util.Optional;
 public class UserLoader extends BaseService {
     private final UserRepository userRepository;
 
-    public User getUserIfExists(@NotNull final UserId userId) {
+    public User getUserIfExists(UserId userId) {
         return fetchOrThrow(userRepository, userId, () -> new UserDoesNotExistException(userId));
     }
 
-    public void assertUserExists(@NotNull final UserId userId) {
+    public void assertUserExists(UserId userId) {
         existsOrThrow(userRepository, userId, () -> new UserDoesNotExistException(userId));
     }
 
-    public Optional<User> getUserByEmail(@NotNull @Email final String email) {
+    public Optional<User> getUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
-    public void assertEmailDoNotExist(@NotNull @Email final String email) {
+    public void assertEmailDoNotExist(String email) {
         if (userRepository.existsByEmail(email)) {
             throw new EmailAlreadyExistsException(email);
         }

@@ -23,7 +23,7 @@ public class UserService {
     private final UserLoader userLoader;
     private final PasswordEncoder passwordEncoder;
 
-    public User create(@NotNull final RegisterRequestDto registerDto) {
+    public User create(@NotNull RegisterRequestDto registerDto) {
         userLoader.assertEmailDoNotExist(registerDto.email());
 
         final var user = new User(registerDto.name(), registerDto.email(),
@@ -32,15 +32,15 @@ public class UserService {
         return repository.save(user);
     }
 
-    public Optional<User> findByEmail(@NotBlank @Email final String email) {
+    public Optional<User> findByEmail(@NotBlank @Email String email) {
         return repository.findByEmail(email);
     }
 
-    public Optional<User> findById(@NotNull final UserId id) {
+    public Optional<User> findById(@NotNull UserId id) {
         return repository.findById(id);
     }
 
-    public User update(@NotNull final UserId id, @NotNull final UserUpdateDto dto) {
+    public User update(@NotNull UserId id, @NotNull UserUpdateDto dto) {
         final var user = userLoader.getUserIfExists(id);
 
         if (dto.name() != null) user.setName(dto.name());
@@ -48,7 +48,7 @@ public class UserService {
         return repository.save(user);
     }
 
-    public void delete(@NotNull final UserId id) {
+    public void delete(@NotNull UserId id) {
         final var user = userLoader.getUserIfExists(id);
         repository.delete(user);
     }

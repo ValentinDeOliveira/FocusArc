@@ -10,7 +10,6 @@ import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.service.BaseService;
-import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -21,31 +20,31 @@ import java.util.Optional;
 public class ArcLoader extends BaseService {
     private final ArcRepository arcRepository;
 
-    public Arc getArcIfExists(@NotNull final ArcId arcId) {
+    public Arc getArcIfExists(ArcId arcId) {
         return fetchOrThrow(arcRepository, arcId, () -> new ArcDoesNotExistException(arcId));
     }
 
-    public Optional<Arc> getArcByIdAndOwnerId(@NotNull final ArcId arcId, @NotNull final UserId ownerId) {
+    public Optional<Arc> getArcByIdAndOwnerId(ArcId arcId, UserId ownerId) {
         return arcRepository.findByIdAndOwner(arcId, ownerId);
     }
 
-    public void assertNotAnotherActiveArc(@NotNull final UserId userId) {
+    public void assertNotAnotherActiveArc(UserId userId) {
         if (arcRepository.existsByOwnerAndStatus(userId, ArcStatus.ACTIVE)) {
             throw new ArcAlreadyExistsException(userId);
         }
     }
 
-    public Arc getActiveArcForUser(@NotNull final UserId userId) {
+    public Arc getActiveArcForUser(UserId userId) {
         return arcRepository.findByOwnerAndStatus(userId, ArcStatus.ACTIVE).orElseThrow(() -> new NoActiveArcException(userId));
     }
 
-    public void assertOwnership(@NotNull final Arc arc, @NotNull final UserId userId) {
+    public void assertOwnership(Arc arc, UserId userId) {
         if (!arc.getOwner().equals(userId)) {
             throw new ArcDoesNotExistForUserException(arc.getId(), userId);
         }
     }
 
-    public void assertArcExistsForUser(@NotNull final ArcId arcId, @NotNull final UserId userId) {
+    public void assertArcExistsForUser(ArcId arcId, UserId userId) {
         if (!arcRepository.existsByIdAndOwner(arcId, userId)) {
             throw new ArcDoesNotExistForUserException(arcId, userId);
         }

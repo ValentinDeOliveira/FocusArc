@@ -35,7 +35,7 @@ public class ChapterService {
     private final TaskService taskService;
 
     // TODO: return Chapter instead?
-    public Optional<Chapter> findById(@NotNull final ChapterId chapterId, @NotNull final UserId userId) {
+    public Optional<Chapter> findById(@NotNull ChapterId chapterId, @NotNull UserId userId) {
         final var optChapter = chapterLoader.getChapter(chapterId);
 
         if (optChapter.isEmpty()) {
@@ -48,14 +48,14 @@ public class ChapterService {
         return Optional.of(chapter);
     }
 
-    public List<Chapter> findAllForArc(@NotNull final ArcId arcId, @NotNull final UserId userId) {
+    public List<Chapter> findAllForArc(@NotNull ArcId arcId, @NotNull UserId userId) {
         arcLoader.assertArcExistsForUser(arcId, userId);
 
         return chapterRepository.findAllByArc(arcId);
     }
 
-    public Chapter create(@NotNull final ChapterCreationDto chapterCreationDto,
-                          @NotNull final UserId userId) {
+    public Chapter create(@NotNull ChapterCreationDto chapterCreationDto,
+                          @NotNull UserId userId) {
         arcLoader.assertArcExistsForUser(chapterCreationDto.arcId(), userId);
         chapterLoader.assertNotAlreadyExists(chapterCreationDto.arcId(), chapterCreationDto.scheduledDate());
 
@@ -64,8 +64,8 @@ public class ChapterService {
         return chapterRepository.save(chapter);
     }
 
-    public Chapter update(@NotNull final ChapterId chapterId, @NotNull final UserId userId,
-                          @NotNull final ChapterUpdateDto chapterUpdateDto) {
+    public Chapter update(@NotNull ChapterId chapterId, @NotNull UserId userId,
+                          @NotNull ChapterUpdateDto chapterUpdateDto) {
         final var chapter = chapterLoader.getChapterIfExists(chapterId);
         arcLoader.assertArcExistsForUser(chapter.getArc(), userId);
 
@@ -74,7 +74,7 @@ public class ChapterService {
         return chapterRepository.save(chapter);
     }
 
-    public void delete(@NotNull final ChapterId chapterId, @NotNull final UserId userId) {
+    public void delete(@NotNull ChapterId chapterId, @NotNull UserId userId) {
         final var chapter = chapterLoader.getChapterIfExists(chapterId);
         arcLoader.assertArcExistsForUser(chapter.getArc(), userId);
         taskService.deleteTasksForChapter(chapterId);
@@ -84,7 +84,7 @@ public class ChapterService {
         arcRecalculationService.recalculateCompletedMinutes(chapter.getArc());
     }
 
-    public void deleteAllForArc(@NotNull final ArcId arcId, @NotNull final UserId userId) {
+    public void deleteAllForArc(@NotNull ArcId arcId, @NotNull UserId userId) {
         arcLoader.assertArcExistsForUser(arcId, userId);
 
         final var chapters = chapterRepository.findAllByArc(arcId);
@@ -96,7 +96,7 @@ public class ChapterService {
         arcRecalculationService.recalculateCompletedMinutes(arcId);
     }
 
-    public ChapterSummaryResponseDto getChapterSummary(@NotNull final UserId userId) {
+    public ChapterSummaryResponseDto getChapterSummary(@NotNull UserId userId) {
         final var chapter = contextLoader.getChapterFromUserId(userId);
         final var tasksTodo = taskLoader.getNotCompletedTaskForChapter(chapter.getId());
 
