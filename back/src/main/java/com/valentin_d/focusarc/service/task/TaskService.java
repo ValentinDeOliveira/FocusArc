@@ -12,7 +12,6 @@ import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.repository.TaskRepository;
 import com.valentin_d.focusarc.service.ContextLoader;
-import com.valentin_d.focusarc.service.chapter.ChapterLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterRecalculationService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -31,21 +30,32 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final ChapterRecalculationService chapterRecalculationService;
     private final TaskLoader taskLoader;
-    private final ChapterLoader chapterLoader;
     private final ContextLoader contextLoader;
 
-    public Optional<Task> findById(final TaskId taskId) {
-        return taskRepository.findById(taskId);
+    public Optional<Task> findById(@NotNull final TaskId taskId,
+                                   @NotNull final UserId userId) {
+        final var optTask = taskLoader.getTask(taskId);
+
+        if (optTask.isEmpty()) {
+            return Optional.empty();
+        }
+
+        final var task = optTask.get();
+        contextLoader.assertChapterForUser(task.getChapter(), userId);
+
+        return Optional.of(task);
     }
 
-    public List<Task> findAllForChapter(final ChapterId chapterId) {
-        chapterLoader.assertChapterExists(chapterId);
+    public List<Task> findAllForChapter(@NotNull final ChapterId chapterId,
+                                        @NotNull final UserId userId) {
+        contextLoader.assertChapterForUser(chapterId, userId);
 
         return taskRepository.findAllByChapter(chapterId);
     }
 
-    public Task create(@NotNull final TaskCreationDto taskCreationDto) {
-        chapterLoader.assertChapterExists(taskCreationDto.chapterId());
+    public Task create(@NotNull final TaskCreationDto taskCreationDto,
+                       @NotNull final UserId userId) {
+        contextLoader.assertChapterForUser(taskCreationDto.chapterId(), userId);
 
         assertMinutes(taskCreationDto.estimatedMinutes());
 
@@ -58,8 +68,11 @@ public class TaskService {
         return savedTask;
     }
 
-    public Task update(@NotNull final TaskId taskId, @NotNull final TaskUpdateDto taskUpdateDto) {
+    public Task update(@NotNull final TaskId taskId,
+                       @NotNull final TaskUpdateDto taskUpdateDto,
+                       @NotNull final UserId userId) {
         final var task = taskLoader.getTaskIfExists(taskId);
+        contextLoader.assertChapterForUser(task.getChapter(), userId);
         final var beforeUpdateTask = task.snapshot();
 
         updateTask(task, taskUpdateDto);
@@ -76,16 +89,20 @@ public class TaskService {
         return savedTask;
     }
 
-    public void delete(@NotNull final TaskId taskId) {
+    public void delete(@NotNull final TaskId taskId,
+                       @NotNull final UserId userId) {
         final var task = taskLoader.getTaskIfExists(taskId);
+        contextLoader.assertChapterForUser(task.getChapter(), userId);
+
         taskRepository.delete(task);
 
         chapterRecalculationService.recalculateEstimatedMinutes(task.getChapter());
         chapterRecalculationService.recalculateCompletedMinutes(task.getChapter());
     }
 
-    public void deleteAllForChapter(@NotNull final ChapterId chapterId) {
-        chapterLoader.assertChapterExists(chapterId);
+    public void deleteAllForChapter(@NotNull final ChapterId chapterId,
+                                    @NotNull final UserId userId) {
+        contextLoader.assertChapterForUser(chapterId, userId);
 
         final var tasks = taskRepository.findAllByChapter(chapterId);
         taskRepository.deleteAll(tasks);
@@ -94,12 +111,16 @@ public class TaskService {
         chapterRecalculationService.recalculateCompletedMinutes(chapterId);
     }
 
-    public void completeTask(@NotNull final TaskId taskId, @NotNull final TaskCompleteDto taskCompleteDto) {
+    public void completeTask(@NotNull final TaskId taskId,
+                             @NotNull final UserId userId,
+                             @NotNull final TaskCompleteDto taskCompleteDto) {
         final var task = taskLoader.getTaskIfExists(taskId);
+        contextLoader.assertChapterForUser(task.getChapter(), userId);
 
         if (task.isDone()) {
             throw new TaskAlreadyDoneException(taskId);
         }
+
         assertMinutes(taskId, taskCompleteDto.completedMinutes());
 
         task.setStatus(TaskStatus.DONE);

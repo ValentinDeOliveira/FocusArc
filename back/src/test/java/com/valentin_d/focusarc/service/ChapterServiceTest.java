@@ -135,7 +135,7 @@ class ChapterServiceTest {
         service.delete(chapter.getId(), user.getId());
 
         verify(arcLoader).assertArcExistsForUser(chapter.getArc(), user.getId());
-        verify(taskService).deleteAllForChapter(chapter.getId());
+        verify(taskService).deleteAllForChapter(chapter.getId(), user.getId());
         verify(chapterRepository).delete(chapter);
         verify(arcRecalculationService).recalculateCompletedMinutes(chapter.getArc());
         verify(arcRecalculationService).recalculateEstimatedMinutes(chapter.getArc());
@@ -154,7 +154,7 @@ class ChapterServiceTest {
                 .hasMessageContaining(String.valueOf(chapter.getId().id()));
 
         verify(arcLoader, never()).assertArcExistsForUser(any(ArcId.class), any(UserId.class));
-        verify(taskService, never()).deleteAllForChapter(any(ChapterId.class));
+        verify(taskService, never()).deleteAllForChapter(any(ChapterId.class), any(UserId.class));
         verify(chapterRepository, never()).delete(any(Chapter.class));
         verify(arcRecalculationService, never()).recalculateCompletedMinutes(any(ArcId.class));
         verify(arcRecalculationService, never()).recalculateEstimatedMinutes(any(ArcId.class));
@@ -171,7 +171,7 @@ class ChapterServiceTest {
         service.deleteAllForArc(arc.getId(), user.getId());
 
         verify(arcLoader).assertArcExistsForUser(arc.getId(), user.getId());
-        verify(taskService).deleteAllForChapter(chapter.getId());
+        verify(taskService).deleteAllForChapter(chapter.getId(), user.getId());
         verify(chapterRepository).deleteAll(List.of(chapter));
         verify(arcRecalculationService).recalculateCompletedMinutes(chapter.getArc());
         verify(arcRecalculationService).recalculateEstimatedMinutes(chapter.getArc());
@@ -188,7 +188,7 @@ class ChapterServiceTest {
                 .isInstanceOf(ArcDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
-        verify(taskService, never()).deleteAllForChapter(any(ChapterId.class));
+        verify(taskService, never()).deleteAllForChapter(any(ChapterId.class), any(UserId.class));
         verify(chapterRepository, never()).deleteAll(anyList());
         verify(arcRecalculationService, never()).recalculateCompletedMinutes(any(ArcId.class));
         verify(arcRecalculationService, never()).recalculateEstimatedMinutes(any(ArcId.class));

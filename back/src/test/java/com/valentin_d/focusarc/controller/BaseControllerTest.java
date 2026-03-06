@@ -62,6 +62,14 @@ abstract class BaseControllerTest {
                 .content(json));
     }
 
+    protected ResultActions mvcPatch(final String url, final String json, final RequestPostProcessor auth) throws Exception {
+        return mockMvc.perform(patch(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .with(auth)
+                .header("Authorization", "Bearer token"));
+    }
+
     protected ResultActions mvcGet(final String url) throws Exception {
         return mockMvc.perform(get(url));
     }

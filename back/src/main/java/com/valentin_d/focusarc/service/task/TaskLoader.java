@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -27,5 +28,9 @@ public class TaskLoader extends BaseService {
 
     public List<Task> getNotCompletedTaskForChapter(final ChapterId chapterId) {
         return taskRepository.findAllByChapterAndStatusIn(chapterId, TaskStatus.PENDING);
+    }
+
+    public Optional<Task> getTask(final TaskId taskId) {
+        return taskRepository.findById(taskId);
     }
 }
