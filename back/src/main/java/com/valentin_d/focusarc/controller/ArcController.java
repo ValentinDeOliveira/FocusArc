@@ -4,7 +4,6 @@ import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
-import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.arc.ArcService;
 import com.valentin_d.focusarc.util.ResponseUtil;
@@ -26,14 +25,15 @@ public class ArcController {
     private final ArcService service;
 
     @GetMapping("/{arcId}")
-    public ResponseEntity<Arc> getById(@PathVariable final ArcId arcId) {
-        final var arc = service.findById(arcId);
+    public ResponseEntity<Arc> getById(@AuthenticationPrincipal final User user,
+                                       @PathVariable final ArcId arcId) {
+        final var arc = service.findByIdAndOwnerId(arcId, user.getId());
         return ResponseUtil.wrapOrNotFound(arc);
     }
 
-    @GetMapping("/users/{userId}")
-    public ResponseEntity<List<Arc>> getAllForUser(@PathVariable final UserId userId) {
-        final var userArcs = service.findAllForUser(userId);
+    @GetMapping("/me")
+    public ResponseEntity<List<Arc>> getAllForCurrentUser(@AuthenticationPrincipal final User user) {
+        final var userArcs = service.findAllForUser(user.getId());
         return ResponseUtil.wrapOrNoContent(userArcs);
     }
 
@@ -45,21 +45,23 @@ public class ArcController {
     }
 
     @PutMapping("/{arcId}")
-    public ResponseEntity<Arc> update(@PathVariable final ArcId arcId,
-                                       @Valid @RequestBody final ArcUpdateDto arcUpdateDto) {
-        final var arc = service.update(arcId, arcUpdateDto);
+    public ResponseEntity<Arc> update(@AuthenticationPrincipal final User user,
+                                      @PathVariable final ArcId arcId,
+                                      @Valid @RequestBody final ArcUpdateDto arcUpdateDto) {
+        final var arc = service.update(user.getId(), arcId, arcUpdateDto);
         return ResponseEntity.ok(arc);
     }
 
     @DeleteMapping("/{arcId}")
-    public ResponseEntity<Void> delete(@PathVariable final ArcId arcId) {
-        service.delete(arcId);
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal final User user,
+                                       @PathVariable final ArcId arcId) {
+        service.delete(user.getId(), arcId);
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/users/{userId}")
-    public ResponseEntity<Void> deleteAllForUser(@PathVariable final UserId userId) {
-        service.deleteAllForUser(userId);
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deleteAllForCurrentUser(@AuthenticationPrincipal final User user) {
+        service.deleteAllForUser(user.getId());
         return ResponseEntity.noContent().build();
     }
 }

@@ -87,7 +87,8 @@ class ArcServiceTest {
 
     @Test
     void shouldUpdate_whenArcExists() {
-        final var arc = anArc();
+        final var user = aUser();
+        final var arc = anArcWithOwnerId(user.getId());
         final var updateDto = anArcUpdateDto();
 
         when(arcLoader.getArcIfExists(eq(arc.getId()))).thenReturn(arc);
@@ -95,7 +96,7 @@ class ArcServiceTest {
         when(arcRepository.save(any(Arc.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        final Arc updated = arcService.update(arc.getId(), updateDto);
+        final Arc updated = arcService.update(user.getId(), arc.getId(), updateDto);
 
         verify(arcRepository).save(arc);
 
@@ -107,13 +108,14 @@ class ArcServiceTest {
 
     @Test
     void shouldThrowExceptionOnUpdate_whenArcDoesNotExists() {
-        final var arc = anArc();
+        final var user = aUser();
+        final var arc = anArcWithOwnerId(user.getId());
         final var updateDto = anArcUpdateDto();
 
         when(arcLoader.getArcIfExists(eq(arc.getId())))
                 .thenThrow((new ArcDoesNotExistException(arc.getId())));
 
-        assertThatThrownBy(() -> arcService.update(arc.getId(), updateDto))
+        assertThatThrownBy(() -> arcService.update(user.getId(), arc.getId(), updateDto))
                 .isInstanceOf(ArcDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
@@ -122,11 +124,12 @@ class ArcServiceTest {
 
     @Test
     void shouldDeleteArc_whenArcExists() {
-        final var arc = anArc();
+        final var user = aUser();
+        final var arc = anArcWithOwnerId(user.getId());
 
         when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
 
-        arcService.delete(arc.getId());
+        arcService.delete(user.getId(), arc.getId());
 
         verify(arcRepository).delete(arc);
         verify(chapterService).deleteAllForArc(arc.getId());
@@ -134,12 +137,13 @@ class ArcServiceTest {
 
     @Test
     void shouldThrowExceptionOnDelete_whenArcDoesNotExists() {
-        final var arc = anArc();
+        final var user = aUser();
+        final var arc = anArcWithOwnerId(user.getId());
 
         when(arcLoader.getArcIfExists(eq(arc.getId())))
                 .thenThrow((new ArcDoesNotExistException(arc.getId())));
 
-        assertThatThrownBy(() -> arcService.delete(arc.getId()))
+        assertThatThrownBy(() -> arcService.delete(user.getId(), arc.getId()))
                 .isInstanceOf(ArcDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 

@@ -1,22 +1,15 @@
 package com.valentin_d.focusarc.controller;
 
-import com.valentin_d.focusarc.service.auth.JwtService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 import tools.jackson.databind.ObjectMapper;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 
 abstract class BaseControllerTest {
-    @MockitoBean
-    private JwtService jwtService;
-    @MockitoBean
-    private UserDetailsService userDetailsService;
-
     @Autowired
     private MockMvc mockMvc;
     @Autowired
@@ -32,14 +25,35 @@ abstract class BaseControllerTest {
                 .content(json));
     }
 
+    protected ResultActions mvcPut(final String url, final String json, final RequestPostProcessor auth) throws Exception {
+        return mockMvc.perform(put(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .with(auth)
+                .header("Authorization", "Bearer token")
+        );
+    }
+
     protected ResultActions mvcDelete(final String url) throws Exception {
         return mockMvc.perform(delete(url));
+    }
+
+    protected ResultActions mvcDelete(final String url, final RequestPostProcessor auth) throws Exception {
+        return mockMvc.perform(delete(url).with(auth).header("Authorization", "Bearer token"));
     }
 
     protected ResultActions mvcPost(final String url, final String json) throws Exception {
         return mockMvc.perform(post(url)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(json));
+    }
+
+    protected ResultActions mvcPost(final String url, final String json, final RequestPostProcessor auth) throws Exception {
+        return mockMvc.perform(post(url)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(json)
+                .with(auth)
+                .header("Authorization", "Bearer token"));
     }
 
     protected ResultActions mvcPatch(final String url, final String json) throws Exception {
@@ -50,5 +64,11 @@ abstract class BaseControllerTest {
 
     protected ResultActions mvcGet(final String url) throws Exception {
         return mockMvc.perform(get(url));
+    }
+
+    protected ResultActions mvcGet(final String url, final RequestPostProcessor auth) throws Exception {
+        return mockMvc.perform(get(url)
+                .with(auth)
+                .header("Authorization", "Bearer token"));
     }
 }

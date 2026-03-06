@@ -25,8 +25,8 @@ public class ArcService {
     private final UserLoader userLoader;
     private final ChapterService chapterService;
 
-    public Optional<Arc> findById(final ArcId arcId) {
-        return arcRepository.findById(arcId);
+    public Optional<Arc> findByIdAndOwnerId(@NotNull final ArcId arcId, @NotNull final UserId ownerId) {
+        return arcLoader.getArcByIdAndOwnerId(arcId, ownerId);
     }
 
     public List<Arc> findAllForUser(final UserId userId) {
@@ -43,8 +43,9 @@ public class ArcService {
         return arcRepository.save(arc);
     }
 
-    public Arc update(@NotNull final ArcId arcId, @NotNull final ArcUpdateDto arcUpdateDto) {
+    public Arc update(@NotNull final UserId userId, @NotNull final ArcId arcId, @NotNull final ArcUpdateDto arcUpdateDto) {
         final var arc = arcLoader.getArcIfExists(arcId);
+        arcLoader.assertOwnership(arc, userId);
 
         if (arcUpdateDto.name() != null) arc.setName(arcUpdateDto.name());
         if (arcUpdateDto.totalEstimatedMinutes() != null) arc.setTotalEstimatedMinutes(arcUpdateDto.totalEstimatedMinutes());
@@ -52,8 +53,9 @@ public class ArcService {
         return arcRepository.save(arc);
     }
 
-    public void delete(@NotNull final ArcId arcId) {
+    public void delete(@NotNull final UserId userId, @NotNull final ArcId arcId) {
         final var arc = arcLoader.getArcIfExists(arcId);
+        arcLoader.assertOwnership(arc, userId);
         chapterService.deleteAllForArc(arcId);
         arcRepository.delete(arc);
     }

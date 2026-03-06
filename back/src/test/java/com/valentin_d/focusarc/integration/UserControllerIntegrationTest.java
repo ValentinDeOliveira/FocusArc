@@ -17,32 +17,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UserControllerIntegrationTest extends BaseUserControllerIntegrationTest {
-    /*@Test
-    void shouldCreateUser_whenDataIsValid() {
-        final var dto = aUserCreationDto();
-
-        final var response = request(URL, HttpMethod.POST, dto, User.class);
-
-        assertCreated(response);
-
-        final var result = response.getBody();
-        assertNotNull(result);
-        assertEquals(dto.email(), result.getEmail());
-        assertEquals(dto.name(), result.getName());
-        assertNotNull(result.getId());
-        assertNotNull(result.getLastLogin());
-    }
-
-    @Test
-    void shouldReturnConflict_whenEmailAlreadyExists() {
-        final var user = domainFixture.user();
-        final var dto = aUserCreationDtoWithEmail(user.getEmail());
-
-        final var response = request(URL, HttpMethod.POST, dto, Void.class);
-
-        assertConflict(response);
-    }*/
-
     @Test
     void shouldReturnUser_whenEmailExists() {
         final var user = domainFixture.user();
