@@ -77,7 +77,7 @@ public class ChapterService {
     public void delete(@NotNull final ChapterId chapterId, @NotNull final UserId userId) {
         final var chapter = chapterLoader.getChapterIfExists(chapterId);
         arcLoader.assertArcExistsForUser(chapter.getArc(), userId);
-        taskService.deleteAllForChapter(chapterId, userId);
+        taskService.deleteTasksForChapter(chapterId);
         chapterRepository.delete(chapter);
 
         arcRecalculationService.recalculateEstimatedMinutes(chapter.getArc());
@@ -89,7 +89,7 @@ public class ChapterService {
 
         final var chapters = chapterRepository.findAllByArc(arcId);
 
-        chapters.forEach(ch -> taskService.deleteAllForChapter(ch.getId(), userId));
+        chapters.forEach(ch -> taskService.deleteTasksForChapter(ch.getId()));
         chapterRepository.deleteAll(chapters);
 
         arcRecalculationService.recalculateEstimatedMinutes(arcId);

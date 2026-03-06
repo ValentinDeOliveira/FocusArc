@@ -12,7 +12,6 @@ import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.service.BaseService;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
@@ -30,23 +29,23 @@ public class ArcLoader extends BaseService {
         return arcRepository.findByIdAndOwner(arcId, ownerId);
     }
 
-    public void assertNotAnotherActiveArc(final UserId userId) {
+    public void assertNotAnotherActiveArc(@NotNull final UserId userId) {
         if (arcRepository.existsByOwnerAndStatus(userId, ArcStatus.ACTIVE)) {
             throw new ArcAlreadyExistsException(userId);
         }
     }
 
-    public Arc getActiveArcForUser(final UserId userId) {
+    public Arc getActiveArcForUser(@NotNull final UserId userId) {
         return arcRepository.findByOwnerAndStatus(userId, ArcStatus.ACTIVE).orElseThrow(() -> new NoActiveArcException(userId));
     }
 
     public void assertOwnership(@NotNull final Arc arc, @NotNull final UserId userId) {
         if (!arc.getOwner().equals(userId)) {
-            throw new AccessDeniedException("You do not own this arc");
+            throw new ArcDoesNotExistForUserException(arc.getId(), userId);
         }
     }
 
-    public void assertArcExistsForUser(final ArcId arcId, final UserId userId) {
+    public void assertArcExistsForUser(@NotNull final ArcId arcId, @NotNull final UserId userId) {
         if (!arcRepository.existsByIdAndOwner(arcId, userId)) {
             throw new ArcDoesNotExistForUserException(arcId, userId);
         }

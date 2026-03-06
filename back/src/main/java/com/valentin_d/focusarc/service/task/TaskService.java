@@ -103,7 +103,10 @@ public class TaskService {
     public void deleteAllForChapter(@NotNull final ChapterId chapterId,
                                     @NotNull final UserId userId) {
         contextLoader.assertChapterForUser(chapterId, userId);
+        deleteTasksForChapter(chapterId);
+    }
 
+    public void deleteTasksForChapter(@NotNull final ChapterId chapterId) {
         final var tasks = taskRepository.findAllByChapter(chapterId);
         taskRepository.deleteAll(tasks);
 

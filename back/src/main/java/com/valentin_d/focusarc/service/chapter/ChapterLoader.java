@@ -28,10 +28,6 @@ public class ChapterLoader extends BaseService {
         return fetchOrThrow(chapterRepository, chapterId, () -> new ChapterDoesNotExistException(chapterId));
     }
 
-    public void assertChapterExists(@NotNull final ChapterId chapterId) {
-        existsOrThrow(chapterRepository, chapterId, () -> new ChapterDoesNotExistException(chapterId));
-    }
-
     public void assertNotAlreadyExists(@NotNull final ArcId arcId, @NotNull final LocalDate scheduledDate) {
         if (chapterRepository.existsByArcAndScheduledDate(arcId, scheduledDate)) {
             throw new ChapterAlreadyExistsException(arcId, scheduledDate);

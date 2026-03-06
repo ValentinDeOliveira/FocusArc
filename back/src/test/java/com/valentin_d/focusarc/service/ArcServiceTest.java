@@ -2,6 +2,7 @@ package com.valentin_d.focusarc.service;
 
 import com.valentin_d.focusarc.exception.ArcAlreadyExistsException;
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
+import com.valentin_d.focusarc.exception.ArcDoesNotExistForUserException;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.UserId;
@@ -199,9 +200,46 @@ class ArcServiceTest {
         verify(arcRepository, never()).findAllByOwner(any(UserId.class));
     }
 
+    @Test
+    void shouldThrowExceptionOnUpdate_whenUserDoesNotOwnArc() {
+        final var owner = aUser();
+        final var attacker = aUser();
+        final var arc = anArcWithOwnerId(owner.getId());
+        final var updateDto = anArcUpdateDto();
+
+        when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
+        doThrowArcDoesNotExistForUser(arc, attacker.getId());
+
+        assertThatThrownBy(() -> arcService.update(attacker.getId(), arc.getId(), updateDto))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(arcRepository, never()).save(any(Arc.class));
+    }
+
+    @Test
+    void shouldThrowExceptionOnDelete_whenUserDoesNotOwnArc() {
+        final var owner = aUser();
+        final var attacker = aUser();
+        final var arc = anArcWithOwnerId(owner.getId());
+
+        when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
+        doThrowArcDoesNotExistForUser(arc, attacker.getId());
+
+        assertThatThrownBy(() -> arcService.delete(attacker.getId(), arc.getId()))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(arcRepository, never()).delete(any(Arc.class));
+    }
+
     private void doThrowUserDoesNotExist(final UserId userId) {
         doThrow(new UserDoesNotExistException(userId))
                 .when(userLoader)
                 .assertUserExists(eq(userId));
+    }
+
+    private void doThrowArcDoesNotExistForUser(final Arc arc, final UserId userId) {
+        doThrow(new ArcDoesNotExistForUserException(arc.getId(), userId))
+                .when(arcLoader)
+                .assertOwnership(arc, userId);
     }
 }

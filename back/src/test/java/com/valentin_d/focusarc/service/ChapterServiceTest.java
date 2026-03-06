@@ -1,6 +1,7 @@
 package com.valentin_d.focusarc.service;
 
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
+import com.valentin_d.focusarc.exception.ArcDoesNotExistForUserException;
 import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.Chapter;
@@ -135,7 +136,7 @@ class ChapterServiceTest {
         service.delete(chapter.getId(), user.getId());
 
         verify(arcLoader).assertArcExistsForUser(chapter.getArc(), user.getId());
-        verify(taskService).deleteAllForChapter(chapter.getId(), user.getId());
+        verify(taskService).deleteTasksForChapter(chapter.getId());
         verify(chapterRepository).delete(chapter);
         verify(arcRecalculationService).recalculateCompletedMinutes(chapter.getArc());
         verify(arcRecalculationService).recalculateEstimatedMinutes(chapter.getArc());
@@ -154,7 +155,7 @@ class ChapterServiceTest {
                 .hasMessageContaining(String.valueOf(chapter.getId().id()));
 
         verify(arcLoader, never()).assertArcExistsForUser(any(ArcId.class), any(UserId.class));
-        verify(taskService, never()).deleteAllForChapter(any(ChapterId.class), any(UserId.class));
+        verify(taskService, never()).deleteTasksForChapter(any(ChapterId.class));
         verify(chapterRepository, never()).delete(any(Chapter.class));
         verify(arcRecalculationService, never()).recalculateCompletedMinutes(any(ArcId.class));
         verify(arcRecalculationService, never()).recalculateEstimatedMinutes(any(ArcId.class));
@@ -171,7 +172,7 @@ class ChapterServiceTest {
         service.deleteAllForArc(arc.getId(), user.getId());
 
         verify(arcLoader).assertArcExistsForUser(arc.getId(), user.getId());
-        verify(taskService).deleteAllForChapter(chapter.getId(), user.getId());
+        verify(taskService).deleteTasksForChapter(chapter.getId());
         verify(chapterRepository).deleteAll(List.of(chapter));
         verify(arcRecalculationService).recalculateCompletedMinutes(chapter.getArc());
         verify(arcRecalculationService).recalculateEstimatedMinutes(chapter.getArc());
@@ -188,7 +189,7 @@ class ChapterServiceTest {
                 .isInstanceOf(ArcDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
-        verify(taskService, never()).deleteAllForChapter(any(ChapterId.class), any(UserId.class));
+        verify(taskService, never()).deleteTasksForChapter(any(ChapterId.class));
         verify(chapterRepository, never()).deleteAll(anyList());
         verify(arcRecalculationService, never()).recalculateCompletedMinutes(any(ArcId.class));
         verify(arcRecalculationService, never()).recalculateEstimatedMinutes(any(ArcId.class));
@@ -254,8 +255,84 @@ class ChapterServiceTest {
                 .hasMessageContaining(String.valueOf(userId.id()));
     }
 
+    @Test
+    void shouldThrowExceptionOnCreate_whenUserDoesNotOwnArc() {
+        final var attacker = aUser();
+        final var creationDto = aChapterCreationDto();
+
+        doThrowArcDoesNotExistForUser(creationDto.arcId(), attacker.getId());
+
+        assertThatThrownBy(() -> service.create(creationDto, attacker.getId()))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(chapterRepository, never()).save(any(Chapter.class));
+    }
+
+    @Test
+    void shouldThrowExceptionOnUpdate_whenUserDoesNotOwnArc() {
+        final var attacker = aUser();
+        final var chapter = aChapter();
+        final var updateDto = aChapterUpdateDto();
+
+        when(chapterLoader.getChapterIfExists(chapter.getId())).thenReturn(chapter);
+        doThrowArcDoesNotExistForUser(chapter.getArc(), attacker.getId());
+
+        assertThatThrownBy(() -> service.update(chapter.getId(), attacker.getId(), updateDto))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(chapterRepository, never()).save(any(Chapter.class));
+    }
+
+    @Test
+    void shouldThrowExceptionOnDelete_whenUserDoesNotOwnArc() {
+        final var attacker = aUser();
+        final var chapter = aChapter();
+
+        when(chapterLoader.getChapterIfExists(chapter.getId())).thenReturn(chapter);
+        doThrowArcDoesNotExistForUser(chapter.getArc(), attacker.getId());
+
+        assertThatThrownBy(() -> service.delete(chapter.getId(), attacker.getId()))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(taskService, never()).deleteTasksForChapter(any(ChapterId.class));
+        verify(chapterRepository, never()).delete(any(Chapter.class));
+    }
+
+    @Test
+    void shouldThrowExceptionOnDeleteAll_whenUserDoesNotOwnArc() {
+        final var attacker = aUser();
+        final var arc = anArc();
+
+        doThrowArcDoesNotExistForUser(arc.getId(), attacker.getId());
+
+        assertThatThrownBy(() -> service.deleteAllForArc(arc.getId(), attacker.getId()))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(taskService, never()).deleteTasksForChapter(any(ChapterId.class));
+        verify(chapterRepository, never()).deleteAll(anyList());
+    }
+
+    @Test
+    void shouldThrowExceptionOnGetAll_whenUserDoesNotOwnArc() {
+        final var attacker = aUser();
+        final var arc = anArc();
+
+        doThrowArcDoesNotExistForUser(arc.getId(), attacker.getId());
+
+        assertThatThrownBy(() -> service.findAllForArc(arc.getId(), attacker.getId()))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(chapterRepository, never()).findAllByArc(any(ArcId.class));
+    }
+
     private void doThrowArcDoesNotExist(final ArcId arcId, final UserId userId) {
         doThrow(new ArcDoesNotExistException(arcId))
+                .when(arcLoader)
+                .assertArcExistsForUser(arcId, userId);
+    }
+
+    private void doThrowArcDoesNotExistForUser(final ArcId arcId, final UserId userId) {
+        doThrow(new ArcDoesNotExistForUserException(arcId, userId))
                 .when(arcLoader)
                 .assertArcExistsForUser(arcId, userId);
     }

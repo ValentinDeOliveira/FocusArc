@@ -1,11 +1,13 @@
 package com.valentin_d.focusarc.service;
 
 import com.valentin_d.focusarc.dto.task.TaskCompleteDto;
+import com.valentin_d.focusarc.exception.ArcDoesNotExistForUserException;
 import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.exception.task.TaskAlreadyDoneException;
 import com.valentin_d.focusarc.exception.task.TaskDoesNotExistException;
 import com.valentin_d.focusarc.exception.task.TaskInvalidMinuteException;
+import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.task.Task;
@@ -302,8 +304,97 @@ class TaskServiceTest {
             );
     }
 
+    @Test
+    void shouldThrowExceptionOnCreate_whenUserDoesNotOwnChapter() {
+        final var attacker = aUser();
+        final var creationDto = aTaskCreationDto();
+
+        doThrowArcDoesNotExistForUser(creationDto.chapterId(), attacker.getId());
+
+        assertThatThrownBy(() -> service.create(creationDto, attacker.getId()))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(taskRepository, never()).save(any(Task.class));
+    }
+
+    @Test
+    void shouldThrowExceptionOnUpdate_whenUserDoesNotOwnChapter() {
+        final var attacker = aUser();
+        final var task = aTask();
+        final var updateDto = aTaskUpdateDto();
+
+        when(taskLoader.getTaskIfExists(task.getId())).thenReturn(task);
+        doThrowArcDoesNotExistForUser(task.getChapter(), attacker.getId());
+
+        assertThatThrownBy(() -> service.update(task.getId(), updateDto, attacker.getId()))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(taskRepository, never()).save(any(Task.class));
+    }
+
+    @Test
+    void shouldThrowExceptionOnDelete_whenUserDoesNotOwnChapter() {
+        final var attacker = aUser();
+        final var task = aTask();
+
+        when(taskLoader.getTaskIfExists(task.getId())).thenReturn(task);
+        doThrowArcDoesNotExistForUser(task.getChapter(), attacker.getId());
+
+        assertThatThrownBy(() -> service.delete(task.getId(), attacker.getId()))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(taskRepository, never()).delete(any(Task.class));
+    }
+
+    @Test
+    void shouldThrowExceptionOnDeleteAll_whenUserDoesNotOwnChapter() {
+        final var attacker = aUser();
+        final var chapter = aChapter();
+
+        doThrowArcDoesNotExistForUser(chapter.getId(), attacker.getId());
+
+        assertThatThrownBy(() -> service.deleteAllForChapter(chapter.getId(), attacker.getId()))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(taskRepository, never()).deleteAll(anyList());
+    }
+
+    @Test
+    void shouldThrowExceptionOnGetAll_whenUserDoesNotOwnChapter() {
+        final var attacker = aUser();
+        final var chapter = aChapter();
+
+        doThrowArcDoesNotExistForUser(chapter.getId(), attacker.getId());
+
+        assertThatThrownBy(() -> service.findAllForChapter(chapter.getId(), attacker.getId()))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(taskRepository, never()).findAllByChapter(any(ChapterId.class));
+    }
+
+    @Test
+    void shouldThrowExceptionOnComplete_whenUserDoesNotOwnChapter() {
+        final var attacker = aUser();
+        final var task = aTask();
+        final var dto = aTaskCompleteDto();
+
+        when(taskLoader.getTaskIfExists(task.getId())).thenReturn(task);
+        doThrowArcDoesNotExistForUser(task.getChapter(), attacker.getId());
+
+        assertThatThrownBy(() -> service.completeTask(task.getId(), attacker.getId(), dto))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(taskRepository, never()).save(any(Task.class));
+    }
+
     private void doThrowChapterDoesNotExist(final ChapterId chapterId, final UserId userId) {
         doThrow(new ChapterDoesNotExistException(chapterId))
+                .when(contextLoader)
+                .assertChapterForUser(chapterId, userId);
+    }
+
+    private void doThrowArcDoesNotExistForUser(final ChapterId chapterId, final UserId userId) {
+        doThrow(new ArcDoesNotExistForUserException(ArcId.random(), userId))
                 .when(contextLoader)
                 .assertChapterForUser(chapterId, userId);
     }
