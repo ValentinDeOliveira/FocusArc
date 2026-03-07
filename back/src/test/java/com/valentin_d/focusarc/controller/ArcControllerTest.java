@@ -27,7 +27,6 @@ class ArcControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnArc_whenIdExists() throws Exception {
-        final var user = aUser();
         final var arc = anArcWithOwnerId(user.getId());
         when(arcService.findByIdAndOwnerId(eq(arc.getId()), eq(user.getId())))
                 .thenReturn(Optional.of(arc));
@@ -40,7 +39,6 @@ class ArcControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnNotFound_whenIdDoesNotExists() throws Exception {
-        final var user = aUser();
         when(arcService.findByIdAndOwnerId(any(ArcId.class), eq(user.getId())))
                 .thenReturn(Optional.empty());
 
@@ -50,7 +48,6 @@ class ArcControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnListOfArc_whenUserIdExists() throws Exception {
-        final var user = aUser();
         final var arc = anArcWithOwnerId(user.getId());
 
         when(arcService.findAllForUser(user.getId())).thenReturn(List.of(arc));
@@ -71,7 +68,6 @@ class ArcControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldCreateArc_whenDataIsValid() throws Exception {
-        final var user = aUser();
         final var arc = anArcWithOwnerId(user.getId());
         final var creationDto = anArcCreationDto();
 
@@ -87,7 +83,6 @@ class ArcControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnArc_whenUpdatingExistingArc() throws Exception {
-        final var user = aUser();
         final var arc = anArcWithOwnerId(user.getId());
         final var updateDto = anArcUpdateDto();
 
@@ -103,7 +98,6 @@ class ArcControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnNoContent_whenDeletingExistingArc() throws Exception {
-        final var user = aUser();
         final var arc = anArcWithOwnerId(user.getId());
 
         mvcDeleteWithUser(ROOT + "/" + arc.getId().id(), user)
@@ -114,9 +108,7 @@ class ArcControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnNoContent_whenDeletingAllArcForExistingUser() throws Exception {
-        final var user = aUser();
-
-        mvcDeleteWithUser(ROOT + "/me", user)
+        mvcDeleteWithUser(ROOT, user)
                 .andExpect(status().isNoContent());
 
         verify(arcService).deleteAllForUser(eq(user.getId()));

@@ -12,7 +12,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.*;
-import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -26,7 +25,6 @@ class TaskControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnTask_whenIdExists() throws Exception {
-        final var user = aUser();
         final var task = aTask();
         when(taskService.findById(task.getId(), user.getId())).thenReturn(Optional.of(task));
 
@@ -38,7 +36,6 @@ class TaskControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnNotFoundOnGetById_whenIdDoesNotExists() throws Exception {
-        final var user = aUser();
         final var task = aTask();
         when(taskService.findById(task.getId(), user.getId())).thenReturn(Optional.empty());
 
@@ -48,7 +45,6 @@ class TaskControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnListOfTasks_whenChapterIdExists() throws Exception {
-        final var user = aUser();
         final var task = aTask();
         when(taskService.findAllForChapter(task.getChapter(), user.getId())).thenReturn(List.of(task));
 
@@ -60,7 +56,6 @@ class TaskControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnNoContent_whenChapterHasNoTasks() throws Exception {
-        final var user = aUser();
         when(taskService.findAllForChapter(any(ChapterId.class), any(UserId.class))).thenReturn(List.of());
 
         mvcGetWithUser(ROOT + "/chapters/" + ChapterId.random().id(), user)
@@ -69,7 +64,6 @@ class TaskControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldCreateTask_whenDataIsValid() throws Exception {
-        final var user = aUser();
         final var task = aTask();
         final var creationDto = aTaskCreationDto();
 
@@ -83,7 +77,6 @@ class TaskControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnTask_whenUpdatingExistingTask() throws Exception {
-        final var user = aUser();
         final var task = aTask();
         final var updateDto = aTaskUpdateDto();
 
@@ -97,7 +90,6 @@ class TaskControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnNoContent_whenDeletingExistingTask() throws Exception {
-        final var user = aUser();
         final var task = aTask();
 
         mvcDeleteWithUser(ROOT + "/" + task.getId().id(), user)
@@ -106,7 +98,6 @@ class TaskControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnNoContent_whenDeletingAllTasksForExistingChapter() throws Exception {
-        final var user = aUser();
         final var task = aTask();
 
         mvcDeleteWithUser(ROOT + "/chapters/" + task.getChapter().id(), user)
@@ -115,7 +106,6 @@ class TaskControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnOk_whenCompletingExistingTask() throws Exception {
-        final var user = aUser();
         final var task = aTask();
         final var completeDto = aTaskCompleteDto();
 
@@ -125,7 +115,6 @@ class TaskControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnTasks_whenGettingTodayTask() throws Exception {
-        final var user = aUser();
         final var task = aTask();
 
         when(taskService.getTodaysTasks(any(UserId.class))).thenReturn(List.of(task));
@@ -138,7 +127,6 @@ class TaskControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnNoContent_whenGettingTodayTaskWhenNoTask() throws Exception {
-        final var user = aUser();
         when(taskService.getTodaysTasks(any(UserId.class))).thenReturn(List.of());
 
         mvcGetWithUser(ROOT + "/today", user)

@@ -14,7 +14,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(AuthController.class)
-class AuthControllerTest extends BaseControllerTest {
+class AuthControllerTest extends BaseSecurityControllerTest {
     @MockitoBean
     private AuthService service;
     private final static String ROOT = "/auth";
@@ -28,7 +28,7 @@ class AuthControllerTest extends BaseControllerTest {
 
         final var json = toJson(registerRequestDto);
 
-        final var actions = mvcPost(ROOT + "/register", json)
+        final var actions = mvcPostWithUser(ROOT + "/register", json, user)
                 .andExpect(status().isCreated());
 
         authResponseAssertion.assertSingleJson(actions, authResponse);
@@ -42,7 +42,7 @@ class AuthControllerTest extends BaseControllerTest {
         when(service.login(loginDto)).thenReturn(authResponse);
         final var json = toJson(loginDto);
 
-        final var actions = mvcPost(ROOT + "/login", json)
+        final var actions = mvcPostWithUser(ROOT + "/login", json, user)
                 .andExpect(status().isOk());
 
         authResponseAssertion.assertSingleJson(actions, authResponse);
@@ -56,7 +56,7 @@ class AuthControllerTest extends BaseControllerTest {
         when(service.refresh(refreshDto)).thenReturn(authResponse);
         final var json = toJson(refreshDto);
 
-        final var actions = mvcPost(ROOT + "/refresh", json)
+        final var actions = mvcPostWithUser(ROOT + "/refresh", json, user)
                 .andExpect(status().isOk());
 
         authResponseAssertion.assertSingleJson(actions, authResponse);

@@ -17,7 +17,6 @@ import java.util.Optional;
 
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTask;
-import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
@@ -33,7 +32,6 @@ class ChapterControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnChapter_whenIdExists() throws Exception {
-        final var user = aUser();
         final var chapter = aChapter();
         when(chapterService.findById(chapter.getId(), user.getId())).thenReturn(Optional.of(chapter));
 
@@ -45,7 +43,6 @@ class ChapterControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnNotFoundOnGetById_whenIdDoesNotExists() throws Exception {
-        final var user = aUser();
         final var chapter = aChapter();
         when(chapterService.findById(chapter.getId(), user.getId())).thenReturn(Optional.empty());
 
@@ -55,7 +52,6 @@ class ChapterControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnListOfChapter_whenArcIdExists() throws Exception {
-        final var user = aUser();
         final var chapter = aChapter();
         when(chapterService.findAllForArc(chapter.getArc(), user.getId())).thenReturn(List.of(chapter));
 
@@ -67,7 +63,6 @@ class ChapterControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnNoContent_whenArcHasNoChapters() throws Exception {
-        final var user = aUser();
         when(chapterService.findAllForArc(any(ArcId.class), eq(user.getId()))).thenReturn(List.of());
 
         mvcGetWithUser(ROOT + "/arcs/" + ChapterId.random().id(), user)
@@ -76,7 +71,6 @@ class ChapterControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnNotFound_whenArcDoesNotExist() throws Exception {
-        final var user = aUser();
         when(chapterService.findAllForArc(any(ArcId.class), eq(user.getId()))).thenThrow(new ArcDoesNotExistException(ArcId.random()));
 
         mvcGetWithUser(ROOT + "/arcs/" + ArcId.random().id(), user)
@@ -85,7 +79,6 @@ class ChapterControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldCreateChapter_whenDataIsValid() throws Exception {
-        final var user = aUser();
         final var chapter = aChapter();
         final var creationDto = aChapterCreationDto();
 
@@ -101,7 +94,6 @@ class ChapterControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnChapter_whenUpdatingExistingChapter() throws Exception {
-        final var user = aUser();
         final var chapter = aChapter();
         final var updateDto = aChapterUpdateDto();
 
@@ -118,7 +110,6 @@ class ChapterControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnNoContent_whenDeletingExistingChapter() throws Exception {
-        final var user = aUser();
         final var chapter = aChapter();
 
         mvcDeleteWithUser(ROOT + "/" + chapter.getId().id(), user)
@@ -127,7 +118,6 @@ class ChapterControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnNoContent_whenDeletingAllChapterForExistingArc() throws Exception {
-        final var user = aUser();
         final var chapter = aChapter();
 
         mvcDeleteWithUser(ROOT + "/arcs/" + chapter.getArc().id(), user)
@@ -136,7 +126,6 @@ class ChapterControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnSummary_whenGettingSummary() throws Exception {
-        final var user = aUser();
         final var task = aTask();
         final var summary = aChapterSummaryResponseDtoWithTasks(List.of(task));
 

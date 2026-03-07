@@ -2,6 +2,7 @@ package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.auth.JwtService;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.context.annotation.Import;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -9,14 +10,22 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.authentication;
 
 @Import(TestSecurityConfig.class)
 abstract class BaseSecurityControllerTest extends BaseControllerTest {
+    protected User user;
+
     @MockitoBean
     private JwtService jwtService;
     @MockitoBean
     private UserDetailsService userDetailsService;
+
+    @BeforeEach
+    void setUp() {
+        user = aUser();
+    }
 
     protected ResultActions mvcGetWithUser(final String url, final User user) throws Exception {
         return mvcGet(url, getAuth(user));
