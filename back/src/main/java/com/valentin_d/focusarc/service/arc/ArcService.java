@@ -25,17 +25,17 @@ public class ArcService {
     private final UserLoader userLoader;
     private final ChapterService chapterService;
 
-    public Optional<Arc> findById(final ArcId arcId) {
-        return arcRepository.findById(arcId);
+    public Optional<Arc> findByIdAndOwnerId(@NotNull ArcId arcId, @NotNull UserId ownerId) {
+        return arcLoader.getArcByIdAndOwnerId(arcId, ownerId);
     }
 
-    public List<Arc> findAllForUser(final UserId userId) {
+    public List<Arc> findAllForUser(@NotNull UserId userId) {
         userLoader.assertUserExists(userId);
 
         return arcRepository.findAllByOwner(userId);
     }
 
-    public Arc create(@NotNull final UserId userId, @NotNull final ArcCreationDto arcCreationDto) {
+    public Arc create(@NotNull UserId userId, @NotNull ArcCreationDto arcCreationDto) {
         userLoader.assertUserExists(userId);
         arcLoader.assertNotAnotherActiveArc(userId);
 
@@ -43,8 +43,9 @@ public class ArcService {
         return arcRepository.save(arc);
     }
 
-    public Arc update(@NotNull final ArcId arcId, @NotNull final ArcUpdateDto arcUpdateDto) {
+    public Arc update(@NotNull UserId userId, @NotNull ArcId arcId, @NotNull ArcUpdateDto arcUpdateDto) {
         final var arc = arcLoader.getArcIfExists(arcId);
+        arcLoader.assertOwnership(arc, userId);
 
         if (arcUpdateDto.name() != null) arc.setName(arcUpdateDto.name());
         if (arcUpdateDto.totalEstimatedMinutes() != null) arc.setTotalEstimatedMinutes(arcUpdateDto.totalEstimatedMinutes());
@@ -52,17 +53,18 @@ public class ArcService {
         return arcRepository.save(arc);
     }
 
-    public void delete(@NotNull final ArcId arcId) {
+    public void delete(@NotNull UserId userId, @NotNull ArcId arcId) {
         final var arc = arcLoader.getArcIfExists(arcId);
-        chapterService.deleteAllForArc(arcId);
+        arcLoader.assertOwnership(arc, userId);
+        chapterService.deleteAllForArc(arcId, userId);
         arcRepository.delete(arc);
     }
 
-    public void deleteAllForUser(@NotNull final UserId userId) {
+    public void deleteAllForUser(@NotNull UserId userId) {
         userLoader.assertUserExists(userId);
 
         final var arcs = arcRepository.findAllByOwner(userId);
-        arcs.forEach(arc -> chapterService.deleteAllForArc(arc.getId()));
+        arcs.forEach(arc -> chapterService.deleteAllForArc(arc.getId(), userId));
         arcRepository.deleteAll(arcs);
     }
 }

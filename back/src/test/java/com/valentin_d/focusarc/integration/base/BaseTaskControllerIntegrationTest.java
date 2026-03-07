@@ -1,8 +1,6 @@
 package com.valentin_d.focusarc.integration.base;
 
 import com.valentin_d.focusarc.model.task.Task;
-import com.valentin_d.focusarc.model.user.User;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 
@@ -20,9 +18,7 @@ public class BaseTaskControllerIntegrationTest extends SecuredIntegrationTest {
         assertEquals(expected.getScheduledAt(), actual.getScheduledAt());
     }
 
-    protected <T> ResponseEntity<T> exchangeTodayForUser(final User user, Class<T> responseType) {
-        final var headers = getHeadersForUser(user);
-
-        return request(URL + "/today", HttpMethod.GET, new HttpEntity<>(headers), responseType);
+    protected <T> ResponseEntity<T> exchangeTodayForUser(Class<T> responseType) {
+        return request(URL + "/today", HttpMethod.GET, getHttpEntity(), responseType);
     }
 }

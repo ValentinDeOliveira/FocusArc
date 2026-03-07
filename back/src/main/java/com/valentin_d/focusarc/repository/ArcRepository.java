@@ -12,7 +12,11 @@ import java.util.Optional;
 public interface ArcRepository extends MongoRepository<Arc, ArcId> {
     List<Arc> findAllByOwner(final UserId userId);
 
-    boolean existsByOwnerAndStatus(UserId userId, ArcStatus status);
+    boolean existsByOwnerAndStatus(final UserId userId, final ArcStatus status);
 
     Optional<Arc> findByOwnerAndStatus(final UserId userId, final ArcStatus status);
+
+    Optional<Arc> findByIdAndOwner(final ArcId id, final UserId owner);
+
+    boolean existsByIdAndOwner(final ArcId id, final UserId owner);
 }

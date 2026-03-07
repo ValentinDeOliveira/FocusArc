@@ -1,15 +1,13 @@
 package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
-import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.user.UserService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,28 +18,22 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
     private final UserService service;
 
-    @GetMapping("/email")
-    public ResponseEntity<User> getByEmail(@RequestParam("email") @NotBlank @Email final String email) {
-        final var user = service.findByEmail(email);
-        return ResponseUtil.wrapOrNotFound(user);
+    @GetMapping
+    public ResponseEntity<User> getById(@AuthenticationPrincipal final User user) {
+        final var foundUser = service.findById(user.getId());
+        return ResponseUtil.wrapOrNotFound(foundUser);
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<User> getById(@PathVariable final UserId id) {
-        final var user = service.findById(id);
-        return ResponseUtil.wrapOrNotFound(user);
-    }
-
-    @PutMapping("/{id}")
-    public ResponseEntity<User> update(@PathVariable final UserId id,
+    @PutMapping
+    public ResponseEntity<User> update(@AuthenticationPrincipal final User user,
                                        @Valid @RequestBody final UserUpdateDto userUpdateDto) {
-        final var user = service.update(id, userUpdateDto);
-        return ResponseEntity.ok(user);
+        final var updated = service.update(user.getId(), userUpdateDto);
+        return ResponseEntity.ok(updated);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<Void> delete(@PathVariable final UserId id) {
-        service.delete(id);
+    @DeleteMapping
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal final User user) {
+        service.delete(user.getId());
         return ResponseEntity.noContent().build();
     }
 }

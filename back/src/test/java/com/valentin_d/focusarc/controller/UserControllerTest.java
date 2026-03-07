@@ -10,47 +10,22 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.Optional;
 
-import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUserUpdateDto;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(UserController.class)
-class UserControllerTest extends BaseControllerTest {
+class UserControllerTest extends BaseSecurityControllerTest {
     @MockitoBean
     private UserService userService;
     private final static String ROOT = "/users";
     private final UserAssertion userAssertion = new UserAssertion();
 
     @Test
-    void shouldReturnUser_whenEmailExists() throws Exception {
-        final var user = aUser();
-
-        when(userService.findByEmail(user.getEmail()))
-                .thenReturn(Optional.of(user));
-
-        final var actions = mvcGet(ROOT + "/email?email=" + user.getEmail())
-                .andExpect(status().isOk());
-
-        userAssertion.assertSingleJson(actions, user);
-    }
-
-    @Test
-    void shouldReturnNotFound_whenEmailDoesNotExist() throws Exception {
-        final var user = aUser();
-        when(userService.findByEmail(user.getEmail()))
-                .thenReturn(Optional.empty());
-
-        mvcGet(ROOT + "/email?email=" + user.getEmail())
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
     void shouldReturnUser_whenIdExists() throws Exception {
-        final var user = aUser();
         when(userService.findById(user.getId())).thenReturn(Optional.of(user));
 
-        final var actions = mvcGet(ROOT + "/" + user.getId().id())
+        final var actions = mvcGetWithUser(ROOT, user)
                 .andExpect(status().isOk());
 
         userAssertion.assertSingleJson(actions, user);
@@ -60,19 +35,17 @@ class UserControllerTest extends BaseControllerTest {
     void shouldReturnNotFound_whenIdDoesNotExist() throws Exception {
         when(userService.findById(any(UserId.class))).thenReturn(Optional.empty());
 
-        mvcGet(ROOT + "/" + UserId.random().id())
+        mvcGetWithUser(ROOT, user)
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldUpdateUser_whenIdExists() throws Exception {
-        final var user = aUser();
-
         when(userService.update(eq(user.getId()), any())).thenReturn(user);
 
         final var json = toJson(aUserUpdateDto());
 
-        final var actions = mvcPut(ROOT + "/" + user.getId().id(), json)
+        final var actions = mvcPutWithUser(ROOT, json, user)
                 .andExpect(status().isOk());
 
         userAssertion.assertSingleJson(actions, user);
@@ -80,19 +53,15 @@ class UserControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnNotFound_whenUpdatingNonExistingUser() throws Exception {
-        final var user = aUser();
-
         when(userService.update(eq(user.getId()), any())).thenThrow(new UserDoesNotExistException(user.getId()));
 
-        mvcPut(ROOT + "/" + user.getId().id(), toJson(aUserUpdateDto()))
+        mvcPutWithUser(ROOT, toJson(aUserUpdateDto()), user)
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldDeleteUser_whenIdExists() throws Exception {
-        final var user = aUser();
-
-        mvcDelete(ROOT + "/" + user.getId().id())
+        mvcDeleteWithUser(ROOT, user)
                 .andExpect(status().isNoContent());
 
         verify(userService).delete(user.getId());
@@ -100,11 +69,9 @@ class UserControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingUser() throws Exception {
-        final var user = aUser();
-
         doThrow(new UserDoesNotExistException(user.getId())).when(userService).delete(user.getId());
 
-        mvcDelete(ROOT + "/" + user.getId().id())
+        mvcDeleteWithUser(ROOT, user)
                 .andExpect(status().isNotFound());
     }
 }

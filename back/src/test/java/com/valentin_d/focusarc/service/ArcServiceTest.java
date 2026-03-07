@@ -2,6 +2,7 @@ package com.valentin_d.focusarc.service;
 
 import com.valentin_d.focusarc.exception.ArcAlreadyExistsException;
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
+import com.valentin_d.focusarc.exception.ArcDoesNotExistForUserException;
 import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.UserId;
@@ -87,7 +88,8 @@ class ArcServiceTest {
 
     @Test
     void shouldUpdate_whenArcExists() {
-        final var arc = anArc();
+        final var user = aUser();
+        final var arc = anArcWithOwnerId(user.getId());
         final var updateDto = anArcUpdateDto();
 
         when(arcLoader.getArcIfExists(eq(arc.getId()))).thenReturn(arc);
@@ -95,7 +97,7 @@ class ArcServiceTest {
         when(arcRepository.save(any(Arc.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
 
-        final Arc updated = arcService.update(arc.getId(), updateDto);
+        final Arc updated = arcService.update(user.getId(), arc.getId(), updateDto);
 
         verify(arcRepository).save(arc);
 
@@ -107,13 +109,14 @@ class ArcServiceTest {
 
     @Test
     void shouldThrowExceptionOnUpdate_whenArcDoesNotExists() {
-        final var arc = anArc();
+        final var user = aUser();
+        final var arc = anArcWithOwnerId(user.getId());
         final var updateDto = anArcUpdateDto();
 
         when(arcLoader.getArcIfExists(eq(arc.getId())))
                 .thenThrow((new ArcDoesNotExistException(arc.getId())));
 
-        assertThatThrownBy(() -> arcService.update(arc.getId(), updateDto))
+        assertThatThrownBy(() -> arcService.update(user.getId(), arc.getId(), updateDto))
                 .isInstanceOf(ArcDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
@@ -122,24 +125,26 @@ class ArcServiceTest {
 
     @Test
     void shouldDeleteArc_whenArcExists() {
-        final var arc = anArc();
+        final var user = aUser();
+        final var arc = anArcWithOwnerId(user.getId());
 
         when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
 
-        arcService.delete(arc.getId());
+        arcService.delete(user.getId(), arc.getId());
 
         verify(arcRepository).delete(arc);
-        verify(chapterService).deleteAllForArc(arc.getId());
+        verify(chapterService).deleteAllForArc(arc.getId(), user.getId());
     }
 
     @Test
     void shouldThrowExceptionOnDelete_whenArcDoesNotExists() {
-        final var arc = anArc();
+        final var user = aUser();
+        final var arc = anArcWithOwnerId(user.getId());
 
         when(arcLoader.getArcIfExists(eq(arc.getId())))
                 .thenThrow((new ArcDoesNotExistException(arc.getId())));
 
-        assertThatThrownBy(() -> arcService.delete(arc.getId()))
+        assertThatThrownBy(() -> arcService.delete(user.getId(), arc.getId()))
                 .isInstanceOf(ArcDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
@@ -156,7 +161,7 @@ class ArcServiceTest {
         arcService.deleteAllForUser(user.getId());
 
         verify(arcRepository).deleteAll(List.of(arc));
-        verify(chapterService).deleteAllForArc(arc.getId());
+        verify(chapterService).deleteAllForArc(arc.getId(), user.getId());
     }
 
     @Test
@@ -195,9 +200,46 @@ class ArcServiceTest {
         verify(arcRepository, never()).findAllByOwner(any(UserId.class));
     }
 
+    @Test
+    void shouldThrowExceptionOnUpdate_whenUserDoesNotOwnArc() {
+        final var owner = aUser();
+        final var attacker = aUser();
+        final var arc = anArcWithOwnerId(owner.getId());
+        final var updateDto = anArcUpdateDto();
+
+        when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
+        doThrowArcDoesNotExistForUser(arc, attacker.getId());
+
+        assertThatThrownBy(() -> arcService.update(attacker.getId(), arc.getId(), updateDto))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(arcRepository, never()).save(any(Arc.class));
+    }
+
+    @Test
+    void shouldThrowExceptionOnDelete_whenUserDoesNotOwnArc() {
+        final var owner = aUser();
+        final var attacker = aUser();
+        final var arc = anArcWithOwnerId(owner.getId());
+
+        when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
+        doThrowArcDoesNotExistForUser(arc, attacker.getId());
+
+        assertThatThrownBy(() -> arcService.delete(attacker.getId(), arc.getId()))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(arcRepository, never()).delete(any(Arc.class));
+    }
+
     private void doThrowUserDoesNotExist(final UserId userId) {
         doThrow(new UserDoesNotExistException(userId))
                 .when(userLoader)
                 .assertUserExists(eq(userId));
+    }
+
+    private void doThrowArcDoesNotExistForUser(final Arc arc, final UserId userId) {
+        doThrow(new ArcDoesNotExistForUserException(arc.getId(), userId))
+                .when(arcLoader)
+                .assertOwnership(arc, userId);
     }
 }

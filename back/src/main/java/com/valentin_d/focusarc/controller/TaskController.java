@@ -30,46 +30,53 @@ public class TaskController {
     private final TaskService service;
 
     @GetMapping("/{taskId}")
-    public ResponseEntity<Task> getById(@PathVariable TaskId taskId) {
-        final var task = service.findById(taskId);
+    public ResponseEntity<Task> getById(@AuthenticationPrincipal final User user,
+                                        @PathVariable TaskId taskId) {
+        final var task = service.findById(taskId, user.getId());
         return ResponseUtil.wrapOrNotFound(task);
     }
 
     @GetMapping("/chapters/{chapterId}")
-    public ResponseEntity<List<Task>> getAllForChapter(@PathVariable ChapterId chapterId) {
-        final var chapterTasks = service.findAllForChapter(chapterId);
+    public ResponseEntity<List<Task>> getAllForChapter(@AuthenticationPrincipal final User user,
+                                                       @PathVariable ChapterId chapterId) {
+        final var chapterTasks = service.findAllForChapter(chapterId, user.getId());
         return ResponseUtil.wrapOrNoContent(chapterTasks);
     }
 
     @PostMapping
-    public ResponseEntity<Task> create(@Valid @RequestBody final TaskCreationDto taskCreationDto) {
-        final var task = service.create(taskCreationDto);
+    public ResponseEntity<Task> create(@AuthenticationPrincipal final User user,
+                                       @Valid @RequestBody final TaskCreationDto taskCreationDto) {
+        final var task = service.create(taskCreationDto, user.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(task);
     }
 
     @PutMapping("/{taskId}")
-    public ResponseEntity<Task> update(@PathVariable final TaskId taskId,
+    public ResponseEntity<Task> update(@AuthenticationPrincipal final User user,
+                                       @PathVariable final TaskId taskId,
                                        @Valid @RequestBody final TaskUpdateDto taskUpdateDto) {
-        final var task = service.update(taskId, taskUpdateDto);
+        final var task = service.update(taskId, taskUpdateDto, user.getId());
         return ResponseEntity.ok(task);
     }
 
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> delete(@PathVariable final TaskId taskId) {
-        service.delete(taskId);
+    public ResponseEntity<Void> delete(@AuthenticationPrincipal final User user,
+                                       @PathVariable final TaskId taskId) {
+        service.delete(taskId, user.getId());
         return ResponseEntity.noContent().build();
     }
 
     @DeleteMapping("/chapters/{chapterId}")
-    public ResponseEntity<Void> deleteAllForChapter(@PathVariable ChapterId chapterId) {
-        service.deleteAllForChapter(chapterId);
+    public ResponseEntity<Void> deleteAllForChapter(@AuthenticationPrincipal final User user,
+                                                    @PathVariable ChapterId chapterId) {
+        service.deleteAllForChapter(chapterId, user.getId());
         return ResponseEntity.noContent().build();
     }
 
     @PatchMapping("/{taskId}/complete")
-    public ResponseEntity<Void> completeTask(@PathVariable final TaskId taskId,
+    public ResponseEntity<Void> completeTask(@AuthenticationPrincipal final User user,
+                                             @PathVariable final TaskId taskId,
                                              @Valid @RequestBody final TaskCompleteDto taskCompleteDto) {
-        service.completeTask(taskId, taskCompleteDto);
+        service.completeTask(taskId, user.getId(), taskCompleteDto);
         return ResponseEntity.ok().build();
     }
 

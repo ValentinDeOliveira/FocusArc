@@ -2,6 +2,7 @@ package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.controller.assertions.TaskAssertion;
 import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.task.TaskService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -12,12 +13,11 @@ import java.util.Optional;
 
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TaskController.class)
-class TaskControllerTest extends BaseControllerTest {
+class TaskControllerTest extends BaseSecurityControllerTest {
     @MockitoBean
     private TaskService taskService;
     private final static String ROOT = "/tasks";
@@ -26,9 +26,9 @@ class TaskControllerTest extends BaseControllerTest {
     @Test
     void shouldReturnTask_whenIdExists() throws Exception {
         final var task = aTask();
-        when(taskService.findById(task.getId())).thenReturn(Optional.of(task));
+        when(taskService.findById(task.getId(), user.getId())).thenReturn(Optional.of(task));
 
-        final var actions = mvcGet(ROOT + "/" + task.getId().id())
+        final var actions = mvcGetWithUser(ROOT + "/" + task.getId().id(), user)
                 .andExpect(status().isOk());
 
         taskAssertion.assertSingleJson(actions, task);
@@ -37,18 +37,18 @@ class TaskControllerTest extends BaseControllerTest {
     @Test
     void shouldReturnNotFoundOnGetById_whenIdDoesNotExists() throws Exception {
         final var task = aTask();
-        when(taskService.findById(task.getId())).thenReturn(Optional.empty());
+        when(taskService.findById(task.getId(), user.getId())).thenReturn(Optional.empty());
 
-        mvcGet(ROOT + "/" + task.getId().id())
+        mvcGetWithUser(ROOT + "/" + task.getId().id(), user)
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldReturnListOfTasks_whenChapterIdExists() throws Exception {
         final var task = aTask();
-        when(taskService.findAllForChapter(task.getChapter())).thenReturn(List.of(task));
+        when(taskService.findAllForChapter(task.getChapter(), user.getId())).thenReturn(List.of(task));
 
-        final var actions = mvcGet(ROOT + "/chapters/" + task.getChapter().id())
+        final var actions = mvcGetWithUser(ROOT + "/chapters/" + task.getChapter().id(), user)
                 .andExpect(status().isOk());
 
         taskAssertion.assertListJson(actions, task);
@@ -56,9 +56,9 @@ class TaskControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnNoContent_whenChapterHasNoTasks() throws Exception {
-        when(taskService.findAllForChapter(any())).thenReturn(List.of());
+        when(taskService.findAllForChapter(any(ChapterId.class), any(UserId.class))).thenReturn(List.of());
 
-        mvcGet(ROOT + "/chapters/" + ChapterId.random().id())
+        mvcGetWithUser(ROOT + "/chapters/" + ChapterId.random().id(), user)
                 .andExpect(status().isNoContent());
     }
 
@@ -67,11 +67,9 @@ class TaskControllerTest extends BaseControllerTest {
         final var task = aTask();
         final var creationDto = aTaskCreationDto();
 
-        when(taskService.create(any())).thenReturn(task);
+        when(taskService.create(creationDto, user.getId())).thenReturn(task);
 
-        final var json = toJson(creationDto);
-
-        final var actions = mvcPost(ROOT, json)
+        final var actions = mvcPostWithUser(ROOT, toJson(creationDto), user)
                 .andExpect(status().isCreated());
 
         taskAssertion.assertSingleJson(actions, task);
@@ -82,11 +80,9 @@ class TaskControllerTest extends BaseControllerTest {
         final var task = aTask();
         final var updateDto = aTaskUpdateDto();
 
-        when(taskService.update(eq(task.getId()), any())).thenReturn(task);
+        when(taskService.update(task.getId(), updateDto, user.getId())).thenReturn(task);
 
-        final String json = toJson(updateDto);
-
-        final var actions = mvcPut(ROOT + "/" + task.getId().id(), json)
+        final var actions = mvcPutWithUser(ROOT + "/" + task.getId().id(), toJson(updateDto), user)
                 .andExpect(status().isOk());
 
         taskAssertion.assertSingleJson(actions, task);
@@ -96,7 +92,7 @@ class TaskControllerTest extends BaseControllerTest {
     void shouldReturnNoContent_whenDeletingExistingTask() throws Exception {
         final var task = aTask();
 
-        mvcDelete(ROOT + "/" + task.getId().id())
+        mvcDeleteWithUser(ROOT + "/" + task.getId().id(), user)
                 .andExpect(status().isNoContent());
     }
 
@@ -104,7 +100,7 @@ class TaskControllerTest extends BaseControllerTest {
     void shouldReturnNoContent_whenDeletingAllTasksForExistingChapter() throws Exception {
         final var task = aTask();
 
-        mvcDelete(ROOT + "/chapters/" + task.getChapter().id())
+        mvcDeleteWithUser(ROOT + "/chapters/" + task.getChapter().id(), user)
                 .andExpect(status().isNoContent());
     }
 
@@ -113,7 +109,7 @@ class TaskControllerTest extends BaseControllerTest {
         final var task = aTask();
         final var completeDto = aTaskCompleteDto();
 
-        mvcPatch(ROOT + "/" + task.getId().id() + "/complete", toJson(completeDto))
+        mvcPatchWithUser(ROOT + "/" + task.getId().id() + "/complete", toJson(completeDto), user)
                 .andExpect(status().isOk());
     }
 
@@ -121,9 +117,9 @@ class TaskControllerTest extends BaseControllerTest {
     void shouldReturnTasks_whenGettingTodayTask() throws Exception {
         final var task = aTask();
 
-        when(taskService.getTodaysTasks(any())).thenReturn(List.of(task));
+        when(taskService.getTodaysTasks(any(UserId.class))).thenReturn(List.of(task));
 
-        final var actions = mvcGet(ROOT + "/today")
+        final var actions = mvcGetWithUser(ROOT + "/today", user)
                 .andExpect(status().isOk());
 
         taskAssertion.assertListJson(actions, task);
@@ -131,9 +127,9 @@ class TaskControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnNoContent_whenGettingTodayTaskWhenNoTask() throws Exception {
-        when(taskService.getTodaysTasks(any())).thenReturn(List.of());
+        when(taskService.getTodaysTasks(any(UserId.class))).thenReturn(List.of());
 
-        mvcGet(ROOT + "/today")
+        mvcGetWithUser(ROOT + "/today", user)
                 .andExpect(status().isNoContent());
     }
 }

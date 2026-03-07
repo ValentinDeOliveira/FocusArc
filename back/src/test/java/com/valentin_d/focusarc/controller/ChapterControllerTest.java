@@ -2,9 +2,11 @@ package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.controller.assertions.ChapterAssertion;
 import com.valentin_d.focusarc.controller.assertions.ChapterSummaryResponseAssertion;
+import com.valentin_d.focusarc.dto.chapter.ChapterCreationDto;
 import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -21,7 +23,7 @@ import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ChapterController.class)
-class ChapterControllerTest extends BaseControllerTest {
+class ChapterControllerTest extends BaseSecurityControllerTest {
     @MockitoBean
     private ChapterService chapterService;
     private final static String ROOT = "/chapters";
@@ -31,9 +33,9 @@ class ChapterControllerTest extends BaseControllerTest {
     @Test
     void shouldReturnChapter_whenIdExists() throws Exception {
         final var chapter = aChapter();
-        when(chapterService.findById(chapter.getId())).thenReturn(Optional.of(chapter));
+        when(chapterService.findById(chapter.getId(), user.getId())).thenReturn(Optional.of(chapter));
 
-        final var actions = mvcGet(ROOT + "/" + chapter.getId().id())
+        final var actions = mvcGetWithUser(ROOT + "/" + chapter.getId().id(), user)
                 .andExpect(status().isOk());
 
         chapterAssertion.assertSingleJson(actions, chapter);
@@ -42,18 +44,18 @@ class ChapterControllerTest extends BaseControllerTest {
     @Test
     void shouldReturnNotFoundOnGetById_whenIdDoesNotExists() throws Exception {
         final var chapter = aChapter();
-        when(chapterService.findById(chapter.getId())).thenReturn(Optional.empty());
+        when(chapterService.findById(chapter.getId(), user.getId())).thenReturn(Optional.empty());
 
-        mvcGet(ROOT + "/" + chapter.getId().id())
+        mvcGetWithUser(ROOT + "/" + chapter.getId().id(),  user)
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void shouldReturnListOfChapter_whenArcIdExists() throws Exception {
         final var chapter = aChapter();
-        when(chapterService.findAllForArc(chapter.getArc())).thenReturn(List.of(chapter));
+        when(chapterService.findAllForArc(chapter.getArc(), user.getId())).thenReturn(List.of(chapter));
 
-        final var actions = mvcGet(ROOT + "/arcs/" + chapter.getArc().id())
+        final var actions = mvcGetWithUser(ROOT + "/arcs/" + chapter.getArc().id(), user)
                 .andExpect(status().isOk());
 
         chapterAssertion.assertListJson(actions, chapter);
@@ -61,17 +63,17 @@ class ChapterControllerTest extends BaseControllerTest {
 
     @Test
     void shouldReturnNoContent_whenArcHasNoChapters() throws Exception {
-        when(chapterService.findAllForArc(any())).thenReturn(List.of());
+        when(chapterService.findAllForArc(any(ArcId.class), eq(user.getId()))).thenReturn(List.of());
 
-        mvcGet(ROOT + "/arcs/" + ChapterId.random().id())
+        mvcGetWithUser(ROOT + "/arcs/" + ChapterId.random().id(), user)
                 .andExpect(status().isNoContent());
     }
 
     @Test
     void shouldReturnNotFound_whenArcDoesNotExist() throws Exception {
-        when(chapterService.findAllForArc(any())).thenThrow(new ArcDoesNotExistException(ArcId.random()));
+        when(chapterService.findAllForArc(any(ArcId.class), eq(user.getId()))).thenThrow(new ArcDoesNotExistException(ArcId.random()));
 
-        mvcGet(ROOT + "/arcs/" + ArcId.random().id())
+        mvcGetWithUser(ROOT + "/arcs/" + ArcId.random().id(), user)
                 .andExpect(status().isNotFound());
     }
 
@@ -80,11 +82,11 @@ class ChapterControllerTest extends BaseControllerTest {
         final var chapter = aChapter();
         final var creationDto = aChapterCreationDto();
 
-        when(chapterService.create(any())).thenReturn(chapter);
+        when(chapterService.create(any(ChapterCreationDto.class), eq(user.getId()))).thenReturn(chapter);
 
         final var json = toJson(creationDto);
 
-        final var actions = mvcPost(ROOT, json)
+        final var actions = mvcPostWithUser(ROOT, json, user)
                 .andExpect(status().isCreated());
 
         chapterAssertion.assertSingleJson(actions, chapter);
@@ -95,11 +97,12 @@ class ChapterControllerTest extends BaseControllerTest {
         final var chapter = aChapter();
         final var updateDto = aChapterUpdateDto();
 
-        when(chapterService.update(eq(chapter.getId()), any())).thenReturn(chapter);
+        when(chapterService.update(eq(chapter.getId()), any(UserId.class), eq(updateDto)))
+                .thenReturn(chapter);
 
         final String json = toJson(updateDto);
 
-        final var actions = mvcPut(ROOT + "/" + chapter.getId().id(), json)
+        final var actions = mvcPutWithUser(ROOT + "/" + chapter.getId().id(), json, user)
                 .andExpect(status().isOk());
 
         chapterAssertion.assertSingleJson(actions, chapter);
@@ -109,7 +112,7 @@ class ChapterControllerTest extends BaseControllerTest {
     void shouldReturnNoContent_whenDeletingExistingChapter() throws Exception {
         final var chapter = aChapter();
 
-        mvcDelete(ROOT + "/" + chapter.getId().id())
+        mvcDeleteWithUser(ROOT + "/" + chapter.getId().id(), user)
                 .andExpect(status().isNoContent());
     }
 
@@ -117,7 +120,7 @@ class ChapterControllerTest extends BaseControllerTest {
     void shouldReturnNoContent_whenDeletingAllChapterForExistingArc() throws Exception {
         final var chapter = aChapter();
 
-        mvcDelete(ROOT + "/arcs/" + chapter.getArc().id())
+        mvcDeleteWithUser(ROOT + "/arcs/" + chapter.getArc().id(), user)
                 .andExpect(status().isNoContent());
     }
 
@@ -126,8 +129,8 @@ class ChapterControllerTest extends BaseControllerTest {
         final var task = aTask();
         final var summary = aChapterSummaryResponseDtoWithTasks(List.of(task));
 
-        when(chapterService.getChapterSummary(any())).thenReturn(summary);
-        final var actions = mvcGet(ROOT + "/summary")
+        when(chapterService.getChapterSummary(user.getId())).thenReturn(summary);
+        final var actions = mvcGetWithUser(ROOT + "/summary", user)
                 .andExpect(status().isOk());
 
         chapterSummaryResponseAssertion.assertSingleJson(actions, summary);

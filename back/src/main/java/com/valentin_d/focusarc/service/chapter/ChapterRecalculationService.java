@@ -25,7 +25,7 @@ public class ChapterRecalculationService {
     private final ChapterLoader chapterLoader;
     private final ArcRecalculationService arcRecalculationService;
 
-    public void recalculateCompletedMinutes(@NotNull final ChapterId chapterId) {
+    public void recalculateCompletedMinutes(@NotNull ChapterId chapterId) {
         recalculateMinutes(
                 chapterId,
                 Chapter::recalculateCompletedMinutes,
@@ -33,7 +33,7 @@ public class ChapterRecalculationService {
         );
     }
 
-    public void recalculateEstimatedMinutes(@NotNull final ChapterId chapterId) {
+    public void recalculateEstimatedMinutes(@NotNull ChapterId chapterId) {
         recalculateMinutes(
                 chapterId,
                 Chapter::recalculateEstimatedMinutes,
@@ -41,9 +41,9 @@ public class ChapterRecalculationService {
         );
     }
 
-    private void recalculateMinutes(@NotNull final ChapterId chapterId,
-                            final BiConsumer<Chapter, List<Task>> chapterRecalculator,
-                            final Consumer<ArcId> arcRecalculator) {
+    private void recalculateMinutes(ChapterId chapterId,
+                            BiConsumer<Chapter, List<Task>> chapterRecalculator,
+                            Consumer<ArcId> arcRecalculator) {
         final var chapter = chapterLoader.getChapterIfExists(chapterId);
 
         final var tasks = taskRepository.findAllByChapter(chapterId);

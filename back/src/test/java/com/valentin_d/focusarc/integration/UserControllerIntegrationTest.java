@@ -17,55 +17,9 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UserControllerIntegrationTest extends BaseUserControllerIntegrationTest {
-    /*@Test
-    void shouldCreateUser_whenDataIsValid() {
-        final var dto = aUserCreationDto();
-
-        final var response = request(URL, HttpMethod.POST, dto, User.class);
-
-        assertCreated(response);
-
-        final var result = response.getBody();
-        assertNotNull(result);
-        assertEquals(dto.email(), result.getEmail());
-        assertEquals(dto.name(), result.getName());
-        assertNotNull(result.getId());
-        assertNotNull(result.getLastLogin());
-    }
-
-    @Test
-    void shouldReturnConflict_whenEmailAlreadyExists() {
-        final var user = domainFixture.user();
-        final var dto = aUserCreationDtoWithEmail(user.getEmail());
-
-        final var response = request(URL, HttpMethod.POST, dto, Void.class);
-
-        assertConflict(response);
-    }*/
-
-    @Test
-    void shouldReturnUser_whenEmailExists() {
-        final var user = domainFixture.user();
-        final var response = request(URL + "/email?email="+ user.getEmail(), HttpMethod.GET, User.class);
-
-        assertionHelper.assertOk(response);
-
-        final var result = response.getBody();
-        assertNotNull(result);
-        assertGetUserEquals(result, user);
-    }
-
-    @Test
-    void shouldReturnNotFound_whenEmailDoesNotExist() {
-        final var response = request(URL + "/email?email=foobar@test.com", HttpMethod.GET, Void.class);
-
-        assertionHelper.assertNotFound(response);
-    }
-
     @Test
     void shouldReturnUser_whenIdExists() {
-        final var user = domainFixture.user();
-        final var response = request(URL + "/" + user.getId().id(), HttpMethod.GET, User.class);
+        final var response = request(URL, HttpMethod.GET, getHttpEntity(), User.class);
 
         assertionHelper.assertOk(response);
 
@@ -76,7 +30,8 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
 
     @Test
     void getUserById_returnsNotFound_whenNotFound() {
-        final var response = request(URL + "/" +  UserId.random().id(), HttpMethod.GET, Void.class);
+        final var response = request(URL + "/" +  UserId.random().id(), HttpMethod.GET,
+                getHttpEntity(), Void.class);
 
         assertionHelper.assertNotFound(response);
     }
@@ -84,9 +39,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     @ParameterizedTest
     @MethodSource("provideUserUpdateDtos")
     void shouldUpdateUser_withDifferentFields(final UserUpdateDto dto) {
-        final var user = domainFixture.user();
-
-        final var response = request(URL+ "/" + user.getId().id(), HttpMethod.PUT, dto, User.class);
+        final var response = request(URL, HttpMethod.PUT, getHttpEntity(dto), User.class);
 
         assertionHelper.assertOk(response);
 
@@ -110,23 +63,17 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     void shouldReturnNotFoundOnUpdate_whenIdDoesNotExists() {
         final var dto = aUserUpdateDto();
 
-        final var response = request(URL + "/" + UserId.random().id(), HttpMethod.PUT, dto, Void.class);
+        final var response = request(URL + "/" + UserId.random().id(), HttpMethod.PUT,
+                getHttpEntity(dto), Void.class);
 
         assertionHelper.assertNotFound(response);
     }
 
     @Test
     void shouldDeleteUser_whenIdExists() {
-        final var user = domainFixture.user();
-        final var response = request(URL + "/" + user.getId().id(), HttpMethod.DELETE, Void.class);
+        final var response = request(URL, HttpMethod.DELETE,
+                getHttpEntity(), Void.class);
 
         assertionHelper.assertNoContent(response);
-    }
-
-    @Test
-    void shouldReturnNotFound_whenDeletingNonExistingUser() {
-        final var response = request(URL + "/" + UserId.random().id(), HttpMethod.DELETE, Void.class);
-
-        assertionHelper.assertNotFound(response);
     }
 }
