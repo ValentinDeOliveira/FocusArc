@@ -63,6 +63,11 @@ public class DomainFixture {
         return chapterRepository.save(chapter);
     }
 
+    public Chapter chapterForUser(final UserId userId) {
+        final var arc = arcForUser(userId);
+        return chapterForArc(arc.getId());
+    }
+
     public Task taskForChapter(final ChapterId chapterId) {
         final var task = aTaskWithChapterId(chapterId);
         return taskRepository.save(task);

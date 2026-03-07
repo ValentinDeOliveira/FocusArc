@@ -7,16 +7,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 
 @Import(SecuredIntegrationTest.TestSecuredAuthConfig.class)
 public abstract class SecuredIntegrationTest extends RestIntegrationTest {
+    protected User user;
+
     @Autowired
     private JwtService jwtService;
-
-    protected User user;
-    protected HttpHeaders userHeaders;
+    private HttpHeaders userHeaders;
 
     @BeforeEach
     void setupUser() {
@@ -41,5 +42,13 @@ public abstract class SecuredIntegrationTest extends RestIntegrationTest {
         headers.setBearerAuth(token);
 
         return headers;
+    }
+
+    protected HttpEntity<User> getHttpEntity() {
+        return new HttpEntity<>(userHeaders);
+    }
+
+    protected HttpEntity<?> getHttpEntity(Object dto) {
+        return new HttpEntity<>(dto, userHeaders);
     }
 }

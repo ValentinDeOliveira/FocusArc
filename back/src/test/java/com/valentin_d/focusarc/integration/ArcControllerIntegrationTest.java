@@ -1,6 +1,5 @@
 package com.valentin_d.focusarc.integration;
 
-import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseArcControllerIntegrationTest;
 import com.valentin_d.focusarc.model.arc.Arc;
@@ -10,7 +9,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 
 import java.util.stream.Stream;
@@ -25,7 +23,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     void shouldCreateArc_whenDataIsValid() {
         final var dto = anArcCreationDto();
 
-        final var response = request(URL, HttpMethod.POST, new HttpEntity<>(dto, userHeaders), Arc.class);
+        final var response = request(URL, HttpMethod.POST, getHttpEntity(dto), Arc.class);
 
         assertionHelper.assertCreated(response);
 
@@ -43,9 +41,9 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     void shouldReturnNotFoundOnCreate_whenActiveArcAlreadyExists() {
         domainFixture.arcForUser(user.getId());
 
-        final HttpEntity<ArcCreationDto> requestEntity = new HttpEntity<>(anArcCreationDto(), userHeaders);
+        final var dto  = anArcCreationDto();
 
-        final var response = request(URL, HttpMethod.POST, requestEntity, Void.class);
+        final var response = request(URL, HttpMethod.POST, getHttpEntity(dto), Void.class);
 
         assertionHelper.assertBadRequest(response);
     }
@@ -55,7 +53,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         final var arc = domainFixture.arcForUser(user.getId());
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.GET,
-                new HttpEntity<>(userHeaders), Arc.class);
+                getHttpEntity(), Arc.class);
 
         assertionHelper.assertOk(response);
         assertNotNull(response.getBody());
@@ -67,7 +65,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         final var arc1 = domainFixture.arcForUser(user.getId());
         final var arc2 = domainFixture.arcForUser(user.getId(), ArcStatus.COMPLETED);
 
-        final var response = request(URL + "/me", HttpMethod.GET, new HttpEntity<>(userHeaders), Arc[].class);
+        final var response = request(URL + "/me", HttpMethod.GET, getHttpEntity(), Arc[].class);
 
         assertionHelper.assertOk(response);
         assertThat(response.getBody()).containsExactly(arc1, arc2);
@@ -75,7 +73,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
     @Test
     void shouldReturnNoContent_whenUserHasNoArcs() {
-        final var response = request(URL + "/me", HttpMethod.GET, new HttpEntity<>(userHeaders), Void.class);
+        final var response = request(URL + "/me", HttpMethod.GET, getHttpEntity(), Void.class);
 
         assertionHelper.assertNoContent(response);
     }
@@ -86,7 +84,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         final var arc = domainFixture.arcForUser(user.getId());
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.PUT,
-                new HttpEntity<>(dto, userHeaders), Arc.class);
+                getHttpEntity(dto), Arc.class);
 
         assertionHelper.assertOk(response);
         final var result = response.getBody();
@@ -112,7 +110,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     @Test
     void shouldReturnNotFound_whenUpdatingNonExistingArc() {
         final var response = request(URL + "/" + ArcId.random().id(), HttpMethod.PUT,
-                new HttpEntity<>(anArcUpdateDto(), userHeaders), Void.class);
+                getHttpEntity(anArcUpdateDto()), Void.class);
 
         assertionHelper.assertNotFound(response);
     }
@@ -122,7 +120,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         final var arc = domainFixture.arcForUser(user.getId());
 
         final var response = request(URL + "/" + arc.getId().id(), HttpMethod.DELETE,
-                new HttpEntity<>(userHeaders), Void.class);
+                getHttpEntity(), Void.class);
 
         assertionHelper.assertNoContent(response);
     }
@@ -130,7 +128,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingArc() {
         final var response = request(URL + "/" + ArcId.random().id(), HttpMethod.DELETE,
-                new HttpEntity<>(userHeaders), Void.class);
+                getHttpEntity(), Void.class);
 
         assertionHelper.assertNotFound(response);
     }
@@ -140,7 +138,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         domainFixture.arcForUser(user.getId());
         domainFixture.arcForUser(user.getId(), ArcStatus.COMPLETED);
 
-        final var response = request(URL, HttpMethod.DELETE, new HttpEntity<>(userHeaders), Void.class);
+        final var response = request(URL, HttpMethod.DELETE, getHttpEntity(), Void.class);
 
         assertionHelper.assertNoContent(response);
     }
@@ -149,7 +147,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     @MethodSource("provideInvalidTotalEstimatedMinutes")
     void shouldReturnBadRequestOnCreate_whenTotalEstimatedMinutesIsNotPositive(final int minutes) {
         final var response = request(URL, HttpMethod.POST,
-                new HttpEntity<>(anArcCreationDtoWithEstimatedMinutes(minutes), userHeaders), Void.class);
+                getHttpEntity(anArcCreationDtoWithEstimatedMinutes(minutes)), Void.class);
 
         assertionHelper.assertBadRequest(response);
     }

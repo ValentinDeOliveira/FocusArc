@@ -2,10 +2,8 @@ package com.valentin_d.focusarc.integration.base;
 
 import com.valentin_d.focusarc.dto.chapter.ChapterSummaryResponseDto;
 import com.valentin_d.focusarc.model.Chapter;
-import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.arc.ArcRecalculationService;
 import com.valentin_d.focusarc.service.chapter.ChapterRecalculationService;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -27,10 +25,8 @@ public class BaseChapterControllerIntegrationTest extends SecuredIntegrationTest
         assertEquals(expected.getScheduledDate(), actual.getScheduledDate());
     }
 
-    protected ResponseEntity<ChapterSummaryResponseDto> exchangeSummaryForUser(final User user) {
-        final var headers = getHeadersForUser(user);
-
-        return request(URL + "/summary", HttpMethod.GET, new HttpEntity<>(headers),
+    protected ResponseEntity<ChapterSummaryResponseDto> exchangeSummaryForUser() {
+        return request(URL + "/summary", HttpMethod.GET, getHttpEntity(),
                 ChapterSummaryResponseDto.class);
     }
 }
