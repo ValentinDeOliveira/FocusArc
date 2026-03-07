@@ -161,6 +161,12 @@
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>0.8.14</version>
+                <configuration>
+                    <excludes>
+                        <!-- Excluded from test context via @Profile("!test"), untestable by design -->
+                        <exclude>com/valentin_d/focusarc/config/SecurityConfig.class</exclude>
+                    </excludes>
+                </configuration>
                 <executions>
                     <execution>
                         <goals>
