@@ -1,6 +1,7 @@
 package com.valentin_d.focusarc.service.auth;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
@@ -24,7 +25,11 @@ public class JwtService {
     private long refreshExpirationTime;
 
     public String extractUsername(final String token) {
-        return extractClaim(token, Claims::getSubject);
+        try {
+            return extractClaim(token, Claims::getSubject);
+        } catch (JwtException e) {
+            return null;
+        }
     }
 
     public <T> T extractClaim(final String token, final Function<Claims, T> claimsResolver) {
