@@ -5,8 +5,6 @@ import com.valentin_d.focusarc.model.auth.RegisterRequestDto;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.repository.UserRepository;
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,10 +28,6 @@ public class UserService {
                 passwordEncoder.encode(registerDto.password()));
 
         return repository.save(user);
-    }
-
-    public Optional<User> findByEmail(@NotBlank @Email String email) {
-        return repository.findByEmail(email);
     }
 
     public Optional<User> findById(@NotNull UserId id) {

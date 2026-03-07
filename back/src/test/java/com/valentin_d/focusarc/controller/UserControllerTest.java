@@ -23,29 +23,6 @@ class UserControllerTest extends BaseControllerTest {
     private final UserAssertion userAssertion = new UserAssertion();
 
     @Test
-    void shouldReturnUser_whenEmailExists() throws Exception {
-        final var user = aUser();
-
-        when(userService.findByEmail(user.getEmail()))
-                .thenReturn(Optional.of(user));
-
-        final var actions = mvcGet(ROOT + "/email?email=" + user.getEmail())
-                .andExpect(status().isOk());
-
-        userAssertion.assertSingleJson(actions, user);
-    }
-
-    @Test
-    void shouldReturnNotFound_whenEmailDoesNotExist() throws Exception {
-        final var user = aUser();
-        when(userService.findByEmail(user.getEmail()))
-                .thenReturn(Optional.empty());
-
-        mvcGet(ROOT + "/email?email=" + user.getEmail())
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
     void shouldReturnUser_whenIdExists() throws Exception {
         final var user = aUser();
         when(userService.findById(user.getId())).thenReturn(Optional.of(user));

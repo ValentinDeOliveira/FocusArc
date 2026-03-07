@@ -2,6 +2,7 @@ package com.valentin_d.focusarc.integration.base;
 
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.auth.JwtService;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,15 @@ import org.springframework.security.authentication.AuthenticationManager;
 public abstract class SecuredIntegrationTest extends RestIntegrationTest {
     @Autowired
     private JwtService jwtService;
+
+    protected User user;
+    protected HttpHeaders userHeaders;
+
+    @BeforeEach
+    void setupUser() {
+        user = domainFixture.user();
+        userHeaders = getHeadersForUser(user);
+    }
 
     @TestConfiguration
     static class TestSecuredAuthConfig {

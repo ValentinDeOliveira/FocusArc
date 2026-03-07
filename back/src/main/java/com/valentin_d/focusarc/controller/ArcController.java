@@ -59,7 +59,7 @@ public class ArcController {
         return ResponseEntity.noContent().build();
     }
 
-    @DeleteMapping("/me")
+    @DeleteMapping
     public ResponseEntity<Void> deleteAllForCurrentUser(@AuthenticationPrincipal final User user) {
         service.deleteAllForUser(user.getId());
         return ResponseEntity.noContent().build();
