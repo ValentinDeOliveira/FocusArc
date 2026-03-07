@@ -89,6 +89,11 @@ public class DomainFixture {
         return taskForChapter(chapter.getId());
     }
 
+    public Task taskForUser(final UserId userId) {
+        final var chapter = chapterForUser(userId);
+        return taskForChapter(chapter.getId());
+    }
+
     public User user() {
         return userRepository.save(aUser());
     }

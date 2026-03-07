@@ -33,10 +33,10 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
     @Test
     void shouldCreateTask_whenDataIsValid() {
-        final var chapter = domainFixture.chapter();
+        final var chapter = domainFixture.chapterForUser(user.getId());
 
         final var dto = aTaskCreationDtoWithChapterId(chapter.getId());
-        final var response = request(URL, HttpMethod.POST, dto, Task.class);
+        final var response = request(URL, HttpMethod.POST, getHttpEntity(dto), Task.class);
 
         assertionHelper.assertCreated(response);
 
@@ -56,16 +56,17 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
     void shouldReturnNotFoundOnCreate_whenChapterDoesNotExists() {
         final var dto = aTaskCreationDto();
 
-        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+        final var response = request(URL, HttpMethod.POST, getHttpEntity(dto), Void.class);
 
         assertionHelper.assertNotFound(response);
     }
 
     @Test
     void shouldReturnTask_whenIdExists() {
-        final var task = domainFixture.taskWithChapter();
+        final var task = domainFixture.taskForUser(user.getId());
 
-        final var response = request(URL + "/" + task.getId().id(), HttpMethod.GET, Task.class);
+        final var response = request(URL + "/" + task.getId().id(), HttpMethod.GET,
+                getHttpEntity(), Task.class);
         assertionHelper.assertOk(response);
 
         final var result = response.getBody();
@@ -76,11 +77,12 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
     @Test
     void shouldReturnAllTask_whenArcChapterExists() {
-        final var chapter = domainFixture.chapter();
+        final var chapter = domainFixture.chapterForUser(user.getId());
         final var task1 = domainFixture.taskForChapter(chapter.getId());
         final var task2 = domainFixture.taskForChapter(chapter.getId());
 
-        final var response = request(URL + "/chapters/" + chapter.getId().id(), HttpMethod.GET, Task[].class);
+        final var response = request(URL + "/chapters/" + chapter.getId().id(), HttpMethod.GET,
+                getHttpEntity(), Task[].class);
         assertionHelper.assertOk(response);
         assertNotNull(response.getBody());
 
@@ -92,15 +94,17 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
     @Test
     void shouldReturnNotFound_whenChapterIdDoesNotExists() {
-        final var response = request(URL + "/chapters/" + ChapterId.random().id(), HttpMethod.GET, Void.class);
+        final var response = request(URL + "/chapters/" + ChapterId.random().id(), HttpMethod.GET,
+                getHttpEntity(), Void.class);
 
         assertionHelper.assertNotFound(response);
     }
 
     @Test
     void shouldReturnNoContent_whenChapterHasNoTasks() {
-        final var chapter = domainFixture.chapter();
-        final var response = request(URL + "/chapters/" + chapter.getId().id(), HttpMethod.GET, Void.class);
+        final var chapter = domainFixture.chapterForUser(user.getId());
+        final var response = request(URL + "/chapters/" + chapter.getId().id(), HttpMethod.GET,
+                getHttpEntity(), Void.class);
 
         assertionHelper.assertNoContent(response);
     }
@@ -108,9 +112,10 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
     @ParameterizedTest
     @MethodSource("provideTaskUpdateDtos")
     void shouldUpdateArc_withDifferentFields(final TaskUpdateDto dto) {
-        final var task = domainFixture.taskWithChapter();
+        final var task = domainFixture.taskForUser(user.getId());
 
-        final var response = request(URL + "/" + task.getId().id(), HttpMethod.PUT, dto, Task.class);
+        final var response = request(URL + "/" + task.getId().id(), HttpMethod.PUT,
+                getHttpEntity(dto), Task.class);
 
         assertionHelper.assertOk(response);
         final var result = response.getBody();
@@ -139,55 +144,59 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
     void shouldReturnNotFound_whenUpdatingNonExistingTask() {
         final var dto = aTaskUpdateDto();
 
-        final var response = request(URL + "/" + TaskId.random().id(), HttpMethod.PUT, dto, Void.class);
+        final var response = request(URL + "/" + TaskId.random().id(), HttpMethod.PUT,
+                getHttpEntity(dto), Void.class);
 
         assertionHelper.assertNotFound(response);
     }
 
     @Test
     void shouldDeleteTask_whenIdExists() {
-        final var task = domainFixture.taskWithChapter();
+        final var task = domainFixture.taskForUser(user.getId());
 
-        final var response = request(URL + "/" + task.getId().id(), HttpMethod.DELETE, Void.class);
+        final var response = request(URL + "/" + task.getId().id(), HttpMethod.DELETE,
+                getHttpEntity(), Void.class);
 
         assertionHelper.assertNoContent(response);
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingTask() {
-        final var response = request(URL + "/" + TaskId.random().id(), HttpMethod.DELETE, Void.class);
+        final var response = request(URL + "/" + TaskId.random().id(), HttpMethod.DELETE,
+                getHttpEntity(), Void.class);
 
         assertionHelper.assertNotFound(response);
     }
 
     @Test
     void shouldDeleteAllTasksForChapter_whenChapterIdExists() {
-        final var chapter = domainFixture.chapter();
+        final var chapter = domainFixture.chapterForUser(user.getId());
         domainFixture.taskForChapter(chapter.getId());
         domainFixture.taskForChapter(chapter.getId());
 
-        final var response = request(URL + "/chapters/" + chapter.getId().id(), HttpMethod.DELETE, Void.class);
+        final var response = request(URL + "/chapters/" + chapter.getId().id(), HttpMethod.DELETE,
+                getHttpEntity(), Void.class);
 
         assertionHelper.assertNoContent(response);
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingAllTasksForNonExistingChapter() {
-        final var response = request(URL + "/chapters/" + ChapterId.random().id(), HttpMethod.DELETE, Void.class);
+        final var response = request(URL + "/chapters/" + ChapterId.random().id(), HttpMethod.DELETE,
+                getHttpEntity(), Void.class);
 
         assertionHelper.assertNotFound(response);
     }
 
     @Test
     void shouldReturnTodayTask_whenArcIsValidAndChapterExists() {
-        final var user = domainFixture.user();
         final var arc = domainFixture.arcForUser(user.getId());
         final var chapter = domainFixture.chapterForArcWithDate(arc.getId(), LocalDate.now());
         final var task1 = domainFixture.taskForChapter(chapter.getId());
         final var task2 = domainFixture.taskForChapter(chapter.getId());
 
 
-        final var response = exchangeTodayForUser(user, Task[].class);
+        final var response = exchangeTodayForUser(Task[].class);
 
         assertionHelper.assertOk(response);
         assertNotNull(response.getBody());
@@ -198,20 +207,18 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
     @Test
     void shouldThrowExceptionOnTodayTask_whenArcIsValidAndChapterDoesNotExists() {
-        final var user = domainFixture.user();
         domainFixture.arcForUser(user.getId());
 
-        final var response = exchangeTodayForUser(user, Void.class);
+        final var response = exchangeTodayForUser(Void.class);
 
         assertionHelper.assertNotFound(response);
     }
 
     @Test
     void shouldThrowExceptionOnTodayTask_whenArcExistButNotActive() {
-        final var user = domainFixture.user();
         domainFixture.arcForUser(user.getId(), ArcStatus.COMPLETED);
 
-        final var response = exchangeTodayForUser(user, Void.class);
+        final var response = exchangeTodayForUser(Void.class);
 
         assertionHelper.assertBadRequest(response);
     }
@@ -219,18 +226,18 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
     @ParameterizedTest
     @MethodSource("provideInvalidTaskEstimatedMinutes")
     void shouldReturnBadRequestOnCreate_whenEstimatedMinutesIsInvalid(final int minutes) {
-        final var chapter = domainFixture.chapter();
+        final var chapter = domainFixture.chapterForUser(user.getId());
         final var dto = aTaskCreationDtoWithChapterIdAndEstimatedMinutes(chapter.getId(), minutes);
-        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+        final var response = request(URL, HttpMethod.POST, getHttpEntity(dto), Void.class);
         assertionHelper.assertBadRequest(response);
     }
 
     @Test
     void shouldReturnBadRequestOnCreate_whenScheduledAtIsInPast() {
-        final var chapter = domainFixture.chapter();
+        final var chapter = domainFixture.chapterForUser(user.getId());
         final var dto = aTaskCreationDtoWithChapterIdAndScheduled(chapter.getId(),
                 Instant.now().minusSeconds(60));
-        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+        final var response = request(URL, HttpMethod.POST, getHttpEntity(dto), Void.class);
         assertionHelper.assertBadRequest(response);
     }
 
@@ -239,7 +246,8 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
     void shouldReturnBadRequestOnComplete_whenCompletedMinutesIsInvalid(final int minutes) {
         final var task = domainFixture.taskWithChapter();
         final var dto = aTaskCompleteDtoWithMinutes(minutes);
-        final var response = request(URL + "/" + task.getId().id() + "/complete", HttpMethod.PATCH, dto, Void.class);
+        final var response = request(URL + "/" + task.getId().id() + "/complete", HttpMethod.PATCH,
+                getHttpEntity(dto), Void.class);
         assertionHelper.assertBadRequest(response);
     }
 
