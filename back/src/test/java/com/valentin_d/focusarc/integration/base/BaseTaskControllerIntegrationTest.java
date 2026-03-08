@@ -1,5 +1,7 @@
 package com.valentin_d.focusarc.integration.base;
 
+import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.id.TaskId;
 import com.valentin_d.focusarc.model.task.Task;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +21,15 @@ public class BaseTaskControllerIntegrationTest extends SecuredIntegrationTest {
     }
 
     protected <T> ResponseEntity<T> exchangeTodayForUser(Class<T> responseType) {
-        return request(URL + "/today", HttpMethod.GET, getHttpEntity(), responseType);
+        return request(URL + "/today", HttpMethod.GET, responseType);
     }
+
+    protected String chaptersUrl(ChapterId chapterId) {
+        return URL + "/chapters/" + chapterId.id();
+    }
+
+    protected String tasksUrl(TaskId taskId) {
+        return URL + "/" + taskId.id();
+    }
+
 }

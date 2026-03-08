@@ -2,6 +2,8 @@ package com.valentin_d.focusarc.integration.base;
 
 import com.valentin_d.focusarc.dto.chapter.ChapterSummaryResponseDto;
 import com.valentin_d.focusarc.model.Chapter;
+import com.valentin_d.focusarc.model.id.ArcId;
+import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.service.arc.ArcRecalculationService;
 import com.valentin_d.focusarc.service.chapter.ChapterRecalculationService;
 import org.springframework.http.HttpMethod;
@@ -25,8 +27,15 @@ public class BaseChapterControllerIntegrationTest extends SecuredIntegrationTest
         assertEquals(expected.getScheduledDate(), actual.getScheduledDate());
     }
 
-    protected ResponseEntity<ChapterSummaryResponseDto> exchangeSummaryForUser() {
-        return request(URL + "/summary", HttpMethod.GET, getHttpEntity(),
-                ChapterSummaryResponseDto.class);
+    protected ResponseEntity<ChapterSummaryResponseDto> requestSummaryForUser() {
+        return request(URL + "/summary", HttpMethod.GET, ChapterSummaryResponseDto.class);
+    }
+
+    protected String chapterUrl(ChapterId chapterId) {
+        return URL + "/" + chapterId.id();
+    }
+
+    protected String chapterByArcUrl(ArcId arcId) {
+        return URL + "/arcs/" + arcId.id();
     }
 }

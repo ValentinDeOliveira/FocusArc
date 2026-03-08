@@ -1,6 +1,7 @@
 package com.valentin_d.focusarc.integration.base;
 
 import com.valentin_d.focusarc.model.arc.Arc;
+import com.valentin_d.focusarc.model.id.ArcId;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -13,5 +14,9 @@ public class BaseArcControllerIntegrationTest extends SecuredIntegrationTest {
         assertEquals(expected.getOwner(), actual.getOwner());
         assertEquals(expected.getTotalEstimatedMinutes(), actual.getTotalEstimatedMinutes());
         assertEquals(expected.getTotalCompletedMinutes(), actual.getTotalCompletedMinutes());
+    }
+
+    protected String arcUrl(final ArcId arcId) {
+        return URL + "/" + arcId.id();
     }
 }

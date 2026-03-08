@@ -2,7 +2,6 @@ package com.valentin_d.focusarc.integration;
 
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseUserControllerIntegrationTest;
-import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.user.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,14 +11,15 @@ import org.springframework.http.HttpMethod;
 
 import java.util.stream.Stream;
 
-import static com.valentin_d.focusarc.fixtures.factory.UserFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUserUpdateDtoWithName;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUserUpdateDtoWithNullFields;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
 public class UserControllerIntegrationTest extends BaseUserControllerIntegrationTest {
     @Test
     void shouldReturnUser_whenIdExists() {
-        final var response = request(URL, HttpMethod.GET, getHttpEntity(), User.class);
+        final var response = request(URL, HttpMethod.GET, User.class);
 
         assertionHelper.assertOk(response);
 
@@ -28,18 +28,10 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
         assertGetUserEquals(result, user);
     }
 
-    @Test
-    void getUserById_returnsNotFound_whenNotFound() {
-        final var response = request(URL + "/" +  UserId.random().id(), HttpMethod.GET,
-                getHttpEntity(), Void.class);
-
-        assertionHelper.assertNotFound(response);
-    }
-
     @ParameterizedTest
     @MethodSource("provideUserUpdateDtos")
     void shouldUpdateUser_withDifferentFields(final UserUpdateDto dto) {
-        final var response = request(URL, HttpMethod.PUT, getHttpEntity(dto), User.class);
+        final var response = request(URL, HttpMethod.PUT, dto, User.class);
 
         assertionHelper.assertOk(response);
 
@@ -60,19 +52,9 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     }
 
     @Test
-    void shouldReturnNotFoundOnUpdate_whenIdDoesNotExists() {
-        final var dto = aUserUpdateDto();
-
-        final var response = request(URL + "/" + UserId.random().id(), HttpMethod.PUT,
-                getHttpEntity(dto), Void.class);
-
-        assertionHelper.assertNotFound(response);
-    }
-
-    @Test
     void shouldDeleteUser_whenIdExists() {
         final var response = request(URL, HttpMethod.DELETE,
-                getHttpEntity(), Void.class);
+                Void.class);
 
         assertionHelper.assertNoContent(response);
     }

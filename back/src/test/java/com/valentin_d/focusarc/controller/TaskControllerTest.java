@@ -2,6 +2,7 @@ package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.controller.assertions.TaskAssertion;
 import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.id.TaskId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.task.TaskService;
 import org.junit.jupiter.api.Test;
@@ -28,7 +29,7 @@ class TaskControllerTest extends BaseSecurityControllerTest {
         final var task = aTask();
         when(taskService.findById(task.getId(), user.getId())).thenReturn(Optional.of(task));
 
-        final var actions = mvcGetWithUser(ROOT + "/" + task.getId().id(), user)
+        final var actions = mvcGetWithUser(taskUrl(task.getId()), user)
                 .andExpect(status().isOk());
 
         taskAssertion.assertSingleJson(actions, task);
@@ -39,7 +40,7 @@ class TaskControllerTest extends BaseSecurityControllerTest {
         final var task = aTask();
         when(taskService.findById(task.getId(), user.getId())).thenReturn(Optional.empty());
 
-        mvcGetWithUser(ROOT + "/" + task.getId().id(), user)
+        mvcGetWithUser(taskUrl(task.getId()), user)
                 .andExpect(status().isNotFound());
     }
 
@@ -48,17 +49,18 @@ class TaskControllerTest extends BaseSecurityControllerTest {
         final var task = aTask();
         when(taskService.findAllForChapter(task.getChapter(), user.getId())).thenReturn(List.of(task));
 
-        final var actions = mvcGetWithUser(ROOT + "/chapters/" + task.getChapter().id(), user)
+        final var actions = mvcGetWithUser(chaptersUrl(task.getChapter()), user)
                 .andExpect(status().isOk());
 
         taskAssertion.assertListJson(actions, task);
     }
 
     @Test
-    void shouldReturnNoContent_whenChapterHasNoTasks() throws Exception {
-        when(taskService.findAllForChapter(any(ChapterId.class), any(UserId.class))).thenReturn(List.of());
+    void shouldReturnNoContent_whenChapterIdExistsButNoTasks() throws Exception {
+        final var chapterId = ChapterId.random();
+        when(taskService.findAllForChapter(chapterId, user.getId())).thenReturn(List.of());
 
-        mvcGetWithUser(ROOT + "/chapters/" + ChapterId.random().id(), user)
+        mvcGetWithUser(chaptersUrl(chapterId), user)
                 .andExpect(status().isNoContent());
     }
 
@@ -82,7 +84,7 @@ class TaskControllerTest extends BaseSecurityControllerTest {
 
         when(taskService.update(task.getId(), updateDto, user.getId())).thenReturn(task);
 
-        final var actions = mvcPutWithUser(ROOT + "/" + task.getId().id(), toJson(updateDto), user)
+        final var actions = mvcPutWithUser(taskUrl(task.getId()), toJson(updateDto), user)
                 .andExpect(status().isOk());
 
         taskAssertion.assertSingleJson(actions, task);
@@ -92,7 +94,7 @@ class TaskControllerTest extends BaseSecurityControllerTest {
     void shouldReturnNoContent_whenDeletingExistingTask() throws Exception {
         final var task = aTask();
 
-        mvcDeleteWithUser(ROOT + "/" + task.getId().id(), user)
+        mvcDeleteWithUser(taskUrl(task.getId()), user)
                 .andExpect(status().isNoContent());
     }
 
@@ -100,7 +102,7 @@ class TaskControllerTest extends BaseSecurityControllerTest {
     void shouldReturnNoContent_whenDeletingAllTasksForExistingChapter() throws Exception {
         final var task = aTask();
 
-        mvcDeleteWithUser(ROOT + "/chapters/" + task.getChapter().id(), user)
+        mvcDeleteWithUser(chaptersUrl(task.getChapter()), user)
                 .andExpect(status().isNoContent());
     }
 
@@ -109,7 +111,7 @@ class TaskControllerTest extends BaseSecurityControllerTest {
         final var task = aTask();
         final var completeDto = aTaskCompleteDto();
 
-        mvcPatchWithUser(ROOT + "/" + task.getId().id() + "/complete", toJson(completeDto), user)
+        mvcPatchWithUser(taskUrl(task.getId()) + "/complete", toJson(completeDto), user)
                 .andExpect(status().isOk());
     }
 
@@ -131,5 +133,13 @@ class TaskControllerTest extends BaseSecurityControllerTest {
 
         mvcGetWithUser(ROOT + "/today", user)
                 .andExpect(status().isNoContent());
+    }
+
+    private String taskUrl(TaskId taskId) {
+        return ROOT + "/" + taskId.id();
+    }
+
+    private String chaptersUrl(ChapterId chapterId) {
+        return ROOT + "/chapters/" + chapterId.id();
     }
 }

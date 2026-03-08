@@ -28,7 +28,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         final var arc = domainFixture.arcForUser(user.getId());
         final var dto = aChapterCreationDtoWithArcId(arc.getId());
 
-        final var response = request(URL, HttpMethod.POST, getHttpEntity(dto), Chapter.class);
+        final var response = request(URL, HttpMethod.POST, dto, Chapter.class);
 
         assertionHelper.assertCreated(response);
 
@@ -44,7 +44,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     void shouldReturnNotFoundOnCreate_whenArcDoesNotExists() {
         final var dto = aChapterCreationDto();
 
-        final var response = request(URL, HttpMethod.POST, getHttpEntity(dto), Void.class);
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
 
         assertionHelper.assertNotFound(response);
     }
@@ -57,7 +57,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
         final var dto = aChapterCreationDtoWithArcIdAndScheduledDate(arc.getId(), date);
 
-        final var response = request(URL, HttpMethod.POST, getHttpEntity(dto), Void.class);
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
 
         assertionHelper.assertBadRequest(response);
     }
@@ -66,8 +66,8 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     void shouldReturnChapter_whenIdExists() {
         final var chapter = domainFixture.chapterForUser(user.getId());
 
-        final var response = request(URL + "/" + chapter.getId().id(), HttpMethod.GET,
-                getHttpEntity(), Chapter.class);
+        final var response = request(chapterUrl(chapter.getId()), HttpMethod.GET,
+                Chapter.class);
         assertionHelper.assertOk(response);
 
         final var result = response.getBody();
@@ -83,8 +83,8 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         final var chapter1 = domainFixture.chapterForArcWithDate(arc.getId(), now.plusDays(5));
         final var chapter2 = domainFixture.chapterForArcWithDate(arc.getId(), now.plusDays(9));
 
-        final var response = request(URL + "/arcs/" + arc.getId().id(), HttpMethod.GET,
-                getHttpEntity(), Chapter[].class);
+        final var response = request(chapterByArcUrl(arc.getId()), HttpMethod.GET,
+                Chapter[].class);
 
         assertionHelper.assertOk(response);
         assertNotNull(response.getBody());
@@ -97,8 +97,8 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
     @Test
     void shouldReturnNotFound_whenArcIdDoesNotExists() {
-        final var response = request(URL + "/arcs/" + ArcId.random().id(), HttpMethod.GET,
-                getHttpEntity(), Void.class);
+        final var response = request(chapterByArcUrl(ArcId.random()), HttpMethod.GET,
+                Void.class);
 
         assertionHelper.assertNotFound(response);
     }
@@ -107,8 +107,8 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     void shouldReturnNoContent_whenArcHasNoChapters() {
         final var arc = domainFixture.arcForUser(user.getId());
 
-        final var response = request(URL + "/arcs/" + arc.getId().id(), HttpMethod.GET,
-                getHttpEntity(), Void.class);
+        final var response = request(chapterByArcUrl(arc.getId()), HttpMethod.GET,
+                Void.class);
 
         assertionHelper.assertNoContent(response);
     }
@@ -118,8 +118,8 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     void shouldUpdateArc_withDifferentFields(final ChapterUpdateDto dto) {
         final var chapter = domainFixture.chapterForUser(user.getId());
 
-        final var response = request(URL + "/" + chapter.getId().id(), HttpMethod.PUT,
-                getHttpEntity(dto), Chapter.class);
+        final var response = request(chapterUrl(chapter.getId()), HttpMethod.PUT,
+                dto, Chapter.class);
 
         assertionHelper.assertOk(response);
         final var result = response.getBody();
@@ -143,8 +143,8 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     void shouldReturnNotFound_whenUpdatingNonExistingChapter() {
         final var dto = aChapterUpdateDto();
 
-        final var response = request(URL + "/" + ChapterId.random().id(), HttpMethod.PUT,
-                getHttpEntity(dto), Void.class);
+        final var response = request(chapterUrl(ChapterId.random()), HttpMethod.PUT,
+                dto, Void.class);
 
         assertionHelper.assertNotFound(response);
     }
@@ -153,16 +153,16 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     void shouldDeleteChapter_whenIdExists() {
         final var chapter = domainFixture.chapterForUser(user.getId());
 
-        final var response = request(URL + "/" + chapter.getId().id(), HttpMethod.DELETE,
-                getHttpEntity(), Void.class);
+        final var response = request(chapterUrl(chapter.getId()), HttpMethod.DELETE,
+                Void.class);
 
         assertionHelper.assertNoContent(response);
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingChapter() {
-        final var response = request(URL + "/" + ChapterId.random().id(), HttpMethod.DELETE,
-                getHttpEntity(), Void.class);
+        final var response = request(chapterUrl(ChapterId.random()), HttpMethod.DELETE,
+                Void.class);
 
         assertionHelper.assertNotFound(response);
     }
@@ -174,16 +174,16 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         domainFixture.chapterForArcWithDate(arc.getId(), now.plusDays(5));
         domainFixture.chapterForArcWithDate(arc.getId(), now.plusDays(9));
 
-        final var response = request(URL + "/arcs/" + arc.getId().id(), HttpMethod.DELETE,
-                getHttpEntity(), Void.class);
+        final var response = request(chapterByArcUrl(arc.getId()), HttpMethod.DELETE,
+                Void.class);
 
         assertionHelper.assertNoContent(response);
     }
 
     @Test
     void shouldReturnNotFound_whenDeletingAllChaptersForNonExistingArc() {
-        final var response = request(URL + "/arcs/" + ChapterId.random().id(), HttpMethod.DELETE,
-                getHttpEntity(), Void.class);
+        final var response = request(chapterByArcUrl(ArcId.random()), HttpMethod.DELETE,
+                Void.class);
 
         assertionHelper.assertNotFound(response);
     }
@@ -197,7 +197,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         domainFixture.taskForChapterWithStatus(chapter.getId(), TaskStatus.DONE);
         domainFixture.taskForChapterWithStatus(chapter.getId(), TaskStatus.DONE);
 
-        final var response = exchangeSummaryForUser();
+        final var response = requestSummaryForUser();
 
         assertionHelper.assertOk(response);
         final var result = response.getBody();
@@ -215,7 +215,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     void shouldReturnBadRequestOnCreate_whenEstimatedMinutesIsNotPositive(final int minutes) {
         final var arc = domainFixture.arcForUser(user.getId());
         final var dto = aChapterCreationDtoWithArcIdAndEstimatedMinutes(arc.getId(), minutes);
-        final var response = request(URL, HttpMethod.POST, getHttpEntity(dto), Void.class);
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
         assertionHelper.assertBadRequest(response);
     }
 
@@ -231,7 +231,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         final var arc = domainFixture.arcForUser(user.getId());
         final var dto = aChapterCreationDtoWithArcIdAndScheduledDate(arc.getId(),
                 LocalDate.now().minusDays(1));
-        final var response = request(URL, HttpMethod.POST, getHttpEntity(dto), Void.class);
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
         assertionHelper.assertBadRequest(response);
     }
 
@@ -242,7 +242,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         domainFixture.taskForChapterWithStatus(chapter.getId(), TaskStatus.DONE);
         domainFixture.taskForChapterWithStatus(chapter.getId(), TaskStatus.DONE);
 
-        final var response = exchangeSummaryForUser();
+        final var response = requestSummaryForUser();
 
         assertionHelper.assertOk(response);
         final var result = response.getBody();

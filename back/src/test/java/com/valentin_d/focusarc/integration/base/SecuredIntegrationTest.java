@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 
 @Import(SecuredIntegrationTest.TestSecuredAuthConfig.class)
@@ -35,20 +37,22 @@ public abstract class SecuredIntegrationTest extends RestIntegrationTest {
         }
     }
 
-    protected HttpHeaders getHeadersForUser(final User user) {
+    protected <T> ResponseEntity<T> request(final String url, final HttpMethod method,
+                                            final Class<T> responseType) {
+        return request(url, method, new HttpEntity<>(userHeaders), responseType);
+    }
+
+    protected <T> ResponseEntity<T> request(final String url, final HttpMethod method,
+                                            final Object dto, final Class<T> responseType) {
+        return request(url, method, new HttpEntity<>(dto, userHeaders), responseType);
+    }
+
+    private HttpHeaders getHeadersForUser(final User user) {
         final var token = jwtService.generateToken(user);
 
         final var headers = new HttpHeaders();
         headers.setBearerAuth(token);
 
         return headers;
-    }
-
-    protected HttpEntity<User> getHttpEntity() {
-        return new HttpEntity<>(userHeaders);
-    }
-
-    protected HttpEntity<?> getHttpEntity(Object dto) {
-        return new HttpEntity<>(dto, userHeaders);
     }
 }

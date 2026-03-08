@@ -12,5 +12,4 @@ public class BaseRecalculationIntegrationTest extends BaseTaskControllerIntegrat
     protected TaskRepository taskRepository;
     @Autowired
     protected ChapterRepository chapterRepository;
-    protected final String URL = "/tasks";
 }

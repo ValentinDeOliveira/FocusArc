@@ -31,7 +31,7 @@ class SecurityIntegrationTest extends BaseIntegrationTest {
     @TestConfiguration
     static class TestEnforcedSecurityConfig {
         @Bean
-        SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) throws Exception {
+        SecurityFilterChain securityFilterChain(HttpSecurity http, JwtAuthFilter jwtAuthFilter) {
             http
                     .csrf(AbstractHttpConfigurer::disable)
                     .authorizeHttpRequests(auth -> auth
@@ -88,7 +88,7 @@ class SecurityIntegrationTest extends BaseIntegrationTest {
 
     @Test
     void shouldPermitAccess_whenEndpointIsUnderAuthPath() {
-        // No auth header — security should let /auth/** through to the handler.
+        // No auth header - security should let /auth/** through to the handler.
         // Validation fails on empty body → 400, but NOT 401 (security rejected).
         final var headers = new HttpHeaders();
         headers.setContentType(MediaType.APPLICATION_JSON);

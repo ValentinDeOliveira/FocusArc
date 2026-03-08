@@ -22,7 +22,7 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
         final var task = domainFixture.taskForUser(user.getId());
 
         final var dto = aTaskCreationDtoWithChapterId(task.getChapter());
-        request(URL, HttpMethod.POST, getHttpEntity(dto), Void.class);
+        request(URL, HttpMethod.POST, dto, Void.class);
 
         final var totalEstimatedMinutes = task.getEstimatedMinutes() + dto.estimatedMinutes();
 
@@ -35,7 +35,7 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
         final var task = domainFixture.taskForUser(user.getId());
 
         final var dto = TaskUpdateDto.builder().estimatedMinutes(50).build();
-        request(URL  + "/" + task.getId().id(), HttpMethod.PUT, getHttpEntity(dto), Void.class);
+        request(tasksUrl(task.getId()), HttpMethod.PUT, dto, Void.class);
 
         assertCorrectRecalculation(task, dto.estimatedMinutes(), Chapter::getEstimatedMinutes,
                 Arc::getTotalEstimatedMinutes);
@@ -46,7 +46,7 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
         final var task = domainFixture.taskForUser(user.getId());
 
         final var dto = TaskUpdateDto.builder().completedMinutes(50).build();
-        request(URL  + "/" + task.getId().id(), HttpMethod.PUT, getHttpEntity(dto), Void.class);
+        request(tasksUrl(task.getId()), HttpMethod.PUT, dto, Void.class);
 
         assertCorrectRecalculation(task, dto.completedMinutes(), Chapter::getCompletedMinutes,
                 Arc::getTotalCompletedMinutes);
@@ -57,8 +57,8 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
         final var task = domainFixture.taskForUser(user.getId());
 
         final var dto = aTaskCompleteDto();
-        request(URL  + "/" + task.getId().id() + "/complete" , HttpMethod.PATCH,
-                getHttpEntity(dto), Void.class);
+        request(tasksUrl(task.getId()) + "/complete" , HttpMethod.PATCH,
+                dto, Void.class);
 
         final var savedTask = taskRepository.findById(task.getId()).orElseThrow();
         assertEquals(savedTask.getCompletedMinutes(), dto.completedMinutes());
@@ -73,7 +73,7 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
         final var task1 = domainFixture.taskForUser(user.getId());
         final var task2 = domainFixture.taskForChapter(task1.getChapter());
 
-        request(URL + "/" + task1.getId().id(), HttpMethod.DELETE, getHttpEntity(), Void.class);
+        request(tasksUrl(task1.getId()), HttpMethod.DELETE, Void.class);
 
         assertCorrectRecalculation(task2, task2.getEstimatedMinutes(), Chapter::getEstimatedMinutes,
                 Arc::getTotalEstimatedMinutes);
