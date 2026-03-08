@@ -31,7 +31,7 @@ class ArcControllerTest extends BaseSecurityControllerTest {
         when(arcService.findByIdAndOwnerId(eq(arc.getId()), eq(user.getId())))
                 .thenReturn(Optional.of(arc));
 
-        final var actions = mvcGetWithUser(ROOT + "/" + arc.getId().id(), user)
+        final var actions = mvcGetWithUser(arcUrl(arc.getId()), user)
                 .andExpect(status().isOk());
 
         arcAssertion.assertSingleJson(actions, arc);
@@ -42,7 +42,7 @@ class ArcControllerTest extends BaseSecurityControllerTest {
         when(arcService.findByIdAndOwnerId(any(ArcId.class), eq(user.getId())))
                 .thenReturn(Optional.empty());
 
-        mvcGetWithUser(ROOT + "/" + ArcId.random().id(), user)
+        mvcGetWithUser(arcUrl(ArcId.random()), user)
                 .andExpect(status().isNotFound());
     }
 
@@ -90,7 +90,7 @@ class ArcControllerTest extends BaseSecurityControllerTest {
 
         final String json = toJson(updateDto);
 
-        final var actions = mvcPutWithUser(ROOT + "/" + arc.getId().id(), json, user)
+        final var actions = mvcPutWithUser(arcUrl(arc.getId()), json, user)
                 .andExpect(status().isOk());
 
         arcAssertion.assertSingleJson(actions, arc);
@@ -100,7 +100,7 @@ class ArcControllerTest extends BaseSecurityControllerTest {
     void shouldReturnNoContent_whenDeletingExistingArc() throws Exception {
         final var arc = anArcWithOwnerId(user.getId());
 
-        mvcDeleteWithUser(ROOT + "/" + arc.getId().id(), user)
+        mvcDeleteWithUser(arcUrl(arc.getId()), user)
                 .andExpect(status().isNoContent());
 
         verify(arcService).delete(eq(user.getId()), eq(arc.getId()));
@@ -112,5 +112,9 @@ class ArcControllerTest extends BaseSecurityControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(arcService).deleteAllForUser(eq(user.getId()));
+    }
+
+    private String arcUrl(ArcId arcId) {
+        return ROOT + "/" + arcId.id();
     }
 }

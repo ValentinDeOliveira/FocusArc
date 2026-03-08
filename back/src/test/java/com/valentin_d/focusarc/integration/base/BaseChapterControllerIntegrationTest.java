@@ -25,8 +25,7 @@ public class BaseChapterControllerIntegrationTest extends SecuredIntegrationTest
         assertEquals(expected.getScheduledDate(), actual.getScheduledDate());
     }
 
-    protected ResponseEntity<ChapterSummaryResponseDto> exchangeSummaryForUser() {
-        return request(URL + "/summary", HttpMethod.GET, getHttpEntity(),
-                ChapterSummaryResponseDto.class);
+    protected ResponseEntity<ChapterSummaryResponseDto> requestSummaryForUser() {
+        return request(URL + "/summary", HttpMethod.GET, ChapterSummaryResponseDto.class);
     }
 }

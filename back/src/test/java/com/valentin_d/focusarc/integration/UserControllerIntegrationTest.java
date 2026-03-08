@@ -19,7 +19,7 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 public class UserControllerIntegrationTest extends BaseUserControllerIntegrationTest {
     @Test
     void shouldReturnUser_whenIdExists() {
-        final var response = request(URL, HttpMethod.GET, getHttpEntity(), User.class);
+        final var response = request(URL, HttpMethod.GET, User.class);
 
         assertionHelper.assertOk(response);
 
@@ -31,7 +31,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     @Test
     void getUserById_returnsNotFound_whenNotFound() {
         final var response = request(URL + "/" +  UserId.random().id(), HttpMethod.GET,
-                getHttpEntity(), Void.class);
+                Void.class);
 
         assertionHelper.assertNotFound(response);
     }
@@ -39,7 +39,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     @ParameterizedTest
     @MethodSource("provideUserUpdateDtos")
     void shouldUpdateUser_withDifferentFields(final UserUpdateDto dto) {
-        final var response = request(URL, HttpMethod.PUT, getHttpEntity(dto), User.class);
+        final var response = request(URL, HttpMethod.PUT, dto, User.class);
 
         assertionHelper.assertOk(response);
 
@@ -64,7 +64,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
         final var dto = aUserUpdateDto();
 
         final var response = request(URL + "/" + UserId.random().id(), HttpMethod.PUT,
-                getHttpEntity(dto), Void.class);
+                dto, Void.class);
 
         assertionHelper.assertNotFound(response);
     }
@@ -72,7 +72,7 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
     @Test
     void shouldDeleteUser_whenIdExists() {
         final var response = request(URL, HttpMethod.DELETE,
-                getHttpEntity(), Void.class);
+                Void.class);
 
         assertionHelper.assertNoContent(response);
     }

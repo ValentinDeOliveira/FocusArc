@@ -19,6 +19,6 @@ public class BaseTaskControllerIntegrationTest extends SecuredIntegrationTest {
     }
 
     protected <T> ResponseEntity<T> exchangeTodayForUser(Class<T> responseType) {
-        return request(URL + "/today", HttpMethod.GET, getHttpEntity(), responseType);
+        return request(URL + "/today", HttpMethod.GET, responseType);
     }
 }
