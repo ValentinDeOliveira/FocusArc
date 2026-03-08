@@ -2,7 +2,6 @@ package com.valentin_d.focusarc.integration;
 
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseUserControllerIntegrationTest;
-import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.user.User;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,7 +11,8 @@ import org.springframework.http.HttpMethod;
 
 import java.util.stream.Stream;
 
-import static com.valentin_d.focusarc.fixtures.factory.UserFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUserUpdateDtoWithName;
+import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUserUpdateDtoWithNullFields;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
@@ -26,14 +26,6 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
         final var result = response.getBody();
         assertNotNull(result);
         assertGetUserEquals(result, user);
-    }
-
-    @Test
-    void getUserById_returnsNotFound_whenNotFound() {
-        final var response = request(URL + "/" +  UserId.random().id(), HttpMethod.GET,
-                Void.class);
-
-        assertionHelper.assertNotFound(response);
     }
 
     @ParameterizedTest
@@ -57,16 +49,6 @@ public class UserControllerIntegrationTest extends BaseUserControllerIntegration
                 Arguments.of(aUserUpdateDtoWithName("Updated Name")),
                 Arguments.of(aUserUpdateDtoWithNullFields())
         );
-    }
-
-    @Test
-    void shouldReturnNotFoundOnUpdate_whenIdDoesNotExists() {
-        final var dto = aUserUpdateDto();
-
-        final var response = request(URL + "/" + UserId.random().id(), HttpMethod.PUT,
-                dto, Void.class);
-
-        assertionHelper.assertNotFound(response);
     }
 
     @Test

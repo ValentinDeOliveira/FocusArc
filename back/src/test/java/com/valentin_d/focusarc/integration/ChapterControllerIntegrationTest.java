@@ -66,7 +66,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     void shouldReturnChapter_whenIdExists() {
         final var chapter = domainFixture.chapterForUser(user.getId());
 
-        final var response = request(URL + "/" + chapter.getId().id(), HttpMethod.GET,
+        final var response = request(chapterUrl(chapter.getId()), HttpMethod.GET,
                 Chapter.class);
         assertionHelper.assertOk(response);
 
@@ -83,7 +83,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         final var chapter1 = domainFixture.chapterForArcWithDate(arc.getId(), now.plusDays(5));
         final var chapter2 = domainFixture.chapterForArcWithDate(arc.getId(), now.plusDays(9));
 
-        final var response = request(URL + "/arcs/" + arc.getId().id(), HttpMethod.GET,
+        final var response = request(chapterByArcUrl(arc.getId()), HttpMethod.GET,
                 Chapter[].class);
 
         assertionHelper.assertOk(response);
@@ -97,7 +97,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
     @Test
     void shouldReturnNotFound_whenArcIdDoesNotExists() {
-        final var response = request(URL + "/arcs/" + ArcId.random().id(), HttpMethod.GET,
+        final var response = request(chapterByArcUrl(ArcId.random()), HttpMethod.GET,
                 Void.class);
 
         assertionHelper.assertNotFound(response);
@@ -107,7 +107,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     void shouldReturnNoContent_whenArcHasNoChapters() {
         final var arc = domainFixture.arcForUser(user.getId());
 
-        final var response = request(URL + "/arcs/" + arc.getId().id(), HttpMethod.GET,
+        final var response = request(chapterByArcUrl(arc.getId()), HttpMethod.GET,
                 Void.class);
 
         assertionHelper.assertNoContent(response);
@@ -118,7 +118,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     void shouldUpdateArc_withDifferentFields(final ChapterUpdateDto dto) {
         final var chapter = domainFixture.chapterForUser(user.getId());
 
-        final var response = request(URL + "/" + chapter.getId().id(), HttpMethod.PUT,
+        final var response = request(chapterUrl(chapter.getId()), HttpMethod.PUT,
                 dto, Chapter.class);
 
         assertionHelper.assertOk(response);
@@ -143,7 +143,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     void shouldReturnNotFound_whenUpdatingNonExistingChapter() {
         final var dto = aChapterUpdateDto();
 
-        final var response = request(URL + "/" + ChapterId.random().id(), HttpMethod.PUT,
+        final var response = request(chapterUrl(ChapterId.random()), HttpMethod.PUT,
                 dto, Void.class);
 
         assertionHelper.assertNotFound(response);
@@ -153,7 +153,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     void shouldDeleteChapter_whenIdExists() {
         final var chapter = domainFixture.chapterForUser(user.getId());
 
-        final var response = request(URL + "/" + chapter.getId().id(), HttpMethod.DELETE,
+        final var response = request(chapterUrl(chapter.getId()), HttpMethod.DELETE,
                 Void.class);
 
         assertionHelper.assertNoContent(response);
@@ -161,7 +161,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingChapter() {
-        final var response = request(URL + "/" + ChapterId.random().id(), HttpMethod.DELETE,
+        final var response = request(chapterUrl(ChapterId.random()), HttpMethod.DELETE,
                 Void.class);
 
         assertionHelper.assertNotFound(response);
@@ -174,7 +174,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
         domainFixture.chapterForArcWithDate(arc.getId(), now.plusDays(5));
         domainFixture.chapterForArcWithDate(arc.getId(), now.plusDays(9));
 
-        final var response = request(URL + "/arcs/" + arc.getId().id(), HttpMethod.DELETE,
+        final var response = request(chapterByArcUrl(arc.getId()), HttpMethod.DELETE,
                 Void.class);
 
         assertionHelper.assertNoContent(response);
@@ -182,7 +182,7 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
 
     @Test
     void shouldReturnNotFound_whenDeletingAllChaptersForNonExistingArc() {
-        final var response = request(URL + "/arcs/" + ChapterId.random().id(), HttpMethod.DELETE,
+        final var response = request(chapterByArcUrl(ArcId.random()), HttpMethod.DELETE,
                 Void.class);
 
         assertionHelper.assertNotFound(response);

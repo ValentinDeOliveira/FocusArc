@@ -52,7 +52,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     void shouldReturnArc_whenIdExists() {
         final var arc = domainFixture.arcForUser(user.getId());
 
-        final var response = request(URL + "/" + arc.getId().id(), HttpMethod.GET, Arc.class);
+        final var response = request(arcUrl(arc.getId()), HttpMethod.GET, Arc.class);
 
         assertionHelper.assertOk(response);
         assertNotNull(response.getBody());
@@ -82,7 +82,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     void shouldUpdateArc_withDifferentFields(final ArcUpdateDto dto) {
         final var arc = domainFixture.arcForUser(user.getId());
 
-        final var response = request(URL + "/" + arc.getId().id(), HttpMethod.PUT,
+        final var response = request(arcUrl(arc.getId()), HttpMethod.PUT,
                 dto, Arc.class);
 
         assertionHelper.assertOk(response);
@@ -108,7 +108,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
     @Test
     void shouldReturnNotFound_whenUpdatingNonExistingArc() {
-        final var response = request(URL + "/" + ArcId.random().id(), HttpMethod.PUT,
+        final var response = request(arcUrl(ArcId.random()), HttpMethod.PUT,
                 anArcUpdateDto(), Void.class);
 
         assertionHelper.assertNotFound(response);
@@ -118,7 +118,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     void shouldDeleteArc_whenIdExists() {
         final var arc = domainFixture.arcForUser(user.getId());
 
-        final var response = request(URL + "/" + arc.getId().id(), HttpMethod.DELETE,
+        final var response = request(arcUrl(arc.getId()), HttpMethod.DELETE,
                  Void.class);
 
         assertionHelper.assertNoContent(response);
@@ -126,7 +126,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
     @Test
     void shouldReturnNotFound_whenDeletingNonExistingArc() {
-        final var response = request(URL + "/" + ArcId.random().id(), HttpMethod.DELETE,
+        final var response = request(arcUrl(ArcId.random()), HttpMethod.DELETE,
                  Void.class);
 
         assertionHelper.assertNotFound(response);
