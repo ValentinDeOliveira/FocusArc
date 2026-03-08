@@ -9,6 +9,10 @@ import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.task.TaskService;
 import com.valentin_d.focusarc.util.ResponseUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -21,14 +25,16 @@ import java.util.List;
 
 import static com.valentin_d.focusarc.util.ResponseUtil.wrapOrNoContent;
 
+@Tag(name = "Tasks", description = "Work blocks within a chapter")
+@SecurityRequirement(name = "Bearer")
 @RestController
 @RequestMapping("/tasks")
 @RequiredArgsConstructor
 @Validated
 public class TaskController {
-
     private final TaskService service;
 
+    @Operation(summary = "Get a task by ID")
     @GetMapping("/{taskId}")
     public ResponseEntity<Task> getById(@AuthenticationPrincipal final User user,
                                         @PathVariable TaskId taskId) {
@@ -36,6 +42,8 @@ public class TaskController {
         return ResponseUtil.wrapOrNotFound(task);
     }
 
+    @Operation(summary = "Get all tasks for a chapter")
+    @ApiResponse(responseCode = "204", description = "No tasks found")
     @GetMapping("/chapters/{chapterId}")
     public ResponseEntity<List<Task>> getAllForChapter(@AuthenticationPrincipal final User user,
                                                        @PathVariable ChapterId chapterId) {
@@ -43,6 +51,7 @@ public class TaskController {
         return ResponseUtil.wrapOrNoContent(chapterTasks);
     }
 
+    @Operation(summary = "Create a task")
     @PostMapping
     public ResponseEntity<Task> create(@AuthenticationPrincipal final User user,
                                        @Valid @RequestBody final TaskCreationDto taskCreationDto) {
@@ -50,6 +59,11 @@ public class TaskController {
         return ResponseEntity.status(HttpStatus.CREATED).body(task);
     }
 
+    @Operation(
+            summary = "Update a task",
+            description = "Partial update, null fields are ignored. " +
+                    "Triggers chapter and arc recalculation if minutes change."
+    )
     @PutMapping("/{taskId}")
     public ResponseEntity<Task> update(@AuthenticationPrincipal final User user,
                                        @PathVariable final TaskId taskId,
@@ -58,6 +72,7 @@ public class TaskController {
         return ResponseEntity.ok(task);
     }
 
+    @Operation(summary = "Delete a task by ID")
     @DeleteMapping("/{taskId}")
     public ResponseEntity<Void> delete(@AuthenticationPrincipal final User user,
                                        @PathVariable final TaskId taskId) {
@@ -65,6 +80,7 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Delete all tasks for a chapter")
     @DeleteMapping("/chapters/{chapterId}")
     public ResponseEntity<Void> deleteAllForChapter(@AuthenticationPrincipal final User user,
                                                     @PathVariable ChapterId chapterId) {
@@ -72,6 +88,12 @@ public class TaskController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "Complete a task",
+            description = "Sets status to `DONE` and records `completedMinutes`. " +
+                    "Triggers chapter and arc recalculation."
+    )
+    @ApiResponse(responseCode = "400", description = "Task is already done")
     @PatchMapping("/{taskId}/complete")
     public ResponseEntity<Void> completeTask(@AuthenticationPrincipal final User user,
                                              @PathVariable final TaskId taskId,
@@ -80,6 +102,9 @@ public class TaskController {
         return ResponseEntity.ok().build();
     }
 
+    @Operation(summary = "Get today's tasks",
+            description = "Tasks for today's chapter in the user's active arc. User resolved from JWT.")
+    @ApiResponse(responseCode = "204", description = "No tasks today")
     @GetMapping("/today")
     public ResponseEntity<List<Task>> getTodayTask(@AuthenticationPrincipal final User user) {
         final var task = service.getTodaysTasks(user.getId());

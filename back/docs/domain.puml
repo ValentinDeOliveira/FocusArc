@@ -1,49 +1,73 @@
 @startuml
+
 class User {
-    UserId userId
+    UserId id
     String name
     String email
-    Date lastLogin
+    String password
+    LocalDateTime lastLogin
 }
 
 class Arc {
-    UUID id
+    ArcId id
+    UserId owner
     String name
     int totalEstimatedMinutes
     int totalCompletedMinutes
+    ArcStatus status
 }
 
 class Chapter {
-    UUID id
-    String date
+    ChapterId id
+    ArcId arc
     int estimatedMinutes
     int completedMinutes
+    LocalDate scheduledDate
 }
 
 class Task {
-    TaskId taskId
-    String title
-    short estimatedMinutes
-    Date scheduledDate
+    TaskId id
+    ChapterId chapter
+    int estimatedMinutes
+    int completedMinutes
+    Instant scheduledAt
     TaskStatus status
 }
 
+enum ArcStatus {
+    ACTIVE
+    COMPLETED
+    ARCHIVED
+}
 
 enum TaskStatus {
-    Planned
-    In progress
-    Done
-    Skipped
+    PLANNED
+    IN_PROGRESS
+    DONE
+    SKIPPED
 }
 
 record UserId {
     UUID id
 }
+
+record ArcId {
+    UUID id
+}
+
+record ChapterId {
+    UUID id
+}
+
 record TaskId {
     UUID id
 }
 
-User "1" *-- "0..*" Arc : has
-Arc "1" *-- "0..*" Chapter : has
-Chapter "1" *-- "0..*" Task : contains
+User    "1" *-- "0..*" Arc     : has
+Arc     "1" *-- "0..*" Chapter : has
+Chapter "1" *-- "0..*" Task    : contains
+
+Arc  --> ArcStatus
+Task --> TaskStatus
+
 @enduml
