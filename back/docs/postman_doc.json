@@ -16,7 +16,7 @@
     ]
   },
   "variable": [
-    { "key": "baseUrl",      "value": "http://localhost:8080", "type": "string" },
+    { "key": "baseUrl",      "value": "http://localhost:8080/api", "type": "string" },
     { "key": "accessToken",  "value": "", "type": "string" },
     { "key": "refreshToken", "value": "", "type": "string" },
     { "key": "arcId",        "value": "00000000-0000-0000-0000-000000000002", "type": "string" },

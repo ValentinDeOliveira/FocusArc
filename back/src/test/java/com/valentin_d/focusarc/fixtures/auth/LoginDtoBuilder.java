@@ -1,6 +1,6 @@
 package com.valentin_d.focusarc.fixtures.auth;
 
-import com.valentin_d.focusarc.model.auth.LoginDto;
+import com.valentin_d.focusarc.model.auth.LoginRequestDto;
 import lombok.Builder;
 
 @Builder
@@ -10,7 +10,7 @@ public class LoginDtoBuilder {
     @Builder.Default
     private final String password = "password123";
 
-    public LoginDto build() {
-        return new LoginDto(email, password);
+    public LoginRequestDto build() {
+        return new LoginRequestDto(email, password);
     }
 }

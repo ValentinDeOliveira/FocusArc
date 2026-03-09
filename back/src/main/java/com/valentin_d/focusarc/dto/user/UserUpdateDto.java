@@ -1,4 +1,6 @@
 package com.valentin_d.focusarc.dto.user;
 
-public record UserUpdateDto(String name) {
+import jakarta.validation.constraints.NotBlank;
+
+public record UserUpdateDto(@NotBlank String name) {
 }

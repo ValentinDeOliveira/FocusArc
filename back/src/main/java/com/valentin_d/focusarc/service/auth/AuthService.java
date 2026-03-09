@@ -3,7 +3,7 @@ package com.valentin_d.focusarc.service.auth;
 import com.valentin_d.focusarc.exception.InvalidCredentialsException;
 import com.valentin_d.focusarc.exception.InvalidTokenException;
 import com.valentin_d.focusarc.model.auth.AuthResponseDto;
-import com.valentin_d.focusarc.model.auth.LoginDto;
+import com.valentin_d.focusarc.model.auth.LoginRequestDto;
 import com.valentin_d.focusarc.model.auth.RefreshRequestDto;
 import com.valentin_d.focusarc.model.auth.RegisterRequestDto;
 import com.valentin_d.focusarc.model.user.User;
@@ -28,7 +28,7 @@ public class AuthService {
         return new AuthResponseDto(jwtService.generateToken(user), jwtService.generateRefreshToken(user));
     }
 
-    public AuthResponseDto login(final LoginDto dto) {
+    public AuthResponseDto login(final LoginRequestDto dto) {
         try {
             final var authToken = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
             final var auth = authenticationManager.authenticate(authToken);
