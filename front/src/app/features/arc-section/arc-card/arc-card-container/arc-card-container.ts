@@ -3,10 +3,10 @@ import {MatCard, MatCardActions, MatCardContent} from '@angular/material/card';
 import {NgOptimizedImage} from '@angular/common';
 import {ArcProgressBar} from '../arc-progress-bar/arc-progress-bar';
 import {MatIcon} from '@angular/material/icon';
-import {Arc} from '../../../models/arc.model';
+import {Arc} from '../../../../models/arc.model';
 
 @Component({
-    selector: 'app-arc-card',
+    selector: 'app-arc-card-container',
     imports: [
         MatCard,
         MatCardContent,
@@ -15,10 +15,10 @@ import {Arc} from '../../../models/arc.model';
         ArcProgressBar,
         MatIcon
     ],
-    templateUrl: './arc-card.html',
-    styleUrl: './arc-card.css',
+    templateUrl: './arc-card-container.html',
+    styleUrl: './arc-card-container.css',
 })
-export class ArcCard implements OnInit {
+export class ArcCardContainer implements OnInit {
     @Input({ required: true }) arc!: Arc;
 
     name!: string;

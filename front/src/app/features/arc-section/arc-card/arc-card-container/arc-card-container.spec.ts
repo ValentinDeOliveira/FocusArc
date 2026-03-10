@@ -1,17 +1,17 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { ArcCard } from './arc-card';
+import { ArcCardContainer } from './arc-card-container';
 
 describe('ArcCard', () => {
-    let component: ArcCard;
-    let fixture: ComponentFixture<ArcCard>;
+    let component: ArcCardContainer;
+    let fixture: ComponentFixture<ArcCardContainer>;
 
     beforeEach(async () => {
         await TestBed.configureTestingModule({
-            imports: [ArcCard],
+            imports: [ArcCardContainer],
         }).compileComponents();
 
-        fixture = TestBed.createComponent(ArcCard);
+        fixture = TestBed.createComponent(ArcCardContainer);
         component = fixture.componentInstance;
         await fixture.whenStable();
     });
