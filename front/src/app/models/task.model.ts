@@ -5,7 +5,7 @@ export interface Task {
     chapter: string;
     estimatedMinutes: number;
     completedMinutes: number;
-    scheduledDate: string;
+    scheduledAt: string;
     status: TaskStatus;
 }
 

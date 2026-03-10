@@ -1,0 +1,10 @@
+<div>
+    <div>
+        <h2 class="today-title">Today - March 8</h2>
+        <span class="today-subtitle">2h15m planned • 4 tasks</span>
+    </div>
+    @for (task of tasks(); track task.id) {
+        <app-dashboard-task [task]="task" />
+        <hr>
+    }
+</div>
