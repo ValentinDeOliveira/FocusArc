@@ -3,4 +3,4 @@ package com.valentin_d.focusarc.model.auth;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-public record LoginDto(@NotBlank @Email String email, @NotBlank String password) {}
+public record LoginRequestDto(@NotBlank @Email String email, @NotBlank String password) {}

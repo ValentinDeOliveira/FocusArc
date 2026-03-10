@@ -1,7 +1,7 @@
 package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.model.auth.AuthResponseDto;
-import com.valentin_d.focusarc.model.auth.LoginDto;
+import com.valentin_d.focusarc.model.auth.LoginRequestDto;
 import com.valentin_d.focusarc.model.auth.RefreshRequestDto;
 import com.valentin_d.focusarc.model.auth.RegisterRequestDto;
 import com.valentin_d.focusarc.service.auth.AuthService;
@@ -36,7 +36,7 @@ public class AuthController {
 
     @Operation(summary = "Authenticate with email and password")
     @PostMapping("/login")
-    public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody final LoginDto dto) {
+    public ResponseEntity<AuthResponseDto> login(@Valid @RequestBody final LoginRequestDto dto) {
         return ResponseEntity.ok(authService.login(dto));
     }
 
