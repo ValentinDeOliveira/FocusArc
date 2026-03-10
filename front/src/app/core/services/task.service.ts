@@ -4,9 +4,9 @@ import {Observable} from 'rxjs';
 import {Task, TaskCompletedDto, TaskCreationDto, TaskUpdateDto} from '../../models/task.model';
 
 @Injectable({ providedIn: 'root' })
-export class ChapterService {
+export class TaskService {
     private http = inject(HttpClient);
-    private baseUrl = "http://localhost:8080/api/chapters";
+    private baseUrl = "http://localhost:8080/api/tasks";
 
     getById(id: string): Observable<Task> {
         return this.http.get<Task>(`${this.baseUrl}/${id}`);

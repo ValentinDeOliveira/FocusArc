@@ -1,0 +1,30 @@
+.task-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 0;
+}
+
+.task-info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+}
+
+.task-name {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: #1f2937;
+}
+
+.task-time {
+    font-size: 0.8rem;
+    color: #9ca3af;
+    margin-top: 2px;
+}
+
+.task-duration {
+    font-size: 0.875rem;
+    color: #6b7280;
+    white-space: nowrap;
+}
