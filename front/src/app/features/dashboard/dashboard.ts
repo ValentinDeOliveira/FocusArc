@@ -1,11 +1,10 @@
 import {Component, inject, OnInit} from '@angular/core';
-import {ArcService} from '../core/services/arc.service';
-import {AuthService} from '../core/services/auth.service';
-import {LoginRequestDto} from '../models/auth.model';
+import {ArcService} from '../../core/services/arc.service';
+import {AuthService} from '../../core/services/auth.service';
+import {LoginRequestDto} from '../../models/auth.model';
 
 @Component({
     selector: 'app-dashboard',
-    imports: [],
     templateUrl: './dashboard.html',
     styleUrl: './dashboard.css',
 })

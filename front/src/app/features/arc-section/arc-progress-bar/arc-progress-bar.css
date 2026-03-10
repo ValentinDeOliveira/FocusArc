@@ -1,0 +1,27 @@
+.progress-track {
+    flex: 1;
+    height: 10px;
+    background: rgba(23, 56, 120, 0.5);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: white;
+    border-radius: 999px;
+}
+
+.progress-label {
+    font-size: 1.2rem;
+    white-space: nowrap;
+}
+
+.progress-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    width: 100%;
+    background-color: rgba(42, 96, 182, 0.4);
+    padding: 15px;
+}

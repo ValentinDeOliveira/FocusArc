@@ -1,0 +1,62 @@
+.arc-card-container {
+    padding: 16px;
+}
+
+.image-wrapper {
+    position: relative;
+}
+
+.image-wrapper img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: 16px 16px 0 0;
+}
+
+.image-text {
+    position: absolute;
+    color: white;
+    font-size: 1.25rem;
+    text-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
+}
+
+.image-text.top {
+    top: 1rem;
+    left: 1rem;
+}
+
+.image-text.bottom {
+    bottom: 0;
+    right: 0;
+    left: 0;
+}
+
+.content-container {
+    display: block;
+    border-left: gray solid 1px;
+    border-right: gray solid 1px;
+    border-bottom: gray solid 1px;
+    border-radius: 0 0 16px 16px;
+}
+
+.number-chapters {
+    font-size: 1.15rem;
+}
+
+.button-container {
+    justify-content: center;
+}
+
+.view-arc-btn {
+    background-color: rgba(42, 96, 182, 0.4);
+    width: 80%;
+    margin-top: 0.5rem;
+    border-radius: 8px;
+    font-size: 1.25rem;
+    padding: 10px;
+}
+
+.view-arc-btn mat-icon {
+    margin-left: 8px;
+    vertical-align: middle;
+}
