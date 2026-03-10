@@ -2,17 +2,17 @@
     <div class="image-wrapper">
         <img ngSrc="/arc-background.png" alt="arc-background" height="1024" width="1536"/>
         <div class="image-text top">
-            <span>JLPT N3 ARC</span>
+            <span class="arc-name">JLPT N3 ARC</span>
             <br/>
-            <span>Jan 10 → Apr 30</span>
+            <span class="arc-date">Jan 10 → Apr 30</span>
         </div>
         <div class="image-text bottom">
-            <app-arc-progress-bar/>
+            <app-arc-progress-bar [progress]="progress"/>
         </div>
     </div>
     <span class="content-container">
         <mat-card-content class="number-chapters">
-            18 / 30 Chapters Completed!
+            {{ currentChapter }} / {{ nbTotalChapters }} Chapters Completed!
         </mat-card-content>
         <mat-card-actions class="button-container">
             <button matBtn class="view-arc-btn">

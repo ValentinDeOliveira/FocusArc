@@ -1,1 +1,3 @@
-<app-arc-card/>
+@if (arc()) {
+    <app-arc-card [arc]="arc()!"/>
+}

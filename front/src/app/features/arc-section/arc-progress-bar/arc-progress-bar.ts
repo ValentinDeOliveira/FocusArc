@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import {Component, Input} from '@angular/core';
 
 @Component({
     selector: 'app-arc-progress-bar',
@@ -7,5 +7,5 @@ import { Component } from '@angular/core';
     styleUrl: './arc-progress-bar.css',
 })
 export class ArcProgressBar {
-    progress: number = 80;
+    @Input() progress: number = 0;
 }

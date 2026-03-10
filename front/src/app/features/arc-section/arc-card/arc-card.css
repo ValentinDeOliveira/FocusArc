@@ -60,3 +60,11 @@
     margin-left: 8px;
     vertical-align: middle;
 }
+
+.arc-name {
+    font-size: 1.8rem;
+}
+
+.arc-date {
+    font-size: 1.1rem;
+}
