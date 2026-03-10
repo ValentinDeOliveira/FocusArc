@@ -1,0 +1,37 @@
+.arc-progress-stats-container {
+    border: gray solid 1px;
+    border-radius: 16px;
+    margin: 0 16px;
+}
+
+
+.arc-progress-title {
+    font-size: 1.7rem;
+}
+
+hr {
+    border: none;
+    border-top: 1px solid lightgray;
+}
+
+mat-card-content div {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin: 16px 0;
+    justify-content: space-between;
+}
+
+.stat-right {
+    margin-left: auto;
+    font-size: 1.6rem;
+    font-weight: 600;
+}
+
+.stat-left {
+    font-size: 1.6rem;
+}
+
+.arc-progress-header {
+    padding: 15px;
+}
