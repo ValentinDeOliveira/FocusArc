@@ -26,6 +26,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -65,9 +66,12 @@ class TaskServiceTest {
         assertEquals(creationDto.chapterId(), result.getChapter());
         assertEquals(creationDto.estimatedMinutes(), result.getEstimatedMinutes());
         assertEquals(0, result.getCompletedMinutes());
-        assertEquals(creationDto.scheduledAt(), result.getScheduledAt());
+        assertEquals(creationDto.scheduledAt(), result.getStartAt());
+        assertEquals(creationDto.name(), result.getName());
+        assertEquals(creationDto.description(), result.getDescription());
 
         verify(contextLoader).assertChapterForUser(creationDto.chapterId(), user.getId());
+        verify(taskLoader).existForChapterAtTime(eq(creationDto.chapterId()), eq(creationDto.scheduledAt()), any(Instant.class));
         verify(taskRepository).save(any(Task.class));
         verify(chapterRecalculationService).recalculateEstimatedMinutes(creationDto.chapterId());
     }
@@ -100,13 +104,17 @@ class TaskServiceTest {
         final var updated = service.update(task.getId(), updateDto, user.getId());
 
         verify(contextLoader).assertChapterForUser(task.getChapter(), user.getId());
+        verify(taskLoader).existForChapterAtTimeExcluding(eq(task.getChapter()), eq(task.getId()),
+                eq(updateDto.scheduledAt()), any(Instant.class));
         verify(taskRepository).save(task);
 
         assertEquals(updated.getId(), task.getId());
         assertEquals(updated.getEstimatedMinutes(), updateDto.estimatedMinutes());
         assertEquals(updated.getCompletedMinutes(), updateDto.completedMinutes());
-        assertEquals(updated.getScheduledAt(), updateDto.scheduledAt());
+        assertEquals(updated.getStartAt(), updateDto.scheduledAt());
         assertEquals(updated.getChapter(), task.getChapter());
+        assertEquals(updated.getName(), task.getName());
+        assertEquals(updated.getDescription(), task.getDescription());
     }
 
     @Test

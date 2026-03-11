@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Data
 @AllArgsConstructor
@@ -20,24 +21,39 @@ public class Task {
     private ChapterId chapter;
     private int estimatedMinutes;
     private int completedMinutes;
-    private Instant scheduledAt;
+    private Instant startAt;
+    private Instant endAt;
     private TaskStatus status;
+    private String name;
+    private String description;
 
     public Task(final Task task){
         this.id = task.getId();
         this.chapter = task.getChapter();
         this.estimatedMinutes = task.getEstimatedMinutes();
         this.completedMinutes = task.getCompletedMinutes();
-        this.scheduledAt = task.getScheduledAt();
+        this.startAt = task.getStartAt();
+        this.endAt = task.getEndAt();
         this.status = task.getStatus();
+        this.name = task.getName();
+        this.description = task.getDescription();
     }
 
-    public Task(final TaskId taskId, final ChapterId chapterId, final int estimatedMinutes, final Instant scheduledAt) {
-        this(taskId, chapterId, estimatedMinutes, 0, scheduledAt, TaskStatus.PLANNED);
+    public Task(final TaskId taskId, final ChapterId chapterId, final int estimatedMinutes,
+                final Instant scheduledAt, final String name, final String description) {
+        this(taskId, chapterId, estimatedMinutes, 0, scheduledAt,
+                scheduledAt.plus(estimatedMinutes, ChronoUnit.MINUTES),
+                TaskStatus.PLANNED, name, description);
     }
 
-    public Task(final ChapterId chapterId, final int estimatedMinutes, final Instant scheduledAt) {
-        this(TaskId.random(), chapterId, estimatedMinutes, scheduledAt);
+    public Task(final ChapterId chapterId, final int estimatedMinutes, final Instant scheduledAt,
+                final String name, final String description) {
+        this(TaskId.random(), chapterId, estimatedMinutes, scheduledAt, name, description);
+    }
+
+    public Task(final ChapterId chapterId, final int estimatedMinutes, final Instant scheduledAt,
+                final String name) {
+        this(TaskId.random(), chapterId, estimatedMinutes, scheduledAt, name, null);
     }
 
     public boolean isDone() {
@@ -54,5 +70,19 @@ public class Task {
 
     public Task snapshot() {
         return new Task(this);
+    }
+
+    public void updateSchedule(final Instant startAt, final int estimatedMinutes) {
+        this.startAt = startAt;
+        this.estimatedMinutes = estimatedMinutes;
+        this.endAt = startAt.plus(estimatedMinutes, ChronoUnit.MINUTES);
+    }
+
+    private Instant getEndAtFromStart() {
+        return startAt.plusSeconds(estimatedMinutes * 60L);
+    }
+
+    private Instant getEndAtFromStart(final Instant start) {
+        return start.plusSeconds(estimatedMinutes * 60L);
     }
 }

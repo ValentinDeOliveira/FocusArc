@@ -15,8 +15,12 @@ public class TaskCreationDtoBuilder {
     private final int estimatedMinutes = 120;
     @Builder.Default
     private final Instant scheduledAt = Instant.now().truncatedTo(ChronoUnit.MILLIS).plusSeconds(120);
+    @Builder.Default
+    private final String name = "My task";
+    @Builder.Default
+    private final String description = "My description";
 
     public TaskCreationDto build() {
-        return new TaskCreationDto(chapterId, estimatedMinutes, scheduledAt);
+        return new TaskCreationDto(chapterId, estimatedMinutes, scheduledAt, name, description);
     }
 }

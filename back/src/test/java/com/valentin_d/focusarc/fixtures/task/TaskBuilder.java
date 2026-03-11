@@ -20,11 +20,17 @@ public class TaskBuilder {
     @Builder.Default
     private final int completedMinutes = 130;
     @Builder.Default
-    private final Instant scheduledAt = Instant.now().truncatedTo(ChronoUnit.MILLIS).plusSeconds(120);
+    private final Instant startAt = Instant.now().truncatedTo(ChronoUnit.MILLIS).plusSeconds(120);
+    @Builder.Default
+    private final Instant endAt = Instant.now().truncatedTo(ChronoUnit.MILLIS).plus(1, ChronoUnit.HOURS);
     @Builder.Default
     private final TaskStatus taskStatus = TaskStatus.PLANNED;
+    @Builder.Default
+    private final String name = "My task";
+    @Builder.Default
+    private final String description = "My description";
 
     public Task build() {
-        return new Task(id, chapter, estimatedMinutes, completedMinutes, scheduledAt, taskStatus);
+        return new Task(id, chapter, estimatedMinutes, completedMinutes, startAt, endAt, taskStatus, name, description);
     }
 }

@@ -43,7 +43,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
         final var task = response.getBody();
         assertNotNull(task);
 
-        assertEquals(dto.scheduledAt(), task.getScheduledAt());
+        assertEquals(dto.scheduledAt(), task.getStartAt());
         assertEquals(dto.chapterId(), task.getChapter());
         assertEquals(dto.estimatedMinutes(), task.getEstimatedMinutes());
         assertEquals(0, task.getCompletedMinutes());
@@ -120,7 +120,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
 
         assertEquals(assertionHelper.expectedValue(dto.estimatedMinutes(), task.getEstimatedMinutes()), result.getEstimatedMinutes());
         assertEquals(assertionHelper.expectedValue(dto.completedMinutes(), task.getCompletedMinutes()), result.getCompletedMinutes());
-        assertEquals(assertionHelper.expectedValue(dto.scheduledAt(), task.getScheduledAt()), result.getScheduledAt());
+        assertEquals(assertionHelper.expectedValue(dto.scheduledAt(), task.getStartAt()), result.getStartAt());
         assertEquals(assertionHelper.expectedValue(dto.taskStatus(), task.getStatus()), result.getStatus());
     }
 
