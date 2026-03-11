@@ -9,10 +9,11 @@ import com.valentin_d.focusarc.model.task.TaskStatus;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 
+import java.time.temporal.ChronoUnit;
 import java.util.function.Function;
 
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskCompleteDto;
-import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskCreationDtoWithChapterId;
+import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskCreationDtoWithChapterIdAndScheduled;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 //TODO: not sure about inheritence
@@ -21,7 +22,8 @@ public class RecalculationIntegrationTest extends BaseRecalculationIntegrationTe
     public void shouldCreateTaskAndRecalculateEstimatedMinutes_whenDataIsValid() {
         final var task = domainFixture.taskForUser(user.getId());
 
-        final var dto = aTaskCreationDtoWithChapterId(task.getChapter());
+        final var dto = aTaskCreationDtoWithChapterIdAndScheduled(task.getChapter(),
+                task.getStartAt().plus(1, ChronoUnit.DAYS));
         request(URL, HttpMethod.POST, dto, Void.class);
 
         final var totalEstimatedMinutes = task.getEstimatedMinutes() + dto.estimatedMinutes();

@@ -16,13 +16,13 @@ import com.valentin_d.focusarc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
 import java.time.LocalDate;
 
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArc;
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwnerIdAndStatus;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.*;
-import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskWithChapterId;
-import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskWithChapterIdAndStatus;
+import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 
 @Component
@@ -35,11 +35,6 @@ public class DomainFixture {
 
     public Arc arc() {
         return arcRepository.save(anArc());
-    }
-
-    public Arc arcWithUser() {
-        final var user = user();
-        return arcForUser(user.getId());
     }
 
     public Arc arcForUser(final UserId userId) {
@@ -73,6 +68,10 @@ public class DomainFixture {
         return taskRepository.save(task);
     }
 
+    public Task taskForChapterAtTime(final ChapterId chapterId, final Instant startAt, final int estimatedMinutes) {
+        return taskRepository.save(aTaskWithChapterIdAndWindow(chapterId, startAt, estimatedMinutes));
+    }
+
     public Task taskForChapterWithStatus(final ChapterId chapterId, final TaskStatus status) {
         final var task = aTaskWithChapterIdAndStatus(chapterId, status);
         return taskRepository.save(task);
@@ -80,12 +79,6 @@ public class DomainFixture {
 
     public Task taskWithChapter() {
         final var chapter = chapter();
-        return taskForChapter(chapter.getId());
-    }
-
-    public Task taskForArc() {
-        final var arc = arc();
-        final var chapter = chapterForArc(arc.getId());
         return taskForChapter(chapter.getId());
     }
 

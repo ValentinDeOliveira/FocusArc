@@ -255,4 +255,61 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
                 Arguments.of(1441)
         );
     }
+
+    // BASE is 1 hour in the future — guarantees @FutureOrPresent passes for all overlap tests
+    private static final Instant BASE = Instant.now().plus(1, ChronoUnit.HOURS).truncatedTo(ChronoUnit.MILLIS);
+
+    @Test
+    void shouldReturnBadRequest_whenCreatingTaskOverlapsWithExistingTask() {
+        // existing [BASE, BASE+60min], new [BASE+30min, BASE+90min] → overlaps
+        final var chapter = domainFixture.chapterForUser(user.getId());
+        domainFixture.taskForChapterAtTime(chapter.getId(), BASE, 60);
+
+        final var dto = aTaskCreationDtoWithChapterIdAndWindow(chapter.getId(), BASE.plus(30, ChronoUnit.MINUTES), 60);
+        final var response = request(URL, HttpMethod.POST, dto, Void.class);
+
+        assertionHelper.assertBadRequest(response);
+    }
+
+    @Test
+    void shouldReturnBadRequest_whenUpdatingScheduledAtOverlapsWithAnotherTask() {
+        // taskA [BASE+2h, BASE+3h], taskB [BASE+4h, BASE+5h]
+        // update taskB scheduledAt to BASE+2h30m → [BASE+2h30m, BASE+3h30m] overlaps with taskA
+        final var chapter = domainFixture.chapterForUser(user.getId());
+        domainFixture.taskForChapterAtTime(chapter.getId(), BASE.plus(2, ChronoUnit.HOURS), 60);
+        final var taskB = domainFixture.taskForChapterAtTime(chapter.getId(), BASE.plus(4, ChronoUnit.HOURS), 60);
+
+        final var dto = TaskUpdateDto.builder().scheduledAt(BASE.plus(2, ChronoUnit.HOURS).plus(30, ChronoUnit.MINUTES)).build();
+        final var response = request(tasksUrl(taskB.getId()), HttpMethod.PUT, dto, Void.class);
+
+        assertionHelper.assertBadRequest(response);
+    }
+
+    @Test
+    void shouldReturnBadRequest_whenUpdatingEstimatedMinutesOverlapsWithAnotherTask() {
+        // taskA [BASE+2h, BASE+3h], taskB [BASE+1h, BASE+1h30m] (30 min, no overlap)
+        // update taskB estimatedMinutes to 90 → [BASE+1h, BASE+2h30m] overlaps with taskA
+        final var chapter = domainFixture.chapterForUser(user.getId());
+        domainFixture.taskForChapterAtTime(chapter.getId(), BASE.plus(2, ChronoUnit.HOURS), 60);
+        final var taskB = domainFixture.taskForChapterAtTime(chapter.getId(), BASE.plus(1, ChronoUnit.HOURS), 30);
+
+        final var dto = TaskUpdateDto.builder().estimatedMinutes(90).build();
+        final var response = request(tasksUrl(taskB.getId()), HttpMethod.PUT, dto, Void.class);
+
+        assertionHelper.assertBadRequest(response);
+    }
+
+    @Test
+    void shouldReturnOk_whenUpdatingOwnScheduledAtWithoutOverlappingOtherTasks() {
+        // taskA [BASE, BASE+1h], taskB [BASE+2h, BASE+3h]
+        // update taskB scheduledAt to BASE+3h → [BASE+3h, BASE+4h] no overlap, self-exclusion works
+        final var chapter = domainFixture.chapterForUser(user.getId());
+        domainFixture.taskForChapterAtTime(chapter.getId(), BASE, 60);
+        final var taskB = domainFixture.taskForChapterAtTime(chapter.getId(), BASE.plus(2, ChronoUnit.HOURS), 60);
+
+        final var dto = TaskUpdateDto.builder().scheduledAt(BASE.plus(3, ChronoUnit.HOURS)).build();
+        final var response = request(tasksUrl(taskB.getId()), HttpMethod.PUT, dto, Task.class);
+
+        assertionHelper.assertOk(response);
+    }
 }
