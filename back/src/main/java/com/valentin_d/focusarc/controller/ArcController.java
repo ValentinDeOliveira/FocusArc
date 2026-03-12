@@ -78,4 +78,9 @@ public class ArcController {
         service.deleteAllForUser(user.getId());
         return ResponseEntity.noContent().build();
     }
+
+    public ResponseEntity<Void> getArcSummary(@AuthenticationPrincipal final User user) {
+        service.getSummaryForUser(user.getId());
+        return ResponseEntity.noContent().build();
+    }
 }
