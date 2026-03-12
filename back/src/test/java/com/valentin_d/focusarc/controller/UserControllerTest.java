@@ -1,7 +1,7 @@
 package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.controller.assertions.UserAssertion;
-import com.valentin_d.focusarc.exception.UserDoesNotExistException;
+import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.service.user.UserService;
 import org.junit.jupiter.api.Test;

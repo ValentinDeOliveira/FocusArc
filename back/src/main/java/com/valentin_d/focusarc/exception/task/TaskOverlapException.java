@@ -1,6 +1,6 @@
 package com.valentin_d.focusarc.exception.task;
 
-import com.valentin_d.focusarc.exception.ApiException;
+import com.valentin_d.focusarc.exception.base.ApiException;
 import com.valentin_d.focusarc.model.id.ChapterId;
 
 import java.time.Instant;

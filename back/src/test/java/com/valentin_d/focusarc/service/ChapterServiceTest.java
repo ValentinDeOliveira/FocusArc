@@ -1,9 +1,9 @@
 package com.valentin_d.focusarc.service;
 
-import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
-import com.valentin_d.focusarc.exception.ArcDoesNotExistForUserException;
-import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
-import com.valentin_d.focusarc.exception.UserDoesNotExistException;
+import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistException;
+import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
+import com.valentin_d.focusarc.exception.chapter.ChapterDoesNotExistException;
+import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;

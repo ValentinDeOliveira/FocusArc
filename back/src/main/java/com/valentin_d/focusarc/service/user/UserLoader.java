@@ -1,7 +1,7 @@
 package com.valentin_d.focusarc.service.user;
 
-import com.valentin_d.focusarc.exception.EmailAlreadyExistsException;
-import com.valentin_d.focusarc.exception.UserDoesNotExistException;
+import com.valentin_d.focusarc.exception.user.EmailAlreadyExistsException;
+import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.repository.UserRepository;
