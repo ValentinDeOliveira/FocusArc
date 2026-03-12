@@ -4,10 +4,13 @@ import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.arc.ArcSummaryResponseDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.exception.InvalidDateRangeException;
+import com.valentin_d.focusarc.model.Chapter;
+import com.valentin_d.focusarc.model.ChapterStatus;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
+import com.valentin_d.focusarc.service.chapter.ChapterLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
 import com.valentin_d.focusarc.service.user.UserLoader;
 import jakarta.validation.constraints.NotNull;
@@ -15,8 +18,11 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Validated
@@ -26,6 +32,7 @@ public class ArcService {
     private final ArcLoader arcLoader;
     private final UserLoader userLoader;
     private final ChapterService chapterService;
+    private final ChapterLoader chapterLoader;
 
     public Optional<Arc> findByIdAndOwnerId(@NotNull ArcId arcId, @NotNull UserId ownerId) {
         return arcLoader.getArcByIdAndOwnerId(arcId, ownerId);
@@ -81,6 +88,43 @@ public class ArcService {
 
     public ArcSummaryResponseDto getSummaryForUser(@NotNull UserId userId) {
         userLoader.assertUserExists(userId);
-        return null;
+
+        final var arc = arcLoader.getActiveArcForUser(userId);
+        final var chapters = chapterLoader.findAllByArc(arc.getId());
+        final var chaptersByStatus = chapters.stream()
+                .collect(Collectors.groupingBy(c -> c.getStatus(LocalDate.now()), Collectors.counting()));
+
+        return new ArcSummaryResponseDto(
+                arc.getTotalEstimatedMinutes(),
+                arc.getTotalCompletedMinutes(),
+                arc.getTotalEstimatedMinutes() - arc.getTotalCompletedMinutes(),
+                chaptersByStatus.getOrDefault(ChapterStatus.COMPLETED, 0L).intValue(),
+                chaptersByStatus.getOrDefault(ChapterStatus.PLANNED, 0L).intValue(),
+                chaptersByStatus.getOrDefault(ChapterStatus.SKIPPED, 0L).intValue(),
+                getStreak(chapters)
+        );
+    }
+
+    private int getStreak(List<Chapter> chapters) {
+        final var today = LocalDate.now();
+
+        final var sorted = chapters.stream()
+                .filter(c -> !c.getScheduledDate().isAfter(today)) // exclude future chapters
+                .sorted(Comparator.comparing(Chapter::getScheduledDate).reversed())
+                .toList();
+
+        // if today has no chapter yet, start counting from yesterday
+        var expected = sorted.isEmpty() || !sorted.get(0).getScheduledDate().isEqual(today)
+                ? today.minusDays(1)
+                : today;
+
+        int streak = 0;
+        for (Chapter chapter : sorted) {
+            // gap | not completed
+            if (!chapter.getScheduledDate().isEqual(expected) || chapter.getCompletedMinutes() == 0) break;
+            streak++;
+            expected = expected.minusDays(1);
+        }
+        return streak;
     }
 }

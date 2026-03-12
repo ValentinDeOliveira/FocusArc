@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
@@ -31,5 +32,9 @@ public class ChapterLoader extends BaseService {
     public Chapter findByDate(ArcId arcId, LocalDate scheduledDate) {
         return chapterRepository.findByArcAndScheduledDate(arcId, scheduledDate)
                 .orElseThrow(() -> new NoChapterForArcException(arcId, scheduledDate));
+    }
+
+    public List<Chapter> findAllByArc(ArcId arcId) {
+        return chapterRepository.findAllByArc(arcId);
     }
 }

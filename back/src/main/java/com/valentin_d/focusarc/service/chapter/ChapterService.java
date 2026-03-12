@@ -42,7 +42,7 @@ public class ChapterService {
     public List<Chapter> findAllForArc(@NotNull ArcId arcId, @NotNull UserId userId) {
         arcLoader.assertArcExistsForUser(arcId, userId);
 
-        return chapterRepository.findAllByArc(arcId);
+        return chapterLoader.findAllByArc(arcId);
     }
 
     public Chapter create(@NotNull ChapterCreationDto chapterCreationDto,
@@ -78,7 +78,7 @@ public class ChapterService {
     public void deleteAllForArc(@NotNull ArcId arcId, @NotNull UserId userId) {
         arcLoader.assertArcExistsForUser(arcId, userId);
 
-        final var chapters = chapterRepository.findAllByArc(arcId);
+        final var chapters = chapterLoader.findAllByArc(arcId);
 
         chapters.forEach(ch -> taskService.deleteTasksForChapter(ch.getId()));
         chapterRepository.deleteAll(chapters);

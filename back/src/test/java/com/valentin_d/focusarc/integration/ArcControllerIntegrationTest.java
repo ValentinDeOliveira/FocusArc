@@ -1,5 +1,6 @@
 package com.valentin_d.focusarc.integration;
 
+import com.valentin_d.focusarc.dto.arc.ArcSummaryResponseDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseArcControllerIntegrationTest;
 import com.valentin_d.focusarc.model.arc.Arc;
@@ -11,6 +12,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpMethod;
 
+import java.time.LocalDate;
 import java.util.stream.Stream;
 
 import static com.mongodb.assertions.Assertions.assertNotNull;
@@ -156,5 +158,31 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
                 Arguments.of(0),
                 Arguments.of(-1)
         );
+    }
+
+    @Test
+    void shouldReturnSummary_whenUserHasActiveArc() {
+        final var arc = domainFixture.arcForUser(user.getId());
+        domainFixture.chapterForArcWithDate(arc.getId(), LocalDate.now().minusDays(1)); // COMPLETED
+        domainFixture.chapterForArcWithDate(arc.getId(), LocalDate.now().minusDays(2)); // COMPLETED
+        domainFixture.plannedChapterForArcWithDate(arc.getId(), LocalDate.now().plusDays(1)); // PLANNED
+
+        final var response = request(URL + "/summary", HttpMethod.GET, ArcSummaryResponseDto.class);
+
+        assertionHelper.assertOk(response);
+        final var summary = response.getBody();
+        assertNotNull(summary);
+        assertEquals(arc.getTotalEstimatedMinutes(), summary.totalEstimatedMinutes());
+        assertEquals(2, summary.nbChapterCompleted());
+        assertEquals(1, summary.nbChapterPlanned());
+        assertEquals(0, summary.nbChapterSkipped());
+        assertEquals(2, summary.daysStreak());
+    }
+
+    @Test
+    void shouldReturnBadRequest_whenNoActiveArc() {
+        final var response = request(URL + "/summary", HttpMethod.GET, Void.class);
+
+        assertionHelper.assertBadRequest(response);
     }
 }

@@ -1,9 +1,11 @@
 package com.valentin_d.focusarc.fixtures.factory;
 
 import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
+import com.valentin_d.focusarc.dto.arc.ArcSummaryResponseDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.fixtures.arc.ArcBuilder;
 import com.valentin_d.focusarc.fixtures.arc.ArcCreationDtoBuilder;
+import com.valentin_d.focusarc.fixtures.arc.ArcSummaryResponseBuilder;
 import com.valentin_d.focusarc.fixtures.arc.ArcUpdateDtoBuilder;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.arc.ArcStatus;
@@ -50,5 +52,9 @@ public final class ArcFactory {
 
     public static ArcUpdateDto anArcUpdateDtoWithTotalEstimatedMinutesAndName(final int totalEstimatedMinutes, final String name) {
         return ArcUpdateDtoBuilder.builder().totalEstimatedMinutes(totalEstimatedMinutes).name(name).build().build();
+    }
+
+    public static ArcSummaryResponseDto anArcSummaryResponseDtoWithTasks() {
+        return ArcSummaryResponseBuilder.builder().build().build();
     }
 }

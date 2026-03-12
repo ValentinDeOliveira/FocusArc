@@ -1,6 +1,7 @@
 package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
+import com.valentin_d.focusarc.dto.arc.ArcSummaryResponseDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
@@ -79,8 +80,9 @@ public class ArcController {
         return ResponseEntity.noContent().build();
     }
 
-    public ResponseEntity<Void> getArcSummary(@AuthenticationPrincipal final User user) {
-        service.getSummaryForUser(user.getId());
-        return ResponseEntity.noContent().build();
+    @GetMapping("/summary")
+    public ResponseEntity<ArcSummaryResponseDto> getArcSummary(@AuthenticationPrincipal final User user) {
+        final var summary = service.getSummaryForUser(user.getId());
+        return ResponseEntity.ok(summary);
     }
 }

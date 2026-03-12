@@ -167,7 +167,7 @@ class ChapterServiceTest {
         final var arc = anArc();
         final var chapter = aChapterWithArcId(arc.getId());
 
-        when(chapterRepository.findAllByArc(arc.getId())).thenReturn(List.of(chapter));
+        when(chapterLoader.findAllByArc(arc.getId())).thenReturn(List.of(chapter));
 
         service.deleteAllForArc(arc.getId(), user.getId());
 
@@ -200,7 +200,7 @@ class ChapterServiceTest {
         final var user = aUser();
         final var arc = anArc();
         final var chapter = aChapterWithArcId(arc.getId());
-        when(chapterRepository.findAllByArc(arc.getId())).thenReturn(List.of(chapter));
+        when(chapterLoader.findAllByArc(arc.getId())).thenReturn(List.of(chapter));
 
         final var result = service.findAllForArc(arc.getId(), user.getId());
 

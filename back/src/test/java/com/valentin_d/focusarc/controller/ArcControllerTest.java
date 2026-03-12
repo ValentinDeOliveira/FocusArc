@@ -1,6 +1,8 @@
 package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.controller.assertions.ArcAssertion;
+import com.valentin_d.focusarc.controller.assertions.ArcSummaryResponseAssertion;
+import com.valentin_d.focusarc.exception.arc.NoActiveArcException;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.service.arc.ArcService;
 import org.junit.jupiter.api.Test;
@@ -14,8 +16,7 @@ import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(ArcController.class)
@@ -24,6 +25,7 @@ class ArcControllerTest extends BaseSecurityControllerTest {
     private ArcService arcService;
     private final static String ROOT = "/arcs";
     private final ArcAssertion arcAssertion = new ArcAssertion();
+    private final ArcSummaryResponseAssertion arcSummaryResponseAssertion = new ArcSummaryResponseAssertion();
 
     @Test
     void shouldReturnArc_whenIdExists() throws Exception {
@@ -112,6 +114,25 @@ class ArcControllerTest extends BaseSecurityControllerTest {
                 .andExpect(status().isNoContent());
 
         verify(arcService).deleteAllForUser(eq(user.getId()));
+    }
+
+    @Test
+    void shouldReturnSummary_whenActiveArcExists() throws Exception {
+        final var summary = anArcSummaryResponseDtoWithTasks();
+        when(arcService.getSummaryForUser(user.getId())).thenReturn(summary);
+
+        final var actions = mvcGetWithUser(ROOT + "/summary", user)
+                .andExpect(status().isOk());
+
+        arcSummaryResponseAssertion.assertSingleJson(actions, summary);
+    }
+
+    @Test
+    void shouldReturnBadRequest_whenNoActiveArc() throws Exception {
+        doThrow(new NoActiveArcException(user.getId())).when(arcService).getSummaryForUser(user.getId());
+
+        mvcGetWithUser(ROOT + "/summary", user)
+                .andExpect(status().isBadRequest());
     }
 
     private String arcUrl(ArcId arcId) {
