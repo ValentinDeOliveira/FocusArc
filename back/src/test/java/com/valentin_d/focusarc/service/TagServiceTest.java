@@ -1,8 +1,8 @@
 package com.valentin_d.focusarc.service;
 
-import com.valentin_d.focusarc.exception.UserDoesNotExistException;
 import com.valentin_d.focusarc.exception.tag.TagDoesNotExistException;
 import com.valentin_d.focusarc.exception.tag.TagDoesNotExistForUserException;
+import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.id.TagId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.tag.Tag;

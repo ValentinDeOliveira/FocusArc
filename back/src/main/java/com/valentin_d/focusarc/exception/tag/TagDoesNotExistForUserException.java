@@ -1,6 +1,6 @@
 package com.valentin_d.focusarc.exception.tag;
 
-import com.valentin_d.focusarc.exception.ApiException;
+import com.valentin_d.focusarc.exception.base.ApiException;
 import org.springframework.http.HttpStatus;
 
 public class TagDoesNotExistForUserException extends ApiException {

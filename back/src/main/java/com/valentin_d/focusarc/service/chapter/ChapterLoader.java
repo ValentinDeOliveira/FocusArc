@@ -1,8 +1,8 @@
 package com.valentin_d.focusarc.service.chapter;
 
-import com.valentin_d.focusarc.exception.ChapterAlreadyExistsException;
-import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
-import com.valentin_d.focusarc.exception.NoChapterForArcException;
+import com.valentin_d.focusarc.exception.chapter.ChapterAlreadyExistsException;
+import com.valentin_d.focusarc.exception.chapter.ChapterDoesNotExistException;
+import com.valentin_d.focusarc.exception.chapter.NoChapterForArcException;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;

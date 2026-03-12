@@ -1,9 +1,9 @@
 package com.valentin_d.focusarc.service.arc;
 
-import com.valentin_d.focusarc.exception.ArcAlreadyExistsException;
-import com.valentin_d.focusarc.exception.ArcDoesNotExistException;
-import com.valentin_d.focusarc.exception.ArcDoesNotExistForUserException;
-import com.valentin_d.focusarc.exception.NoActiveArcException;
+import com.valentin_d.focusarc.exception.arc.ArcAlreadyExistsException;
+import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistException;
+import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
+import com.valentin_d.focusarc.exception.arc.NoActiveArcException;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.ArcId;

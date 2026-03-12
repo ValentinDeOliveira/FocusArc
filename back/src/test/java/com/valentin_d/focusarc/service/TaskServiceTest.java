@@ -1,12 +1,12 @@
 package com.valentin_d.focusarc.service;
 
 import com.valentin_d.focusarc.dto.task.TaskCompleteDto;
-import com.valentin_d.focusarc.exception.ArcDoesNotExistForUserException;
-import com.valentin_d.focusarc.exception.ChapterDoesNotExistException;
-import com.valentin_d.focusarc.exception.UserDoesNotExistException;
+import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
+import com.valentin_d.focusarc.exception.chapter.ChapterDoesNotExistException;
 import com.valentin_d.focusarc.exception.task.TaskAlreadyDoneException;
 import com.valentin_d.focusarc.exception.task.TaskDoesNotExistException;
 import com.valentin_d.focusarc.exception.task.TaskInvalidMinuteException;
+import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.UserId;

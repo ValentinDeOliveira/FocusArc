@@ -1,4 +1,4 @@
-package com.valentin_d.focusarc.exception;
+package com.valentin_d.focusarc.exception.base;
 
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

@@ -1,5 +1,6 @@
-package com.valentin_d.focusarc.exception;
+package com.valentin_d.focusarc.exception.user;
 
+import com.valentin_d.focusarc.exception.base.ApiException;
 import com.valentin_d.focusarc.model.id.UserId;
 import org.springframework.http.HttpStatus;
 

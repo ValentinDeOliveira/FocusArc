@@ -1,6 +1,6 @@
 package com.valentin_d.focusarc.exception.handler;
 
-import com.valentin_d.focusarc.exception.ApiException;
+import com.valentin_d.focusarc.exception.base.ApiException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
