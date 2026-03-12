@@ -31,7 +31,18 @@ class Task {
     int estimatedMinutes
     int completedMinutes
     Instant scheduledAt
+    Instant endAt
     TaskStatus status
+    String name
+    String description
+    Set<TagId> tags
+}
+
+class Tag {
+    TagId id
+    UserId owner
+    String label
+    TagColor color
 }
 
 enum ArcStatus {
@@ -45,6 +56,18 @@ enum TaskStatus {
     IN_PROGRESS
     DONE
     SKIPPED
+}
+
+enum TagColor {
+    RED
+    ORANGE
+    YELLOW
+    GREEN
+    TEAL
+    BLUE
+    PURPLE
+    PINK
+    GRAY
 }
 
 record UserId {
@@ -63,11 +86,18 @@ record TaskId {
     UUID id
 }
 
+record TagId {
+    UUID id
+}
+
 User    "1" *-- "0..*" Arc     : has
 Arc     "1" *-- "0..*" Chapter : has
 Chapter "1" *-- "0..*" Task    : contains
+User    "1" *-- "0..*" Tag     : owns
+Task    "0..*" --> "0..*" Tag  : tagged with
 
 Arc  --> ArcStatus
 Task --> TaskStatus
+Tag  --> TagColor
 
 @enduml
