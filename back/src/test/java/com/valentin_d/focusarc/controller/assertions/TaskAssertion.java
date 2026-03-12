@@ -11,7 +11,12 @@ public class TaskAssertion extends BaseAssertion<Task> {
         expect(actions, path, "chapter", expected.getChapter().id().toString());
         expect(actions, path, "estimatedMinutes", expected.getEstimatedMinutes());
         expect(actions, path, "completedMinutes", expected.getCompletedMinutes());
-        expect(actions, path, "scheduledAt", expected.getScheduledAt().toString());
+        expect(actions, path, "startAt", expected.getStartAt().toString());
+        expect(actions, path, "endAt", expected.getEndAt().toString());
         expect(actions, path, "status", expected.getStatus().name());
+        expect(actions, path, "name", expected.getName());
+        expect(actions, path, "description", expected.getDescription());
+        assertValues(actions, path + ".tags",
+                expected.getTags().stream().map(tag -> tag.id().toString()).toList());
     }
 }

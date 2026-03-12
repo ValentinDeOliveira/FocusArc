@@ -2,10 +2,12 @@ package com.valentin_d.focusarc.fixtures.task;
 
 import com.valentin_d.focusarc.dto.task.TaskCreationDto;
 import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.id.TagId;
 import lombok.Builder;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Set;
 
 @Builder
 public class TaskCreationDtoBuilder {
@@ -15,8 +17,14 @@ public class TaskCreationDtoBuilder {
     private final int estimatedMinutes = 120;
     @Builder.Default
     private final Instant scheduledAt = Instant.now().truncatedTo(ChronoUnit.MILLIS).plusSeconds(120);
+    @Builder.Default
+    private final String name = "My task";
+    @Builder.Default
+    private final String description = "My description";
+    @Builder.Default
+    private final Set<TagId> tags = Set.of();
 
     public TaskCreationDto build() {
-        return new TaskCreationDto(chapterId, estimatedMinutes, scheduledAt);
+        return new TaskCreationDto(chapterId, estimatedMinutes, scheduledAt, name, description, tags);
     }
 }

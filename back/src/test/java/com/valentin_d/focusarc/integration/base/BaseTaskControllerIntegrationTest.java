@@ -17,7 +17,7 @@ public class BaseTaskControllerIntegrationTest extends SecuredIntegrationTest {
         assertEquals(expected.getEstimatedMinutes(), actual.getEstimatedMinutes());
         assertEquals(expected.getChapter(), actual.getChapter());
         assertEquals(expected.getStatus(), actual.getStatus());
-        assertEquals(expected.getScheduledAt(), actual.getScheduledAt());
+        assertEquals(expected.getStartAt(), actual.getStartAt());
     }
 
     protected <T> ResponseEntity<T> exchangeTodayForUser(Class<T> responseType) {

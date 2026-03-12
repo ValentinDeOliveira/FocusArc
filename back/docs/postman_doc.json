@@ -21,7 +21,8 @@
     { "key": "refreshToken", "value": "", "type": "string" },
     { "key": "arcId",        "value": "00000000-0000-0000-0000-000000000002", "type": "string" },
     { "key": "chapterId",    "value": "00000000-0000-0000-0000-000000000003", "type": "string" },
-    { "key": "taskId",       "value": "00000000-0000-0000-0000-000000000004", "type": "string" }
+    { "key": "taskId",       "value": "00000000-0000-0000-0000-000000000004", "type": "string" },
+    { "key": "tagId",        "value": "00000000-0000-0000-0000-000000000005", "type": "string" }
   ],
   "item": [
     {
@@ -396,7 +397,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"chapterId\": \"{{chapterId}}\",\n  \"estimatedMinutes\": 45,\n  \"scheduledAt\": \"2026-03-15T10:00:00Z\"\n}",
+              "raw": "{\n  \"chapterId\": \"{{chapterId}}\",\n  \"name\": \"Deep work session\",\n  \"description\": \"Focus on implementing feature X\",\n  \"estimatedMinutes\": 45,\n  \"scheduledAt\": \"2026-03-15T10:00:00Z\",\n  \"tags\": [\"{{tagId}}\"]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -404,7 +405,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["tasks"]
             },
-            "description": "Create a task within a chapter.\n\n**Validations**\n- `chapterId`: required (UUID)\n- `estimatedMinutes`: required, positive, max 1440\n- `scheduledAt`: now or future, ISO 8601 instant (`YYYY-MM-DDTHH:mm:ssZ`)\n\n**Responses**\n- `201 Created`\n- `400 Bad Request` — validation failure\n- `401 Unauthorized`\n- `404 Not Found` — chapter not found"
+            "description": "Create a task within a chapter.\n\n**Validations**\n- `chapterId`: required (UUID)\n- `name`: optional string\n- `description`: optional string\n- `estimatedMinutes`: required, positive, max 1440\n- `scheduledAt`: now or future, ISO 8601 instant (`YYYY-MM-DDTHH:mm:ssZ`)\n- `tags`: optional array of tag UUIDs (must belong to authenticated user)\n\n**Responses**\n- `201 Created`\n- `400 Bad Request` — validation failure or schedule overlap\n- `401 Unauthorized`\n- `404 Not Found` — chapter or tag not found"
           },
           "response": []
         },
@@ -454,7 +455,7 @@
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"estimatedMinutes\": 60,\n  \"scheduledAt\": \"2026-03-15T11:00:00Z\",\n  \"taskStatus\": \"IN_PROGRESS\"\n}",
+              "raw": "{\n  \"name\": \"Updated session\",\n  \"description\": \"Updated description\",\n  \"estimatedMinutes\": 60,\n  \"scheduledAt\": \"2026-03-15T11:00:00Z\",\n  \"taskStatus\": \"IN_PROGRESS\",\n  \"tags\": [\"{{tagId}}\"]\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
@@ -508,6 +509,102 @@
               "path": ["tasks", "chapters", "{{chapterId}}"]
             },
             "description": "**Responses**\n- `204 No Content`\n- `401 Unauthorized`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Tags",
+      "description": "Tag management. Tags are user-defined labels (with a color) that can be attached to tasks.",
+      "item": [
+        {
+          "name": "Create Tag",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Deep Work\",\n  \"color\": \"BLUE\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tags",
+              "host": ["{{baseUrl}}"],
+              "path": ["tags"]
+            },
+            "description": "Create a new tag for the authenticated user.\n\n**Validations**\n- `label`: required, non-blank\n- `color`: required, one of `RED`, `ORANGE`, `YELLOW`, `GREEN`, `TEAL`, `BLUE`, `PURPLE`, `PINK`, `GRAY`\n\n**Responses**\n- `201 Created`\n- `400 Bad Request` — validation failure\n- `401 Unauthorized`"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tag by ID",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/tags/{{tagId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["tags", "{{tagId}}"]
+            },
+            "description": "Returns the tag only if it belongs to the authenticated user.\n\n**Responses**\n- `200 OK`\n- `401 Unauthorized`\n- `404 Not Found`"
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Tags (current user)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/tags/me",
+              "host": ["{{baseUrl}}"],
+              "path": ["tags", "me"]
+            },
+            "description": "Returns all tags owned by the authenticated user.\n\n**Responses**\n- `200 OK` — list of tags\n- `204 No Content` — no tags found\n- `401 Unauthorized`"
+          },
+          "response": []
+        },
+        {
+          "name": "Update Tag",
+          "request": {
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"label\": \"Focus Session\",\n  \"color\": \"GREEN\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/tags/{{tagId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["tags", "{{tagId}}"]
+            },
+            "description": "Partial update — null fields are ignored.\n\n**Responses**\n- `200 OK`\n- `401 Unauthorized`\n- `404 Not Found`"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Tag",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/tags/{{tagId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["tags", "{{tagId}}"]
+            },
+            "description": "**Responses**\n- `204 No Content`\n- `401 Unauthorized`\n- `404 Not Found`"
+          },
+          "response": []
+        },
+        {
+          "name": "Delete All Tags (current user)",
+          "request": {
+            "method": "DELETE",
+            "url": {
+              "raw": "{{baseUrl}}/tags",
+              "host": ["{{baseUrl}}"],
+              "path": ["tags"]
+            },
+            "description": "Deletes all tags owned by the authenticated user.\n\n**Responses**\n- `204 No Content`\n- `401 Unauthorized`"
           },
           "response": []
         }

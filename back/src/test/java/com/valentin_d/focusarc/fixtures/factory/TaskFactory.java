@@ -58,8 +58,17 @@ public final class TaskFactory {
         return TaskUpdateDtoBuilder.builder().build().build();
     }
 
-    public static TaskUpdateDto aTaskUpdateDtoWithEstimatedMinutes(final int estimatedMinutes) {
-        return TaskUpdateDtoBuilder.builder().estimatedMinutes(estimatedMinutes).build().build();
+    public static Task aTaskWithChapterIdAndWindow(final ChapterId chapterId, final Instant startAt,
+                                                   final int estimatedMinutes) {
+        return new Task(chapterId, estimatedMinutes, startAt, "task");
+    }
+
+    public static TaskCreationDto aTaskCreationDtoWithChapterIdAndWindow(final ChapterId chapterId,
+                                                                         final Instant scheduledAt,
+                                                                         final int estimatedMinutes) {
+        return TaskCreationDtoBuilder.builder()
+                .chapterId(chapterId).scheduledAt(scheduledAt).estimatedMinutes(estimatedMinutes)
+                .build().build();
     }
 
     public static TaskCompleteDto aTaskCompleteDto() {

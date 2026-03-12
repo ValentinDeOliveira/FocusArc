@@ -5,6 +5,7 @@ import com.valentin_d.focusarc.dto.task.TaskCreationDto;
 import com.valentin_d.focusarc.dto.task.TaskUpdateDto;
 import com.valentin_d.focusarc.exception.task.TaskAlreadyDoneException;
 import com.valentin_d.focusarc.exception.task.TaskInvalidMinuteException;
+import com.valentin_d.focusarc.exception.task.TaskOverlapException;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.TaskId;
 import com.valentin_d.focusarc.model.id.UserId;
@@ -13,11 +14,17 @@ import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.repository.TaskRepository;
 import com.valentin_d.focusarc.service.ContextLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterRecalculationService;
+import com.valentin_d.focusarc.service.tag.TagLoader;
+import jakarta.validation.constraints.FutureOrPresent;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -30,6 +37,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final ChapterRecalculationService chapterRecalculationService;
     private final TaskLoader taskLoader;
+    private final TagLoader tagLoader;
     private final ContextLoader contextLoader;
 
     public Optional<Task> findById(@NotNull TaskId taskId,
@@ -53,17 +61,25 @@ public class TaskService {
         return taskRepository.findAllByChapter(chapterId);
     }
 
-    public Task create(@NotNull TaskCreationDto taskCreationDto,
+    public Task create(@NotNull TaskCreationDto dto,
                        @NotNull UserId userId) {
-        contextLoader.assertChapterForUser(taskCreationDto.chapterId(), userId);
+        contextLoader.assertChapterForUser(dto.chapterId(), userId);
 
-        assertMinutes(taskCreationDto.estimatedMinutes());
+        tagLoader.assertTagsForUser(userId, dto.tags());
+        assertMinutes(dto.estimatedMinutes());
+        assertNotOverlapping(dto.chapterId(), dto.estimatedMinutes(), dto.scheduledAt());
 
-        final var task = new Task(taskCreationDto.chapterId(),
-                taskCreationDto.estimatedMinutes(), taskCreationDto.scheduledAt());
+        final var task = new Task(
+                dto.chapterId(),
+                dto.estimatedMinutes(),
+                dto.scheduledAt(),
+                dto.name(),
+                dto.description(),
+                dto.tags()
+        );
 
         final var savedTask = taskRepository.save(task);
-        chapterRecalculationService.recalculateEstimatedMinutes(taskCreationDto.chapterId());
+        chapterRecalculationService.recalculateEstimatedMinutes(dto.chapterId());
 
         return savedTask;
     }
@@ -72,6 +88,7 @@ public class TaskService {
                        @NotNull TaskUpdateDto taskUpdateDto,
                        @NotNull UserId userId) {
         final var task = taskLoader.getTaskIfExists(taskId);
+        tagLoader.assertTagsForUser(userId, taskUpdateDto.tags());
         contextLoader.assertChapterForUser(task.getChapter(), userId);
         final var beforeUpdateTask = task.snapshot();
 
@@ -151,6 +168,17 @@ public class TaskService {
     }
 
     private void updateTask(Task task, TaskUpdateDto dto) {
+        if (dto.scheduledAt() != null || dto.estimatedMinutes() != null) {
+            // use dto value if provided, otherwise fall back to current task value
+            final var newStart = dto.scheduledAt() != null
+                    ? dto.scheduledAt() : task.getStartAt();
+            final var newEstimated = dto.estimatedMinutes() != null
+                    ? dto.estimatedMinutes() : task.getEstimatedMinutes();
+
+            assertNotOverlapping(task.getChapter(), newEstimated, newStart, task.getId());
+            task.updateSchedule(newStart, newEstimated);
+        }
+
         if (dto.completedMinutes() != null) {
             assertMinutes(task.getId(), dto.completedMinutes());
             task.setCompletedMinutes(dto.completedMinutes());
@@ -159,7 +187,33 @@ public class TaskService {
             assertMinutes(task.getId(), dto.estimatedMinutes());
             task.setEstimatedMinutes(dto.estimatedMinutes());
         }
-        if (dto.scheduledAt() != null) task.setScheduledAt(dto.scheduledAt());
+
+        if (dto.scheduledAt() != null) task.setStartAt(dto.scheduledAt());
         if (dto.taskStatus() != null) task.setStatus(dto.taskStatus());
+        // TODO: assert name not empty
+        if (dto.name() != null) task.setName(dto.name());
+        if (dto.description() != null) task.setDescription(dto.description());
+        if (dto.tags() != null) task.setTags(dto.tags());
+    }
+
+
+    private void assertNotOverlapping(@NotNull ChapterId chapterId,
+                                      @Positive @Max(MINUTES_PER_DAY) int estimatedMinutes,
+                                      @FutureOrPresent Instant scheduledAt) {
+        final var estimatedEnd = scheduledAt.plus(estimatedMinutes, ChronoUnit.MINUTES);
+        if (taskLoader.existForChapterAtTime(chapterId, scheduledAt, estimatedEnd)) {
+            throw new TaskOverlapException(chapterId, scheduledAt, estimatedEnd);
+        }
+    }
+
+
+    private void assertNotOverlapping(@NotNull ChapterId chapterId,
+                                      @Positive @Max(MINUTES_PER_DAY) int estimatedMinutes,
+                                      @FutureOrPresent Instant scheduledAt,
+                                      @NotNull TaskId taskId) {
+        final var estimatedEnd = scheduledAt.plus(estimatedMinutes, ChronoUnit.MINUTES);
+        if (taskLoader.existForChapterAtTimeExcluding(chapterId, taskId, scheduledAt, estimatedEnd)) {
+            throw new TaskOverlapException(chapterId, scheduledAt, estimatedEnd);
+        }
     }
 }
