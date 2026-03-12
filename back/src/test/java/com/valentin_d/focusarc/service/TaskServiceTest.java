@@ -14,6 +14,7 @@ import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.repository.TaskRepository;
 import com.valentin_d.focusarc.service.chapter.ChapterRecalculationService;
+import com.valentin_d.focusarc.service.tag.TagLoader;
 import com.valentin_d.focusarc.service.task.TaskLoader;
 import com.valentin_d.focusarc.service.task.TaskService;
 import org.junit.jupiter.api.Test;
@@ -50,6 +51,8 @@ class TaskServiceTest {
     private TaskLoader taskLoader;
     @Mock
     private ContextLoader contextLoader;
+    @Mock
+    private TagLoader tagLoader;
     @InjectMocks
     private TaskService service;
 
@@ -71,6 +74,7 @@ class TaskServiceTest {
         assertEquals(creationDto.description(), result.getDescription());
 
         verify(contextLoader).assertChapterForUser(creationDto.chapterId(), user.getId());
+        verify(tagLoader).assertTagsForUser(user.getId(), creationDto.tags());
         verify(taskLoader).existForChapterAtTime(eq(creationDto.chapterId()), eq(creationDto.scheduledAt()), any(Instant.class));
         verify(taskRepository).save(any(Task.class));
         verify(chapterRecalculationService).recalculateEstimatedMinutes(creationDto.chapterId());
@@ -104,6 +108,7 @@ class TaskServiceTest {
         final var updated = service.update(task.getId(), updateDto, user.getId());
 
         verify(contextLoader).assertChapterForUser(task.getChapter(), user.getId());
+        verify(tagLoader).assertTagsForUser(user.getId(), updateDto.tags());
         verify(taskLoader).existForChapterAtTimeExcluding(eq(task.getChapter()), eq(task.getId()),
                 eq(updateDto.scheduledAt()), any(Instant.class));
         verify(taskRepository).save(task);

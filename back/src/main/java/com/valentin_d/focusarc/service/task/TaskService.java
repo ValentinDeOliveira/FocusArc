@@ -14,6 +14,7 @@ import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.repository.TaskRepository;
 import com.valentin_d.focusarc.service.ContextLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterRecalculationService;
+import com.valentin_d.focusarc.service.tag.TagLoader;
 import jakarta.validation.constraints.FutureOrPresent;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotNull;
@@ -36,6 +37,7 @@ public class TaskService {
     private final TaskRepository taskRepository;
     private final ChapterRecalculationService chapterRecalculationService;
     private final TaskLoader taskLoader;
+    private final TagLoader tagLoader;
     private final ContextLoader contextLoader;
 
     public Optional<Task> findById(@NotNull TaskId taskId,
@@ -63,6 +65,7 @@ public class TaskService {
                        @NotNull UserId userId) {
         contextLoader.assertChapterForUser(dto.chapterId(), userId);
 
+        tagLoader.assertTagsForUser(userId, dto.tags());
         assertMinutes(dto.estimatedMinutes());
         assertNotOverlapping(dto.chapterId(), dto.estimatedMinutes(), dto.scheduledAt());
 
@@ -71,7 +74,8 @@ public class TaskService {
                 dto.estimatedMinutes(),
                 dto.scheduledAt(),
                 dto.name(),
-                dto.description()
+                dto.description(),
+                dto.tags()
         );
 
         final var savedTask = taskRepository.save(task);
@@ -84,6 +88,7 @@ public class TaskService {
                        @NotNull TaskUpdateDto taskUpdateDto,
                        @NotNull UserId userId) {
         final var task = taskLoader.getTaskIfExists(taskId);
+        tagLoader.assertTagsForUser(userId, taskUpdateDto.tags());
         contextLoader.assertChapterForUser(task.getChapter(), userId);
         final var beforeUpdateTask = task.snapshot();
 
@@ -188,6 +193,7 @@ public class TaskService {
         // TODO: assert name not empty
         if (dto.name() != null) task.setName(dto.name());
         if (dto.description() != null) task.setDescription(dto.description());
+        if (dto.tags() != null) task.setTags(dto.tags());
     }
 
 

@@ -1,11 +1,13 @@
 package com.valentin_d.focusarc.fixtures.task;
 
 import com.valentin_d.focusarc.dto.task.TaskUpdateDto;
+import com.valentin_d.focusarc.model.id.TagId;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 import lombok.Builder;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.Set;
 
 @Builder
 public class TaskUpdateDtoBuilder {
@@ -21,9 +23,12 @@ public class TaskUpdateDtoBuilder {
     private final String name = "My task";
     @Builder.Default
     private final String description = "My description";
+    @Builder.Default
+    private final Set<TagId> tags = Set.of();
 
 
     public TaskUpdateDto build() {
-        return new TaskUpdateDto(completedMinutes, estimatedMinutes, scheduledAt, taskStatus, name, description);
+        return new TaskUpdateDto(completedMinutes, estimatedMinutes, scheduledAt, taskStatus, name,
+                description, tags);
     }
 }
