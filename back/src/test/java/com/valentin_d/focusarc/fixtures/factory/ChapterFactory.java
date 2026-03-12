@@ -62,10 +62,6 @@ public final class ChapterFactory {
         return ChapterUpdateDtoBuilder.builder().scheduledDate(null).build().build();
     }
 
-    public static ChapterSummaryResponseDto aChapterSummaryResponseDto() {
-        return ChapterSummaryResponseDtoBuilder.builder().build().build();
-    }
-
     public static ChapterSummaryResponseDto aChapterSummaryResponseDtoWithTasks(final List<Task> tasks) {
         return ChapterSummaryResponseDtoBuilder.builder().tasksToComplete(tasks).build().build();
     }
