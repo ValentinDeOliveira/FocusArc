@@ -34,8 +34,9 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
     @Test
     void shouldCreateTask_whenDataIsValid() {
         final var chapter = domainFixture.chapterForUser(user.getId());
+        final var tag = domainFixture.tagForUser(user.getId());
 
-        final var dto = aTaskCreationDtoWithChapterId(chapter.getId());
+        final var dto = aTaskCreationDtoWithChapterIdWithTag(chapter.getId(), tag.getId());
         final var response = request(URL, HttpMethod.POST, dto, Task.class);
 
         assertionHelper.assertCreated(response);
@@ -48,6 +49,9 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
         assertEquals(dto.estimatedMinutes(), task.getEstimatedMinutes());
         assertEquals(0, task.getCompletedMinutes());
         assertEquals(TaskStatus.PLANNED, task.getStatus());
+        assertEquals(task.getTag(), dto.tag());
+        assertEquals(task.getName(), dto.name());
+        assertEquals(task.getDescription(), dto.description());
         assertNotNull(task.getId());
     }
 

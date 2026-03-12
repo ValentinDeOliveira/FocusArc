@@ -7,7 +7,6 @@ import lombok.Builder;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
 
 @Builder
 public class TaskCreationDtoBuilder {
@@ -22,9 +21,9 @@ public class TaskCreationDtoBuilder {
     @Builder.Default
     private final String description = "My description";
     @Builder.Default
-    private final Set<TagId> tags = Set.of();
+    private final TagId tag = TagId.random();
 
     public TaskCreationDto build() {
-        return new TaskCreationDto(chapterId, estimatedMinutes, scheduledAt, name, description, tags);
+        return new TaskCreationDto(chapterId, estimatedMinutes, scheduledAt, name, description, tag);
     }
 }

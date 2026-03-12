@@ -6,11 +6,10 @@ import jakarta.annotation.Nullable;
 import jakarta.validation.constraints.*;
 
 import java.time.Instant;
-import java.util.Set;
 
 import static com.valentin_d.focusarc.shared.TimeConstraints.MINUTES_PER_DAY;
 
 public record TaskCreationDto(@NotNull ChapterId chapterId, @Positive @Max(MINUTES_PER_DAY) int estimatedMinutes,
                               @FutureOrPresent Instant scheduledAt, @NotBlank String name,
-                              @Nullable String description, @Nullable Set<@NotNull TagId> tags) {
+                              @Nullable String description, @Nullable TagId tag) {
 }

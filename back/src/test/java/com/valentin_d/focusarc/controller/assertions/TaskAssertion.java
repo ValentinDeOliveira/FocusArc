@@ -16,7 +16,6 @@ public class TaskAssertion extends BaseAssertion<Task> {
         expect(actions, path, "status", expected.getStatus().name());
         expect(actions, path, "name", expected.getName());
         expect(actions, path, "description", expected.getDescription());
-        assertValues(actions, path + ".tags",
-                expected.getTags().stream().map(tag -> tag.id().toString()).toList());
+        expect(actions, path, "tag", expected.getTag().id().toString());
     }
 }

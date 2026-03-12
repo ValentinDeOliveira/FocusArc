@@ -11,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.util.Optional;
-import java.util.Set;
 
 @Component
 @RequiredArgsConstructor
@@ -32,10 +31,9 @@ public class TagLoader extends BaseService {
         }
     }
 
-    public void assertTagsForUser(final UserId owner, final Set<TagId> tagsId) {
-        if (tagsId == null || tagsId.isEmpty()) return;
-        final long count = tagRepository.countByOwnerAndIdIn(owner, tagsId);
-        if (count != tagsId.size()) {
+    public void assertTagsForUser(final UserId owner, final TagId tagId) {
+        if (tagId == null) return;
+        if (!tagRepository.existsByIdAndOwner(tagId, owner)) {
             throw new TagDoesNotExistForUserException();
         }
     }

@@ -8,6 +8,7 @@ import com.valentin_d.focusarc.fixtures.task.TaskCompleteDtoBuilder;
 import com.valentin_d.focusarc.fixtures.task.TaskCreationDtoBuilder;
 import com.valentin_d.focusarc.fixtures.task.TaskUpdateDtoBuilder;
 import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.id.TagId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 
@@ -40,8 +41,8 @@ public final class TaskFactory {
         return TaskCreationDtoBuilder.builder().build().build();
     }
 
-    public static TaskCreationDto aTaskCreationDtoWithChapterId(final ChapterId chapterId) {
-        return TaskCreationDtoBuilder.builder().chapterId(chapterId).build().build();
+    public static TaskCreationDto aTaskCreationDtoWithChapterIdWithTag(final ChapterId chapterId, final TagId tagId) {
+        return TaskCreationDtoBuilder.builder().chapterId(chapterId).tag(tagId).build().build();
     }
 
     public static TaskCreationDto aTaskCreationDtoWithChapterIdAndEstimatedMinutes(final ChapterId chapterId,
@@ -51,7 +52,7 @@ public final class TaskFactory {
 
     public static TaskCreationDto aTaskCreationDtoWithChapterIdAndScheduled(final ChapterId chapterId,
                                                                             final Instant scheduled) {
-        return TaskCreationDtoBuilder.builder().chapterId(chapterId).scheduledAt(scheduled).build().build();
+        return TaskCreationDtoBuilder.builder().chapterId(chapterId).scheduledAt(scheduled).tag(null).build().build();
     }
 
     public static TaskUpdateDto aTaskUpdateDto() {
@@ -67,7 +68,7 @@ public final class TaskFactory {
                                                                          final Instant scheduledAt,
                                                                          final int estimatedMinutes) {
         return TaskCreationDtoBuilder.builder()
-                .chapterId(chapterId).scheduledAt(scheduledAt).estimatedMinutes(estimatedMinutes)
+                .chapterId(chapterId).scheduledAt(scheduledAt).estimatedMinutes(estimatedMinutes).tag(null)
                 .build().build();
     }
 

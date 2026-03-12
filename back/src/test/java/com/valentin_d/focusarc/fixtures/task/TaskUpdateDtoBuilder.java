@@ -7,7 +7,6 @@ import lombok.Builder;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
 
 @Builder
 public class TaskUpdateDtoBuilder {
@@ -24,11 +23,11 @@ public class TaskUpdateDtoBuilder {
     @Builder.Default
     private final String description = "My description";
     @Builder.Default
-    private final Set<TagId> tags = Set.of();
+    private final TagId tag = TagId.random();
 
 
     public TaskUpdateDto build() {
-        return new TaskUpdateDto(completedMinutes, estimatedMinutes, scheduledAt, taskStatus, name,
-                description, tags);
+        return new TaskUpdateDto(completedMinutes, estimatedMinutes, scheduledAt,
+                taskStatus, name, description, tag);
     }
 }
