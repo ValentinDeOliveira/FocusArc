@@ -13,4 +13,5 @@ public interface TagRepository extends MongoRepository<Tag, TagId> {
     List<Tag> findAllByOwner(UserId owner);
     Optional<Tag> findByIdAndOwner(TagId id, UserId owner);
     long countByOwnerAndIdIn(UserId owner, Collection<TagId> ids);
+    boolean existsByIdAndOwner(TagId id, UserId owner);
 }

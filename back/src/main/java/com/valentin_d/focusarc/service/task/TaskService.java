@@ -65,7 +65,7 @@ public class TaskService {
                        @NotNull UserId userId) {
         contextLoader.assertChapterForUser(dto.chapterId(), userId);
 
-        tagLoader.assertTagsForUser(userId, dto.tags());
+        tagLoader.assertTagsForUser(userId, dto.tag());
         assertMinutes(dto.estimatedMinutes());
         assertNotOverlapping(dto.chapterId(), dto.estimatedMinutes(), dto.scheduledAt());
 
@@ -75,7 +75,7 @@ public class TaskService {
                 dto.scheduledAt(),
                 dto.name(),
                 dto.description(),
-                dto.tags()
+                dto.tag()
         );
 
         final var savedTask = taskRepository.save(task);
@@ -88,7 +88,7 @@ public class TaskService {
                        @NotNull TaskUpdateDto taskUpdateDto,
                        @NotNull UserId userId) {
         final var task = taskLoader.getTaskIfExists(taskId);
-        tagLoader.assertTagsForUser(userId, taskUpdateDto.tags());
+        tagLoader.assertTagsForUser(userId, taskUpdateDto.tag());
         contextLoader.assertChapterForUser(task.getChapter(), userId);
         final var beforeUpdateTask = task.snapshot();
 
@@ -193,7 +193,8 @@ public class TaskService {
         // TODO: assert name not empty
         if (dto.name() != null) task.setName(dto.name());
         if (dto.description() != null) task.setDescription(dto.description());
-        if (dto.tags() != null) task.setTags(dto.tags());
+        // how to differenciate "no tag" and remove tag
+        if (dto.tag() != null) task.setTag(dto.tag());
     }
 
 

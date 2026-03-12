@@ -11,7 +11,6 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
 
 @Data
 @AllArgsConstructor
@@ -28,7 +27,7 @@ public class Task {
     private TaskStatus status;
     private String name;
     private String description;
-    private Set<TagId> tags;
+    private TagId tag;
 
     public Task(final Task task){
         this.id = task.getId();
@@ -40,28 +39,27 @@ public class Task {
         this.status = task.getStatus();
         this.name = task.getName();
         this.description = task.getDescription();
-        this.tags = task.getTags();
+        this.tag = task.getTag();
     }
 
     public Task(final TaskId taskId, final ChapterId chapterId, final int estimatedMinutes,
                 final Instant scheduledAt, final String name, final String description,
-                final Set<TagId> tags) {
+                final TagId tag) {
         this(taskId, chapterId, estimatedMinutes, 0, scheduledAt,
                 scheduledAt.plus(estimatedMinutes, ChronoUnit.MINUTES),
-                TaskStatus.PLANNED, name, description, tags);
+                TaskStatus.PLANNED, name, description, tag);
     }
 
     public Task(final TaskId taskId, final ChapterId chapterId, final int estimatedMinutes,
                 final Instant scheduledAt, final String name, final String description) {
         this(taskId, chapterId, estimatedMinutes, 0, scheduledAt,
                 scheduledAt.plus(estimatedMinutes, ChronoUnit.MINUTES),
-                TaskStatus.PLANNED, name, description, Set.of());
+                TaskStatus.PLANNED, name, description, null);
     }
 
     public Task(final ChapterId chapterId, final int estimatedMinutes, final Instant scheduledAt,
-                final String name, final String description, final Set<TagId> tags) {
-        this(TaskId.random(), chapterId, estimatedMinutes, scheduledAt, name, description,
-                tags == null ? Set.of() : tags);
+                final String name, final String description, final TagId tag) {
+        this(TaskId.random(), chapterId, estimatedMinutes, scheduledAt, name, description, tag);
     }
 
     public Task(final ChapterId chapterId, final int estimatedMinutes, final Instant scheduledAt,

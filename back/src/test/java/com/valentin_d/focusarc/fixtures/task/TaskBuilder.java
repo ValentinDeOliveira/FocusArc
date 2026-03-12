@@ -9,7 +9,6 @@ import lombok.Builder;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.util.Set;
 
 @Builder
 public class TaskBuilder {
@@ -32,10 +31,10 @@ public class TaskBuilder {
     @Builder.Default
     private final String description = "My description";
     @Builder.Default
-    private final Set<TagId> tags = Set.of(TagId.random());
+    private final TagId tag = TagId.random();
 
     public Task build() {
-        return new Task(id, chapter, estimatedMinutes, completedMinutes, startAt, endAt, taskStatus, name, description,
-                tags);
+        return new Task(id, chapter, estimatedMinutes, completedMinutes, startAt, endAt,
+                taskStatus, name, description, tag);
     }
 }
