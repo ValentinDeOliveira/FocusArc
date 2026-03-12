@@ -18,4 +18,8 @@ public class Tag {
     private UserId owner;
     private String label;
     private TagColor color;
+
+    public Tag(UserId owner, String label, TagColor color) {
+        this(TagId.random(), owner, label, color);
+    }
 }

@@ -6,11 +6,13 @@ import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.tag.Tag;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.repository.ChapterRepository;
+import com.valentin_d.focusarc.repository.TagRepository;
 import com.valentin_d.focusarc.repository.TaskRepository;
 import com.valentin_d.focusarc.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +24,7 @@ import java.time.LocalDate;
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArc;
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwnerIdAndStatus;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.TagFactory.aTagWithOwnerId;
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 
@@ -32,6 +35,7 @@ public class DomainFixture {
     private final ArcRepository arcRepository;
     private final ChapterRepository chapterRepository;
     private final TaskRepository taskRepository;
+    private final TagRepository tagRepository;
 
     public Arc arc() {
         return arcRepository.save(anArc());
@@ -85,6 +89,10 @@ public class DomainFixture {
     public Task taskForUser(final UserId userId) {
         final var chapter = chapterForUser(userId);
         return taskForChapter(chapter.getId());
+    }
+
+    public Tag tagForUser(final UserId userId) {
+        return tagRepository.save(aTagWithOwnerId(userId));
     }
 
     public User user() {

@@ -47,6 +47,16 @@ public abstract class SecuredIntegrationTest extends RestIntegrationTest {
         return request(url, method, new HttpEntity<>(dto, userHeaders), responseType);
     }
 
+    protected <T> ResponseEntity<T> request(final String url, final HttpMethod method,
+                                             final User user, final Class<T> responseType) {
+        return request(url, method, new HttpEntity<>(getHeadersForUser(user)), responseType);
+    }
+
+    protected  <T> ResponseEntity<T> request(final String url, final HttpMethod method,
+                                             final User user, final Object dto, final Class<T> responseType) {
+        return request(url, method, new HttpEntity<>(dto, getHeadersForUser(user)), responseType);
+    }
+
     private HttpHeaders getHeadersForUser(final User user) {
         final var token = jwtService.generateToken(user);
 
