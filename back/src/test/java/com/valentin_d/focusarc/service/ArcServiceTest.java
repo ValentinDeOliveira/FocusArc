@@ -1,5 +1,6 @@
 package com.valentin_d.focusarc.service;
 
+import com.valentin_d.focusarc.exception.InvalidDateRangeException;
 import com.valentin_d.focusarc.exception.arc.ArcAlreadyExistsException;
 import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistException;
 import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
@@ -112,6 +113,19 @@ class ArcServiceTest {
         assertEquals(arc.getTotalEstimatedMinutes(), updated.getTotalEstimatedMinutes());
         assertEquals(arc.getId(), updated.getId());
         assertEquals(arc.getOwner(), updated.getOwner());
+    }
+
+    @Test
+    void shouldThrowExceptionOnUpdate_whenDateAreInvalid() {
+        final var now = LocalDate.now();
+        final var user = aUser();
+        final var arc = anArcWithOwnerId(user.getId());
+        final var updateDto = anArcUpdateDtoWithStartAndEndDate(now, now.minusDays(15));
+
+        when(arcLoader.getArcIfExists(eq(arc.getId()))).thenReturn(arc);
+
+        assertThatThrownBy(() -> arcService.update(user.getId(), arc.getId(), updateDto))
+                .isInstanceOf(InvalidDateRangeException.class);
     }
 
     @Test

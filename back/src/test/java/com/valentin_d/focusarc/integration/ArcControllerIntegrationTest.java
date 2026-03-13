@@ -97,13 +97,17 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         assertEquals(assertionHelper.expectedValue(dto.totalEstimatedMinutes(), arc.getTotalEstimatedMinutes()),
                 result.getTotalEstimatedMinutes());
         assertEquals(arc.getTotalCompletedMinutes(), result.getTotalCompletedMinutes());
+        assertEquals(assertionHelper.expectedValue(dto.startDate(), arc.getStartDate()), result.getStartDate());
+        assertEquals(assertionHelper.expectedValue(dto.endDate(), arc.getEndDate()), result.getEndDate());
     }
 
     private static Stream<Arguments> provideArcUpdateDtos() {
         return Stream.of(
-                Arguments.of(anArcUpdateDtoWithTotalEstimatedMinutesAndName(200, "Updated Name")),
+                Arguments.of(anArcUpdateDtoWithAllUpdatedFields(200, "Updated Name", LocalDate.now(), LocalDate.now().plusDays(15))),
                 Arguments.of(anArcUpdateDtoWithName("Updated Name")),
                 Arguments.of(anArcUpdateDtoWithTotalEstimatedMinutes(150)),
+                Arguments.of(anArcUpdateDtoWithStartDate(LocalDate.now())),
+                Arguments.of(anArcUpdateDtoWithEndDate(LocalDate.now().plusDays(20))),
                 Arguments.of(anArcUpdateDtoWithNullFields())
         );
     }
