@@ -40,7 +40,6 @@ public final class ArcFactory {
         return ArcUpdateDtoBuilder.builder().build().build();
     }
 
-    // TODO: refactor to call "allFieldsNull"
     public static ArcUpdateDto anArcUpdateDtoWithNullFields() {
         return ArcUpdateDtoBuilder.builder().totalEstimatedMinutes(null).name(null).startDate(null).endDate(null).build().build();
     }
