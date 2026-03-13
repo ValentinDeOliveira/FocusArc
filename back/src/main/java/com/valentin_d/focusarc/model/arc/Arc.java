@@ -11,6 +11,7 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.CompoundIndexes;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Data
@@ -33,17 +34,22 @@ public class Arc {
     private int totalEstimatedMinutes;
     private int totalCompletedMinutes;
     private ArcStatus status;
+    private LocalDate startDate;
+    private LocalDate endDate;
 
-    public Arc(final ArcId arcId, final UserId userId, final String name, final int totalEstimatedMinutes, final ArcStatus status) {
-        this(arcId, userId, name, totalEstimatedMinutes, 0, status);
+    public Arc(final ArcId arcId, final UserId userId, final String name, final int totalEstimatedMinutes,
+               final ArcStatus status, final LocalDate startDate, final LocalDate endDate) {
+        this(arcId, userId, name, totalEstimatedMinutes, 0, status, startDate, endDate);
     }
 
-    public Arc(final ArcId arcId, final UserId userId, final String name, final int totalEstimatedMinutes) {
-        this(arcId, userId, name, totalEstimatedMinutes, 0, ArcStatus.ACTIVE);
+    public Arc(final ArcId arcId, final UserId userId, final String name, final int totalEstimatedMinutes,
+               final LocalDate startDate, final LocalDate endDate) {
+        this(arcId, userId, name, totalEstimatedMinutes, 0, ArcStatus.ACTIVE, startDate, endDate);
     }
 
-    public Arc(final UserId userId, final String name, final int totalEstimatedMinutes) {
-        this(ArcId.random(), userId, name, totalEstimatedMinutes);
+    public Arc(final UserId userId, final String name, final int totalEstimatedMinutes,
+               final LocalDate startDate, final LocalDate endDate) {
+        this(ArcId.random(), userId, name, totalEstimatedMinutes, startDate, endDate);
     }
 
     public void recalculateCompletedMinutes(final List<Chapter> chapters) {

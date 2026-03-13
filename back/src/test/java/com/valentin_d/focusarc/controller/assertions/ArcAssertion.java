@@ -13,5 +13,7 @@ public class ArcAssertion extends BaseAssertion<Arc> {
         expect(actions, path, "totalEstimatedMinutes", expected.getTotalEstimatedMinutes());
         expect(actions, path, "totalCompletedMinutes", expected.getTotalCompletedMinutes());
         expect(actions, path, "status", expected.getStatus().name());
+        expect(actions, path, "startDate", expected.getStartDate().toString());
+        expect(actions, path, "endDate", expected.getEndDate().toString());
     }
 }

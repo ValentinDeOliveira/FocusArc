@@ -1,5 +1,6 @@
 package com.valentin_d.focusarc.integration;
 
+import com.valentin_d.focusarc.dto.arc.ArcSummaryResponseDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.integration.base.BaseArcControllerIntegrationTest;
 import com.valentin_d.focusarc.model.arc.Arc;
@@ -11,6 +12,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpMethod;
 
+import java.time.LocalDate;
 import java.util.stream.Stream;
 
 import static com.mongodb.assertions.Assertions.assertNotNull;
@@ -95,13 +97,17 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         assertEquals(assertionHelper.expectedValue(dto.totalEstimatedMinutes(), arc.getTotalEstimatedMinutes()),
                 result.getTotalEstimatedMinutes());
         assertEquals(arc.getTotalCompletedMinutes(), result.getTotalCompletedMinutes());
+        assertEquals(assertionHelper.expectedValue(dto.startDate(), arc.getStartDate()), result.getStartDate());
+        assertEquals(assertionHelper.expectedValue(dto.endDate(), arc.getEndDate()), result.getEndDate());
     }
 
     private static Stream<Arguments> provideArcUpdateDtos() {
         return Stream.of(
-                Arguments.of(anArcUpdateDtoWithTotalEstimatedMinutesAndName(200, "Updated Name")),
+                Arguments.of(anArcUpdateDtoWithAllUpdatedFields(200, "Updated Name", LocalDate.now(), LocalDate.now().plusDays(15))),
                 Arguments.of(anArcUpdateDtoWithName("Updated Name")),
                 Arguments.of(anArcUpdateDtoWithTotalEstimatedMinutes(150)),
+                Arguments.of(anArcUpdateDtoWithStartDate(LocalDate.now())),
+                Arguments.of(anArcUpdateDtoWithEndDate(LocalDate.now().plusDays(20))),
                 Arguments.of(anArcUpdateDtoWithNullFields())
         );
     }
@@ -156,5 +162,31 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
                 Arguments.of(0),
                 Arguments.of(-1)
         );
+    }
+
+    @Test
+    void shouldReturnSummary_whenUserHasActiveArc() {
+        final var arc = domainFixture.arcForUser(user.getId());
+        domainFixture.chapterForArcWithDate(arc.getId(), LocalDate.now().minusDays(1)); // COMPLETED
+        domainFixture.chapterForArcWithDate(arc.getId(), LocalDate.now().minusDays(2)); // COMPLETED
+        domainFixture.plannedChapterForArcWithDate(arc.getId(), LocalDate.now().plusDays(1)); // PLANNED
+
+        final var response = request(URL + "/summary", HttpMethod.GET, ArcSummaryResponseDto.class);
+
+        assertionHelper.assertOk(response);
+        final var summary = response.getBody();
+        assertNotNull(summary);
+        assertEquals(arc.getTotalEstimatedMinutes(), summary.totalEstimatedMinutes());
+        assertEquals(2, summary.nbChapterCompleted());
+        assertEquals(1, summary.nbChapterPlanned());
+        assertEquals(0, summary.nbChapterSkipped());
+        assertEquals(2, summary.daysStreak());
+    }
+
+    @Test
+    void shouldReturnBadRequest_whenNoActiveArc() {
+        final var response = request(URL + "/summary", HttpMethod.GET, Void.class);
+
+        assertionHelper.assertBadRequest(response);
     }
 }

@@ -1,14 +1,18 @@
 package com.valentin_d.focusarc.service;
 
+import com.valentin_d.focusarc.exception.InvalidDateRangeException;
 import com.valentin_d.focusarc.exception.arc.ArcAlreadyExistsException;
 import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistException;
 import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
+import com.valentin_d.focusarc.exception.arc.NoActiveArcException;
 import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
+import com.valentin_d.focusarc.fixtures.chapter.ChapterBuilder;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.service.arc.ArcLoader;
 import com.valentin_d.focusarc.service.arc.ArcService;
+import com.valentin_d.focusarc.service.chapter.ChapterLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
 import com.valentin_d.focusarc.service.user.UserLoader;
 import org.junit.jupiter.api.Test;
@@ -17,10 +21,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import java.time.LocalDate;
 import java.util.List;
 
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
@@ -35,6 +41,8 @@ class ArcServiceTest {
     private UserLoader userLoader;
     @Mock
     private ChapterService chapterService;
+    @Mock
+    private ChapterLoader chapterLoader;
     @InjectMocks
     private ArcService arcService;
 
@@ -105,6 +113,19 @@ class ArcServiceTest {
         assertEquals(arc.getTotalEstimatedMinutes(), updated.getTotalEstimatedMinutes());
         assertEquals(arc.getId(), updated.getId());
         assertEquals(arc.getOwner(), updated.getOwner());
+    }
+
+    @Test
+    void shouldThrowExceptionOnUpdate_whenDateAreInvalid() {
+        final var now = LocalDate.now();
+        final var user = aUser();
+        final var arc = anArcWithOwnerId(user.getId());
+        final var updateDto = anArcUpdateDtoWithStartAndEndDate(now, now.minusDays(15));
+
+        when(arcLoader.getArcIfExists(eq(arc.getId()))).thenReturn(arc);
+
+        assertThatThrownBy(() -> arcService.update(user.getId(), arc.getId(), updateDto))
+                .isInstanceOf(InvalidDateRangeException.class);
     }
 
     @Test
@@ -229,6 +250,55 @@ class ArcServiceTest {
                 .isInstanceOf(ArcDoesNotExistForUserException.class);
 
         verify(arcRepository, never()).delete(any(Arc.class));
+    }
+
+    @Test
+    void shouldReturnSummary_whenUserHasActiveArc() {
+        final var userId = UserId.random();
+        final var arc = anArcWithOwnerId(userId);
+        arc.setTotalCompletedMinutes(60);
+
+        final var yesterday = ChapterBuilder.builder()
+                .arc(arc.getId()).scheduledDate(LocalDate.now().minusDays(1)).completedMinutes(60).build().build();
+        final var threeDaysAgo = ChapterBuilder.builder()
+                .arc(arc.getId()).scheduledDate(LocalDate.now().minusDays(3)).completedMinutes(0).build().build();
+        final var tomorrow = ChapterBuilder.builder()
+                .arc(arc.getId()).scheduledDate(LocalDate.now().plusDays(1)).completedMinutes(0).build().build();
+
+        when(arcLoader.getActiveArcForUser(userId)).thenReturn(arc);
+        when(chapterLoader.findAllByArc(arc.getId())).thenReturn(List.of(yesterday, threeDaysAgo, tomorrow));
+
+        final var result = arcService.getSummaryForUser(userId);
+
+        assertThat(result.totalEstimatedMinutes()).isEqualTo(arc.getTotalEstimatedMinutes());
+        assertThat(result.totalCompletedMinutes()).isEqualTo(60);
+        assertThat(result.remainingMinutes()).isEqualTo(arc.getTotalEstimatedMinutes() - 60);
+        assertThat(result.nbChapterCompleted()).isEqualTo(1);
+        assertThat(result.nbChapterSkipped()).isEqualTo(1);
+        assertThat(result.nbChapterPlanned()).isEqualTo(1);
+        assertThat(result.daysStreak()).isEqualTo(1);
+    }
+
+    @Test
+    void shouldThrowException_whenUserDoesNotExist_onGetSummary() {
+        final var userId = UserId.random();
+        doThrowUserDoesNotExist(userId);
+
+        assertThatThrownBy(() -> arcService.getSummaryForUser(userId))
+                .isInstanceOf(UserDoesNotExistException.class);
+
+        verify(arcLoader, never()).getActiveArcForUser(any());
+    }
+
+    @Test
+    void shouldThrowException_whenNoActiveArc_onGetSummary() {
+        final var userId = UserId.random();
+        doThrow(new NoActiveArcException(userId)).when(arcLoader).getActiveArcForUser(userId);
+
+        assertThatThrownBy(() -> arcService.getSummaryForUser(userId))
+                .isInstanceOf(NoActiveArcException.class);
+
+        verify(chapterLoader, never()).findAllByArc(any());
     }
 
     private void doThrowUserDoesNotExist(final UserId userId) {

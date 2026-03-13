@@ -53,4 +53,10 @@ public class Chapter {
     public void recalculateEstimatedMinutes(final List<Task> tasks) {
         this.estimatedMinutes = tasks.stream().mapToInt(Task::getEstimatedMinutes).sum();
     }
+
+    public ChapterStatus getStatus(LocalDate today) {
+        if (completedMinutes > 0)          return ChapterStatus.COMPLETED;
+        if (scheduledDate.isBefore(today)) return ChapterStatus.SKIPPED;
+        return ChapterStatus.PLANNED;
+    }
 }
