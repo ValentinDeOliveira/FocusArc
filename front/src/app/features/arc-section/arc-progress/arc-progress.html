@@ -1,4 +1,7 @@
-@if (arc()) {
-    <app-arc-card-container [arc]="arc()!"/>
-    <app-arc-progress-stats [arc]="arc()!" />
+@if (arc() && arcSummary()) {
+    <app-arc-card-container
+        [arc]="arc()!"
+        [nbChapterCompleted]="arcSummary()!.nbChapterCompleted"
+        [nbChapterTotal]="getNbTotalChapter()"/>
+    <app-arc-progress-stats [arc]="arc()!" [arcSummary]="arcSummary()!"/>
 }

@@ -1,10 +1,10 @@
 <mat-card class="arc-card-container">
     <div class="image-wrapper">
-        <img ngSrc="/arc-background.png" alt="arc-background" height="1024" width="1536"/>
+        <img ngSrc="/arc-background.png" alt="arc-background" height="1024" width="1536" priority/>
         <div class="image-text top">
             <span class="arc-name">{{ name }}</span>
             <br/>
-            <span class="arc-date">Jan 10 → Apr 30</span>
+            <span class="arc-date"> {{ formatDate(arc.startDate) }} → {{formatDate(arc.endDate)}} </span>
         </div>
         <div class="image-text bottom">
             <app-arc-progress-bar [progress]="progress"/>
@@ -12,7 +12,7 @@
     </div>
     <span class="content-container">
         <mat-card-content class="number-chapters">
-            {{ currentChapter }} / {{ nbTotalChapters }} chapters completed!
+            {{ nbChapterCompleted }} / {{ nbChapterTotal }} chapters completed!
         </mat-card-content>
         <mat-card-actions class="button-container">
             <button matBtn class="view-arc-btn">

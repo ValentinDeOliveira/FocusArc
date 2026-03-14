@@ -1,7 +1,9 @@
 <div>
     <div>
-        <h2 class="today-title">Today - March 8</h2>
-        <span class="today-subtitle">2h15m planned • 4 tasks</span>
+        <h2 class="today-title">Today - {{ todayDate() }}</h2>
+        @if (chapterSummary()) {
+            <span class="today-subtitle">{{ getPlannedTime() }} planned • {{tasks().length}} tasks</span>
+        }
     </div>
     @for (task of tasks(); track task.id) {
         <app-dashboard-task [task]="task" />

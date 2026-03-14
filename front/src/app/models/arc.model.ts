@@ -7,6 +7,8 @@ export interface Arc {
   totalEstimatedMinutes: number;
   totalCompletedMinutes: number;
   status: ArcStatus;
+  startDate: string;
+  endDate: string;
 }
 
 export interface ArcCreationDto {
@@ -17,4 +19,14 @@ export interface ArcCreationDto {
 export interface ArcUpdateDto {
     name: string;
     totalEstimatedMinutes: number;
+}
+
+export interface ArcSummaryResponseDto {
+    totalEstimatedMinutes: number,
+    totalCompletedMinutes: number,
+    remainingMinutes: number,
+    nbChapterCompleted: number,
+    nbChapterPlanned: number,
+    nbChapterSkipped: number,
+    daysStreak: number
 }

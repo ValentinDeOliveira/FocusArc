@@ -1,8 +1,8 @@
 <div class="task-row">
     <mat-checkbox/>
     <div class="task-info">
-        <span class="task-name">{{ task.chapter }}</span>
-        <span class="task-time">{{ startTime }} – {{ endTime }}</span>
+        <span class="task-name">{{ task.name }}</span>
+        <span class="task-time">{{ formatTime(task.startAt) }} – {{ formatTime(task.endAt) }}</span>
     </div>
     <span class="task-duration">{{ task.estimatedMinutes }}m</span>
 </div>

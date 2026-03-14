@@ -1,30 +1,22 @@
-import {Component, Input} from '@angular/core';
+import {Component, inject, Input} from '@angular/core';
 import {Task} from '../../../models/task.model';
 import {MatCheckbox} from '@angular/material/checkbox';
+import {DatePipe} from '@angular/common';
 
 @Component({
     selector: 'app-dashboard-task',
     imports: [
-        MatCheckbox
+        MatCheckbox,
     ],
+    providers: [DatePipe],
     templateUrl: './dashboard-task.html',
     styleUrl: './dashboard-task.css',
 })
 export class DashboardTask {
     @Input() task!: Task;
+    private datePipe = inject(DatePipe);
 
-    get startTime(): string {
-        return this.formatTime(new Date(this.task.scheduledAt));
-    }
-
-    get endTime(): string {
-        const end = new Date(this.task.scheduledAt);
-        console.log(end.getTime());
-        end.setMinutes(end.getMinutes() + this.task.estimatedMinutes);
-        return this.formatTime(end);
-    }
-
-    private formatTime(date: Date): string {
-        return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    formatTime(date: string) {
+        return this.datePipe.transform(date, 'HH:mm');
     }
 }

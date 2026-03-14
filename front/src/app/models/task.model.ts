@@ -2,11 +2,15 @@ export type TaskStatus = 'PLANNED' | 'IN_PROGRESS' | 'DONE' | 'SKIPPED';
 
 export interface Task {
     id: string;
-    chapter: string;
+    chapterId: string;
     estimatedMinutes: number;
     completedMinutes: number;
-    scheduledAt: string;
+    startAt: string;
+    endAt: string;
     status: TaskStatus;
+    name: string;
+    description: string;
+    tagId: string;
 }
 
 export interface TaskCreationDto {
