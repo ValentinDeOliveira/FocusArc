@@ -23,7 +23,7 @@ export class ArcProgress implements OnInit {
 
     ngOnInit(): void {
         const dto: LoginRequestDto = {
-            email: 'alice@example.com',
+            email: 'dev@focusarc.com',
             password: 'password123',
         }
 

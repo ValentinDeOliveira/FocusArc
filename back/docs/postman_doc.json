@@ -515,6 +515,39 @@
       ]
     },
     {
+      "name": "Dev",
+      "description": "Development-only endpoints. Active on all profiles except `test`. Use `POST /dev/seed` to wipe the database and populate it with a realistic multi-day dataset.",
+      "item": [
+        {
+          "name": "Seed Database",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();",
+                  "if (res.accessToken)  pm.collectionVariables.set('accessToken',  res.accessToken);",
+                  "if (res.refreshToken) pm.collectionVariables.set('refreshToken', res.refreshToken);"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/dev/seed",
+              "host": ["{{baseUrl}}"],
+              "path": ["dev", "seed"]
+            },
+            "description": "Wipes all collections and inserts a realistic dataset ready for frontend development. Tokens are saved automatically.\n\n**Seeded data**\n- User: `dev@focusarc.com` / `password123`\n- Tags: Work (blue), Study (purple), Health (teal), Personal (green)\n- Arc: \"Spring 2026 Arc\", ACTIVE\n- Chapters: −3 days, −2 days, yesterday, **today**, tomorrow\n- Tasks: past days have DONE/SKIPPED tasks with completedMinutes; today has PLANNED + IN_PROGRESS; tomorrow has PLANNED\n\n**Responses**\n- `201 Created` — seed successful, returns `email`, `password`, `accessToken`, `refreshToken`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
       "name": "Tags",
       "description": "Tag management. Tags are user-defined labels (with a color) that can be attached to tasks.",
       "item": [
