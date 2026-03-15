@@ -17,6 +17,10 @@
     color: #1f2937;
 }
 
+.task-name.line-through {
+    text-decoration: line-through;
+}
+
 .task-time {
     font-size: 0.8rem;
     color: #9ca3af;

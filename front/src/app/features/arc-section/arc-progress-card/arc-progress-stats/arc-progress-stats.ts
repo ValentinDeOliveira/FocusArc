@@ -2,6 +2,7 @@ import {Component, Input} from '@angular/core';
 import {Arc, ArcSummaryResponseDto} from '../../../../models/arc.model';
 import {MatCard, MatCardContent} from '@angular/material/card';
 import {MatIcon} from '@angular/material/icon';
+import {formatMinutes} from '../../../../utils/time.utils';
 
 @Component({
     selector: 'app-arc-progress-stats',
@@ -28,8 +29,6 @@ export class ArcProgressStats {
     }
 
     getCompletedTime() {
-        const hours = Math.floor(this.arcSummary.totalCompletedMinutes / 60);
-        const minutes = this.arcSummary.totalCompletedMinutes % 60;
-        return `${hours}h ${minutes}m`;
+        return formatMinutes(this.arcSummary.totalCompletedMinutes);
     }
 }

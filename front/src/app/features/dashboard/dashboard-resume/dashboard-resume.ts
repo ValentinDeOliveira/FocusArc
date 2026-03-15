@@ -5,6 +5,7 @@ import {DashboardTask} from '../dashboard-task/dashboard-task';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ChapterService} from '../../../core/services/chapter.service';
 import {DatePipe} from '@angular/common';
+import {formatMinutes} from '../../../utils/time.utils';
 
 @Component({
     selector: 'app-dashboard-resume',
@@ -28,11 +29,6 @@ export class DashboardResume {
     }
 
     getPlannedTime() {
-        const hours = Math.floor(this.chapterSummary()!.estimatedMinutes / 60);
-        const minutes = this.chapterSummary()!.estimatedMinutes % 60;
-        if (minutes > 0) {
-            return `${hours}h ${minutes}m`;
-        }
-        return `${hours}h`;
+        return formatMinutes(this.chapterSummary()!.estimatedMinutes);
     }
 }

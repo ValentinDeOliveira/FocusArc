@@ -1,8 +1,10 @@
 <div class="task-row">
-    <mat-checkbox/>
+    <mat-checkbox [checked]="isTaskEnded"/>
     <div class="task-info">
-        <span class="task-name">{{ task.name }}</span>
-        <span class="task-time">{{ formatTime(task.startAt) }} – {{ formatTime(task.endAt) }}</span>
+        <span class="task-name" [class.line-through]="isTaskEnded">{{ task.name }}</span>
+        <span class="task-time">{{ formatTime(task.startAt) }} - {{ formatTime(task.endAt) }}</span>
     </div>
-    <span class="task-duration">{{ task.estimatedMinutes }}m</span>
+    <app-task-status-badge [status]="task.status"/>
+    <span class="task-duration">{{ getEstimatedMinutes() }}</span>
+    <button matButton="outlined">Start</button>
 </div>
