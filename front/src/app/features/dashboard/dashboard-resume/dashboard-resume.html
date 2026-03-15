@@ -2,7 +2,13 @@
     <div>
         <h2 class="today-title">Today - {{ todayDate() }}</h2>
         @if (chapterSummary()) {
-            <span class="today-subtitle">{{ getPlannedTime() }} planned • {{tasks().length}} tasks</span>
+            <div class="today-subtitle">
+                <span >{{ getPlannedTime() }} planned</span>
+                <span> • </span>
+                <span>{{tasks().length}} tasks</span>
+                <span> • </span>
+                <span class="completed-tasks">{{getNumberOfCompletedTasks}} task completed</span>
+            </div>
         }
     </div>
     @for (task of tasks(); track task.id) {

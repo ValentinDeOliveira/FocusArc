@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, Input} from '@angular/core';
 import {TaskService} from '../../../core/services/task.service';
 import {Task} from '../../../models/task.model';
 import {DashboardTask} from '../dashboard-task/dashboard-task';
@@ -30,5 +30,13 @@ export class DashboardResume {
 
     getPlannedTime() {
         return formatMinutes(this.chapterSummary()!.estimatedMinutes);
+    }
+
+    get getNumberOfCompletedTasks() {
+        let n = 0;
+        for (let task of this.tasks()) {
+            if (task.status == "DONE") n++;
+        }
+        return n;
     }
 }
