@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {User, UserUpdateDto} from '../../models/user.model';
 
 @Injectable({ providedIn: 'root' })
-export class ChapterService {
+export class UserService {
     private http = inject(HttpClient);
     private baseUrl = "http://localhost:8080/api/users";
 

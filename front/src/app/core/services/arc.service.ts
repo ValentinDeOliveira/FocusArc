@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {Arc, ArcCreationDto, ArcUpdateDto} from '../../models/arc.model';
+import {Arc, ArcCreationDto, ArcSummaryResponseDto, ArcUpdateDto} from '../../models/arc.model';
 
 @Injectable({ providedIn: 'root' })
 export class ArcService {
@@ -30,5 +30,9 @@ export class ArcService {
 
     deleteAll(): Observable<void> {
         return this.http.delete<void>(`${this.baseUrl}`);
+    }
+
+    getSummary(): Observable<ArcSummaryResponseDto> {
+        return this.http.get<ArcSummaryResponseDto>(`${this.baseUrl}/summary`);
     }
 }

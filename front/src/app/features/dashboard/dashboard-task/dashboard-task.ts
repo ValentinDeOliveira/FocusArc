@@ -1,30 +1,37 @@
-import {Component, Input} from '@angular/core';
+import {Component, inject, Input, output} from '@angular/core';
 import {Task} from '../../../models/task.model';
 import {MatCheckbox} from '@angular/material/checkbox';
+import {DatePipe} from '@angular/common';
+import {formatMinutes} from '../../../utils/time.utils';
+import {MatButton} from '@angular/material/button';
+import {TaskStatusBadge} from '../../../shared/task-status-badge/task-status-badge';
 
 @Component({
     selector: 'app-dashboard-task',
     imports: [
-        MatCheckbox
+        MatCheckbox,
+        MatButton,
+        TaskStatusBadge,
     ],
+    providers: [DatePipe],
     templateUrl: './dashboard-task.html',
     styleUrl: './dashboard-task.css',
 })
 export class DashboardTask {
     @Input() task!: Task;
+    started = output<Task>();
 
-    get startTime(): string {
-        return this.formatTime(new Date(this.task.scheduledAt));
+    private datePipe = inject(DatePipe);
+
+    formatTime(date: string) {
+        return this.datePipe.transform(date, 'HH:mm');
     }
 
-    get endTime(): string {
-        const end = new Date(this.task.scheduledAt);
-        console.log(end.getTime());
-        end.setMinutes(end.getMinutes() + this.task.estimatedMinutes);
-        return this.formatTime(end);
+    getEstimatedMinutes() {
+        return formatMinutes(this.task.estimatedMinutes);
     }
 
-    private formatTime(date: Date): string {
-        return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+    get isTaskEnded() {
+        return this.task.status === "DONE" || this.task.status === "SKIPPED";
     }
 }

@@ -1,10 +1,21 @@
 <div>
     <div>
-        <h2 class="today-title">Today - March 8</h2>
-        <span class="today-subtitle">2h15m planned • 4 tasks</span>
+        <h2 class="today-title">Today - {{ todayDate() }}</h2>
+        @if (chapterSummary()) {
+            <div class="today-subtitle">
+                <span >{{ getPlannedTime() }} planned</span>
+                <span> • </span>
+                <span>{{tasks().length}} tasks</span>
+                <span> • </span>
+                <span class="completed-tasks">{{getNumberOfCompletedTasks}} task completed</span>
+            </div>
+        }
     </div>
+    @if (activeTask()) {
+        <app-dashboard-task-timer [task]="activeTask()!" />
+    }
     @for (task of tasks(); track task.id) {
-        <app-dashboard-task [task]="task" />
+        <app-dashboard-task [task]="task" (started)="activeTask.set($event)" />
         <hr>
     }
 </div>

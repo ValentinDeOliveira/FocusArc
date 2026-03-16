@@ -63,6 +63,11 @@ public class Task {
     }
 
     public Task(final ChapterId chapterId, final int estimatedMinutes, final Instant scheduledAt,
+                final String name, final TagId tag) {
+        this(TaskId.random(), chapterId, estimatedMinutes, scheduledAt, name, null, tag);
+    }
+
+    public Task(final ChapterId chapterId, final int estimatedMinutes, final Instant scheduledAt,
                 final String name) {
         this(TaskId.random(), chapterId, estimatedMinutes, scheduledAt, name, null);
     }

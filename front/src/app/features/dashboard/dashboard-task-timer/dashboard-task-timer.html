@@ -1,0 +1,27 @@
+<div class="timer-wrapper">
+    <p class="task-name">{{ task().name }}</p>
+    <div class="timer-container">
+        <svg viewBox="0 0 100 100" class="timer-svg">
+            <circle class="track" cx="50" cy="50" [attr.r]="radius" />
+            <circle class="progress"
+                    cx="50" cy="50"
+                    [attr.r]="radius"
+                    [attr.stroke]="strokeColor()"
+                    [attr.stroke-dasharray]="circumference"
+                    [attr.stroke-dashoffset]="strokeDashoffset()"
+                    transform="rotate(-90 50 50)" />
+        </svg>
+        <div class="timer-center">
+            <span class="timer-text">{{ timeDisplay() }}</span>
+            <span class="timer-label" [style.color]="strokeColor()">{{ label() }}</span>
+        </div>
+    </div>
+    <div>
+        <span>Estimated {{task().estimatedMinutes}} min</span>
+        @if (overtimeDisplay()) {
+            <span> • </span>
+            <span class="overtime-duration">{{ overtimeDisplay() }} over estimate</span>
+        }
+    </div>
+    <button matButton="outlined" (click)="complete()">{{ doneButtonText() }}</button>
+</div>

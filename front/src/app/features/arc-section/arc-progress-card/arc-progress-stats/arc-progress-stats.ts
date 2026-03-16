@@ -1,7 +1,8 @@
 import {Component, Input} from '@angular/core';
-import {Arc} from '../../../../models/arc.model';
+import {Arc, ArcSummaryResponseDto} from '../../../../models/arc.model';
 import {MatCard, MatCardContent} from '@angular/material/card';
 import {MatIcon} from '@angular/material/icon';
+import {formatMinutes} from '../../../../utils/time.utils';
 
 @Component({
     selector: 'app-arc-progress-stats',
@@ -15,4 +16,19 @@ import {MatIcon} from '@angular/material/icon';
 })
 export class ArcProgressStats {
     @Input({ required: true }) arc!: Arc;
+    @Input({ required: true }) arcSummary!: ArcSummaryResponseDto;
+
+    getRemainingDays() {
+        const now = new Date();
+        now.setHours(0, 0, 0, 0);
+        const end = new Date(this.arc.endDate);
+        end.setHours(0, 0, 0, 0);
+
+        const diff = end.getTime() - now.getTime();
+        return Math.floor(diff / (1000 * 60 * 60 * 24));
+    }
+
+    getCompletedTime() {
+        return formatMinutes(this.arcSummary.totalCompletedMinutes);
+    }
 }

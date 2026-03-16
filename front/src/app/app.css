@@ -5,6 +5,7 @@
 
 .main-content {
     flex: 3;
+    padding: 16px;
 }
 
 .sidebar {
