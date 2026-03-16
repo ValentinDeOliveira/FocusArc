@@ -1,6 +1,6 @@
 import {Component, inject, signal} from '@angular/core';
 import {TaskService} from '../../../core/services/task.service';
-import {Task} from '../../../models/task.model';
+import {Task, TaskCompletedDto} from '../../../models/task.model';
 import {DashboardTask} from '../dashboard-task/dashboard-task';
 import {toSignal} from '@angular/core/rxjs-interop';
 import {ChapterService} from '../../../core/services/chapter.service';
@@ -23,7 +23,11 @@ export class DashboardResume {
     private chapterService = inject(ChapterService);
     private datePipe = inject(DatePipe);
 
-    tasks = toSignal(this.taskService.getTodayTask(), { initialValue: [] as Task[] });
+    tasks = signal<Task[]>([]);
+
+    constructor() {
+        this.taskService.getTodayTask().subscribe(t => this.tasks.set(t));
+    }
     activeTask = signal<Task | null>(null);
     chapterSummary = toSignal(this.chapterService.getSummary());
 
@@ -36,10 +40,22 @@ export class DashboardResume {
     }
 
     get getNumberOfCompletedTasks() {
-        let n = 0;
-        for (let task of this.tasks()) {
-            if (task.status == "DONE") n++;
+        return this.tasks().filter((task) => task.status == "DONE").length;
+    }
+
+    protected onTaskDone(overtime: number) {
+        let finalTime = this.activeTask()!.estimatedMinutes;
+        if (overtime != null) {
+            finalTime += overtime;
         }
-        return n;
+
+        const dto: TaskCompletedDto = {
+            completedMinutes: finalTime
+        }
+
+        this.taskService.completeTask(this.activeTask()!.id, dto).subscribe(updatedTask => {
+            this.tasks.update(l => l.map(task => task.id == updatedTask.id ? updatedTask : task));
+            this.activeTask.set(null);
+        });
     }
 }

@@ -95,11 +95,11 @@ public class TaskController {
     )
     @ApiResponse(responseCode = "400", description = "Task is already done")
     @PatchMapping("/{taskId}/complete")
-    public ResponseEntity<Void> completeTask(@AuthenticationPrincipal final User user,
+    public ResponseEntity<Task> completeTask(@AuthenticationPrincipal final User user,
                                              @PathVariable final TaskId taskId,
                                              @Valid @RequestBody final TaskCompleteDto taskCompleteDto) {
-        service.completeTask(taskId, user.getId(), taskCompleteDto);
-        return ResponseEntity.ok().build();
+        final var task = service.completeTask(taskId, user.getId(), taskCompleteDto);
+        return ResponseEntity.ok(task);
     }
 
     @Operation(summary = "Get today's tasks",

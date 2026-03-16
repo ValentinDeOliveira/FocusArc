@@ -131,7 +131,7 @@ public class TaskService {
         chapterRecalculationService.recalculateCompletedMinutes(chapterId);
     }
 
-    public void completeTask(@NotNull TaskId taskId,
+    public Task completeTask(@NotNull TaskId taskId,
                              @NotNull UserId userId,
                              @NotNull TaskCompleteDto taskCompleteDto) {
         final var task = taskLoader.getTaskIfExists(taskId);
@@ -147,6 +147,8 @@ public class TaskService {
         task.setCompletedMinutes(taskCompleteDto.completedMinutes());
         taskRepository.save(task);
         chapterRecalculationService.recalculateCompletedMinutes(task.getChapter());
+
+        return task;
     }
 
     public List<Task> getTodaysTasks(@NotNull UserId userId) {
