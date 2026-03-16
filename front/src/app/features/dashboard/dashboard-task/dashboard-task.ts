@@ -1,4 +1,4 @@
-import {Component, inject, Input} from '@angular/core';
+import {Component, inject, Input, output} from '@angular/core';
 import {Task} from '../../../models/task.model';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {DatePipe} from '@angular/common';
@@ -19,6 +19,8 @@ import {TaskStatusBadge} from '../../../shared/task-status-badge/task-status-bad
 })
 export class DashboardTask {
     @Input() task!: Task;
+    started = output<Task>();
+
     private datePipe = inject(DatePipe);
 
     formatTime(date: string) {

@@ -1,4 +1,4 @@
-import {Component, inject, Input} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {TaskService} from '../../../core/services/task.service';
 import {Task} from '../../../models/task.model';
 import {DashboardTask} from '../dashboard-task/dashboard-task';
@@ -6,11 +6,13 @@ import {toSignal} from '@angular/core/rxjs-interop';
 import {ChapterService} from '../../../core/services/chapter.service';
 import {DatePipe} from '@angular/common';
 import {formatMinutes} from '../../../utils/time.utils';
+import {DashboardTaskTimer} from '../dashboard-task-timer/dashboard-task-timer';
 
 @Component({
     selector: 'app-dashboard-resume',
     imports: [
-        DashboardTask
+        DashboardTask,
+        DashboardTaskTimer
     ],
     providers: [DatePipe],
     templateUrl: './dashboard-resume.html',
@@ -22,6 +24,7 @@ export class DashboardResume {
     private datePipe = inject(DatePipe);
 
     tasks = toSignal(this.taskService.getTodayTask(), { initialValue: [] as Task[] });
+    activeTask = signal<Task | null>(null);
     chapterSummary = toSignal(this.chapterService.getSummary());
 
     todayDate() {
