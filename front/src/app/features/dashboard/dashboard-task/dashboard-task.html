@@ -6,5 +6,7 @@
     </div>
     <app-task-status-badge [status]="task.status"/>
     <span class="task-duration">{{ getEstimatedMinutes() }}</span>
-    <button matButton="outlined" (click)="started.emit(task)">Start</button>
+    @if (!isTaskEnded) {
+        <button matButton="outlined" (click)="startTask()">Start</button>
+    }
 </div>

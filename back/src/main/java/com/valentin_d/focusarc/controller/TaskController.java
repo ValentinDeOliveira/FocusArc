@@ -89,6 +89,19 @@ public class TaskController {
     }
 
     @Operation(
+            summary = "Start a task",
+            description = "Sets status to `IN_PROGRESS` and records the start timestamp. " +
+                    "Only pending tasks (PLANNED or IN_PROGRESS) can be started."
+    )
+    @ApiResponse(responseCode = "400", description = "Task is already finished (DONE or SKIPPED)")
+    @PatchMapping("/{taskId}/start")
+    public ResponseEntity<Task> startTask(@AuthenticationPrincipal final User user,
+                                          @PathVariable final TaskId taskId) {
+        final var task = service.startTask(taskId, user.getId());
+        return ResponseEntity.ok(task);
+    }
+
+    @Operation(
             summary = "Complete a task",
             description = "Sets status to `DONE` and records `completedMinutes`. " +
                     "Triggers chapter and arc recalculation."

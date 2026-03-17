@@ -15,7 +15,7 @@
         <app-dashboard-task-timer [task]="activeTask()!" (done)="onTaskDone($event)" />
     }
     @for (task of tasks(); track task.id) {
-        <app-dashboard-task [task]="task" (started)="activeTask.set($event)" />
+        <app-dashboard-task [task]="task" (started)="setActiveTask($event)" />
         <hr>
     }
 </div>

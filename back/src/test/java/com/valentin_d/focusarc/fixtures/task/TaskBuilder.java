@@ -34,7 +34,7 @@ public class TaskBuilder {
     private final TagId tag = TagId.random();
 
     public Task build() {
-        return new Task(id, chapter, estimatedMinutes, completedMinutes, startAt, endAt,
+        return new Task(id, chapter, estimatedMinutes, completedMinutes, startAt, startAt, endAt, endAt,
                 taskStatus, name, description, tag);
     }
 }
