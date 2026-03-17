@@ -3,7 +3,7 @@ package com.valentin_d.focusarc.service;
 import com.valentin_d.focusarc.dto.task.TaskCompleteDto;
 import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
 import com.valentin_d.focusarc.exception.chapter.ChapterDoesNotExistException;
-import com.valentin_d.focusarc.exception.task.TaskAlreadyDoneException;
+import com.valentin_d.focusarc.exception.task.TaskAlreadyFinishedException;
 import com.valentin_d.focusarc.exception.task.TaskDoesNotExistException;
 import com.valentin_d.focusarc.exception.task.TaskInvalidMinuteException;
 import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
@@ -39,6 +39,7 @@ import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static com.valentin_d.focusarc.shared.TimeConstraints.MINUTES_PER_DAY;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -243,21 +244,24 @@ class TaskServiceTest {
 
         assertEquals(TaskStatus.DONE, savedTask.getStatus());
         assertEquals(dto.completedMinutes(), savedTask.getCompletedMinutes());
+        assertNotNull(savedTask.getCompletedAt());
 
         verify(contextLoader).assertChapterForUser(savedTask.getChapter(), user.getId());
         verify(chapterRecalculationService).recalculateCompletedMinutes(task.getChapter());
     }
 
-    @Test
-    void shouldThrowExceptionOnComplete_whenTaskExistsAndIsDone() {
-        final var task = aTaskWithStatus(TaskStatus.DONE);
+    @ParameterizedTest
+    @MethodSource("provideFinishedTaskStatuses")
+    void shouldThrowExceptionOnComplete_whenTaskIsFinished(final TaskStatus status) {
+        final var task = aTaskWithStatus(status);
         final var dto = aTaskCompleteDto();
 
         when(taskLoader.getTaskIfExists(task.getId())).thenReturn(task);
 
         assertThatThrownBy(() -> service.completeTask(task.getId(), UserId.random(), dto))
-                .isInstanceOf(TaskAlreadyDoneException.class)
-                .hasMessageContaining(String.valueOf(task.getId().id()));
+                .isInstanceOf(TaskAlreadyFinishedException.class)
+                .hasMessageContaining(String.valueOf(task.getId().id()))
+                .hasMessageContaining(status.name());
 
         verify(taskRepository, never()).save(any());
         verify(chapterRecalculationService, never()).recalculateCompletedMinutes(any());
@@ -295,6 +299,53 @@ class TaskServiceTest {
     }
 
     @Test
+    void shouldStartTask_whenTaskExistsAndIsPending() {
+        final var user = aUser();
+        final var task = aTaskWithStatus(TaskStatus.PLANNED);
+
+        when(taskLoader.getTaskIfExists(task.getId())).thenReturn(task);
+        when(taskRepository.save(any(Task.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        final var result = service.startTask(task.getId(), user.getId());
+
+        assertEquals(TaskStatus.IN_PROGRESS, result.getStatus());
+        assertNotNull(result.getStartedAt());
+
+        verify(contextLoader).assertChapterForUser(task.getChapter(), user.getId());
+        assertEquals(task.getId(), result.getId());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideFinishedTaskStatuses")
+    void shouldThrowExceptionOnStart_whenTaskIsFinished(final TaskStatus status) {
+        final var task = aTaskWithStatus(status);
+
+        when(taskLoader.getTaskIfExists(task.getId())).thenReturn(task);
+
+        assertThatThrownBy(() -> service.startTask(task.getId(), UserId.random()))
+                .isInstanceOf(TaskAlreadyFinishedException.class)
+                .hasMessageContaining(task.getId().id().toString())
+                .hasMessageContaining(status.name());
+
+        verify(taskRepository, never()).save(any());
+    }
+
+    @Test
+    void shouldThrowExceptionOnStart_whenUserDoesNotOwnChapter() {
+        final var attacker = aUser();
+        final var task = aTaskWithStatus(TaskStatus.PLANNED);
+
+        when(taskLoader.getTaskIfExists(task.getId())).thenReturn(task);
+        doThrowArcDoesNotExistForUser(task.getChapter(), attacker.getId());
+
+        assertThatThrownBy(() -> service.startTask(task.getId(), attacker.getId()))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(taskRepository, never()).save(any(Task.class));
+    }
+
+    @Test
     void shouldThrowErrorOnTodayTasks_whenArcIsValidAndChapterDoesNotExists() {
         final var userId = UserId.random();
 
@@ -308,6 +359,13 @@ class TaskServiceTest {
 
         verify(contextLoader).getChapterFromUserId(userId);
         verify(taskLoader, never()).getTasksForChapter(any(ChapterId.class));
+    }
+
+    private static Stream<Arguments> provideFinishedTaskStatuses() {
+        return Stream.of(
+                Arguments.of(TaskStatus.DONE),
+                Arguments.of(TaskStatus.SKIPPED)
+        );
     }
 
     private static Stream<Arguments> provideTaskCompleteDtos() {

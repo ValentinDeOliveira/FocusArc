@@ -34,4 +34,8 @@ export class DashboardTask {
     get isTaskEnded() {
         return this.task.status === "DONE" || this.task.status === "SKIPPED";
     }
+
+    startTask() {
+        this.started.emit(this.task);
+    }
 }

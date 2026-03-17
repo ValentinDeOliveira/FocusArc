@@ -217,6 +217,37 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
         assertionHelper.assertBadRequest(response);
     }
 
+    @Test
+    void shouldStartTask_whenTaskIsPending() {
+        final var task = domainFixture.taskForUser(user.getId());
+
+        final var response = request(tasksUrl(task.getId()) + "/start", HttpMethod.PATCH, Task.class);
+
+        assertionHelper.assertOk(response);
+        final var result = response.getBody();
+        assertNotNull(result);
+        assertEquals(TaskStatus.IN_PROGRESS, result.getStatus());
+        assertNotNull(result.getStartedAt());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideFinishedStatuses")
+    void shouldReturnBadRequest_whenStartingTaskWithFinishedStatus(final TaskStatus status) {
+        final var chapter = domainFixture.chapterForUser(user.getId());
+        final var task = domainFixture.taskForChapterWithStatus(chapter.getId(), status);
+
+        final var response = request(tasksUrl(task.getId()) + "/start", HttpMethod.PATCH, Void.class);
+
+        assertionHelper.assertBadRequest(response);
+    }
+
+    private static Stream<Arguments> provideFinishedStatuses() {
+        return Stream.of(
+                Arguments.of(TaskStatus.DONE),
+                Arguments.of(TaskStatus.SKIPPED)
+        );
+    }
+
     @ParameterizedTest
     @MethodSource("provideInvalidTaskEstimatedMinutes")
     void shouldReturnBadRequestOnCreate_whenEstimatedMinutesIsInvalid(final int minutes) {
@@ -232,6 +263,18 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
         final var dto = aTaskCreationDtoWithChapterIdAndScheduled(chapter.getId(),
                 Instant.now().minusSeconds(60));
         final var response = request(URL, HttpMethod.POST, dto, Void.class);
+        assertionHelper.assertBadRequest(response);
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideFinishedStatuses")
+    void shouldReturnBadRequest_whenCompletingTaskWithFinishedStatus(final TaskStatus status) {
+        final var chapter = domainFixture.chapterForUser(user.getId());
+        final var task = domainFixture.taskForChapterWithStatus(chapter.getId(), status);
+        final var dto = aTaskCompleteDto();
+
+        final var response = request(tasksUrl(task.getId()) + "/complete", HttpMethod.PATCH, dto, Void.class);
+
         assertionHelper.assertBadRequest(response);
     }
 

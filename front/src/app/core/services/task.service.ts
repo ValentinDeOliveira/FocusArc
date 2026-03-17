@@ -32,8 +32,12 @@ export class TaskService {
         return this.http.delete<void>(`${this.baseUrl}/chapters/${arcId}`);
     }
 
-    completeTask(dto: TaskCompletedDto): Observable<void> {
-        return this.http.patch<void>(`${this.baseUrl}/complete`, dto);
+    completeTask(id: string, dto: TaskCompletedDto): Observable<Task> {
+        return this.http.patch<Task>(`${this.baseUrl}/${id}/complete`, dto);
+    }
+
+    startTask(id: string): Observable<Task> {
+        return this.http.patch<Task>(`${this.baseUrl}/${id}/start`, null);
     }
 
     getTodayTask(): Observable<Task[]> {

@@ -468,6 +468,19 @@
           "response": []
         },
         {
+          "name": "Start Task",
+          "request": {
+            "method": "PATCH",
+            "url": {
+              "raw": "{{baseUrl}}/tasks/{{taskId}}/start",
+              "host": ["{{baseUrl}}"],
+              "path": ["tasks", "{{taskId}}", "start"]
+            },
+            "description": "Mark a task as `IN_PROGRESS` and record the start timestamp. Only tasks with a pending status (`PLANNED` or `IN_PROGRESS`) can be started — attempting to start a `DONE` or `SKIPPED` task returns `400`.\n\n**Responses**\n- `200 OK` — task updated with `IN_PROGRESS` status\n- `400 Bad Request` — task is already finished (DONE or SKIPPED)\n- `401 Unauthorized`\n- `404 Not Found`"
+          },
+          "response": []
+        },
+        {
           "name": "Complete Task",
           "request": {
             "method": "PATCH",

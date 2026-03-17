@@ -23,7 +23,9 @@ public class Task {
     private int estimatedMinutes;
     private int completedMinutes;
     private Instant startAt;
+    private Instant startedAt;
     private Instant endAt;
+    private Instant completedAt;
     private TaskStatus status;
     private String name;
     private String description;
@@ -35,7 +37,9 @@ public class Task {
         this.estimatedMinutes = task.getEstimatedMinutes();
         this.completedMinutes = task.getCompletedMinutes();
         this.startAt = task.getStartAt();
+        this.startedAt = task.getStartedAt();
         this.endAt = task.getEndAt();
+        this.completedAt = task.getCompletedAt();
         this.status = task.getStatus();
         this.name = task.getName();
         this.description = task.getDescription();
@@ -45,14 +49,16 @@ public class Task {
     public Task(final TaskId taskId, final ChapterId chapterId, final int estimatedMinutes,
                 final Instant scheduledAt, final String name, final String description,
                 final TagId tag) {
-        this(taskId, chapterId, estimatedMinutes, 0, scheduledAt,
+        this(taskId, chapterId, estimatedMinutes, 0, scheduledAt, scheduledAt,
+                scheduledAt.plus(estimatedMinutes, ChronoUnit.MINUTES),
                 scheduledAt.plus(estimatedMinutes, ChronoUnit.MINUTES),
                 TaskStatus.PLANNED, name, description, tag);
     }
 
     public Task(final TaskId taskId, final ChapterId chapterId, final int estimatedMinutes,
                 final Instant scheduledAt, final String name, final String description) {
-        this(taskId, chapterId, estimatedMinutes, 0, scheduledAt,
+        this(taskId, chapterId, estimatedMinutes, 0, scheduledAt, scheduledAt,
+                scheduledAt.plus(estimatedMinutes, ChronoUnit.MINUTES),
                 scheduledAt.plus(estimatedMinutes, ChronoUnit.MINUTES),
                 TaskStatus.PLANNED, name, description, null);
     }

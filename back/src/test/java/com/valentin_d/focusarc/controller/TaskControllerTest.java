@@ -1,9 +1,11 @@
 package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.controller.assertions.TaskAssertion;
+import com.valentin_d.focusarc.exception.task.TaskAlreadyFinishedException;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.TaskId;
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.service.task.TaskService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -14,6 +16,7 @@ import java.util.Optional;
 
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.*;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -107,12 +110,47 @@ class TaskControllerTest extends BaseSecurityControllerTest {
     }
 
     @Test
+    void shouldReturnOk_whenStartingPlannedTask() throws Exception {
+        final var task = aTaskWithStatus(TaskStatus.PLANNED);
+
+        when(taskService.startTask(task.getId(), user.getId())).thenReturn(task);
+
+        final var actions = mvcPatchWithUser(taskUrl(task.getId()) + "/start", "", user)
+                .andExpect(status().isOk());
+
+        taskAssertion.assertSingleJson(actions, task);
+    }
+
+    @Test
+    void shouldReturnBadRequest_whenStartingFinishedTask() throws Exception {
+        final var task = aTaskWithStatus(TaskStatus.DONE);
+
+        doThrow(new TaskAlreadyFinishedException(task.getId(), task.getStatus()))
+                .when(taskService).startTask(task.getId(), user.getId());
+
+        mvcPatchWithUser(taskUrl(task.getId()) + "/start", "", user)
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
     void shouldReturnOk_whenCompletingExistingTask() throws Exception {
         final var task = aTask();
         final var completeDto = aTaskCompleteDto();
 
         mvcPatchWithUser(taskUrl(task.getId()) + "/complete", toJson(completeDto), user)
                 .andExpect(status().isOk());
+    }
+
+    @Test
+    void shouldReturnBadRequest_whenCompletingFinishedTask() throws Exception {
+        final var task = aTaskWithStatus(TaskStatus.DONE);
+        final var completeDto = aTaskCompleteDto();
+
+        doThrow(new TaskAlreadyFinishedException(task.getId(), task.getStatus()))
+                .when(taskService).completeTask(task.getId(), user.getId(), completeDto);
+
+        mvcPatchWithUser(taskUrl(task.getId()) + "/complete", toJson(completeDto), user)
+                .andExpect(status().isBadRequest());
     }
 
     @Test

@@ -3,7 +3,7 @@ package com.valentin_d.focusarc.service.task;
 import com.valentin_d.focusarc.dto.task.TaskCompleteDto;
 import com.valentin_d.focusarc.dto.task.TaskCreationDto;
 import com.valentin_d.focusarc.dto.task.TaskUpdateDto;
-import com.valentin_d.focusarc.exception.task.TaskAlreadyDoneException;
+import com.valentin_d.focusarc.exception.task.TaskAlreadyFinishedException;
 import com.valentin_d.focusarc.exception.task.TaskInvalidMinuteException;
 import com.valentin_d.focusarc.exception.task.TaskOverlapException;
 import com.valentin_d.focusarc.model.id.ChapterId;
@@ -131,22 +131,43 @@ public class TaskService {
         chapterRecalculationService.recalculateCompletedMinutes(chapterId);
     }
 
-    public void completeTask(@NotNull TaskId taskId,
+    public Task completeTask(@NotNull TaskId taskId,
                              @NotNull UserId userId,
                              @NotNull TaskCompleteDto taskCompleteDto) {
         final var task = taskLoader.getTaskIfExists(taskId);
         contextLoader.assertChapterForUser(task.getChapter(), userId);
 
-        if (task.isDone()) {
-            throw new TaskAlreadyDoneException(taskId);
+        if (task.getStatus().isFinished()) {
+            throw new TaskAlreadyFinishedException(taskId, task.getStatus());
         }
 
         assertMinutes(taskId, taskCompleteDto.completedMinutes());
 
         task.setStatus(TaskStatus.DONE);
         task.setCompletedMinutes(taskCompleteDto.completedMinutes());
+        task.setCompletedAt(Instant.now());
+
         taskRepository.save(task);
         chapterRecalculationService.recalculateCompletedMinutes(task.getChapter());
+
+        return task;
+    }
+
+
+    public Task startTask(@NotNull TaskId taskId,
+                          @NotNull UserId id) {
+        final var task = taskLoader.getTaskIfExists(taskId);
+        contextLoader.assertChapterForUser(task.getChapter(), id);
+
+        if(task.getStatus().isFinished()) {
+            throw new TaskAlreadyFinishedException(taskId, task.getStatus());
+        }
+
+        task.setStatus(TaskStatus.IN_PROGRESS);
+        task.setStartedAt(Instant.now());
+        taskRepository.save(task);
+
+        return task;
     }
 
     public List<Task> getTodaysTasks(@NotNull UserId userId) {
