@@ -60,7 +60,9 @@ export class DashboardResume {
     }
 
     protected setActiveTask(task: Task) {
-        this.tasks.update(l => l.map(task => task.id == task.id ? task : task));
-        this.activeTask.set(task);
+        this.taskService.startTask(task.id).subscribe(updatedTask => {
+            this.tasks.update(l => l.map(task => task.id == updatedTask.id ? updatedTask : task));
+            this.activeTask.set(task);
+        });
     }
 }

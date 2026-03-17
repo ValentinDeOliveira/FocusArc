@@ -36,6 +36,10 @@ export class TaskService {
         return this.http.patch<Task>(`${this.baseUrl}/${id}/complete`, dto);
     }
 
+    startTask(id: string): Observable<Task> {
+        return this.http.patch<Task>(`${this.baseUrl}/${id}/start`, null);
+    }
+
     getTodayTask(): Observable<Task[]> {
         return this.http.get<Task[]>(`${this.baseUrl}/today`);
     }
