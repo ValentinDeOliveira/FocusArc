@@ -54,10 +54,7 @@ export class DashboardTaskTimer implements OnInit {
     private interval: ReturnType<typeof setInterval> | null = null;
 
     complete() {
-        if (this.interval) {
-            clearInterval(this.interval);
-            this.interval = null;
-        }
+        this.clearIntervalIfExists();
         const overtime = Math.max(0, -this.remainingSeconds());
         this.done.emit(overtime);
     }
@@ -71,6 +68,13 @@ export class DashboardTaskTimer implements OnInit {
             this.remainingSeconds.update(s => s - 1);
         }, 0.5);
 
-        this.destroyRef.onDestroy(() => this.complete());
+        this.destroyRef.onDestroy(() => this.clearIntervalIfExists());
+    }
+
+    private clearIntervalIfExists() {
+        if (this.interval) {
+            clearInterval(this.interval);
+            this.interval = null;
+        }
     }
 }

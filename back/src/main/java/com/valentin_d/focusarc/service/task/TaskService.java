@@ -158,6 +158,7 @@ public class TaskService {
                           @NotNull UserId id) {
         final var task = taskLoader.getTaskIfExists(taskId);
         contextLoader.assertChapterForUser(task.getChapter(), id);
+        taskLoader.assertNoOtherTasksInProgressForChapter(task.getChapter(), taskId);
 
         if(task.getStatus().isFinished()) {
             throw new TaskAlreadyFinishedException(taskId, task.getStatus());
