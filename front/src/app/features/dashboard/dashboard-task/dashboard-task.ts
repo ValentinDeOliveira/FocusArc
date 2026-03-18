@@ -19,6 +19,7 @@ import {TaskStatusBadge} from '../../../shared/task-status-badge/task-status-bad
 })
 export class DashboardTask {
     @Input() task!: Task;
+    @Input() hasActiveTask = false;
     started = output<Task>();
 
     private datePipe = inject(DatePipe);

@@ -115,7 +115,7 @@ public class DevSeedController {
                                        final TagId primary, final TagId secondary) {
         final var t1 = doneTask(chapterId, "Cleaning", 50, 43, dayStart.minus(2, ChronoUnit.HOURS), primary);
         final var t2 = plannedTask(chapterId, "Morning planning",   15, dayStart,               primary);
-        final var t3 = inProgressTask(chapterId, dayStart.plus(15,  ChronoUnit.MINUTES), primary);
+        final var t3 = plannedTask(chapterId,"Core feature dev", 120, dayStart.plus(15,  ChronoUnit.MINUTES), primary);
         final var t4 = plannedTask(chapterId, "Lunch break walk",   30, dayStart.plus(135, ChronoUnit.MINUTES), secondary);
         final var t5 = plannedTask(chapterId, "Study session",      60, dayStart.plus(165, ChronoUnit.MINUTES), secondary);
         return List.of(t1, t2, t3, t4, t5);
@@ -140,13 +140,6 @@ public class DevSeedController {
                              final Instant startAt, final TagId tag) {
         final var task = new Task(chapterId, estimated, startAt, name, tag);
         task.setStatus(TaskStatus.SKIPPED);
-        return task;
-    }
-
-    private Task inProgressTask(final ChapterId chapterId, final Instant startAt,
-                                final TagId tag) {
-        final var task = new Task(chapterId, 120, startAt, "Core feature dev", tag);
-        task.setStatus(TaskStatus.IN_PROGRESS);
         return task;
     }
 

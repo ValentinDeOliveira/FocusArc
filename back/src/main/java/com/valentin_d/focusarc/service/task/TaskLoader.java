@@ -1,9 +1,11 @@
 package com.valentin_d.focusarc.service.task;
 
 import com.valentin_d.focusarc.exception.task.TaskDoesNotExistException;
+import com.valentin_d.focusarc.exception.task.TaskInProgressException;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.TaskId;
 import com.valentin_d.focusarc.model.task.Task;
+import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.repository.TaskRepository;
 import com.valentin_d.focusarc.service.BaseService;
 import lombok.RequiredArgsConstructor;
@@ -45,5 +47,11 @@ public class TaskLoader extends BaseService {
                                                   Instant start, Instant end) {
         return taskRepository.existsByChapterAndStatusInAndIdNotAndStartAtBeforeAndEndAtAfter(
                 chapterId, PENDING, excludedId, end, start);
+    }
+
+    public void assertNoOtherTasksInProgressForChapter(ChapterId chapterId, TaskId taskId) {
+        if(taskRepository.existsByChapterAndStatus(chapterId, TaskStatus.IN_PROGRESS)) {
+            throw new TaskInProgressException(chapterId, taskId);
+        }
     }
 }
