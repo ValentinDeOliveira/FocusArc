@@ -49,7 +49,7 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
         assertEquals(dto.estimatedMinutes(), task.getEstimatedMinutes());
         assertEquals(0, task.getCompletedMinutes());
         assertEquals(TaskStatus.PLANNED, task.getStatus());
-        assertEquals(task.getTag(), dto.tag());
+        assertEquals(task.getTagId(), dto.tagId());
         assertEquals(task.getName(), dto.name());
         assertEquals(task.getDescription(), dto.description());
         assertNotNull(task.getId());

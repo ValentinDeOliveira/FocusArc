@@ -1,6 +1,6 @@
 <div>
     <div>
-        <h2 class="today-title">Today — {{ todayDate() }}</h2>
+        <h2 class="today-title">Today - {{ todayDate() }}</h2>
         @if (chapterSummary()) {
             <div class="today-subtitle">
                 <span>{{ getPlannedTime() }} planned</span>
@@ -16,7 +16,7 @@
     }
     <div class="task-list-card">
         @for (task of tasks(); track task.id; let last = $last) {
-            <app-dashboard-task [task]="task" [hasActiveTask]="!!activeTask()" (started)="setActiveTask($event)" />
+            <app-dashboard-task [task]="task" [tag]="tagStore.byId(task.tagId)!" [hasActiveTask]="!!activeTask()" (started)="setActiveTask($event)" />
             @if (!last) {
                 <div class="task-divider"></div>
             }

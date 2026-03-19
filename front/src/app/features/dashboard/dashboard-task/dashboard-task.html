@@ -1,5 +1,5 @@
 <div class="task-row">
-    <mat-checkbox [checked]="isTaskEnded" [disabled]="isTaskEnded"/>
+    <app-tag-dot [tag]="tag"/>
     <div class="task-info">
         <span class="task-name" [class.line-through]="isTaskEnded">{{ task.name }}</span>
         <span class="task-time">{{ formatTime(task.startAt) }} - {{ formatTime(task.endAt) }}</span>

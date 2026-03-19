@@ -42,7 +42,7 @@ public final class TaskFactory {
     }
 
     public static TaskCreationDto aTaskCreationDtoWithChapterIdWithTag(final ChapterId chapterId, final TagId tagId) {
-        return TaskCreationDtoBuilder.builder().chapterId(chapterId).tag(tagId).build().build();
+        return TaskCreationDtoBuilder.builder().chapterId(chapterId).tagId(tagId).build().build();
     }
 
     public static TaskCreationDto aTaskCreationDtoWithChapterIdAndEstimatedMinutes(final ChapterId chapterId,
@@ -52,7 +52,7 @@ public final class TaskFactory {
 
     public static TaskCreationDto aTaskCreationDtoWithChapterIdAndScheduled(final ChapterId chapterId,
                                                                             final Instant scheduled) {
-        return TaskCreationDtoBuilder.builder().chapterId(chapterId).scheduledAt(scheduled).tag(null).build().build();
+        return TaskCreationDtoBuilder.builder().chapterId(chapterId).scheduledAt(scheduled).tagId(null).build().build();
     }
 
     public static TaskUpdateDto aTaskUpdateDto() {
@@ -68,7 +68,7 @@ public final class TaskFactory {
                                                                          final Instant scheduledAt,
                                                                          final int estimatedMinutes) {
         return TaskCreationDtoBuilder.builder()
-                .chapterId(chapterId).scheduledAt(scheduledAt).estimatedMinutes(estimatedMinutes).tag(null)
+                .chapterId(chapterId).scheduledAt(scheduledAt).estimatedMinutes(estimatedMinutes).tagId(null)
                 .build().build();
     }
 

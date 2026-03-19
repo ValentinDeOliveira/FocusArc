@@ -21,9 +21,9 @@ public class TaskCreationDtoBuilder {
     @Builder.Default
     private final String description = "My description";
     @Builder.Default
-    private final TagId tag = TagId.random();
+    private final TagId tagId = TagId.random();
 
     public TaskCreationDto build() {
-        return new TaskCreationDto(chapterId, estimatedMinutes, scheduledAt, name, description, tag);
+        return new TaskCreationDto(chapterId, estimatedMinutes, scheduledAt, name, description, tagId);
     }
 }

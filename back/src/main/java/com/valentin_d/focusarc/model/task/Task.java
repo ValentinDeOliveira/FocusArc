@@ -29,7 +29,7 @@ public class Task {
     private TaskStatus status;
     private String name;
     private String description;
-    private TagId tag;
+    private TagId tagId;
 
     public Task(final Task task){
         this.id = task.getId();
@@ -43,7 +43,7 @@ public class Task {
         this.status = task.getStatus();
         this.name = task.getName();
         this.description = task.getDescription();
-        this.tag = task.getTag();
+        this.tagId = task.getTagId();
     }
 
     public Task(final TaskId taskId, final ChapterId chapterId, final int estimatedMinutes,
