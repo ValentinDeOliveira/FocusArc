@@ -3,15 +3,15 @@ import {Task} from '../../../models/task.model';
 import {MatCheckbox} from '@angular/material/checkbox';
 import {DatePipe} from '@angular/common';
 import {formatMinutes} from '../../../utils/time.utils';
-import {MatButton} from '@angular/material/button';
 import {TaskStatusBadge} from '../../../shared/task-status-badge/task-status-badge';
+import {PrimaryButton} from '../../../shared/primary-button/primary-button';
 
 @Component({
     selector: 'app-dashboard-task',
     imports: [
         MatCheckbox,
-        MatButton,
         TaskStatusBadge,
+        PrimaryButton,
     ],
     providers: [DatePipe],
     templateUrl: './dashboard-task.html',

@@ -1,4 +1,4 @@
-<div class="timer-wrapper">
+<div class="timer-card">
     <p class="task-name">{{ task().name }}</p>
     <div class="timer-container">
         <svg viewBox="0 0 100 100" class="timer-svg">
@@ -16,12 +16,12 @@
             <span class="timer-label" [style.color]="strokeColor()">{{ label() }}</span>
         </div>
     </div>
-    <div>
+    <div class="timer-meta">
         <span>Estimated {{task().estimatedMinutes}} min</span>
         @if (overtimeDisplay()) {
             <span> • </span>
-            <span class="overtime-duration">{{ overtimeDisplay() }} over estimate</span>
+            <span class="overtime-duration">{{ overtimeDisplay() }} over</span>
         }
     </div>
-    <button matButton="outlined" (click)="complete()">{{ doneButtonText() }}</button>
+    <app-primary-btn (click)="complete()">{{ doneButtonText() }}</app-primary-btn>
 </div>

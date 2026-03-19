@@ -7,6 +7,6 @@
     <app-task-status-badge [status]="task.status"/>
     <span class="task-duration">{{ getEstimatedMinutes() }}</span>
     @if (!isTaskEnded && !hasActiveTask) {
-        <button matButton="outlined" (click)="startTask()">Start</button>
+        <app-primary-btn (click)="startTask()">Start</app-primary-btn>
     }
 </div>

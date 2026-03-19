@@ -1,12 +1,12 @@
 import { Component, computed, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
 import { Task } from '../../../models/task.model';
-import {MatButton} from '@angular/material/button';
 import {formatSeconds} from '../../../utils/time.utils';
+import {PrimaryButton} from '../../../shared/primary-button/primary-button';
 
 @Component({
     selector: 'app-dashboard-task-timer',
     imports: [
-        MatButton
+        PrimaryButton
     ],
     templateUrl: './dashboard-task-timer.html',
     styleUrl: './dashboard-task-timer.css',

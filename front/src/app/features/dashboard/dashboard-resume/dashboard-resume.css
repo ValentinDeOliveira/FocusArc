@@ -1,14 +1,36 @@
 .today-title {
-    font-size: 2.6rem;
-    color: #2d3561;
+    font-size: 2.1rem;
+    font-weight: 700;
+    color: var(--color-text);
     margin: 0;
+    letter-spacing: -0.02em;
 }
 
 .today-subtitle {
-    font-size: 1.5rem;
-    color: #9ca3af;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 1.1rem;
+    color: var(--color-text-muted);
+    margin-top: 6px;
 }
 
 .completed-tasks {
-    color: #15803d;
+    color: var(--color-success);
+    font-weight: 600;
+}
+
+.task-list-card {
+    margin-top: 24px;
+    background: var(--color-surface);
+    border-radius: 16px;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 16px var(--color-primary-shadow), 0 1px 4px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
+}
+
+.task-divider {
+    height: 1px;
+    background-color: var(--color-surface-subtle);
+    margin: 0 20px;
 }
