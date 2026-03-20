@@ -1,11 +1,11 @@
 import { Component, signal } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {Dashboard} from './features/dashboard/dashboard';
 import {ArcProgress} from './features/arc-section/arc-progress/arc-progress';
+import {DashboardResume} from './features/dashboard/dashboard-resume/dashboard-resume';
 
 @Component({
   selector: 'app-root',
-    imports: [RouterOutlet, Dashboard, ArcProgress],
+    imports: [RouterOutlet,  ArcProgress, DashboardResume],
   templateUrl: './app.html',
   styleUrl: './app.css',
 })
