@@ -1,37 +1,50 @@
-.arc-progress-stats-container {
-    border: gray solid 1px;
+mat-card.arc-progress-stats-container {
+    border: 1px solid var(--color-border);
     border-radius: 16px;
-    margin: 0 16px;
+    box-shadow: 0 4px 16px var(--color-primary-shadow), 0 1px 4px rgba(0, 0, 0, 0.08);
+    margin: 12px 0 0 0;
+    overflow: hidden;
 }
 
+.arc-progress-header {
+    padding: 14px 16px 10px;
+}
 
 .arc-progress-title {
-    font-size: 1.7rem;
+    font-size: 0.8rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-faint);
 }
 
 hr {
     border: none;
-    border-top: 1px solid lightgray;
+    border-top: 1px solid var(--color-surface-subtle);
+    margin: 0;
 }
 
 mat-card-content div {
     display: flex;
     align-items: center;
-    gap: 15px;
-    margin: 16px 0;
+    gap: 12px;
+    padding: 14px 16px;
     justify-content: space-between;
 }
 
-.stat-right {
-    margin-left: auto;
-    font-size: 1.6rem;
-    font-weight: 600;
+mat-card-content div + div {
+    border-top: 1px solid var(--color-surface-hover);
 }
 
 .stat-left {
-    font-size: 1.6rem;
+    font-size: 1.05rem;
+    color: var(--color-text-secondary);
+    flex: 1;
 }
 
-.arc-progress-header {
-    padding: 15px;
+.stat-right {
+    font-size: 1.05rem;
+    font-weight: 700;
+    color: var(--color-text);
+    margin-left: auto;
 }

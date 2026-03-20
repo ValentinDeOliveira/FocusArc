@@ -1,3 +1,38 @@
-/* You can add global styles to this file, and also import other style files */
-
 @import 'tailwindcss';
+
+:root {
+    /* Primary */
+    --color-primary:        #2563eb;
+    --color-primary-hover:  #1d4ed8;
+    --color-primary-shadow: rgba(37, 99, 235, 0.12);
+
+    /* Backgrounds */
+    --color-bg:             #f0f5ff;
+    --color-surface:        #ffffff;
+    --color-surface-hover:  #f8fafc;
+    --color-surface-subtle: #f1f5f9;
+
+    /* Borders */
+    --color-border:         #e2e8f0;
+
+    /* Text */
+    --color-text:           #0f172a;
+    --color-text-secondary: #475569;
+    --color-text-muted:     #64748b;
+    --color-text-faint:     #94a3b8;
+
+    /* Semantic — status badges */
+    --color-success-bg:     #dcfce7;
+    --color-success-text:   #15803d;
+    --color-success:        #16a34a;
+
+    --color-warning-bg:     #ffedd5;
+    --color-warning-text:   #c2410c;
+    --color-warning:        #f97316;
+
+    --color-in-progress-bg:   #dbeafe;
+    --color-in-progress-text: #1d4ed8;
+
+    /* States */
+    --color-disabled: #cbd5e1;
+}

@@ -4,6 +4,7 @@ import {DatePipe, NgOptimizedImage} from '@angular/common';
 import {ArcProgressBar} from '../arc-progress-bar/arc-progress-bar';
 import {MatIcon} from '@angular/material/icon';
 import {Arc} from '../../../../models/arc.model';
+import {PrimaryButton} from '../../../../shared/primary-button/primary-button';
 
 @Component({
     selector: 'app-arc-card-container',
@@ -13,7 +14,8 @@ import {Arc} from '../../../../models/arc.model';
         MatCardActions,
         NgOptimizedImage,
         ArcProgressBar,
-        MatIcon
+        MatIcon,
+        PrimaryButton,
     ],
     providers: [DatePipe],
     templateUrl: './arc-card-container.html',
