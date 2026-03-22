@@ -6,13 +6,14 @@ import {formatMinutes} from '../../../utils/time.utils';
 import {TaskStatusBadge} from '../../../shared/task-status-badge/task-status-badge';
 import {PrimaryButton} from '../../../shared/primary-button/primary-button';
 import {TagDot} from '../../../shared/tag-dot/tag-dot';
-
+import {TaskRow} from '../../../shared/task-row/task-row';
 @Component({
     selector: 'app-dashboard-task',
     imports: [
         TaskStatusBadge,
         PrimaryButton,
         TagDot,
+        TaskRow,
     ],
     providers: [DatePipe],
     templateUrl: './dashboard-task.html',

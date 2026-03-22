@@ -1,0 +1,16 @@
+@if (!isTaskCreation) {
+    <app-task-row class="centered">
+        <app-primary-btn (click)="addTask()">
+            <mat-icon>add</mat-icon>
+        </app-primary-btn>
+    </app-task-row>
+} @else {
+    <app-task-row>
+        <app-tag-dot [tag]="null"/>
+        <app-task-info-edit
+            (nameChange)="name = $event"
+            (scheduledAtChange)="scheduledAt = $event"
+            (estimatedMinutesChange)="estimatedMinutes = $event"
+        />
+    </app-task-row>
+}

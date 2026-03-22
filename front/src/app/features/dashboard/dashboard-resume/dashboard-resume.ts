@@ -9,12 +9,14 @@ import {formatMinutes} from '../../../utils/time.utils';
 import {DashboardTaskTimer} from '../dashboard-task-timer/dashboard-task-timer';
 import {TagStore} from '../../../core/stores/tag.store';
 import {switchMap} from 'rxjs';
+import {TaskCreation} from '../task-creation/task-creation';
 
 @Component({
     selector: 'app-dashboard-resume',
     imports: [
         DashboardTask,
-        DashboardTaskTimer
+        DashboardTaskTimer,
+        TaskCreation
     ],
     providers: [DatePipe],
     templateUrl: './dashboard-resume.html',

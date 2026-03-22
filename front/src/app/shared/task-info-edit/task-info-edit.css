@@ -1,0 +1,52 @@
+:host {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+}
+
+.task-name-input,
+.task-time-input,
+.task-duration-input {
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--color-text);
+    font-family: inherit;
+    padding: 0;
+}
+
+.task-name-input {
+    font-size: 1.05rem;
+    font-weight: 500;
+}
+
+.task-name-input::placeholder {
+    color: var(--color-text-faint);
+}
+
+.task-time-row {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 3px;
+}
+
+.task-time-input,
+.task-duration-input {
+    font-size: 0.9rem;
+    color: var(--color-text-faint);
+}
+
+.task-duration-input {
+    width: 48px;
+}
+
+.task-duration-input::placeholder {
+    color: var(--color-text-faint);
+}
+
+.task-time-separator {
+    font-size: 0.9rem;
+    color: var(--color-text-faint);
+}

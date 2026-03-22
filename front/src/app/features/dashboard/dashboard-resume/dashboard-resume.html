@@ -15,11 +15,10 @@
         <app-dashboard-task-timer [task]="activeTask()!" (done)="onTaskDone($event)" />
     }
     <div class="task-list-card">
-        @for (task of tasks(); track task.id; let last = $last) {
+        @for (task of tasks(); track task.id) {
             <app-dashboard-task [task]="task" [tag]="tagStore.byId(task.tagId)!" [hasActiveTask]="!!activeTask()" (started)="setActiveTask($event)" />
-            @if (!last) {
-                <div class="task-divider"></div>
-            }
+            <div class="task-divider"></div>
         }
+        <app-task-creation/>
     </div>
 </div>
