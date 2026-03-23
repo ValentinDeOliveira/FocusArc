@@ -176,6 +176,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         assertionHelper.assertOk(response);
         final var summary = response.getBody();
         assertNotNull(summary);
+        assertEquals(summary.arcId(), arc.getId());
         assertEquals(arc.getTotalEstimatedMinutes(), summary.totalEstimatedMinutes());
         assertEquals(2, summary.nbChapterCompleted());
         assertEquals(1, summary.nbChapterPlanned());

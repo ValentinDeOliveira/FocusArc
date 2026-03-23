@@ -17,6 +17,8 @@ export interface TaskCreationDto {
     chapterId: string;
     estimatedMinutes: number;
     scheduledAt: string;
+    name: string;
+    tagId: string | null;
 }
 
 export interface TaskUpdateDto {

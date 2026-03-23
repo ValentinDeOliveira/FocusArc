@@ -95,6 +95,7 @@ public class ChapterService {
         final var remainingTime = chapter.getEstimatedMinutes() - completedMinutes;
 
         return new ChapterSummaryResponseDto(
+                chapter.getId(),
                 tasksTodo,
                 chapter.getEstimatedMinutes(),
                 completedMinutes,

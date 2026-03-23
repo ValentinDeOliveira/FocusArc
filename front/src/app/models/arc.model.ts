@@ -22,6 +22,7 @@ export interface ArcUpdateDto {
 }
 
 export interface ArcSummaryResponseDto {
+    arcId: string;
     totalEstimatedMinutes: number,
     totalCompletedMinutes: number,
     remainingMinutes: number,

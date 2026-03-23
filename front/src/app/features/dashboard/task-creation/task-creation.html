@@ -6,11 +6,15 @@
     </app-task-row>
 } @else {
     <app-task-row>
-        <app-tag-dot [tag]="null"/>
+        <app-tag-picker [selectedTag]="selectedTag" (tagChange)="selectedTag = $event"/>
         <app-task-info-edit
             (nameChange)="name = $event"
             (scheduledAtChange)="scheduledAt = $event"
             (estimatedMinutesChange)="estimatedMinutes = $event"
         />
+        <button class="cancel-btn" (click)="cancel()">
+            <mat-icon>close</mat-icon>
+        </button>
+        <app-primary-btn (click)="confirm()">Add</app-primary-btn>
     </app-task-row>
 }

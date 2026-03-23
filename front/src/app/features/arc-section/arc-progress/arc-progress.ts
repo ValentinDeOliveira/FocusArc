@@ -5,6 +5,7 @@ import {Arc, ArcSummaryResponseDto} from '../../../models/arc.model';
 import {AuthService} from '../../../core/services/auth.service';
 import {LoginRequestDto} from '../../../models/auth.model';
 import {ArcProgressStats} from '../arc-progress-card/arc-progress-stats/arc-progress-stats';
+import {ContextStore} from '../../../core/stores/context.store';
 
 @Component({
     selector: 'app-arc-progress',
@@ -18,6 +19,8 @@ import {ArcProgressStats} from '../arc-progress-card/arc-progress-stats/arc-prog
 export class ArcProgress implements OnInit {
     private arcService = inject(ArcService);
     private authService = inject(AuthService);
+    private contextStore = inject(ContextStore);
+
     arc = signal<Arc | undefined>(undefined);
     arcSummary = signal<ArcSummaryResponseDto | undefined>(undefined);
 
@@ -34,6 +37,7 @@ export class ArcProgress implements OnInit {
             });
             this.arcService.getSummary().subscribe(summary => {
                 this.arcSummary.set(summary);
+                this.contextStore.setArcId(summary.arcId);
             });
         });
     }

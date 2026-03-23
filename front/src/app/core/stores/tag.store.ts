@@ -11,6 +11,8 @@ export class TagStore {
     private tags = signal<Tag[]>([]);
     private tagMap = computed(() => new Map(this.tags().map(t => [t.id, t])));
 
+    all = computed(() => this.tags());
+
     load(): Observable<Tag[]> {
         return this.tagService.getAllForUser().pipe(
             tap(tags => this.tags.set(tags))
