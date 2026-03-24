@@ -5,9 +5,12 @@ import {Tag} from '../../../models/tag.model';
 import {TagPicker} from '../../../shared/tag-picker/tag-picker';
 import {TaskRow} from '../../../shared/task-row/task-row';
 import {TaskInfoEdit} from '../../../shared/task-info-edit/task-info-edit';
-import {Task, TaskCreationDto} from '../../../models/task.model';
+import {TaskCreationDto} from '../../../models/task.model';
 import {TaskService} from '../../../core/services/task.service';
 import {ContextStore} from '../../../core/stores/context.store';
+import {HttpErrorResponse} from '@angular/common/http';
+import {getTaskError} from '../../../models/errors/task-error.model';
+import {ToastrService} from 'ngx-toastr';
 
 @Component({
     selector: 'app-task-creation',
@@ -28,10 +31,12 @@ export class TaskCreation {
     protected estimatedMinutes: number | null = null;
     protected selectedTag: Tag | null = null;
 
+    toastr = inject(ToastrService);
+
 
     private contextStore = inject(ContextStore);
     private taskService = inject(TaskService);
-    taskCreated = output<Task>();
+    taskCreated = output<void>();
 
     protected addTask() {
         this.isTaskCreation = true;
@@ -58,9 +63,15 @@ export class TaskCreation {
             name: this.name
         }
 
-        this.taskService.create(dto).subscribe(task => {
-            this.taskCreated.emit(task);
-            this.isTaskCreation = false;
+        this.taskService.create(dto).subscribe({
+            next: () => {
+                this.taskCreated.emit();
+                this.isTaskCreation = false;
+            },
+            error: (err: HttpErrorResponse) => {
+                const message = getTaskError(err.error?.error);
+                this.toastr.error(message);
+            }
         });
     }
 }

@@ -1,5 +1,10 @@
 @import 'tailwindcss';
 
+#toast-container > div {
+    width: 30%;
+    margin-top: 16px;
+}
+
 :root {
     /* Primary */
     --color-primary:        #2563eb;
