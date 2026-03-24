@@ -19,6 +19,6 @@
             <app-dashboard-task [task]="task" [tag]="tagStore.byId(task.tagId)!" [hasActiveTask]="!!activeTask()" (started)="setActiveTask($event)" />
             <div class="task-divider"></div>
         }
-        <app-task-creation/>
+        <app-task-creation (taskCreated)="onTaskCreated($event)"/>
     </div>
 </div>

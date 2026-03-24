@@ -58,7 +58,7 @@ public class TaskService {
                                         @NotNull UserId userId) {
         contextLoader.assertChapterForUser(chapterId, userId);
 
-        return taskRepository.findAllByChapter(chapterId);
+        return taskRepository.findAllByChapterOrderByStartAtAsc(chapterId);
     }
 
     public Task create(@NotNull TaskCreationDto dto,
@@ -124,7 +124,7 @@ public class TaskService {
     }
 
     public void deleteTasksForChapter(@NotNull ChapterId chapterId) {
-        final var tasks = taskRepository.findAllByChapter(chapterId);
+        final var tasks = taskRepository.findAllByChapterOrderByStartAtAsc(chapterId);
         taskRepository.deleteAll(tasks);
 
         chapterRecalculationService.recalculateEstimatedMinutes(chapterId);

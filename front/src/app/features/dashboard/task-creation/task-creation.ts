@@ -1,11 +1,11 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, output} from '@angular/core';
 import {PrimaryButton} from '../../../shared/primary-button/primary-button';
 import {MatIcon} from '@angular/material/icon';
 import {Tag} from '../../../models/tag.model';
 import {TagPicker} from '../../../shared/tag-picker/tag-picker';
 import {TaskRow} from '../../../shared/task-row/task-row';
 import {TaskInfoEdit} from '../../../shared/task-info-edit/task-info-edit';
-import {TaskCreationDto} from '../../../models/task.model';
+import {Task, TaskCreationDto} from '../../../models/task.model';
 import {TaskService} from '../../../core/services/task.service';
 import {ContextStore} from '../../../core/stores/context.store';
 
@@ -22,15 +22,16 @@ import {ContextStore} from '../../../core/stores/context.store';
     styleUrl: './task-creation.css',
 })
 export class TaskCreation {
-    private contextStore = inject(ContextStore);
-
     protected isTaskCreation = false;
     protected name = '';
     protected scheduledAt = '';
     protected estimatedMinutes: number | null = null;
     protected selectedTag: Tag | null = null;
 
+
+    private contextStore = inject(ContextStore);
     private taskService = inject(TaskService);
+    taskCreated = output<Task>();
 
     protected addTask() {
         this.isTaskCreation = true;
@@ -57,6 +58,9 @@ export class TaskCreation {
             name: this.name
         }
 
-        this.taskService.create(dto).subscribe();
+        this.taskService.create(dto).subscribe(task => {
+            this.taskCreated.emit(task);
+            this.isTaskCreation = false;
+        });
     }
 }

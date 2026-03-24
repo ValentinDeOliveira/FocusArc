@@ -80,4 +80,10 @@ export class DashboardResume implements OnInit {
             this.activeTask.set(task);
         });
     }
+
+    protected onTaskCreated(task: Task) {
+        this.taskService.getTodayTask().subscribe(tasks => {
+            this.tasks.set(tasks);
+        })
+    }
 }

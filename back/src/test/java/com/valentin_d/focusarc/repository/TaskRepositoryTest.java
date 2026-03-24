@@ -43,7 +43,7 @@ class TaskRepositoryTest {
         repository.save(task1);
         repository.save(task2);
 
-        final var arcsLists = repository.findAllByChapter(chapterId);
+        final var arcsLists = repository.findAllByChapterOrderByStartAtAsc(chapterId);
         assertEquals(2, arcsLists.size());
         assertThatCollection(arcsLists).containsExactly(task1, task2);
     }

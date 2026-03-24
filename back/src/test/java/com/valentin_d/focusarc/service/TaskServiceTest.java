@@ -173,7 +173,7 @@ class TaskServiceTest {
         final var chapter = aChapter();
         final var task = aTaskWithChapterId(chapter.getId());
 
-        when(taskRepository.findAllByChapter(chapter.getId())).thenReturn(List.of(task));
+        when(taskRepository.findAllByChapterOrderByStartAtAsc(chapter.getId())).thenReturn(List.of(task));
 
         service.deleteAllForChapter(chapter.getId(), user.getId());
 
@@ -202,7 +202,7 @@ class TaskServiceTest {
         final var user = aUser();
         final var chapter = aChapter();
         final var task = aTaskWithChapterId(chapter.getId());
-        when(taskRepository.findAllByChapter(chapter.getId())).thenReturn(List.of(task));
+        when(taskRepository.findAllByChapterOrderByStartAtAsc(chapter.getId())).thenReturn(List.of(task));
 
         final var result = service.findAllForChapter(chapter.getId(), user.getId());
 
@@ -222,7 +222,7 @@ class TaskServiceTest {
                 .isInstanceOf(ChapterDoesNotExistException.class)
                 .hasMessageContaining(String.valueOf(chapter.getId().id().toString()));
 
-        verify(taskRepository, never()).findAllByChapter(chapter.getId());
+        verify(taskRepository, never()).findAllByChapterOrderByStartAtAsc(chapter.getId());
     }
 
     @Test
@@ -440,7 +440,7 @@ class TaskServiceTest {
         assertThatThrownBy(() -> service.findAllForChapter(chapter.getId(), attacker.getId()))
                 .isInstanceOf(ArcDoesNotExistForUserException.class);
 
-        verify(taskRepository, never()).findAllByChapter(any(ChapterId.class));
+        verify(taskRepository, never()).findAllByChapterOrderByStartAtAsc(any(ChapterId.class));
     }
 
     @Test

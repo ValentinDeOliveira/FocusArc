@@ -11,7 +11,7 @@ import java.util.Collection;
 import java.util.List;
 
 public interface TaskRepository extends MongoRepository<Task, TaskId> {
-    List<Task> findAllByChapter(final ChapterId chapterId);
+    List<Task> findAllByChapterOrderByStartAtAsc(final ChapterId chapterId);
 
     List<Task> findAllByChapterAndStatusIn(final ChapterId chapter, final Collection<TaskStatus> statuses);
 
