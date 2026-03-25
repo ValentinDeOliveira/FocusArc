@@ -27,7 +27,7 @@ public class TaskLoader extends BaseService {
     }
 
     public List<Task> getTasksForChapter(ChapterId chapterId) {
-        return taskRepository.findAllByChapter(chapterId);
+        return taskRepository.findAllByChapterOrderByStartAtAsc(chapterId);
     }
 
     public List<Task> getNotCompletedTaskForChapter(ChapterId chapterId) {

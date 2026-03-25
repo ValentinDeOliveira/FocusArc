@@ -8,6 +8,7 @@ public class ChapterSummaryResponseAssertion extends BaseAssertion<ChapterSummar
 
     @Override
     protected void assertJson(final ResultActions actions, final String path, final ChapterSummaryResponseDto expected) throws Exception {
+        expect(actions, path, "chapterId", expected.chapterId().id().toString());
         taskAssertion.assertListPathJson(actions, "tasksToComplete", expected.tasksToComplete());
         expect(actions, path, "estimatedMinutes", expected.estimatedMinutes());
         expect(actions, path, "completedMinutes", expected.completedMinutes());

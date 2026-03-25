@@ -19,6 +19,7 @@ export interface ChapterUpdateDto {
 }
 
 export interface ChapterSummaryResponseDto {
+    chapterId: string;
     tasksToComplete: Task[];
     estimatedMinutes: number;
     completedMinutes: number;

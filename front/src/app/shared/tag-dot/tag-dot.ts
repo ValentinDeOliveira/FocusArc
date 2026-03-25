@@ -22,7 +22,6 @@ export class TagDot {
     @Input() tag: Tag | null = null;
 
     get color(): string {
-        console.log("tag: " + this.tag);
         return this.tag ? TAG_COLORS[this.tag.color] : 'var(--color-border)';
     }
 }

@@ -1,0 +1,25 @@
+<input
+    class="task-name-input"
+    type="text"
+    [(ngModel)]="name"
+    (ngModelChange)="nameChange.emit($event)"
+    placeholder="Task name"
+    autofocus
+/>
+<div class="task-time-row">
+    <input
+        class="task-time-input"
+        type="time"
+        [(ngModel)]="scheduledAt"
+        (ngModelChange)="scheduledAtChange.emit($event)"
+    />
+    <span class="task-time-separator">·</span>
+    <input
+        class="task-duration-input"
+        type="number"
+        [(ngModel)]="estimatedMinutes"
+        (ngModelChange)="estimatedMinutesChange.emit($event)"
+        placeholder="min"
+        min="0"
+    />
+</div>

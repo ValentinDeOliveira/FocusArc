@@ -1,10 +1,13 @@
 package com.valentin_d.focusarc.fixtures.arc;
 
 import com.valentin_d.focusarc.dto.arc.ArcSummaryResponseDto;
+import com.valentin_d.focusarc.model.id.ArcId;
 import lombok.Builder;
 
 @Builder
 public class ArcSummaryResponseBuilder {
+    @Builder.Default
+    private final ArcId arcId = ArcId.random();
     @Builder.Default
     private final int totalEstimatedMinutes = 260;
     @Builder.Default
@@ -21,7 +24,7 @@ public class ArcSummaryResponseBuilder {
     private final int daysStreak = 2;
 
     public ArcSummaryResponseDto build() {
-        return new ArcSummaryResponseDto(totalEstimatedMinutes, totalCompletedMinutes, remainingMinutes,
-                nbChapterCompleted, nbChapterPlanned, nbChapterSkipped, daysStreak);
+        return new ArcSummaryResponseDto(arcId, totalEstimatedMinutes, totalCompletedMinutes,
+                remainingMinutes, nbChapterCompleted, nbChapterPlanned, nbChapterSkipped, daysStreak);
     }
 }

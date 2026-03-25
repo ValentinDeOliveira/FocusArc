@@ -58,7 +58,7 @@ public class TaskService {
                                         @NotNull UserId userId) {
         contextLoader.assertChapterForUser(chapterId, userId);
 
-        return taskRepository.findAllByChapter(chapterId);
+        return taskRepository.findAllByChapterOrderByStartAtAsc(chapterId);
     }
 
     public Task create(@NotNull TaskCreationDto dto,
@@ -88,7 +88,7 @@ public class TaskService {
                        @NotNull TaskUpdateDto taskUpdateDto,
                        @NotNull UserId userId) {
         final var task = taskLoader.getTaskIfExists(taskId);
-        tagLoader.assertTagsForUser(userId, taskUpdateDto.tag());
+        tagLoader.assertTagsForUser(userId, taskUpdateDto.tagId());
         contextLoader.assertChapterForUser(task.getChapter(), userId);
         final var beforeUpdateTask = task.snapshot();
 
@@ -124,7 +124,7 @@ public class TaskService {
     }
 
     public void deleteTasksForChapter(@NotNull ChapterId chapterId) {
-        final var tasks = taskRepository.findAllByChapter(chapterId);
+        final var tasks = taskRepository.findAllByChapterOrderByStartAtAsc(chapterId);
         taskRepository.deleteAll(tasks);
 
         chapterRecalculationService.recalculateEstimatedMinutes(chapterId);
@@ -216,7 +216,7 @@ public class TaskService {
         if (dto.name() != null) task.setName(dto.name());
         if (dto.description() != null) task.setDescription(dto.description());
         // how to differenciate "no tag" and remove tag
-        if (dto.tag() != null) task.setTagId(dto.tag());
+        if (dto.tagId() != null) task.setTagId(dto.tagId());
     }
 
 

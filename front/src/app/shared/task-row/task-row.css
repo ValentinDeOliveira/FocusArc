@@ -1,0 +1,15 @@
+:host {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding: 18px 20px;
+    transition: background-color 0.15s ease;
+}
+
+:host(.hoverable):hover {
+    background-color: var(--color-surface-hover);
+}
+
+:host(.centered) {
+    justify-content: center;
+}

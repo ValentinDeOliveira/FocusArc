@@ -46,7 +46,7 @@ public class ChapterRecalculationService {
                             Consumer<ArcId> arcRecalculator) {
         final var chapter = chapterLoader.getChapterIfExists(chapterId);
 
-        final var tasks = taskRepository.findAllByChapter(chapterId);
+        final var tasks = taskRepository.findAllByChapterOrderByStartAtAsc(chapterId);
         chapterRecalculator.accept(chapter, tasks);
 
         chapterRepository.save(chapter);

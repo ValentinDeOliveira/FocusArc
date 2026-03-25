@@ -2,19 +2,22 @@ import {Component, inject, OnInit, signal} from '@angular/core';
 import {TaskService} from '../../../core/services/task.service';
 import {Task, TaskCompletedDto} from '../../../models/task.model';
 import {DashboardTask} from '../dashboard-task/dashboard-task';
-import {toSignal} from '@angular/core/rxjs-interop';
 import {ChapterService} from '../../../core/services/chapter.service';
 import {DatePipe} from '@angular/common';
 import {formatMinutes} from '../../../utils/time.utils';
 import {DashboardTaskTimer} from '../dashboard-task-timer/dashboard-task-timer';
 import {TagStore} from '../../../core/stores/tag.store';
 import {switchMap} from 'rxjs';
+import {TaskCreation} from '../task-creation/task-creation';
+import {ContextStore} from '../../../core/stores/context.store';
+import {ChapterSummaryResponseDto} from '../../../models/chapter.model';
 
 @Component({
     selector: 'app-dashboard-resume',
     imports: [
         DashboardTask,
-        DashboardTaskTimer
+        DashboardTaskTimer,
+        TaskCreation
     ],
     providers: [DatePipe],
     templateUrl: './dashboard-resume.html',
@@ -25,15 +28,22 @@ export class DashboardResume implements OnInit {
     private chapterService = inject(ChapterService);
     private datePipe = inject(DatePipe);
     protected tagStore = inject(TagStore);
+    private contextStore = inject(ContextStore);
+
 
     tasks = signal<Task[]>([]);
     activeTask = signal<Task | null>(null);
-    chapterSummary = toSignal(this.chapterService.getSummary());
+    chapterSummary = signal<ChapterSummaryResponseDto | null>(null);
 
     ngOnInit(): void {
         this.tagStore.load().pipe(
             switchMap(() => this.taskService.getTodayTask())
         ).subscribe(t => this.tasks.set(t));
+
+        this.chapterService.getSummary().subscribe(summary => {
+            this.chapterSummary.set(summary);
+            this.contextStore.setChapterId(summary.chapterId);
+        });
     }
 
     todayDate() {
@@ -69,5 +79,11 @@ export class DashboardResume implements OnInit {
             this.tasks.update(l => l.map(task => task.id == updatedTask.id ? updatedTask : task));
             this.activeTask.set(task);
         });
+    }
+
+    protected onTaskCreated() {
+        this.taskService.getTodayTask().subscribe(tasks => {
+            this.tasks.set(tasks);
+        })
     }
 }

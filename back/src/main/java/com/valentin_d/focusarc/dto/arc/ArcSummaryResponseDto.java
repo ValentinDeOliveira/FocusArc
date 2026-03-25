@@ -1,6 +1,9 @@
 package com.valentin_d.focusarc.dto.arc;
 
+import com.valentin_d.focusarc.model.id.ArcId;
+
 public record ArcSummaryResponseDto(
+        ArcId arcId,
         int totalEstimatedMinutes,
         int totalCompletedMinutes,
         int remainingMinutes,

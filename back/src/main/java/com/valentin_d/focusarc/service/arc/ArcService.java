@@ -95,6 +95,7 @@ public class ArcService {
                 .collect(Collectors.groupingBy(c -> c.getStatus(LocalDate.now()), Collectors.counting()));
 
         return new ArcSummaryResponseDto(
+                arc.getId(),
                 arc.getTotalEstimatedMinutes(),
                 arc.getTotalCompletedMinutes(),
                 arc.getTotalEstimatedMinutes() - arc.getTotalCompletedMinutes(),

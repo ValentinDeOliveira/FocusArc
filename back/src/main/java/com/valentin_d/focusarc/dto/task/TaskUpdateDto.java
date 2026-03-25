@@ -13,5 +13,5 @@ import java.time.Instant;
 @Builder
 public record TaskUpdateDto(@Positive Integer completedMinutes, @Positive Integer estimatedMinutes,
                             @FutureOrPresent Instant scheduledAt, TaskStatus taskStatus,
-                            String name, String description, @Nullable TagId tag) {
+                            String name, String description, @Nullable TagId tagId) {
 }
