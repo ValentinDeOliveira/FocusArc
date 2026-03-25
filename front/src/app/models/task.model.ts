@@ -22,10 +22,13 @@ export interface TaskCreationDto {
 }
 
 export interface TaskUpdateDto {
-    completedMinutes: number;
-    estimatedMinutes: number;
-    scheduledAt: string;
-    status: TaskStatus;
+    completedMinutes?: number;
+    estimatedMinutes?: number;
+    scheduledAt?: string;
+    status?: TaskStatus;
+    name?: string;
+    description?: string;
+    tagId?: string;
 }
 
 export interface TaskCompletedDto {

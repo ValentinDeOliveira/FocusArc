@@ -88,7 +88,7 @@ public class TaskService {
                        @NotNull TaskUpdateDto taskUpdateDto,
                        @NotNull UserId userId) {
         final var task = taskLoader.getTaskIfExists(taskId);
-        tagLoader.assertTagsForUser(userId, taskUpdateDto.tag());
+        tagLoader.assertTagsForUser(userId, taskUpdateDto.tagId());
         contextLoader.assertChapterForUser(task.getChapter(), userId);
         final var beforeUpdateTask = task.snapshot();
 
@@ -216,7 +216,7 @@ public class TaskService {
         if (dto.name() != null) task.setName(dto.name());
         if (dto.description() != null) task.setDescription(dto.description());
         // how to differenciate "no tag" and remove tag
-        if (dto.tag() != null) task.setTagId(dto.tag());
+        if (dto.tagId() != null) task.setTagId(dto.tagId());
     }
 
 
