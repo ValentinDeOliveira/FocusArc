@@ -1,7 +1,7 @@
-@if (arc() && arcSummary()) {
+@if (arc() && contextStore.arcSummary()) {
     <app-arc-card-container
         [arc]="arc()!"
-        [nbChapterCompleted]="arcSummary()!.nbChapterCompleted"
+        [nbChapterCompleted]="contextStore.arcSummary()!.nbChapterCompleted"
         [nbChapterTotal]="getNbTotalChapter()"/>
-    <app-arc-progress-stats [arc]="arc()!" [arcSummary]="arcSummary()!"/>
+    <app-arc-progress-stats [arc]="arc()!" [arcSummary]="contextStore.arcSummary()!"/>
 }

@@ -11,6 +11,7 @@ import {switchMap} from 'rxjs';
 import {TaskCreation} from '../task-creation/task-creation';
 import {ContextStore} from '../../../core/stores/context.store';
 import {ChapterSummaryResponseDto} from '../../../models/chapter.model';
+import {ArcService} from '../../../core/services/arc.service';
 
 @Component({
     selector: 'app-dashboard-resume',
@@ -29,7 +30,7 @@ export class DashboardResume implements OnInit {
     private datePipe = inject(DatePipe);
     protected tagStore = inject(TagStore);
     private contextStore = inject(ContextStore);
-
+    private arcService = inject(ArcService);
 
     tasks = signal<Task[]>([]);
     activeTask = signal<Task | null>(null);
@@ -68,9 +69,14 @@ export class DashboardResume implements OnInit {
             completedMinutes: finalTime
         }
 
-        this.taskService.completeTask(this.activeTask()!.id, dto).subscribe(updatedTask => {
-            this.tasks.update(l => l.map(task => task.id == updatedTask.id ? updatedTask : task));
-            this.activeTask.set(null);
+        this.taskService.completeTask(this.activeTask()!.id, dto).pipe(
+            switchMap(updatedTask => {
+                this.tasks.update(l => l.map(t => t.id === updatedTask.id ? updatedTask : t));
+                this.activeTask.set(null);
+                return this.arcService.getSummary();
+            })
+        ).subscribe(summary => {
+            this.contextStore.setSummary(summary);
         });
     }
 
