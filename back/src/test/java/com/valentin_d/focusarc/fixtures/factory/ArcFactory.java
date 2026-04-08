@@ -24,6 +24,10 @@ public final class ArcFactory {
         return ArcBuilder.builder().owner(ownerId).build().build();
     }
 
+    public static Arc anArcWithOwnerIdAndCompletedMinutes(final UserId ownerId, final int completedMinutes) {
+        return ArcBuilder.builder().owner(ownerId).totalCompletededMinutes(completedMinutes).build().build();
+    }
+
     public static Arc anArcWithOwnerIdAndStatus(final UserId ownerId, final ArcStatus status) {
         return ArcBuilder.builder().owner(ownerId).status(status).build().build();
     }

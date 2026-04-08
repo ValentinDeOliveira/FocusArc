@@ -19,6 +19,8 @@ public class ArcBuilder {
     @Builder.Default
     private final int totalEstimatedMinutes = 120;
     @Builder.Default
+    private final int totalCompletededMinutes = 0;
+    @Builder.Default
     private final ArcStatus status = ArcStatus.ACTIVE;
     @Builder.Default
     private final LocalDate startDate = LocalDate.now();
@@ -26,6 +28,6 @@ public class ArcBuilder {
     private final LocalDate endDate = LocalDate.now().plusDays(10);
 
     public Arc build() {
-        return new Arc(id, owner, name, totalEstimatedMinutes, status, startDate, endDate);
+        return new Arc(id, owner, name, totalEstimatedMinutes, totalCompletededMinutes, status, startDate, endDate);
     }
 }

@@ -29,17 +29,19 @@ public class Chapter {
     private int estimatedMinutes;
     private int completedMinutes;
     private LocalDate scheduledDate;
+    private boolean allTasksDone;
 
-    public Chapter(final ChapterId chapterId, final ArcId arc, final int estimatedMinutes,  final LocalDate scheduledDate) {
-        this(chapterId, arc, estimatedMinutes, 0, scheduledDate);
+    public Chapter(final ChapterId chapterId, final ArcId arc, final int estimatedMinutes,
+                   final LocalDate scheduledDate, final boolean allTasksDone) {
+        this(chapterId, arc, estimatedMinutes, 0, scheduledDate, allTasksDone);
     }
 
     public Chapter(final ChapterId chapterId, final ArcId arc, final int estimatedMinutes) {
-        this(chapterId, arc, estimatedMinutes, 0, LocalDate.now());
+        this(chapterId, arc, estimatedMinutes, 0, LocalDate.now(), false);
     }
 
     public Chapter(final ArcId arc, final int estimatedMinutes, final LocalDate scheduledDate) {
-        this(ChapterId.random(), arc, estimatedMinutes, 0, scheduledDate);
+        this(ChapterId.random(), arc, estimatedMinutes, 0, scheduledDate, false);
     }
 
     public Chapter(final ArcId arc, final int estimatedMinutes) {
@@ -48,6 +50,9 @@ public class Chapter {
 
     public void recalculateCompletedMinutes(final List<Task> tasks) {
         this.completedMinutes = tasks.stream().mapToInt(Task::getCompletedMinutes).sum();
+        if (!tasks.isEmpty()) {
+            this.allTasksDone = tasks.stream().allMatch(Task::isDone);
+        }
     }
 
     public void recalculateEstimatedMinutes(final List<Task> tasks) {
@@ -55,7 +60,7 @@ public class Chapter {
     }
 
     public ChapterStatus getStatus(LocalDate today) {
-        if (completedMinutes > 0)          return ChapterStatus.COMPLETED;
+        if (allTasksDone) return ChapterStatus.COMPLETED;
         if (scheduledDate.isBefore(today)) return ChapterStatus.SKIPPED;
         return ChapterStatus.PLANNED;
     }
