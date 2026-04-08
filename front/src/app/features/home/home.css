@@ -1,0 +1,17 @@
+.layout {
+    display: flex;
+    height: 100vh;
+    background-color: var(--color-bg);
+}
+
+.main-content {
+    flex: 3;
+    padding: 40px 48px;
+    overflow-y: auto;
+}
+
+.sidebar {
+    flex: 1;
+    padding: 20px 16px;
+    overflow-y: auto;
+}
