@@ -33,6 +33,17 @@ public final class ChapterFactory {
         return ChapterBuilder.builder().scheduledDate(date).arc(arcId).build().build();
     }
 
+    public static Chapter aChapterWithScheduledDateAndArcIdAndAllTasksDone(final LocalDate date, final ArcId arcId,
+                                                                           final boolean allTasksDone) {
+        return ChapterBuilder.builder().scheduledDate(date).arc(arcId).allTasksDone(allTasksDone).build().build();
+    }
+
+    public static Chapter aChapterWithScheduledDateAndArcIdAndCompletedMinutesAndAllTasksCompleted(
+            final LocalDate date, final ArcId arcId, final int completedMinutes, final boolean allTasksCompleted) {
+        return ChapterBuilder.builder().scheduledDate(date).arc(arcId).completedMinutes(completedMinutes)
+                .allTasksDone(allTasksCompleted).build().build();
+    }
+
     public static ChapterCreationDto aChapterCreationDto() {
         return ChapterCreationDtoBuilder.builder().build().build();
     }

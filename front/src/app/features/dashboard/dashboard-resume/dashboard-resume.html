@@ -6,8 +6,10 @@
                 <span>{{ getPlannedTime() }} planned</span>
                 <span>•</span>
                 <span>{{tasks().length}} tasks</span>
-                <span>•</span>
-                <span class="completed-tasks">{{getNumberOfCompletedTasks}} completed</span>
+                @if (getNumberOfCompletedTasks > 0) {
+                    <span>•</span>
+                    <span class="completed-tasks">{{getNumberOfCompletedTasks}} completed</span>
+                }
             </div>
         }
     </div>

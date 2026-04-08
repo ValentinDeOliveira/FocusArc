@@ -167,8 +167,8 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     @Test
     void shouldReturnSummary_whenUserHasActiveArc() {
         final var arc = domainFixture.arcForUser(user.getId());
-        domainFixture.chapterForArcWithDate(arc.getId(), LocalDate.now().minusDays(1)); // COMPLETED
-        domainFixture.chapterForArcWithDate(arc.getId(), LocalDate.now().minusDays(2)); // COMPLETED
+        domainFixture.chapterForArcWithDateAllTaskDone(arc.getId(), LocalDate.now().minusDays(1)); // COMPLETED
+        domainFixture.chapterForArcWithDateAllTaskDone(arc.getId(), LocalDate.now().minusDays(2)); // COMPLETED
         domainFixture.plannedChapterForArcWithDate(arc.getId(), LocalDate.now().plusDays(1)); // PLANNED
 
         final var response = request(URL + "/summary", HttpMethod.GET, ArcSummaryResponseDto.class);

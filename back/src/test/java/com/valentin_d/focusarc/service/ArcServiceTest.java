@@ -6,7 +6,6 @@ import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistException;
 import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
 import com.valentin_d.focusarc.exception.arc.NoActiveArcException;
 import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
-import com.valentin_d.focusarc.fixtures.chapter.ChapterBuilder;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
@@ -25,6 +24,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapterWithScheduledDateAndArcIdAndCompletedMinutesAndAllTasksCompleted;
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -255,15 +255,16 @@ class ArcServiceTest {
     @Test
     void shouldReturnSummary_whenUserHasActiveArc() {
         final var userId = UserId.random();
-        final var arc = anArcWithOwnerId(userId);
-        arc.setTotalCompletedMinutes(60);
+        final var arc = anArcWithOwnerIdAndCompletedMinutes(userId, 60);
 
-        final var yesterday = ChapterBuilder.builder()
-                .arc(arc.getId()).scheduledDate(LocalDate.now().minusDays(1)).completedMinutes(60).build().build();
-        final var threeDaysAgo = ChapterBuilder.builder()
-                .arc(arc.getId()).scheduledDate(LocalDate.now().minusDays(3)).completedMinutes(0).build().build();
-        final var tomorrow = ChapterBuilder.builder()
-                .arc(arc.getId()).scheduledDate(LocalDate.now().plusDays(1)).completedMinutes(0).build().build();
+        final var now = LocalDate.now();
+
+        final var yesterday = aChapterWithScheduledDateAndArcIdAndCompletedMinutesAndAllTasksCompleted(
+                now.minusDays(1), arc.getId(), 60, true);
+        final var threeDaysAgo = aChapterWithScheduledDateAndArcIdAndCompletedMinutesAndAllTasksCompleted(
+                now.minusDays(3), arc.getId(), 0, false);
+        final var tomorrow = aChapterWithScheduledDateAndArcIdAndCompletedMinutesAndAllTasksCompleted(
+                now.plusDays(1), arc.getId(), 0, false);
 
         when(arcLoader.getActiveArcForUser(userId)).thenReturn(arc);
         when(chapterLoader.findAllByArc(arc.getId())).thenReturn(List.of(yesterday, threeDaysAgo, tomorrow));

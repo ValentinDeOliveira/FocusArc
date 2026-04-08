@@ -19,10 +19,9 @@ import {ContextStore} from '../../../core/stores/context.store';
 export class ArcProgress implements OnInit {
     private arcService = inject(ArcService);
     private authService = inject(AuthService);
-    private contextStore = inject(ContextStore);
+    contextStore = inject(ContextStore);
 
     arc = signal<Arc | undefined>(undefined);
-    arcSummary = signal<ArcSummaryResponseDto | undefined>(undefined);
 
     ngOnInit(): void {
         const dto: LoginRequestDto = {
@@ -36,7 +35,7 @@ export class ArcProgress implements OnInit {
                 this.arc.set(Object.values(arcs).at(0));
             });
             this.arcService.getSummary().subscribe(summary => {
-                this.arcSummary.set(summary);
+                this.contextStore.setSummary(summary);
                 this.contextStore.setArcId(summary.arcId);
             });
         });
@@ -44,7 +43,7 @@ export class ArcProgress implements OnInit {
 
     // TODO fix when modifying the summary endpoint to get total chapters from back
     getNbTotalChapter() {
-        return this.arcSummary()!.nbChapterCompleted + this.arcSummary()!.nbChapterSkipped +
-            this.arcSummary()!.nbChapterPlanned;
+        return this.contextStore.arcSummary()!.nbChapterCompleted + this.contextStore.arcSummary()!.nbChapterSkipped +
+            this.contextStore.arcSummary()!.nbChapterPlanned;
     }
 }

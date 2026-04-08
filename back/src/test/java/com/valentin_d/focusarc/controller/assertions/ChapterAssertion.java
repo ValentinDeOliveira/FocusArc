@@ -12,5 +12,6 @@ public class ChapterAssertion extends BaseAssertion<Chapter> {
         expect(actions, path, "estimatedMinutes", expected.getEstimatedMinutes());
         expect(actions, path, "completedMinutes", expected.getCompletedMinutes());
         expect(actions, path, "scheduledDate", expected.getScheduledDate().toString());
+        expect(actions, path, "allTasksDone", expected.isAllTasksDone());
     }
 }

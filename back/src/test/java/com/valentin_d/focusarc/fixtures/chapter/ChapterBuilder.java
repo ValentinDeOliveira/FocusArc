@@ -19,8 +19,10 @@ public class ChapterBuilder {
     private final int completedMinutes = 130;
     @Builder.Default
     private final LocalDate scheduledDate = LocalDate.now();
+    @Builder.Default
+    private final boolean allTasksDone = false;
 
     public Chapter build() {
-        return new Chapter(id, arc, estimatedMinutes, completedMinutes, scheduledDate);
+        return new Chapter(id, arc, estimatedMinutes, completedMinutes, scheduledDate, allTasksDone);
     }
 }

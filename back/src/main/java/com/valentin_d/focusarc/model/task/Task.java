@@ -79,7 +79,7 @@ public class Task {
     }
 
     public boolean isDone() {
-        return status == TaskStatus.DONE;
+        return status.isFinished();
     }
 
     public boolean isEstimatedMinutesChanged(final Task other) {

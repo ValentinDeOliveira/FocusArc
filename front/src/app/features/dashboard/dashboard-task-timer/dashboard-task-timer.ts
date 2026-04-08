@@ -55,7 +55,7 @@ export class DashboardTaskTimer implements OnInit {
 
     complete() {
         this.clearIntervalIfExists();
-        const overtime = Math.max(0, -this.remainingSeconds());
+        const overtime = Math.max(0, -this.remainingSeconds()/60);
         this.done.emit(overtime);
     }
 

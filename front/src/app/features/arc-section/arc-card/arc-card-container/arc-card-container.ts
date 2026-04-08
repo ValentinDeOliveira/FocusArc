@@ -28,16 +28,16 @@ export class ArcCardContainer implements OnInit {
     private datePipe = inject(DatePipe);
 
     name!: string;
-    progress!: number;
 
     ngOnInit(): void {
         this.name = this.arc.name + ' Arc';
-        this.progress = Math.floor((this.nbChapterCompleted / this.nbChapterTotal) * 100);
     }
 
     formatDate(date: string) {
         return this.datePipe.transform(date, 'MMM d');
     }
 
-
+    get progress(): number {
+        return Math.floor((this.nbChapterCompleted / this.nbChapterTotal) * 100);
+    }
 }

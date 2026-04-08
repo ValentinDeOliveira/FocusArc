@@ -111,10 +111,11 @@ public class ArcService {
 
         final var sorted = chapters.stream()
                 .filter(c -> !c.getScheduledDate().isAfter(today)) // exclude future chapters
+                .filter(c -> !c.getScheduledDate().isEqual(today) || c.getCompletedMinutes() > 0) // today counts only if at least one task is done
                 .sorted(Comparator.comparing(Chapter::getScheduledDate).reversed())
                 .toList();
 
-        // if today has no chapter yet, start counting from yesterday
+        // if today has no completed work yet, start counting from yesterday
         var expected = sorted.isEmpty() || !sorted.get(0).getScheduledDate().isEqual(today)
                 ? today.minusDays(1)
                 : today;

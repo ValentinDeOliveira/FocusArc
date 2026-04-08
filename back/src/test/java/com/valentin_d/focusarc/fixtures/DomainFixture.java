@@ -10,18 +10,13 @@ import com.valentin_d.focusarc.model.tag.Tag;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.model.user.User;
-import com.valentin_d.focusarc.repository.ArcRepository;
-import com.valentin_d.focusarc.repository.ChapterRepository;
-import com.valentin_d.focusarc.repository.TagRepository;
-import com.valentin_d.focusarc.repository.TaskRepository;
-import com.valentin_d.focusarc.repository.UserRepository;
+import com.valentin_d.focusarc.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.time.LocalDate;
 
-import com.valentin_d.focusarc.fixtures.chapter.ChapterBuilder;
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArc;
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwnerIdAndStatus;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.*;
@@ -59,12 +54,18 @@ public class DomainFixture {
     }
 
     public Chapter chapterForArcWithDate(final ArcId arcId, final LocalDate date) {
-        final var chapter = aChapterWithScheduledDateAndArcId(date, arcId);
+        final var chapter = aChapterWithScheduledDateAndArcIdAndAllTasksDone(date, arcId, false);
+        return chapterRepository.save(chapter);
+    }
+
+    public Chapter chapterForArcWithDateAllTaskDone(final ArcId arcId, final LocalDate date) {
+        final var chapter = aChapterWithScheduledDateAndArcIdAndAllTasksDone(date, arcId, true);
         return chapterRepository.save(chapter);
     }
 
     public Chapter plannedChapterForArcWithDate(final ArcId arcId, final LocalDate date) {
-        final var chapter = ChapterBuilder.builder().arc(arcId).scheduledDate(date).completedMinutes(0).build().build();
+        final var chapter = aChapterWithScheduledDateAndArcIdAndCompletedMinutesAndAllTasksCompleted(date, arcId,
+                0, false);
         return chapterRepository.save(chapter);
     }
 
