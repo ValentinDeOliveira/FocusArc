@@ -1,0 +1,17 @@
+<div>
+    <span>
+        <button mat-icon-button (click)="expandChapter()">
+            @if (isChapterExpanded) {
+                <mat-icon>keyboard_arrow_down</mat-icon>
+            } @else {
+                <mat-icon>keyboard_arrow_right</mat-icon>
+            }
+        </button>
+        {{ chapter.scheduledDate }}
+    </span>
+    @if (isChapterExpanded) {
+        <div>
+            <span> {{ chapter.completedMinutes }} / {{ chapter.estimatedMinutes }} </span>
+        </div>
+    }
+</div>
