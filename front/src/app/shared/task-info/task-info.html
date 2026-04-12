@@ -1,0 +1,10 @@
+<app-task-row class="hoverable">
+    <app-tag-picker [selectedTag]="tag" (tagChange)="updateTag($event)"/>
+    <div class="task-info">
+        <span class="task-name" [class.line-through]="isTaskEnded">{{ task.name }}</span>
+        <span class="task-time">{{ formatTime(task.startAt) + ' - ' + formatTime(task.endAt) }}</span>
+    </div>
+    <app-task-status-badge [status]="task.status"/>
+    <span class="task-duration">{{ getEstimatedMinutes() }}</span>
+    <ng-content/>
+</app-task-row>
