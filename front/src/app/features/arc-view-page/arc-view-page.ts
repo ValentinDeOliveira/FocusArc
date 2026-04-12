@@ -17,9 +17,18 @@ export class ArcViewPage implements OnInit {
     private route = inject(ActivatedRoute);
 
     chapters: Chapter[] = [];
+    isOn2Years = false;
 
     ngOnInit() {
         this.chapters = this.route.snapshot.data['chapters'];
+
+        if (this.chapters.length > 1) {
+            const c1Year = new Date(this.chapters.at(0)!.scheduledDate).getFullYear();
+            const cLastYear = new Date(this.chapters.at(this.chapters.length - 1)!.scheduledDate).getFullYear();
+            if (c1Year != cLastYear) {
+                this.isOn2Years = true;
+            }
+        }
     }
 
     get expandedChapterIndex(): number {

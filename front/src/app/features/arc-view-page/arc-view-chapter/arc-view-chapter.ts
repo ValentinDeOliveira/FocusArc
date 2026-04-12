@@ -21,14 +21,14 @@ import {TagStore} from '../../../core/stores/tag.store';
 })
 export class ArcViewChapter implements OnInit {
     @Input({required: true}) chapter!: Chapter;
-    @Input() isChapterExpanded: boolean = false;
+    @Input() isChapterExpanded = false;
+    @Input() isOn2Years = false;
 
     tagStore = inject(TagStore);
     tasks = signal<Task[]>([]);
 
     private datePipe = inject(DatePipe);
     private taskService= inject(TaskService);
-    private isOn2Years = false;
 
     ngOnInit() {
         if (this.isChapterExpanded) {
@@ -37,7 +37,6 @@ export class ArcViewChapter implements OnInit {
     }
 
     formatDate(date: string) {
-        // TODO move this logic to another file?
         if (this.isOn2Years) {
             return this.datePipe.transform(date, 'MMMM d yyyy');
         }
@@ -58,14 +57,6 @@ export class ArcViewChapter implements OnInit {
     private getAllChapters() {
         this.taskService.getAllForChapter(this.chapter.id).subscribe(tasks => {
             this.tasks.set(tasks);
-            // TODO move this to the store?
-            if (tasks.length > 1) {
-                const t1Year = new Date(tasks.at(0)!.startAt).getFullYear();
-                const tLastYear = new Date(tasks.at(tasks.length - 1)!.startAt).getFullYear();
-                if (t1Year != tLastYear) {
-                    this.isOn2Years = true;
-                }
-            }
         });
     }
 }
