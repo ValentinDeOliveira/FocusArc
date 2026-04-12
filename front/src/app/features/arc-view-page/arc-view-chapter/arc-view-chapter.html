@@ -7,7 +7,7 @@
                 <mat-icon>keyboard_arrow_right</mat-icon>
             }
         </button>
-        {{ chapter.scheduledDate }}
+        {{ formatDate(chapter.scheduledDate) }}
     </span>
     @if (isChapterExpanded) {
         @for (task of tasks(); track task.id) {

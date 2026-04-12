@@ -21,4 +21,16 @@ export class ArcViewPage implements OnInit {
     ngOnInit() {
         this.chapters = this.route.snapshot.data['chapters'];
     }
+
+    get expandedChapterIndex(): number {
+        const today = new Date().toISOString().split('T')[0];
+        let lastIndex = 0;
+
+        for (let i = 0; i < this.chapters.length; i++) {
+            if (this.chapters[i].scheduledDate <= today) lastIndex = i;
+            else break;
+        }
+
+        return lastIndex;
+    }
 }

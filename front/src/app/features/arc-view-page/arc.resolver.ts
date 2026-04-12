@@ -17,6 +17,7 @@ export const arcResolver: ResolveFn<Chapter[]> = () => {
 
     const load = (arcId: string) => forkJoin({
         chapters: chapterService.getAllForArc(arcId),
+        // TODO: tag load is called everytime? Try to avoid that
         tags: tagStore.load()
     }).pipe(map(r => r.chapters));
 

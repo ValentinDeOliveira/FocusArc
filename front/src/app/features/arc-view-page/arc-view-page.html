@@ -1,8 +1,8 @@
 <div>
     arc-view-page works!
     <br/>
-    @for (chapter of this.chapters; track chapter.id) {
-        <app-arc-view-chapter [chapter]="chapter"/>
+    @for (chapter of this.chapters; track chapter.id; let i = $index) {
+        <app-arc-view-chapter [chapter]="chapter" [isChapterExpanded]="i === expandedChapterIndex"/>
         <div class="task-divider"></div>
     }
 </div>
