@@ -1,4 +1,9 @@
-export type TaskStatus = 'PLANNED' | 'IN_PROGRESS' | 'DONE' | 'SKIPPED';
+export enum TaskStatus {
+    PLANNED = 'PLANNED',
+    IN_PROGRESS = 'IN_PROGRESS',
+    DONE = 'DONE',
+    SKIPPED = 'SKIPPED'
+}
 
 export interface Task {
     id: string;

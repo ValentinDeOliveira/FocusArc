@@ -1,4 +1,11 @@
 import {Component, inject, Input, OnInit, signal} from '@angular/core';
+
+export enum ChapterState {
+    DONE = 'done',
+    INCOMPLETE = 'incomplete',
+    IN_PROGRESS = 'in-progress',
+    PLANNED = 'planned'
+}
 import {Chapter} from '../../../models/chapter.model';
 import {MatIcon} from '@angular/material/icon';
 import {DatePipe} from '@angular/common';
@@ -24,6 +31,8 @@ export class ArcViewChapter implements OnInit {
     @Input() isChapterExpanded = false;
     @Input() isOn2Years = false;
 
+    protected readonly ChapterState = ChapterState;
+
     tagStore = inject(TagStore);
     tasks = signal<Task[]>([]);
 
@@ -42,6 +51,16 @@ export class ArcViewChapter implements OnInit {
         }
 
         return this.datePipe.transform(date, 'MMMM d');
+    }
+
+    get chapterState(): ChapterState {
+        const today = new Date().toISOString().split('T')[0];
+        const date = this.chapter.scheduledDate;
+
+        if (this.chapter.allTasksDone) return ChapterState.DONE;
+        if (date < today) return ChapterState.INCOMPLETE;
+        if (date === today) return ChapterState.IN_PROGRESS;
+        return ChapterState.PLANNED;
     }
 
     protected expandChapter() {

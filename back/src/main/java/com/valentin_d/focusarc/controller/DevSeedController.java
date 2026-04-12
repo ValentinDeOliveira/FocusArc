@@ -25,6 +25,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -86,15 +87,21 @@ public class DevSeedController {
     private void seedDay(final ArcId arcId, final LocalDate date,
                          final TagId primaryTag, final TagId secondaryTag) {
         final var chapter = new Chapter(arcId, 0, date);
-        final boolean isPast = date.isBefore(NOW);
-        final boolean isToday = date.equals(NOW);
         final Instant dayStart = date.atStartOfDay(ZoneOffset.UTC).toInstant();
+        final ChapterId chapterId = chapter.getId();
 
-        final var tasks = isPast
-                ? buildPastTasks(chapter.getId(), dayStart, primaryTag, secondaryTag)
-                : isToday
-                        ? buildTodayTasks(chapter.getId(), dayStart.plus(8, ChronoUnit.HOURS), primaryTag, secondaryTag)
-                        : buildFutureTasks(chapter.getId(), dayStart, primaryTag, secondaryTag);
+        final List<Task> tasks;
+        if (date.equals(NOW.minusDays(2))) {
+            tasks = buildPastTasksWithNotDone(chapterId, dayStart, primaryTag, secondaryTag);
+        } else if (date.equals(NOW.minusDays(1))) {
+            tasks = buildYesterdayTasks(chapterId, dayStart, primaryTag, secondaryTag);
+        } else if (date.equals(NOW)) {
+            tasks = buildTodayTasks(chapterId, dayStart.plus(8, ChronoUnit.HOURS), primaryTag, secondaryTag);
+        } else if (date.isBefore(NOW)) {
+            tasks = buildPastTasks(chapterId, dayStart, primaryTag, secondaryTag);
+        } else {
+            tasks = buildFutureTasks(chapterId, dayStart, primaryTag, secondaryTag);
+        }
 
         taskRepository.saveAll(tasks);
         chapter.recalculateEstimatedMinutes(tasks);
@@ -106,9 +113,23 @@ public class DevSeedController {
                                       final TagId primary, final TagId secondary) {
         final var t1 = doneTask(chapterId, "Deep work session",  90, 88, dayStart,               primary);
         final var t2 = doneTask(chapterId, "Code review",        30, 25, dayStart.plus(90,  ChronoUnit.MINUTES), primary);
-        final var t3 = skippedTask(chapterId, "Lunch walk",      30,     dayStart.plus(120, ChronoUnit.MINUTES), secondary);
-        final var t4 = skippedTask(chapterId, "Gym",      90,     dayStart.plus(150, ChronoUnit.MINUTES), secondary);
+        final var t3 = doneTask(chapterId, "Lunch walk",      30, 30,   dayStart.plus(120, ChronoUnit.MINUTES), secondary);
+        final var t4 = doneTask(chapterId, "Gym",      90, 100,    dayStart.plus(150, ChronoUnit.MINUTES), secondary);
         return List.of(t1, t2, t3, t4);
+    }
+
+    private List<Task> buildYesterdayTasks(final ChapterId chapterId, final Instant dayStart,
+                                      final TagId primary, final TagId secondary) {
+        final var tasks = new ArrayList<>(buildPastTasks(chapterId, dayStart, primary, secondary));
+        tasks.add(skippedTask(chapterId, "Deep work session",  90, dayStart.plus(3, ChronoUnit.HOURS), primary));
+        return tasks;
+    }
+
+    private List<Task> buildPastTasksWithNotDone(final ChapterId chapterId, final Instant dayStart,
+                                           final TagId primary, final TagId secondary) {
+        final var tasks = new ArrayList<>(buildPastTasks(chapterId, dayStart, primary, secondary));
+        tasks.add(plannedTask(chapterId, "Deep work session",  90, dayStart.plus(3, ChronoUnit.HOURS), primary));
+        return tasks;
     }
 
     private List<Task> buildTodayTasks(final ChapterId chapterId, final Instant dayStart,
