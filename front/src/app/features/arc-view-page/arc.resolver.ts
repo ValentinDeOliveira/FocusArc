@@ -4,17 +4,24 @@ import {ChapterService} from '../../core/services/chapter.service';
 import {inject} from '@angular/core';
 import {ArcService} from '../../core/services/arc.service';
 import {ContextStore} from '../../core/stores/context.store';
-import {tap} from 'rxjs/operators';
-import {switchMap} from 'rxjs';
+import {map, tap} from 'rxjs/operators';
+import {forkJoin, switchMap} from 'rxjs';
+import {TagStore} from '../../core/stores/tag.store';
 
 export const arcResolver: ResolveFn<Chapter[]> = () => {
     const contextStore = inject(ContextStore);
     const chapterService = inject(ChapterService);
+    const tagStore = inject(TagStore);
 
     const arcId = contextStore.currentArcId();
 
+    const load = (arcId: string) => forkJoin({
+        chapters: chapterService.getAllForArc(arcId),
+        tags: tagStore.load()
+    }).pipe(map(r => r.chapters));
+
     if(arcId) {
-       return chapterService.getAllForArc(arcId);
+       return load(arcId);
     }
 
     const arcService = inject(ArcService);
@@ -23,6 +30,6 @@ export const arcResolver: ResolveFn<Chapter[]> = () => {
             contextStore.setSummary(summary);
             contextStore.setArcId(summary.arcId);
         }),
-        switchMap(summary => chapterService.getAllForArc(summary.arcId))
+        switchMap(summary => load(summary.arcId))
     );
 }

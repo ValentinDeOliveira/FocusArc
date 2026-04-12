@@ -11,7 +11,6 @@ import {Tag} from '../../../models/tag.model';
     imports: [
         PrimaryButton,
         TaskInfo,
-
     ],
     providers: [DatePipe],
     templateUrl: './dashboard-task.html',

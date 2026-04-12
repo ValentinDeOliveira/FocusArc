@@ -10,8 +10,8 @@
         {{ chapter.scheduledDate }}
     </span>
     @if (isChapterExpanded) {
-        <div>
-            <span> {{ chapter.completedMinutes }} / {{ chapter.estimatedMinutes }} </span>
-        </div>
+        @for (task of tasks(); track task.id) {
+            <app-task-info [task]="task" [tag]="tagStore.byId(task.tagId)!"/>
+        }
     }
 </div>

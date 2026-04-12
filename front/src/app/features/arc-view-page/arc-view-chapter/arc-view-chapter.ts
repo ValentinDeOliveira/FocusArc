@@ -5,12 +5,15 @@ import {DatePipe} from '@angular/common';
 import {MatIconButton} from '@angular/material/button';
 import {Task} from '../../../models/task.model';
 import {TaskService} from '../../../core/services/task.service';
+import {TaskInfo} from '../../../shared/task-info/task-info';
+import {TagStore} from '../../../core/stores/tag.store';
 
 @Component({
     selector: 'app-arc-view-chapter',
     imports: [
         MatIcon,
-        MatIconButton
+        MatIconButton,
+        TaskInfo
     ],
     templateUrl: './arc-view-chapter.html',
     styleUrl: './arc-view-chapter.css',
@@ -19,6 +22,7 @@ import {TaskService} from '../../../core/services/task.service';
 export class ArcViewChapter {
     @Input({required: true}) chapter!: Chapter;
 
+    tagStore = inject(TagStore);
     isChapterExpanded = false;
     tasks = signal<Task[]>([]);
 
