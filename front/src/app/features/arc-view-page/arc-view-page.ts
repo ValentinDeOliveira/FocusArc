@@ -3,6 +3,8 @@ import {Chapter} from '../../models/chapter.model';
 import {ActivatedRoute} from '@angular/router';
 import {DatePipe} from '@angular/common';
 import {ArcViewChapter} from './arc-view-chapter/arc-view-chapter';
+import {ContextStore} from '../../core/stores/context.store';
+import {ArcSummaryResponseDto} from '../../models/arc.model';
 
 @Component({
     selector: 'app-arc-view-page',
@@ -15,12 +17,15 @@ import {ArcViewChapter} from './arc-view-chapter/arc-view-chapter';
 })
 export class ArcViewPage implements OnInit {
     private route = inject(ActivatedRoute);
+    private contextStore = inject(ContextStore);
 
     chapters: Chapter[] = [];
+    arcSummary: ArcSummaryResponseDto | null = null;
     isOn2Years = false;
 
     ngOnInit() {
         this.chapters = this.route.snapshot.data['chapters'];
+        this.arcSummary = this.contextStore.arcSummary();
 
         if (this.chapters.length > 1) {
             const c1Year = new Date(this.chapters.at(0)!.scheduledDate).getFullYear();

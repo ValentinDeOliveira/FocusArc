@@ -4,6 +4,7 @@ import com.valentin_d.focusarc.model.id.ArcId;
 
 public record ArcSummaryResponseDto(
         ArcId arcId,
+        String name,
         int totalEstimatedMinutes,
         int totalCompletedMinutes,
         int remainingMinutes,

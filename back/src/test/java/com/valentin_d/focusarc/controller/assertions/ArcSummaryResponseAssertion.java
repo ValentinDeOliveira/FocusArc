@@ -8,6 +8,7 @@ public class ArcSummaryResponseAssertion extends BaseAssertion<ArcSummaryRespons
     protected void assertJson(final ResultActions actions, final String path,
                               final ArcSummaryResponseDto expected) throws Exception {
         expect(actions, path, "arcId", expected.arcId().id().toString());
+        expect(actions, path, "name", expected.name());
         expect(actions, path, "totalEstimatedMinutes", expected.totalEstimatedMinutes());
         expect(actions, path, "totalCompletedMinutes", expected.totalCompletedMinutes());
         expect(actions, path, "remainingMinutes", expected.remainingMinutes());

@@ -1,7 +1,5 @@
 <div class="page">
-    @if (chapters.length > 0) {
-        <h1 class="arc-title">{{ chapters[0].arc }}</h1>
-    }
+    <h1 class="arc-title">{{ arcSummary?.name }}</h1>
     @for (chapter of chapters; track chapter.id; let i = $index) {
         <app-arc-view-chapter
             [chapter]="chapter"
