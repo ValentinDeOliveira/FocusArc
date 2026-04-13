@@ -1,0 +1,78 @@
+.chapter {
+    background: var(--color-surface);
+    border-radius: 12px;
+    border: 1px solid var(--color-border);
+    overflow: hidden;
+}
+
+.chapter-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 16px 12px 8px;
+    cursor: pointer;
+    user-select: none;
+    transition: background-color 0.15s ease;
+}
+
+.chapter-header:hover {
+    background-color: var(--color-surface-hover);
+}
+
+.chapter-date {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text);
+}
+
+.chapter-tasks {
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-direction: column;
+}
+
+.chapter-tasks app-task-info + app-task-info {
+    border-top: 1px solid var(--color-border);
+}
+
+.chapter-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    margin-left: auto;
+    padding: 2px 10px 2px 6px;
+    border-radius: 999px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.badge-icon {
+    font-size: 14px;
+    width: 14px;
+    height: 14px;
+}
+
+.badge-done {
+    background: var(--color-success-bg);
+    color: var(--color-success-text);
+}
+.badge-done .badge-icon { color: var(--color-success); }
+
+.badge-incomplete {
+    background: var(--color-warning-bg);
+    color: var(--color-warning-text);
+}
+.badge-incomplete .badge-icon { color: var(--color-warning); }
+
+.badge-in-progress {
+    background: var(--color-in-progress-bg);
+    color: var(--color-in-progress-text);
+}
+.badge-in-progress .badge-icon { color: var(--color-in-progress-text); }
+
+.badge-planned {
+    background: var(--color-surface-subtle);
+    color: var(--color-text-muted);
+}
+.badge-planned .badge-icon { color: var(--color-text-muted); }

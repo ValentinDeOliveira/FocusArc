@@ -1,0 +1,45 @@
+<div class="chapter">
+    <div class="chapter-header" (click)="expandChapter()">
+        <button mat-icon-button class="expand-btn" (click)="$event.stopPropagation()">
+            @if (isChapterExpanded) {
+                <mat-icon>keyboard_arrow_down</mat-icon>
+            } @else {
+                <mat-icon>keyboard_arrow_right</mat-icon>
+            }
+        </button>
+        <span class="chapter-date">{{ formatDate(chapter.scheduledDate) }}</span>
+        @switch (chapterState) {
+            @case (ChapterState.DONE) {
+                <span class="chapter-badge badge-done">
+                    <mat-icon class="badge-icon">check_circle</mat-icon>
+                    Done
+                </span>
+            }
+            @case (ChapterState.INCOMPLETE) {
+                <span class="chapter-badge badge-incomplete">
+                    <mat-icon class="badge-icon">pending</mat-icon>
+                    Incomplete
+                </span>
+            }
+            @case (ChapterState.IN_PROGRESS) {
+                <span class="chapter-badge badge-in-progress">
+                    <mat-icon class="badge-icon">radio_button_checked</mat-icon>
+                    In Progress
+                </span>
+            }
+            @case (ChapterState.PLANNED) {
+                <span class="chapter-badge badge-planned">
+                    <mat-icon class="badge-icon">calendar_today</mat-icon>
+                    Planned
+                </span>
+            }
+        }
+    </div>
+    @if (isChapterExpanded) {
+        <div class="chapter-tasks">
+            @for (task of tasks(); track task.id) {
+                <app-task-info [task]="task" [tag]="tagStore.byId(task.tagId)!"/>
+            }
+        </div>
+    }
+</div>

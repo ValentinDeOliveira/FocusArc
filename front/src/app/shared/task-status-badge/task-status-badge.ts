@@ -11,10 +11,10 @@ export class TaskStatusBadge {
 
     get label(): string {
         const labels: Record<TaskStatus, string> = {
-            PLANNED: 'Planned',
-            IN_PROGRESS: 'In Progress',
-            DONE: 'Done',
-            SKIPPED: 'Skipped',
+            [TaskStatus.PLANNED]: 'Planned',
+            [TaskStatus.IN_PROGRESS]: 'In Progress',
+            [TaskStatus.DONE]: 'Done',
+            [TaskStatus.SKIPPED]: 'Skipped',
         };
         return labels[this.status];
     }

@@ -96,6 +96,7 @@ public class ArcService {
 
         return new ArcSummaryResponseDto(
                 arc.getId(),
+                arc.getName(),
                 arc.getTotalEstimatedMinutes(),
                 arc.getTotalCompletedMinutes(),
                 arc.getTotalEstimatedMinutes() - arc.getTotalCompletedMinutes(),

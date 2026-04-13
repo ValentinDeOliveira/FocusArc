@@ -9,6 +9,8 @@ public class ArcSummaryResponseBuilder {
     @Builder.Default
     private final ArcId arcId = ArcId.random();
     @Builder.Default
+    private final String name = "Arc 1";
+    @Builder.Default
     private final int totalEstimatedMinutes = 260;
     @Builder.Default
     private final int totalCompletedMinutes = 120;
@@ -24,7 +26,7 @@ public class ArcSummaryResponseBuilder {
     private final int daysStreak = 2;
 
     public ArcSummaryResponseDto build() {
-        return new ArcSummaryResponseDto(arcId, totalEstimatedMinutes, totalCompletedMinutes,
+        return new ArcSummaryResponseDto(arcId, name, totalEstimatedMinutes, totalCompletedMinutes,
                 remainingMinutes, nbChapterCompleted, nbChapterPlanned, nbChapterSkipped, daysStreak);
     }
 }

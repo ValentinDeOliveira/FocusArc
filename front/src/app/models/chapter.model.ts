@@ -6,6 +6,7 @@ export interface Chapter {
     estimatedMinutes: number;
     completedMinutes: number;
     scheduledDate: string;
+    allTasksDone: boolean;
 }
 
 export interface ChapterCreationDto {

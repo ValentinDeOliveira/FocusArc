@@ -1,0 +1,16 @@
+<div class="layout">
+    <div class="main-content">
+        <h1 class="arc-title">{{ arcSummary?.name }}</h1>
+        @for (chapter of chapters; track chapter.id; let i = $index) {
+            <app-arc-view-chapter
+                [chapter]="chapter"
+                [isChapterExpanded]="i === expandedChapterIndex"
+                [isOn2Years]="isOn2Years"
+            />
+        }
+    </div>
+
+    <aside class="sidebar">
+        <app-arc-donut-chart [counts]="chapterCounts" />
+    </aside>
+</div>

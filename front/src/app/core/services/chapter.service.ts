@@ -1,7 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {ArcCreationDto, ArcUpdateDto} from '../../models/arc.model';
 import {Chapter, ChapterCreationDto, ChapterSummaryResponseDto, ChapterUpdateDto} from '../../models/chapter.model';
 
 @Injectable({ providedIn: 'root' })

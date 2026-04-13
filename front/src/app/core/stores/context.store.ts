@@ -9,6 +9,7 @@ export class ContextStore {
 
     arcSummary = this.arcSummarySignal.asReadonly();
     currentChapterId = this.chapterId.asReadonly();
+    currentArcId = this.arcId.asReadonly();
 
     setArcId(arcId: string) {
         this.arcId.set(arcId);
