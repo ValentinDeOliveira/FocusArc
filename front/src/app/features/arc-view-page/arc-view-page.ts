@@ -2,16 +2,18 @@ import {Component, inject, OnInit} from '@angular/core';
 import {Chapter} from '../../models/chapter.model';
 import {ActivatedRoute} from '@angular/router';
 import {DatePipe} from '@angular/common';
-import {ArcViewChapter} from './arc-view-chapter/arc-view-chapter';
+import {ArcViewChapter, ChapterState} from './arc-view-chapter/arc-view-chapter';
 import {ContextStore} from '../../core/stores/context.store';
 import {ArcSummaryResponseDto} from '../../models/arc.model';
+import {ArcDonutChart} from './arc-donut-chart/arc-donut-chart';
 
 @Component({
     selector: 'app-arc-view-page',
     templateUrl: './arc-view-page.html',
     styleUrl: './arc-view-page.css',
     imports: [
-        ArcViewChapter
+        ArcViewChapter,
+        ArcDonutChart,
     ],
     providers: [DatePipe]
 })
@@ -46,5 +48,24 @@ export class ArcViewPage implements OnInit {
         }
 
         return lastIndex;
+    }
+
+    get chapterCounts(): Record<ChapterState, number> {
+        const today = new Date().toISOString().split('T')[0];
+        const counts: Record<ChapterState, number> = {
+            [ChapterState.DONE]: 0,
+            [ChapterState.INCOMPLETE]: 0,
+            [ChapterState.IN_PROGRESS]: 0,
+            [ChapterState.PLANNED]: 0,
+        };
+
+        for (const chapter of this.chapters) {
+            if (chapter.allTasksDone) counts[ChapterState.DONE]++;
+            else if (chapter.scheduledDate < today) counts[ChapterState.INCOMPLETE]++;
+            else if (chapter.scheduledDate === today) counts[ChapterState.IN_PROGRESS]++;
+            else counts[ChapterState.PLANNED]++;
+        }
+
+        return counts;
     }
 }

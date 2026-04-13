@@ -1,0 +1,34 @@
+<mat-card class="donut-card">
+    <span class="card-title">CHAPTERS</span>
+    <div class="donut-wrapper">
+        <svg viewBox="0 0 100 100" class="donut-svg">
+            <circle
+                cx="50" cy="50" [attr.r]="r"
+                fill="none"
+                [attr.stroke-width]="strokeWidth"
+            />
+            @for (seg of segments; track seg.label) {
+                <circle
+                    cx="50" cy="50" [attr.r]="r"
+                    fill="none"
+                    [style.stroke]="seg.color"
+                    [attr.stroke-width]="strokeWidth"
+                    [attr.stroke-dasharray]="seg.dashArray"
+                    [attr.stroke-dashoffset]="seg.dashOffset"
+                    transform="rotate(-90, 50, 50)"
+                />
+            }
+            <text x="50" y="46" class="donut-center-top">{{ done }}</text>
+            <text x="50" y="58" class="donut-center-bottom">of {{ total }}</text>
+        </svg>
+    </div>
+    <div class="legend">
+        @for (item of legend; track item.label) {
+            <div class="legend-row">
+                <span class="legend-dot" [style.background-color]="item.color"></span>
+                <span class="legend-label">{{ item.label }}</span>
+                <span class="legend-count">{{ item.count }}</span>
+            </div>
+        }
+    </div>
+</mat-card>

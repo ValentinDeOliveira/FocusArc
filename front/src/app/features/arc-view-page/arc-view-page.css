@@ -1,7 +1,13 @@
-.page {
-    max-width: 860px;
-    margin: 0 auto;
-    padding: 32px 24px;
+.layout {
+    display: flex;
+    min-height: 100vh;
+    background-color: var(--color-bg);
+}
+
+.main-content {
+    flex: 3;
+    padding: 32px 48px;
+    overflow-y: auto;
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -12,4 +18,12 @@
     font-weight: 700;
     color: var(--color-text);
     margin: 0 0 16px 0;
+}
+
+.sidebar {
+    flex: 1;
+    padding: 32px 16px;
+    align-self: flex-start;
+    position: sticky;
+    top: 32px;
 }
