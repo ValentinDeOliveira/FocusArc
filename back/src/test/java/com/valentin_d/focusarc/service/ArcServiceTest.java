@@ -1,5 +1,6 @@
 package com.valentin_d.focusarc.service;
 
+import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
 import com.valentin_d.focusarc.exception.InvalidDateRangeException;
 import com.valentin_d.focusarc.exception.arc.ArcAlreadyExistsException;
 import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistException;
@@ -7,12 +8,14 @@ import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
 import com.valentin_d.focusarc.exception.arc.NoActiveArcException;
 import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.arc.Arc;
+import com.valentin_d.focusarc.model.id.TagId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.service.arc.ArcLoader;
 import com.valentin_d.focusarc.service.arc.ArcService;
 import com.valentin_d.focusarc.service.chapter.ChapterLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
+import com.valentin_d.focusarc.service.task.TaskLoader;
 import com.valentin_d.focusarc.service.user.UserLoader;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -24,6 +27,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapterWithArcId;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapterWithScheduledDateAndArcIdAndCompletedMinutesAndAllTasksCompleted;
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -43,6 +47,8 @@ class ArcServiceTest {
     private ChapterService chapterService;
     @Mock
     private ChapterLoader chapterLoader;
+    @Mock
+    private TaskLoader taskLoader;
     @InjectMocks
     private ArcService arcService;
 
@@ -297,6 +303,52 @@ class ArcServiceTest {
         doThrow(new NoActiveArcException(userId)).when(arcLoader).getActiveArcForUser(userId);
 
         assertThatThrownBy(() -> arcService.getSummaryForUser(userId))
+                .isInstanceOf(NoActiveArcException.class);
+
+        verify(chapterLoader, never()).findAllByArc(any());
+    }
+
+    @Test
+    void shouldReturnTagStats_whenUserHasActiveArc() {
+        final var userId = UserId.random();
+        final var arc = anArcWithOwnerIdAndCompletedMinutes(userId, 60);
+
+        final var chapter1 = aChapterWithArcId(arc.getId());
+        final var chapter2 = aChapterWithArcId(arc.getId());
+
+        final var expectedStats = List.of(
+                new TagTaskStatsDto(TagId.random(), 3L, 2L),
+                new TagTaskStatsDto(TagId.random(), 1L, 0L)
+        );
+
+        when(arcLoader.getActiveArcForUser(userId)).thenReturn(arc);
+        when(chapterLoader.findAllByArc(arc.getId())).thenReturn(List.of(chapter1, chapter2));
+        when(taskLoader.getNumberTasksPerTagForChapters(List.of(chapter1.getId(), chapter2.getId())))
+                .thenReturn(expectedStats);
+
+        final var result = arcService.getTagTaskStats(userId);
+
+        assertThat(result).hasSize(2);
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedStats);
+    }
+
+    @Test
+    void shouldThrowException_whenUserDoesNotExist_onGetTaskStats() {
+        final var userId = UserId.random();
+        doThrowUserDoesNotExist(userId);
+
+        assertThatThrownBy(() -> arcService.getTagTaskStats(userId))
+                .isInstanceOf(UserDoesNotExistException.class);
+
+        verify(arcLoader, never()).getActiveArcForUser(any());
+    }
+
+    @Test
+    void shouldThrowException_whenNoActiveArc_onGetTaskStats() {
+        final var userId = UserId.random();
+        doThrow(new NoActiveArcException(userId)).when(arcLoader).getActiveArcForUser(userId);
+
+        assertThatThrownBy(() -> arcService.getTagTaskStats(userId))
                 .isInstanceOf(NoActiveArcException.class);
 
         verify(chapterLoader, never()).findAllByArc(any());

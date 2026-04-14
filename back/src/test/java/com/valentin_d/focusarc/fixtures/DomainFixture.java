@@ -5,6 +5,7 @@ import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
+import com.valentin_d.focusarc.model.id.TagId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.tag.Tag;
 import com.valentin_d.focusarc.model.task.Task;
@@ -86,6 +87,14 @@ public class DomainFixture {
     public Task taskForChapterWithStatus(final ChapterId chapterId, final TaskStatus status) {
         final var task = aTaskWithChapterIdAndStatus(chapterId, status);
         return taskRepository.save(task);
+    }
+
+    public Task taskForChapterWithTag(final ChapterId chapterId, final TagId tagId) {
+        return taskRepository.save(aTaskWithChapterIdAndTag(chapterId, tagId));
+    }
+
+    public Task taskForChapterWithStatusAndTag(final ChapterId chapterId, final TaskStatus status, final TagId tagId) {
+        return taskRepository.save(aTaskWithChapterIdAndStatusAndTag(chapterId, status, tagId));
     }
 
     public Task taskWithChapter() {

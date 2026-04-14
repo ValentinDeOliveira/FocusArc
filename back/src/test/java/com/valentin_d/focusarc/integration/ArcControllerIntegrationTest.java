@@ -2,10 +2,12 @@ package com.valentin_d.focusarc.integration;
 
 import com.valentin_d.focusarc.dto.arc.ArcSummaryResponseDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
+import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
 import com.valentin_d.focusarc.integration.base.BaseArcControllerIntegrationTest;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.ArcId;
+import com.valentin_d.focusarc.model.task.TaskStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -13,6 +15,7 @@ import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpMethod;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.stream.Stream;
 
 import static com.mongodb.assertions.Assertions.assertNotNull;
@@ -186,8 +189,50 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     }
 
     @Test
-    void shouldReturnBadRequest_whenNoActiveArc() {
+    void shouldReturnBadRequestOnSummary_whenNoActiveArc() {
         final var response = request(URL + "/summary", HttpMethod.GET, Void.class);
+
+        assertionHelper.assertBadRequest(response);
+    }
+
+    @Test
+    void shouldReturnStats_whenUserHasActiveArc() {
+        final var arc = domainFixture.arcForUser(user.getId());
+        final var chapter1 = domainFixture.chapterForArc(arc.getId());
+        final var chapter2 = domainFixture.chapterForArc(arc.getId());
+
+        final var tag1 = domainFixture.tagForUser(user.getId());
+        final var tag2 = domainFixture.tagForUser(user.getId());
+
+        // tag1: 3 tasks, 2 done
+        domainFixture.taskForChapterWithStatusAndTag(chapter1.getId(), TaskStatus.DONE, tag1.getId());
+        domainFixture.taskForChapterWithStatusAndTag(chapter1.getId(), TaskStatus.DONE, tag1.getId());
+        domainFixture.taskForChapterWithTag(chapter2.getId(), tag1.getId());
+
+        // tag2: 1 task, 0 done
+        domainFixture.taskForChapterWithTag(chapter2.getId(), tag2.getId());
+
+        final var response = request(URL + "/stats", HttpMethod.GET, TagTaskStatsDto[].class);
+
+        assertionHelper.assertOk(response);
+        final var stats = response.getBody();
+        assertNotNull(stats);
+        assertThat(stats).hasSize(2);
+
+        final var statForTag1 = Arrays.stream(stats)
+                .filter(s -> s.tagId().equals(tag1.getId())).findFirst().orElseThrow();
+        final var statForTag2 = Arrays.stream(stats)
+                .filter(s -> s.tagId().equals(tag2.getId())).findFirst().orElseThrow();
+
+        assertEquals(3L, statForTag1.total());
+        assertEquals(2L, statForTag1.done());
+        assertEquals(1L, statForTag2.total());
+        assertEquals(0L, statForTag2.done());
+    }
+
+    @Test
+    void shouldReturnBadRequestOnStats_whenNoActiveArc() {
+        final var response = request(URL + "/stats", HttpMethod.GET, Void.class);
 
         assertionHelper.assertBadRequest(response);
     }

@@ -11,5 +11,6 @@ public record ArcSummaryResponseDto(
         int nbChapterCompleted,
         int nbChapterPlanned,
         int nbChapterSkipped,
-        int daysStreak) {
+        int daysStreak
+        ) {
 }
