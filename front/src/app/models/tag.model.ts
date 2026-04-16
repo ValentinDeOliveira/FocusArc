@@ -16,3 +16,9 @@ export interface TagUpdateDto {
     label: string;
     color: TagColor;
 }
+
+export interface TagStatDto {
+    tagId: string;
+    total: number;
+    done: number;
+}

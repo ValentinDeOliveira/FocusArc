@@ -4,6 +4,7 @@ import {formatMinutes} from '../../utils/time.utils';
 import {Task, TaskUpdateDto} from '../../models/task.model';
 import {DatePipe} from '@angular/common';
 import {TaskService} from '../../core/services/task.service';
+import {ArcService} from '../../core/services/arc.service';
 import {TaskRow} from '../task-row/task-row';
 import {TagPicker} from '../tag-picker/tag-picker';
 import {TaskStatusBadge} from '../task-status-badge/task-status-badge';
@@ -26,6 +27,7 @@ export class TaskInfo {
 
     private datePipe = inject(DatePipe);
     private taskService = inject(TaskService);
+    private arcService = inject(ArcService);
 
     formatTime(date: string) {
         return this.datePipe.transform(date, 'HH:mm');
@@ -42,7 +44,9 @@ export class TaskInfo {
             tagId: updatedTag?.id
         };
 
-        this.taskService.update(this.task.id, dto).subscribe();
+        this.taskService.update(this.task.id, dto).subscribe(() => {
+            this.arcService.notifyStatsChanged();
+        });
     }
 
     get isTaskEnded() {

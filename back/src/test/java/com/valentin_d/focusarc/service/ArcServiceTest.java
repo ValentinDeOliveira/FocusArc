@@ -323,7 +323,7 @@ class ArcServiceTest {
 
         when(arcLoader.getActiveArcForUser(userId)).thenReturn(arc);
         when(chapterLoader.findAllByArc(arc.getId())).thenReturn(List.of(chapter1, chapter2));
-        when(taskLoader.getNumberTasksPerTagForChapters(List.of(chapter1.getId(), chapter2.getId())))
+        when(taskLoader.getTagStatsForChapters(List.of(chapter1.getId(), chapter2.getId())))
                 .thenReturn(expectedStats);
 
         final var result = arcService.getTagTaskStats(userId);

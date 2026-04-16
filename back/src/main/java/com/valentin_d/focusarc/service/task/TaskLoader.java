@@ -1,6 +1,7 @@
 package com.valentin_d.focusarc.service.task;
 
 import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
+import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.exception.task.TaskDoesNotExistException;
 import com.valentin_d.focusarc.exception.task.TaskInProgressException;
 import com.valentin_d.focusarc.model.id.ChapterId;
@@ -57,7 +58,7 @@ public class TaskLoader extends BaseService {
         }
     }
 
-    public List<TagTaskStatsDto> getNumberTasksPerTagForChapters(List<ChapterId> chapterIds) {
+    public List<TagTaskStatsDto> getTagStatsForChapters(List<ChapterId> chapterIds) {
         return taskRepository
                 .findAllByChapterIn(chapterIds)
                 .stream()
@@ -69,6 +70,23 @@ public class TaskLoader extends BaseService {
                         e.getKey(),
                         (long) e.getValue().size(),
                         e.getValue().stream().filter(Task::isDone).count()
+                ))
+                .toList();
+    }
+
+    public List<TaskStatsDto> getTaskStatsForChapters(List<ChapterId> chapterIds) {
+        final var tasks = taskRepository.findAllByChapterIn(chapterIds);
+        final var nTasks = tasks.size();
+
+        return tasks
+                .stream()
+                .collect(groupingBy(Task::getStatus))
+                .entrySet()
+                .stream()
+                .map(e -> new TaskStatsDto(
+                        e.getKey(),
+                        (long) nTasks,
+                        (long) e.getValue().size()
                 ))
                 .toList();
     }

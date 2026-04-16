@@ -212,7 +212,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         // tag2: 1 task, 0 done
         domainFixture.taskForChapterWithTag(chapter2.getId(), tag2.getId());
 
-        final var response = request(URL + "/stats", HttpMethod.GET, TagTaskStatsDto[].class);
+        final var response = request(URL + "/tag-stats", HttpMethod.GET, TagTaskStatsDto[].class);
 
         assertionHelper.assertOk(response);
         final var stats = response.getBody();
@@ -232,7 +232,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
 
     @Test
     void shouldReturnBadRequestOnStats_whenNoActiveArc() {
-        final var response = request(URL + "/stats", HttpMethod.GET, Void.class);
+        final var response = request(URL + "/tag-stats", HttpMethod.GET, Void.class);
 
         assertionHelper.assertBadRequest(response);
     }

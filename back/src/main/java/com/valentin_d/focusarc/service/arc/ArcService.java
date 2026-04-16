@@ -4,6 +4,7 @@ import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.arc.ArcSummaryResponseDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
+import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.exception.InvalidDateRangeException;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.ChapterStatus;
@@ -116,7 +117,16 @@ public class ArcService {
         final var arc = arcLoader.getActiveArcForUser(userId);
         final var chapters = chapterLoader.findAllByArc(arc.getId());
 
-        return taskLoader.getNumberTasksPerTagForChapters(chapters.stream().map(Chapter::getId).collect(Collectors.toList()));
+        return taskLoader.getTagStatsForChapters(chapters.stream().map(Chapter::getId).collect(Collectors.toList()));
+    }
+
+    public List<TaskStatsDto> getTaskStats(@NotNull UserId userId) {
+        userLoader.assertUserExists(userId);
+
+        final var arc = arcLoader.getActiveArcForUser(userId);
+        final var chapters = chapterLoader.findAllByArc(arc.getId());
+
+        return taskLoader.getTaskStatsForChapters(chapters.stream().map(Chapter::getId).collect(Collectors.toList()));
     }
 
     private int getStreak(List<Chapter> chapters) {

@@ -1,12 +1,21 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable} from 'rxjs';
+import {Observable, Subject} from 'rxjs';
 import {Arc, ArcCreationDto, ArcSummaryResponseDto, ArcUpdateDto} from '../../models/arc.model';
+import {TagStatDto} from '../../models/tag.model';
+import {TaskStatDto} from '../../models/task.model';
 
 @Injectable({ providedIn: 'root' })
 export class ArcService {
     private http = inject(HttpClient);
     private baseUrl = "http://localhost:8080/api/arcs";
+
+    private statsChangedSubject = new Subject<void>();
+    readonly statsChanged$ = this.statsChangedSubject.asObservable();
+
+    notifyStatsChanged(): void {
+        this.statsChangedSubject.next();
+    }
 
     getById(id: string): Observable<Arc> {
         return this.http.get<Arc>(`${this.baseUrl}/${id}`);
@@ -34,5 +43,13 @@ export class ArcService {
 
     getSummary(): Observable<ArcSummaryResponseDto> {
         return this.http.get<ArcSummaryResponseDto>(`${this.baseUrl}/summary`);
+    }
+
+    getTagStats(): Observable<TagStatDto[]> {
+        return this.http.get<TagStatDto[]>(`${this.baseUrl}/tag-stats`);
+    }
+
+    getTaskStats(): Observable<TaskStatDto[]> {
+        return this.http.get<TaskStatDto[]>(`${this.baseUrl}/task-stats`);
     }
 }

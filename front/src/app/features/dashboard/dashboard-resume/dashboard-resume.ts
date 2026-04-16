@@ -7,7 +7,8 @@ import {DatePipe} from '@angular/common';
 import {formatMinutes} from '../../../utils/time.utils';
 import {DashboardTaskTimer} from '../dashboard-task-timer/dashboard-task-timer';
 import {TagStore} from '../../../core/stores/tag.store';
-import {switchMap} from 'rxjs';
+import {forkJoin, switchMap} from 'rxjs';
+import {tap} from 'rxjs/operators';
 import {TaskCreation} from '../task-creation/task-creation';
 import {ContextStore} from '../../../core/stores/context.store';
 import {ChapterSummaryResponseDto} from '../../../models/chapter.model';
@@ -37,14 +38,16 @@ export class DashboardResume implements OnInit {
     chapterSummary = signal<ChapterSummaryResponseDto | null>(null);
 
     ngOnInit(): void {
-        this.tagStore.load().pipe(
+        forkJoin({
+            tags: this.tagStore.load(),
+            summary: this.chapterService.getSummary()
+        }).pipe(
+            tap(({ summary }) => {
+                this.chapterSummary.set(summary);
+                this.contextStore.setChapterId(summary.chapterId);
+            }),
             switchMap(() => this.taskService.getTodayTask())
-        ).subscribe(t => this.tasks.set(t));
-
-        this.chapterService.getSummary().subscribe(summary => {
-            this.chapterSummary.set(summary);
-            this.contextStore.setChapterId(summary.chapterId);
-        });
+        ).subscribe(tasks => this.tasks.set(tasks));
     }
 
     todayDate() {

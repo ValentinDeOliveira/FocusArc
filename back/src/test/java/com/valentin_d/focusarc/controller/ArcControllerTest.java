@@ -146,7 +146,7 @@ class ArcControllerTest extends BaseSecurityControllerTest {
 
         when(arcService.getTagTaskStats(user.getId())).thenReturn(stats);
 
-        final var actions = mvcGetWithUser(ROOT + "/stats", user)
+        final var actions = mvcGetWithUser(ROOT + "/tag-stats", user)
                 .andExpect(status().isOk());
 
         tagTaskStatsAssertion.assertListJson(actions, stats.get(0));
@@ -156,7 +156,7 @@ class ArcControllerTest extends BaseSecurityControllerTest {
     void shouldReturnBadRequestOnStats_whenNoActiveArc() throws Exception {
         doThrow(new NoActiveArcException(user.getId())).when(arcService).getTagTaskStats(user.getId());
 
-        mvcGetWithUser(ROOT + "/stats", user)
+        mvcGetWithUser(ROOT + "/tag-stats", user)
                 .andExpect(status().isBadRequest());
     }
 

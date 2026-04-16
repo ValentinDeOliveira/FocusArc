@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {MatCard} from '@angular/material/card';
 import {ChapterState} from '../arc-view-chapter/arc-view-chapter';
+import {TaskStatus} from '../../../models/task.model';
 
 interface DonutSegment {
     label: string;
@@ -10,11 +11,18 @@ interface DonutSegment {
     dashOffset: number;
 }
 
-const CHAPTER_STATES: { state: ChapterState; label: string; color: string }[] = [
+export const CHAPTER_STATES: { state: ChapterState; label: string; color: string }[] = [
     { state: ChapterState.DONE,        label: 'Done',        color: 'var(--color-success)'          },
     { state: ChapterState.INCOMPLETE,  label: 'Incomplete',  color: 'var(--color-warning)'          },
     { state: ChapterState.IN_PROGRESS, label: 'In Progress', color: 'var(--color-in-progress-text)' },
     { state: ChapterState.PLANNED,     label: 'Planned',     color: 'var(--color-disabled)'         },
+];
+// TODO change colors
+export const TASK_STATES: { state: TaskStatus; label: string; color: string }[] = [
+    { state: TaskStatus.DONE,        label: 'Done',        color: 'var(--color-success)'          },
+    { state: TaskStatus.SKIPPED,  label: 'Skipped',  color: 'var(--color-warning)'          },
+    { state: TaskStatus.IN_PROGRESS, label: 'In Progress', color: 'var(--color-in-progress-text)' },
+    { state: TaskStatus.PLANNED,     label: 'Planned',     color: 'var(--color-disabled)'         },
 ];
 
 @Component({
