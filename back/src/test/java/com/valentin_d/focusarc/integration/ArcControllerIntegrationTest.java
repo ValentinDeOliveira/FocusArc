@@ -3,6 +3,7 @@ package com.valentin_d.focusarc.integration;
 import com.valentin_d.focusarc.dto.arc.ArcSummaryResponseDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
+import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.integration.base.BaseArcControllerIntegrationTest;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.arc.ArcStatus;
@@ -233,6 +234,43 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     @Test
     void shouldReturnBadRequestOnStats_whenNoActiveArc() {
         final var response = request(URL + "/tag-stats", HttpMethod.GET, Void.class);
+
+        assertionHelper.assertBadRequest(response);
+    }
+
+    @Test
+    void shouldReturnTaskStats_whenUserHasActiveArc() {
+        final var arc = domainFixture.arcForUser(user.getId());
+        final var chapter1 = domainFixture.chapterForArc(arc.getId());
+        final var chapter2 = domainFixture.chapterForArc(arc.getId());
+
+        // 2 DONE tasks across two chapters
+        domainFixture.taskForChapterWithStatus(chapter1.getId(), TaskStatus.DONE);
+        domainFixture.taskForChapterWithStatus(chapter2.getId(), TaskStatus.DONE);
+        // 1 PLANNED task
+        domainFixture.taskForChapterWithStatus(chapter1.getId(), TaskStatus.PLANNED);
+
+        final var response = request(URL + "/task-stats", HttpMethod.GET, TaskStatsDto[].class);
+
+        assertionHelper.assertOk(response);
+        final var stats = response.getBody();
+        assertNotNull(stats);
+        assertThat(stats).hasSize(2);
+
+        final var statForDone = Arrays.stream(stats)
+                .filter(s -> s.taskStatus() == TaskStatus.DONE).findFirst().orElseThrow();
+        final var statForPlanned = Arrays.stream(stats)
+                .filter(s -> s.taskStatus() == TaskStatus.PLANNED).findFirst().orElseThrow();
+
+        assertEquals(3L, statForDone.total());
+        assertEquals(2L, statForDone.done());
+        assertEquals(3L, statForPlanned.total());
+        assertEquals(1L, statForPlanned.done());
+    }
+
+    @Test
+    void shouldReturnBadRequestOnTaskStats_whenNoActiveArc() {
+        final var response = request(URL + "/task-stats", HttpMethod.GET, Void.class);
 
         assertionHelper.assertBadRequest(response);
     }

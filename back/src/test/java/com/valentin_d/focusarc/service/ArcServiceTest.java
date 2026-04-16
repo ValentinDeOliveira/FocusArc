@@ -1,6 +1,7 @@
 package com.valentin_d.focusarc.service;
 
 import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
+import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.exception.InvalidDateRangeException;
 import com.valentin_d.focusarc.exception.arc.ArcAlreadyExistsException;
 import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistException;
@@ -10,6 +11,7 @@ import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.TagId;
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.service.arc.ArcLoader;
 import com.valentin_d.focusarc.service.arc.ArcService;
@@ -17,14 +19,20 @@ import com.valentin_d.focusarc.service.chapter.ChapterLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
 import com.valentin_d.focusarc.service.task.TaskLoader;
 import com.valentin_d.focusarc.service.user.UserLoader;
+import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.stream.Stream;
 
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapterWithArcId;
@@ -332,27 +340,61 @@ class ArcServiceTest {
         assertThat(result).containsExactlyInAnyOrderElementsOf(expectedStats);
     }
 
-    @Test
-    void shouldThrowException_whenUserDoesNotExist_onGetTaskStats() {
+    @ParameterizedTest
+    @MethodSource("statsMethodsProvider")
+    void shouldThrowException_whenUserDoesNotExist_onGetChaptersForUser(BiConsumer<ArcService, UserId> statsMethod) {
         final var userId = UserId.random();
         doThrowUserDoesNotExist(userId);
 
-        assertThatThrownBy(() -> arcService.getTagTaskStats(userId))
+        assertThatThrownBy(() -> statsMethod.accept(arcService, userId))
                 .isInstanceOf(UserDoesNotExistException.class);
 
         verify(arcLoader, never()).getActiveArcForUser(any());
     }
 
-    @Test
-    void shouldThrowException_whenNoActiveArc_onGetTaskStats() {
+    @ParameterizedTest
+    @MethodSource("statsMethodsProvider")
+    void shouldThrowException_whenNoActiveArc_onGetChaptersForUser(BiConsumer<ArcService, UserId> statsMethod) {
         final var userId = UserId.random();
         doThrow(new NoActiveArcException(userId)).when(arcLoader).getActiveArcForUser(userId);
 
-        assertThatThrownBy(() -> arcService.getTagTaskStats(userId))
+        assertThatThrownBy(() -> statsMethod.accept(arcService, userId))
                 .isInstanceOf(NoActiveArcException.class);
 
         verify(chapterLoader, never()).findAllByArc(any());
     }
+
+    private static Stream<Arguments> statsMethodsProvider() {
+        return Stream.of(
+                Arguments.of(Named.of("getTagTaskStats", (BiConsumer<ArcService, UserId>) ArcService::getTagTaskStats)),
+                Arguments.of(Named.of("getTaskStats", (BiConsumer<ArcService, UserId>) ArcService::getTaskStats))
+        );
+    }
+
+    @Test
+    void shouldReturnTaskStats_whenUserHasActiveArc() {
+        final var userId = UserId.random();
+        final var arc = anArcWithOwnerIdAndCompletedMinutes(userId, 60);
+
+        final var chapter1 = aChapterWithArcId(arc.getId());
+        final var chapter2 = aChapterWithArcId(arc.getId());
+
+        final var expectedStats = List.of(
+                new TaskStatsDto(TaskStatus.DONE, 5L, 5L),
+                new TaskStatsDto(TaskStatus.SKIPPED, 2L, 0L)
+        );
+
+        when(arcLoader.getActiveArcForUser(userId)).thenReturn(arc);
+        when(chapterLoader.findAllByArc(arc.getId())).thenReturn(List.of(chapter1, chapter2));
+        when(taskLoader.getTaskStatsForChapters(List.of(chapter1.getId(), chapter2.getId())))
+                .thenReturn(expectedStats);
+
+        final var result = arcService.getTaskStats(userId);
+
+        assertThat(result).hasSize(2);
+        assertThat(result).containsExactlyInAnyOrderElementsOf(expectedStats);
+    }
+
 
     private void doThrowUserDoesNotExist(final UserId userId) {
         doThrow(new UserDoesNotExistException(userId))

@@ -3,10 +3,13 @@ package com.valentin_d.focusarc.controller;
 import com.valentin_d.focusarc.controller.assertions.ArcAssertion;
 import com.valentin_d.focusarc.controller.assertions.ArcSummaryResponseAssertion;
 import com.valentin_d.focusarc.controller.assertions.TagTaskStatsAssertion;
+import com.valentin_d.focusarc.controller.assertions.TaskStatsAssertion;
 import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
+import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.exception.arc.NoActiveArcException;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.TagId;
+import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.service.arc.ArcService;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -30,6 +33,7 @@ class ArcControllerTest extends BaseSecurityControllerTest {
     private final ArcAssertion arcAssertion = new ArcAssertion();
     private final ArcSummaryResponseAssertion arcSummaryResponseAssertion = new ArcSummaryResponseAssertion();
     private final TagTaskStatsAssertion tagTaskStatsAssertion = new TagTaskStatsAssertion();
+    private final TaskStatsAssertion taskStatsAssertion = new TaskStatsAssertion();
 
     @Test
     void shouldReturnArc_whenIdExists() throws Exception {
@@ -140,7 +144,7 @@ class ArcControllerTest extends BaseSecurityControllerTest {
     }
 
     @Test
-    void shouldReturnStats_whenActiveArcExists() throws Exception {
+    void shouldReturnTagStats_whenActiveArcExists() throws Exception {
         final var tagId = TagId.random();
         final var stats = List.of(new TagTaskStatsDto(tagId, 3L, 2L));
 
@@ -153,10 +157,30 @@ class ArcControllerTest extends BaseSecurityControllerTest {
     }
 
     @Test
-    void shouldReturnBadRequestOnStats_whenNoActiveArc() throws Exception {
+    void shouldReturnBadRequestOnTagStats_whenNoActiveArc() throws Exception {
         doThrow(new NoActiveArcException(user.getId())).when(arcService).getTagTaskStats(user.getId());
 
         mvcGetWithUser(ROOT + "/tag-stats", user)
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void shouldReturnTaskStats_whenActiveArcExists() throws Exception {
+        final var stats = List.of(new TaskStatsDto(TaskStatus.DONE, 3L, 2L));
+
+        when(arcService.getTaskStats(user.getId())).thenReturn(stats);
+
+        final var actions = mvcGetWithUser(ROOT + "/task-stats", user)
+                .andExpect(status().isOk());
+
+        taskStatsAssertion.assertListJson(actions, stats.get(0));
+    }
+
+    @Test
+    void shouldReturnBadRequestOnTaskStats_whenNoActiveArc() throws Exception {
+        doThrow(new NoActiveArcException(user.getId())).when(arcService).getTaskStats(user.getId());
+
+        mvcGetWithUser(ROOT + "/task-stats", user)
                 .andExpect(status().isBadRequest());
     }
 

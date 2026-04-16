@@ -10,6 +10,7 @@ import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.ChapterStatus;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
+import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.service.chapter.ChapterLoader;
@@ -112,21 +113,21 @@ public class ArcService {
     }
 
     public List<TagTaskStatsDto> getTagTaskStats(@NotNull UserId userId) {
-        userLoader.assertUserExists(userId);
-
-        final var arc = arcLoader.getActiveArcForUser(userId);
-        final var chapters = chapterLoader.findAllByArc(arc.getId());
-
-        return taskLoader.getTagStatsForChapters(chapters.stream().map(Chapter::getId).collect(Collectors.toList()));
+        return taskLoader.getTagStatsForChapters(getChaptersForUser(userId));
     }
 
     public List<TaskStatsDto> getTaskStats(@NotNull UserId userId) {
+        return taskLoader.getTaskStatsForChapters(getChaptersForUser(userId));
+    }
+
+    private List<ChapterId> getChaptersForUser(UserId userId) {
         userLoader.assertUserExists(userId);
 
         final var arc = arcLoader.getActiveArcForUser(userId);
-        final var chapters = chapterLoader.findAllByArc(arc.getId());
-
-        return taskLoader.getTaskStatsForChapters(chapters.stream().map(Chapter::getId).collect(Collectors.toList()));
+        return chapterLoader.findAllByArc(arc.getId())
+                .stream()
+                .map(Chapter::getId)
+                .collect(Collectors.toList());
     }
 
     private int getStreak(List<Chapter> chapters) {
