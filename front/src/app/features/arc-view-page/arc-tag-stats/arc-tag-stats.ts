@@ -23,9 +23,9 @@ export class ArcTagStats {
 
     @Input({ required: true }) tagStats!: TagStatDto[];
 
-    get rows(): TagStatRow[] {
+    private get allRows(): TagStatRow[] {
         return this.tagStats
-            .filter(s => s.total > 0)
+            .filter(s => s.done > 0)
             .map(s => {
                 const tag = this.tagStore.byId(s.tagId);
                 return {
@@ -35,6 +35,21 @@ export class ArcTagStats {
                     total: s.total,
                     pct: Math.round((s.done / s.total) * 100),
                 };
-            });
+            })
+            .sort((a, b) => b.done - a.done);
+    }
+
+    get rows(): TagStatRow[] {
+        return this.allRows.filter(r => r.pct < 100).slice(0, 4);
+    }
+
+    get completedRows(): TagStatRow[] {
+        return this.allRows.filter(r => r.pct === 100);
+    }
+
+    get completedLabel(): string {
+        const labels = this.completedRows.map(r => r.label);
+        if (labels.length <= 3) return labels.join(', ');
+        return `${labels.slice(0, 3).join(', ')} +${labels.length - 3} more`;
     }
 }

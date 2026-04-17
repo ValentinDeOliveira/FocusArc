@@ -22,7 +22,7 @@ export class ArcTaskStats {
 
     get rows(): TaskStatRow[] {
         return this.taskStats
-            .filter(s => s.total > 0)
+            .filter(s => s.done > 0)
             .map(s => {
                 const taskState = TASK_STATES.filter(cs => cs.state == s.taskStatus).at(0);
                 return {

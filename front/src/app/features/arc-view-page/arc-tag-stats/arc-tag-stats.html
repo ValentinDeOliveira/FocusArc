@@ -15,5 +15,11 @@
                 </div>
             }
         </div>
+        @if (completedRows.length > 0) {
+            <div class="completed-overflow">
+                <span class="completed-overflow-icon">✓</span>
+                <span>{{ completedLabel }}</span>
+            </div>
+        }
     </mat-card>
 }
