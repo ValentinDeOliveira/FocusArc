@@ -1,26 +1,17 @@
 import {Component, Input} from '@angular/core';
-import {MatCard} from '@angular/material/card';
 import {TaskStatDto} from '../../../models/task.model';
 import {TASK_STATES} from '../arc-donut-chart/arc-donut-chart';
-
-interface TaskStatRow {
-    label: string;
-    color: string;
-    done: number;
-    total: number;
-    pct: number;
-}
+import {ArcStatsBase, StatRow} from '../../../shared/arc-stats-base/arc-stats-base';
 
 @Component({
     selector: 'app-arc-task-stats',
-    imports: [MatCard],
+    imports: [ArcStatsBase],
     templateUrl: './arc-task-stats.html',
-    styleUrl: './arc-task-stats.css',
 })
 export class ArcTaskStats {
     @Input({ required: true }) taskStats!: TaskStatDto[];
 
-    get rows(): TaskStatRow[] {
+    get rows(): StatRow[] {
         return this.taskStats
             .filter(s => s.done > 0)
             .map(s => {

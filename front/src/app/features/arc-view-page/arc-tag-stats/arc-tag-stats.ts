@@ -1,20 +1,12 @@
 import {Component, inject, Input} from '@angular/core';
-import {MatCard} from '@angular/material/card';
 import {TagStatDto} from '../../../models/tag.model';
 import {TagStore} from '../../../core/stores/tag.store';
 import {TAG_COLORS} from '../../../shared/tag-dot/tag-dot';
-
-interface TagStatRow {
-    label: string;
-    color: string;
-    done: number;
-    total: number;
-    pct: number;
-}
+import {ArcStatsBase, StatRow} from '../../../shared/arc-stats-base/arc-stats-base';
 
 @Component({
     selector: 'app-arc-tag-stats',
-    imports: [MatCard],
+    imports: [ArcStatsBase],
     templateUrl: './arc-tag-stats.html',
     styleUrl: './arc-tag-stats.css',
 })
@@ -23,7 +15,7 @@ export class ArcTagStats {
 
     @Input({ required: true }) tagStats!: TagStatDto[];
 
-    private get allRows(): TagStatRow[] {
+    private get allRows(): StatRow[] {
         return this.tagStats
             .filter(s => s.done > 0)
             .map(s => {
@@ -39,11 +31,11 @@ export class ArcTagStats {
             .sort((a, b) => b.done - a.done);
     }
 
-    get rows(): TagStatRow[] {
+    get rows(): StatRow[] {
         return this.allRows.filter(r => r.pct < 100).slice(0, 4);
     }
 
-    get completedRows(): TagStatRow[] {
+    get completedRows(): StatRow[] {
         return this.allRows.filter(r => r.pct === 100);
     }
 
