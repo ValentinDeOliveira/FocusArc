@@ -19,5 +19,5 @@ schedules and executes day to day.
 
 - **Backend**: Java 17, Spring Boot 4.0.2, MongoDb
 - **Frontend**: Angular 21, TypeScript, TailwindCSS
-- **Deployment**: Docker, , Github Action
+- **Deployment**: Docker, Github Action
 - **Other**: Docusaurus, JaCoCo, Lombok
