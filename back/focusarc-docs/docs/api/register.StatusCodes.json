@@ -1,0 +1,1 @@
+{"responses":{"409":{"description":"Email already in use","content":{"*/*":{"schema":{"type":"object","properties":{"accessToken":{"type":"string"},"refreshToken":{"type":"string"}},"title":"AuthResponseDto"}}}}}}

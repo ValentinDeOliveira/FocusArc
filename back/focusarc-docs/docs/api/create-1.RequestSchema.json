@@ -1,0 +1,1 @@
+{"title":"Body","body":{"content":{"application/json":{"schema":{"type":"object","properties":{"label":{"type":"string"},"color":{"type":"string","enum":["RED","ORANGE","YELLOW","GREEN","TEAL","BLUE","PURPLE","PINK","GRAY"]}},"required":["color","label"],"title":"TagCreationDto"}}},"required":true}}

@@ -1,0 +1,1 @@
+{"title":"Body","body":{"content":{"application/json":{"schema":{"type":"object","properties":{"name":{"type":"string"},"totalEstimatedMinutes":{"type":"integer","format":"int32"},"startDate":{"type":"string","format":"date"},"endDate":{"type":"string","format":"date"}},"title":"ArcUpdateDto"}}},"required":true}}

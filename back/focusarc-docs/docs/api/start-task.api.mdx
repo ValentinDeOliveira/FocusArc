@@ -1,0 +1,69 @@
+---
+id: start-task
+title: "Start a task"
+description: "Sets status to `IN_PROGRESS` and records the start timestamp. Only pending tasks (PLANNED or IN_PROGRESS) can be started."
+sidebar_label: "Start a task"
+hide_title: true
+hide_table_of_contents: true
+api: eJzFVc1u4zYQfhViTonBWu7PYaGbu8lu3Z/EiLPoITCasTix2EiklhwFdQUBPfUBij7hPkkxlJw4G7dATtWFEmc4/Gbm+0YdMG4j5DdwjfE+wlqDoVgE27D1DnJYEUcVGbmNir26XVz8sry6fH91vlrdKnRGBSp8MFFxSeIXWLGtKTLWzVRdumqnGnLGuq1iuUGdLH+cX1ycnykf1EGwU1WgU5sxBpkpaPANBRQcCwM5JIOgBA0NBqyJKQj0DhzWBDnIBQsDGqwgb5BL0BDoY2sDGcg5tKQhFiXVCHkHvGsoxQ3WbaHv1+IcG+8iRbF/M5vJ8rweAkDZqLAKhGan7qyzsSSjTs4uL84lqdUPi+Xy/OwUNBTeMTmWKJNsIsuL2/3mVypYUgqSLtvhbmuOINRQlNgwhaM2imxrZDI/WdfyEGZ0so5pSwE03PlQIw9bX3+VQvq6qejVx1I35vwSyYGzQaYvhA2PB8i85gi5V7k/ZvJKWNzGY/7k2lqEMfIVNBzQFTRIv0HD2G5Y93rk4ZHePOPQETvjdnG848a7w5Ab7ytCB70cslzRSEno5dEQqWiD5V2SxbeEQchysxZu18SlN4MwijKJiEvIIUu6zLpBPX2WGgUSKjzsBdaGCnIomZs8yypfYFX6yPmb2ZtZho2Fz6fGe3IiXTJqiKIkgIDY41uJDgay7VE+5ijXwL6Ye/Mo3FSD/c7w8m7f1+9/vk51se7Op3Bjfd75oo3zUKj5cvEC6TJ40xZsHyzvFDaN+vTH3+pDpKA+/fmXklOyvh10l97TBCgtBQxFuZuqK9raKEYfVOW3yjr1YFHdZthyeStD028YrVOohlwU+3tyWiamU0Vli3s1mcxbLn2wv9NkIqNPKj8A/HI6m86ECY2PXGPiz1iaVRq3mAbr54l1T8Pnf53hY0+ZfuOsqdA6SSXRqRsJeJPmdgQN+eMAHzi41iA0E5eu22CkD6Hqe9n+2FIQjq81PGCwuJFG33RgbJR3A/kdVpH+oyYnV+N/4VT9G8pxE91OGoJVK1+g4Z52Tz+bXnRfEpoktG40zouCGj44JuP/mQiX8+u334EGIcmhvp9zO4U8iqPrBo9r4VLfP8GSb0HV9/8AqRal+w==
+sidebar_class_name: "patch api-method"
+info_path: docs/api/focusarc-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Start a task"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"patch"}
+  path={"/tasks/{taskId}/start"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Sets status to `IN_PROGRESS` and records the start timestamp. Only pending tasks (PLANNED or IN_PROGRESS) can be started.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./start-task.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./start-task.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./start-task.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      

@@ -1,0 +1,1 @@
+{"title":"Body","body":{"content":{"application/json":{"schema":{"type":"object","properties":{"completedMinutes":{"type":"integer","format":"int32","maximum":1440}},"title":"TaskCompleteDto"}}},"required":true}}

@@ -1,0 +1,1 @@
+{"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"object","properties":{"id":{"type":"string"},"arc":{"type":"string"},"estimatedMinutes":{"type":"integer","format":"int32"},"completedMinutes":{"type":"integer","format":"int32"},"scheduledDate":{"type":"string","format":"date"},"allTasksDone":{"type":"boolean"}},"title":"Chapter"}}}}}}
