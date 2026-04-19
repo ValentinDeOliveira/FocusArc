@@ -5,7 +5,7 @@ sidebar_position: 1
 
 # Task
 
-A discrete work block scheduled within a chapter, with an estimated duration and a time slot.
+A work block scheduled within a chapter, with an estimated duration and a time slot.
 
 ## Fields
 | Field              | Type         | Description                                      |

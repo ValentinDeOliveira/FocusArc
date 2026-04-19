@@ -1,3 +1,7 @@
+---
+sidebar_position: 0
+---
+
 # What is Focus Arc?
 Focus Arc is a productivity platform that helps users manage tasks and focus sessions.
 
@@ -9,8 +13,9 @@ schedules and executes day to day.
 ## Key Feature
 
 - **Task Management**: create, schedule and track tasks
-- **Focus Sessions**: Start a session on any task. The timer runs freely
-  and logs your actual time when you're done, no interruptions
+- **Focus Sessions**: Start a session on any task. When the estimated time ends the timer
+  automatically enters **overtime mode** — no interruption, no required input. Your actual
+  time (including overtime) is recorded when you stop.
 - **Time Tracking**: See how you spend your time at both daily and arc level.
 - **Analytics**: Visualize your productivity and estimation accuracy
   over time

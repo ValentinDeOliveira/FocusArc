@@ -1,0 +1,26 @@
+{
+  "version.label": {
+    "message": "Next",
+    "description": "The label for version current"
+  },
+  "sidebar.tutorialSidebar.category.adr": {
+    "message": "adr",
+    "description": "The label for category 'adr' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.api": {
+    "message": "api",
+    "description": "The label for category 'api' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.domain": {
+    "message": "domain",
+    "description": "The label for category 'domain' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.entities": {
+    "message": "entities",
+    "description": "The label for category 'entities' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.getting-started": {
+    "message": "getting-started",
+    "description": "The label for category 'getting-started' in sidebar 'tutorialSidebar'"
+  }
+}
