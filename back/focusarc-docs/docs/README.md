@@ -14,7 +14,7 @@ schedules and executes day to day.
 
 - **Task Management**: create, schedule and track tasks
 - **Focus Sessions**: Start a session on any task. When the estimated time ends the timer
-  automatically enters **overtime mode** — no interruption, no required input. Your actual
+  automatically enters **overtime mode** no interruption, no required input. Your actual
   time (including overtime) is recorded when you stop.
 - **Time Tracking**: See how you spend your time at both daily and arc level.
 - **Analytics**: Visualize your productivity and estimation accuracy
@@ -22,7 +22,7 @@ schedules and executes day to day.
 
 ## Tech Stack
 
-- **Backend**: Java 17, Spring Boot 4.0.2, MongoDb
-- **Frontend**: Angular 21, TypeScript, TailwindCSS
-- **Deployment**: Docker, Github Action
+- **Backend**: Java 17, Spring Boot 4.0.2, MongoDB 6.0
+- **Frontend**: Angular 21, TypeScript, Tailwind CSS
+- **Deployment**: Docker, Github Actions
 - **Other**: Docusaurus, JaCoCo, Lombok
