@@ -215,7 +215,7 @@ public class TaskService {
         // TODO: assert name not empty
         if (dto.name() != null) task.setName(dto.name());
         if (dto.description() != null) task.setDescription(dto.description());
-        // how to differenciate "no tag" and remove tag
+        // TODO: how to differenciate "no tag" and remove tag
         if (dto.tagId() != null) task.setTagId(dto.tagId());
     }
 

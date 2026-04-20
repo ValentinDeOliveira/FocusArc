@@ -17,7 +17,7 @@ export const CHAPTER_STATES: { state: ChapterState; label: string; color: string
     { state: ChapterState.IN_PROGRESS, label: 'In Progress', color: 'var(--color-in-progress-text)' },
     { state: ChapterState.PLANNED,     label: 'Planned',     color: 'var(--color-disabled)'         },
 ];
-// TODO change colors
+
 export const TASK_STATES: { state: TaskStatus; label: string; color: string }[] = [
     { state: TaskStatus.DONE,        label: 'Done',        color: 'var(--color-success)'          },
     { state: TaskStatus.SKIPPED,  label: 'Skipped',  color: 'var(--color-warning)'          },
