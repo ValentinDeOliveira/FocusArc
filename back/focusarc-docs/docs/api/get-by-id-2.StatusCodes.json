@@ -1,0 +1,1 @@
+{"responses":{"200":{"description":"OK","content":{"*/*":{"schema":{"type":"object","properties":{"id":{"type":"string"},"owner":{"type":"string"},"label":{"type":"string"},"color":{"type":"string","enum":["RED","ORANGE","YELLOW","GREEN","TEAL","BLUE","PURPLE","PINK","GRAY"]}},"title":"Tag"}}}}}}

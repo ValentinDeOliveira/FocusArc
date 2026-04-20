@@ -1,0 +1,1 @@
+{"parameters":[{"name":"chapterId","in":"path","required":true,"schema":{"type":"string"}}]}

@@ -1,0 +1,1 @@
+{"responses":{"201":{"description":"Created","content":{"*/*":{"schema":{"type":"object","additionalProperties":{"type":"string"}}}}}}}

@@ -1,0 +1,1 @@
+{"title":"Body","body":{"content":{"application/json":{"schema":{"type":"object","properties":{"scheduledDate":{"type":"string","format":"date"}},"title":"ChapterUpdateDto"}}},"required":true}}

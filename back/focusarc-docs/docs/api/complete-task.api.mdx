@@ -1,0 +1,69 @@
+---
+id: complete-task
+title: "Complete a task"
+description: "Sets status to `DONE` and records `completedMinutes`. Triggers chapter and arc recalculation."
+sidebar_label: "Complete a task"
+hide_title: true
+hide_table_of_contents: true
+api: eJy1Vc1uGzcQfhViTq3AWErrQ7A3xXZS9ccRZAU9GEI15o61jHfJDTnrWFks0FMfIMgT5kmK2R/ZstUCLtDTcsmZ4czw+76pgXETIbmEJcabCCsNKUUTbMnWO0jggjiqyMhVVOzV+vTd+dlaoUtVIONDGtXa+KLMiSn9zbqKKa6P1DLYzYZCVCbDkim0DhiMOGFuqhwl/BFo8CWF9meWQgJDKEkGNJQYsCCmIBnW4LAgSIAx3sxS0GAlwRI5Aw2BPlY2UAoJh4o0RJNRgZDUwNtSvCIH6zbQNKvOmCK/9ulWLIx3TI5liWWZW9MmNP4QpQP101D+6gMZlvyCpM+WYhdmvw8PPKxj2lAADdc+FMjd1o8/gIYC72xRFZC8PD6eNI0GtpyLj/TgpA95yh4aOdwvs92IpXexu+14MpHP/gtKHGWjwjwQpluVekegHxY9Go+eU6dND7RVQ//UB88osi3wea2RkP+ho42GyBh4yk8zeWCcItMLtgXtHCh9jgu5Z5nvKnlmWlzFQ/bkBDGXMP91en5+dgoaZud/zBfv3i7OLi5Ag7AUNFz8MpvPz05h1eiePAfeZg8tB84ZN7PDL94i6f7gyvuc0MFjEAtyZS+SqYLlbcvl14RBwHK5EkIWxJlPOzabrGU+Z5DAWLgex3VH+WY8tBEkWrgdhKEKOSSQMZfJeJx7g3nmIyevJq8mYywtPBa1t+REdShVXRQlASSPIcULoUKHtyHRXZlyDQz9HI57wWnbMOx0izfD0/78+7JtjcjK4l6Azu5QajosIJNGVO7at9f3LX3jTRWnwajpfPaksnnwaWXY3lreKixL9e3Pr+p9pKC+/fVFiZd8T3pVlnUrD5mlgMFk2yO1oI2NcuiDyv1GWaduLar1GCvO1jID/BWjdQpVV7tif0NOK87IKZNbc6NGo2nFmQ/2M41GovLyUl2CL48mRxMBT+kjF9hCrm/lIHYKFXf6/wiaO8n636dS/9RMdzwuc7ROMm5RVvfQvGzHUAQNyW4e7dC50iAAFKu6vsJI70PeNLL9saIgBFhpuMVg8Uqe9LKG1EZZp5BcYx7pX0r/btGPgO/VPyXab6LbSusxr+QPNNzQ9n58NiIKGWHasrDuD0+6e14sJcS985Ox2OjBY2oMlfzAVqbJHqfn0+XJT8KHftwWPhW7gJ9kbuOnLjnf1tpSrt2rIUe3qXAjtt2dwh5B4UPN2SdbW8nB8uu6s1gKWJvmvhvyL81omr8BfUUXFQ==
+sidebar_class_name: "patch api-method"
+info_path: docs/api/focusarc-api
+custom_edit_url: null
+---
+
+import MethodEndpoint from "@theme/ApiExplorer/MethodEndpoint";
+import ParamsDetails from "@theme/ParamsDetails";
+import RequestSchema from "@theme/RequestSchema";
+import StatusCodes from "@theme/StatusCodes";
+import OperationTabs from "@theme/OperationTabs";
+import TabItem from "@theme/TabItem";
+import Heading from "@theme/Heading";
+import Translate from "@docusaurus/Translate";
+
+<Heading
+  as={"h1"}
+  className={"openapi__heading"}
+  children={"Complete a task"}
+>
+</Heading>
+
+<MethodEndpoint
+  method={"patch"}
+  path={"/tasks/{taskId}/complete"}
+  context={"endpoint"}
+>
+  
+</MethodEndpoint>
+
+
+
+Sets status to `DONE` and records `completedMinutes`. Triggers chapter and arc recalculation.
+
+<Heading
+  id={"request"}
+  as={"h2"}
+  className={"openapi-tabs__heading"}
+>
+  <Translate id="theme.openapi.request.title">Request</Translate>
+</Heading>
+
+<ParamsDetails
+  {...require("./complete-task.ParamsDetails.json")}
+>
+  
+</ParamsDetails>
+
+<RequestSchema
+  {...require("./complete-task.RequestSchema.json")}
+>
+  
+</RequestSchema>
+
+<StatusCodes
+  {...require("./complete-task.StatusCodes.json")}
+>
+  
+</StatusCodes>
+
+
+      
