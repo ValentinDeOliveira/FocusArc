@@ -4,23 +4,23 @@
     "description": "The label for version current"
   },
   "sidebar.tutorialSidebar.category.adr": {
-    "message": "adr",
+    "message": "ADR",
     "description": "The label for category 'adr' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.api": {
-    "message": "api",
+    "message": "API",
     "description": "The label for category 'api' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.domain": {
-    "message": "domain",
+    "message": "ドメイン",
     "description": "The label for category 'domain' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.entities": {
-    "message": "entities",
+    "message": "エンティティ",
     "description": "The label for category 'entities' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.getting-started": {
-    "message": "getting-started",
+    "message": "始め方",
     "description": "The label for category 'getting-started' in sidebar 'tutorialSidebar'"
   }
 }
