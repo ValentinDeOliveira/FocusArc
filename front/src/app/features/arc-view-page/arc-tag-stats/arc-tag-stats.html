@@ -1,0 +1,8 @@
+<app-arc-stats-base cardLabel="TASKS BY TAG" [rows]="rows">
+    @if (completedRows.length > 0) {
+        <div class="completed-overflow">
+            <span class="completed-overflow-icon">✓</span>
+            <span>{{ completedLabel }}</span>
+        </div>
+    }
+</app-arc-stats-base>

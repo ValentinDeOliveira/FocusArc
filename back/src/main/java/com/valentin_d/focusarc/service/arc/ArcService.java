@@ -3,15 +3,19 @@ package com.valentin_d.focusarc.service.arc;
 import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.arc.ArcSummaryResponseDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
+import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
+import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.exception.InvalidDateRangeException;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.ChapterStatus;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
+import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.service.chapter.ChapterLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
+import com.valentin_d.focusarc.service.task.TaskLoader;
 import com.valentin_d.focusarc.service.user.UserLoader;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -33,6 +37,7 @@ public class ArcService {
     private final UserLoader userLoader;
     private final ChapterService chapterService;
     private final ChapterLoader chapterLoader;
+    private final TaskLoader taskLoader;
 
     public Optional<Arc> findByIdAndOwnerId(@NotNull ArcId arcId, @NotNull UserId ownerId) {
         return arcLoader.getArcByIdAndOwnerId(arcId, ownerId);
@@ -105,6 +110,24 @@ public class ArcService {
                 chaptersByStatus.getOrDefault(ChapterStatus.SKIPPED, 0L).intValue(),
                 getStreak(chapters)
         );
+    }
+
+    public List<TagTaskStatsDto> getTagTaskStats(@NotNull UserId userId) {
+        return taskLoader.getTagStatsForChapters(getChaptersForUser(userId));
+    }
+
+    public List<TaskStatsDto> getTaskStats(@NotNull UserId userId) {
+        return taskLoader.getTaskStatsForChapters(getChaptersForUser(userId));
+    }
+
+    private List<ChapterId> getChaptersForUser(UserId userId) {
+        userLoader.assertUserExists(userId);
+
+        final var arc = arcLoader.getActiveArcForUser(userId);
+        return chapterLoader.findAllByArc(arc.getId())
+                .stream()
+                .map(Chapter::getId)
+                .collect(Collectors.toList());
     }
 
     private int getStreak(List<Chapter> chapters) {

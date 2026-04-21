@@ -1,0 +1,12 @@
+.completed-overflow {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.8rem;
+    color: var(--color-text-faint);
+}
+
+.completed-overflow-icon {
+    color: #22c55e;
+    font-weight: 700;
+}

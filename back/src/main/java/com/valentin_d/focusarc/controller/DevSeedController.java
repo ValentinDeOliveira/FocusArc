@@ -63,16 +63,21 @@ public class DevSeedController {
         final var tagStudy   = tagRepository.save(new Tag(user.getId(), "Study",    TagColor.PURPLE)).getId();
         final var tagHealth  = tagRepository.save(new Tag(user.getId(), "Health",   TagColor.TEAL)).getId();
         final var tagPersonal = tagRepository.save(new Tag(user.getId(), "Personal", TagColor.GREEN)).getId();
+        final var tagCreative = tagRepository.save(new Tag(user.getId(), "Creative", TagColor.ORANGE)).getId();
+        final var tagReading  = tagRepository.save(new Tag(user.getId(), "Reading",  TagColor.YELLOW)).getId();
+        final var tagSocial   = tagRepository.save(new Tag(user.getId(), "Social",   TagColor.PINK)).getId();
 
         final var arc = new Arc(user.getId(), "Spring 2026 Arc", 0,
                 NOW.minusWeeks(2), NOW.plusWeeks(4));
         arcRepository.save(arc);
 
+        seedDay(arc.getId(), NOW.minusDays(5), tagCreative, tagReading);
         seedDay(arc.getId(), NOW.minusDays(3), tagWork, tagHealth);
         seedDay(arc.getId(), NOW.minusDays(2), tagWork, tagStudy);
         seedDay(arc.getId(), NOW.minusDays(1), tagWork, tagPersonal);
         seedDay(arc.getId(), NOW,               tagWork, tagStudy);
         seedDay(arc.getId(), NOW.plusDays(1),   tagWork, tagPersonal);
+        seedDay(arc.getId(), NOW.plusDays(4),   tagSocial, tagCreative);
 
         recalculateArc(arc);
 

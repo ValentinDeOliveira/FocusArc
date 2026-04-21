@@ -1,0 +1,29 @@
+import {Component, Input} from '@angular/core';
+import {TaskStatDto} from '../../../models/task.model';
+import {TASK_STATES} from '../arc-donut-chart/arc-donut-chart';
+import {ArcStatsBase, StatRow} from '../../../shared/arc-stats-base/arc-stats-base';
+
+@Component({
+    selector: 'app-arc-task-stats',
+    imports: [ArcStatsBase],
+    templateUrl: './arc-task-stats.html',
+})
+export class ArcTaskStats {
+    @Input({ required: true }) taskStats!: TaskStatDto[];
+
+    get rows(): StatRow[] {
+        return this.taskStats
+            .filter(s => s.done > 0)
+            .map(s => {
+                const taskState = TASK_STATES.filter(cs => cs.state == s.taskStatus).at(0);
+                return {
+                    label: taskState?.label ?? '?',
+                    color: taskState?.color ?? '#6b7280',
+                    done: s.done,
+                    total: s.total,
+                    pct: Math.round((s.done / s.total) * 100),
+                };
+            })
+            .sort((a, b) => b.done - a.done);
+    }
+}

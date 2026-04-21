@@ -1,4 +1,5 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
+import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {Chapter} from '../../models/chapter.model';
 import {ActivatedRoute} from '@angular/router';
 import {DatePipe} from '@angular/common';
@@ -6,6 +7,11 @@ import {ArcViewChapter, ChapterState} from './arc-view-chapter/arc-view-chapter'
 import {ContextStore} from '../../core/stores/context.store';
 import {ArcSummaryResponseDto} from '../../models/arc.model';
 import {ArcDonutChart} from './arc-donut-chart/arc-donut-chart';
+import {ArcTagStats} from './arc-tag-stats/arc-tag-stats';
+import {ArcService} from '../../core/services/arc.service';
+import {TagStatDto} from '../../models/tag.model';
+import {ArcTaskStats} from './arc-task-stats/arc-task-stats';
+import {TaskStatDto} from '../../models/task.model';
 
 @Component({
     selector: 'app-arc-view-page',
@@ -14,20 +20,33 @@ import {ArcDonutChart} from './arc-donut-chart/arc-donut-chart';
     imports: [
         ArcViewChapter,
         ArcDonutChart,
+        ArcTagStats,
+        ArcTaskStats,
     ],
     providers: [DatePipe]
 })
 export class ArcViewPage implements OnInit {
     private route = inject(ActivatedRoute);
     private contextStore = inject(ContextStore);
+    private arcService = inject(ArcService);
+    private destroyRef = inject(DestroyRef);
 
     chapters: Chapter[] = [];
     arcSummary: ArcSummaryResponseDto | null = null;
     isOn2Years = false;
+    tagStats = signal<TagStatDto[]>([]);
+    taskStats = signal<TaskStatDto[]>([]);
 
     ngOnInit() {
         this.chapters = this.route.snapshot.data['chapters'];
         this.arcSummary = this.contextStore.arcSummary();
+        this.arcService.getTagStats().subscribe(s => this.tagStats.set(s));
+
+        this.arcService.getTaskStats().subscribe(s => this.taskStats.set(s));
+
+        this.arcService.statsChanged$
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => this.arcService.getTagStats().subscribe(s => this.tagStats.set(s)));
 
         if (this.chapters.length > 1) {
             const c1Year = new Date(this.chapters.at(0)!.scheduledDate).getFullYear();

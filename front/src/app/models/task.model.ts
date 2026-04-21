@@ -39,3 +39,10 @@ export interface TaskUpdateDto {
 export interface TaskCompletedDto {
     completedMinutes: number;
 }
+
+export interface TaskStatDto {
+    taskStatus: TaskStatus;
+    total: number;
+    done: number;
+}
+

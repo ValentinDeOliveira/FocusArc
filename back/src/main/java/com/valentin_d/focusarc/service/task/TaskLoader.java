@@ -1,5 +1,7 @@
 package com.valentin_d.focusarc.service.task;
 
+import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
+import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.exception.task.TaskDoesNotExistException;
 import com.valentin_d.focusarc.exception.task.TaskInProgressException;
 import com.valentin_d.focusarc.model.id.ChapterId;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.valentin_d.focusarc.model.task.TaskStatus.PENDING;
+import static java.util.stream.Collectors.groupingBy;
 
 @Component
 @RequiredArgsConstructor
@@ -53,5 +56,38 @@ public class TaskLoader extends BaseService {
         if(taskRepository.existsByChapterAndStatus(chapterId, TaskStatus.IN_PROGRESS)) {
             throw new TaskInProgressException(chapterId, taskId);
         }
+    }
+
+    public List<TagTaskStatsDto> getTagStatsForChapters(List<ChapterId> chapterIds) {
+        return taskRepository
+                .findAllByChapterIn(chapterIds)
+                .stream()
+                .filter(task -> task.getId() != null)
+                .collect(groupingBy(Task::getTagId))
+                .entrySet()
+                .stream()
+                .map(e -> new TagTaskStatsDto(
+                        e.getKey(),
+                        (long) e.getValue().size(),
+                        e.getValue().stream().filter(Task::isDone).count()
+                ))
+                .toList();
+    }
+
+    public List<TaskStatsDto> getTaskStatsForChapters(List<ChapterId> chapterIds) {
+        final var tasks = taskRepository.findAllByChapterIn(chapterIds);
+        final var nTasks = tasks.size();
+
+        return tasks
+                .stream()
+                .collect(groupingBy(Task::getStatus))
+                .entrySet()
+                .stream()
+                .map(e -> new TaskStatsDto(
+                        e.getKey(),
+                        (long) nTasks,
+                        (long) e.getValue().size()
+                ))
+                .toList();
     }
 }

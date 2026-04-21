@@ -15,6 +15,8 @@ public interface TaskRepository extends MongoRepository<Task, TaskId> {
 
     List<Task> findAllByChapterAndStatusIn(final ChapterId chapter, final Collection<TaskStatus> statuses);
 
+    List<Task> findAllByChapterIn(Collection<ChapterId> chapterIds);
+
     boolean existsByChapterAndStatusInAndStartAtBeforeAndEndAtAfter(ChapterId chapter,
                                                                     Collection<TaskStatus> status,
                                                                     Instant startAt, Instant endAt);

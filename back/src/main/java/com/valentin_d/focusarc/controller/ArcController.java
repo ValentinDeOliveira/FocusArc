@@ -3,6 +3,8 @@ package com.valentin_d.focusarc.controller;
 import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.arc.ArcSummaryResponseDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
+import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
+import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.user.User;
@@ -80,9 +82,24 @@ public class ArcController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(summary = "Get summary for the active arc")
     @GetMapping("/summary")
     public ResponseEntity<ArcSummaryResponseDto> getArcSummary(@AuthenticationPrincipal final User user) {
         final var summary = service.getSummaryForUser(user.getId());
         return ResponseEntity.ok(summary);
+    }
+
+    @Operation(summary = "Get task counts grouped by tag for the active arc")
+    @GetMapping("/tag-stats")
+    public ResponseEntity<List<TagTaskStatsDto>> getTagTasksStats(@AuthenticationPrincipal final User user) {
+        final var stats = service.getTagTaskStats(user.getId());
+        return ResponseEntity.ok(stats);
+    }
+
+    @Operation(summary = "Get task counts grouped by status for the active arc")
+    @GetMapping("/task-stats")
+    public ResponseEntity<List<TaskStatsDto>> getTasksStats(@AuthenticationPrincipal final User user) {
+        final var stats = service.getTaskStats(user.getId());
+        return ResponseEntity.ok(stats);
     }
 }

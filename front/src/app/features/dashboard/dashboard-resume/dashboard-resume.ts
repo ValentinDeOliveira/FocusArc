@@ -7,11 +7,14 @@ import {DatePipe} from '@angular/common';
 import {formatMinutes} from '../../../utils/time.utils';
 import {DashboardTaskTimer} from '../dashboard-task-timer/dashboard-task-timer';
 import {TagStore} from '../../../core/stores/tag.store';
-import {switchMap} from 'rxjs';
+import {forkJoin, of, switchMap} from 'rxjs';
+import {catchError, tap} from 'rxjs/operators';
 import {TaskCreation} from '../task-creation/task-creation';
 import {ContextStore} from '../../../core/stores/context.store';
 import {ChapterSummaryResponseDto} from '../../../models/chapter.model';
 import {ArcService} from '../../../core/services/arc.service';
+import {HttpErrorResponse} from '@angular/common/http';
+import {ApiErrorType} from '../../../models/api-error.model';
 
 @Component({
     selector: 'app-dashboard-resume',
@@ -37,14 +40,29 @@ export class DashboardResume implements OnInit {
     chapterSummary = signal<ChapterSummaryResponseDto | null>(null);
 
     ngOnInit(): void {
-        this.tagStore.load().pipe(
-            switchMap(() => this.taskService.getTodayTask())
-        ).subscribe(t => this.tasks.set(t));
-
-        this.chapterService.getSummary().subscribe(summary => {
-            this.chapterSummary.set(summary);
-            this.contextStore.setChapterId(summary.chapterId);
-        });
+        forkJoin({
+            tags: this.tagStore.load(),
+            summary: this.chapterService.getSummary()
+        }).pipe(
+            tap(({ summary }) => {
+                this.chapterSummary.set(summary);
+                this.contextStore.setChapterId(summary.chapterId);
+            }),
+            switchMap(() => this.taskService.getTodayTask()),
+            catchError((err: HttpErrorResponse) => {
+                /*
+                * Right now the only possible error is if no task schedule for that day
+                * It means there's no chapter, hence summary fail
+                * TODO: fix backend to not crash in case of no chapter
+                * TODO 2: OR as soon as a user create a task on a chapter without task, create the chapter first
+                *         (+ link it with other data like update summary progress bar) and create the task
+                * */
+                if (err.error.error == ApiErrorType.NoChapterForArcException) {
+                    return of([]);
+                }
+                throw err;
+            })
+        ).subscribe(tasks => this.tasks.set(tasks));
     }
 
     todayDate() {

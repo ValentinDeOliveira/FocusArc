@@ -33,6 +33,14 @@ public final class TaskFactory {
         return TaskBuilder.builder().chapter(chapterId).taskStatus(status).build().build();
     }
 
+    public static Task aTaskWithChapterIdAndTag(final ChapterId chapterId, final TagId tagId) {
+        return TaskBuilder.builder().chapter(chapterId).tag(tagId).build().build();
+    }
+
+    public static Task aTaskWithChapterIdAndStatusAndTag(final ChapterId chapterId, final TaskStatus status, final TagId tagId) {
+        return TaskBuilder.builder().chapter(chapterId).taskStatus(status).tag(tagId).build().build();
+    }
+
     public static Task aTaskWithEstimatedAndCompletedMinutes(final int estimated, final int completed) {
         return TaskBuilder.builder().estimatedMinutes(estimated).completedMinutes(completed).build().build();
     }

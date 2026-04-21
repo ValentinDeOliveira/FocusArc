@@ -1,13 +1,13 @@
 import {Component, Input} from '@angular/core';
 import {Tag, TagColor} from '../../models/tag.model';
 
-const TAG_COLORS: Record<TagColor, string> = {
+export const TAG_COLORS: Record<TagColor, string> = {
     RED: '#ef4444',
-    ORANGE: '#f97316',
+    ORANGE: '#f59e0b',
     YELLOW: '#eab308',
-    GREEN: '#22c55e',
+    GREEN: '#10b981',
     TEAL: '#14b8a6',
-    BLUE: '#3b82f6',
+    BLUE: '#6366f1',
     PURPLE: '#a855f7',
     PINK: '#ec4899',
     GRAY: '#6b7280',

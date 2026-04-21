@@ -274,6 +274,45 @@
             "description": "Deletes all arcs owned by the authenticated user.\n\n**Responses**\n- `204 No Content`\n- `401 Unauthorized`"
           },
           "response": []
+        },
+        {
+          "name": "Get Arc Summary",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/arcs/summary",
+              "host": ["{{baseUrl}}"],
+              "path": ["arcs", "summary"]
+            },
+            "description": "Returns a summary of the authenticated user's active arc: estimated vs completed minutes, chapter counts by status (completed / planned / skipped), and the current day streak.\n\n**Responses**\n- `200 OK`\n- `400 Bad Request` — no active arc\n- `401 Unauthorized`"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Tag Stats",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/arcs/tag-stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["arcs", "tag-stats"]
+            },
+            "description": "Returns task counts grouped by tag for the active arc. Each entry contains the tag ID, total task count, and number of completed (`DONE`) tasks.\n\n**Responses**\n- `200 OK`\n- `400 Bad Request` — no active arc\n- `401 Unauthorized`"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Task Stats",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/arcs/task-stats",
+              "host": ["{{baseUrl}}"],
+              "path": ["arcs", "task-stats"]
+            },
+            "description": "Returns task counts grouped by status for the active arc. Each entry contains the status, total task count across all chapters, and the count of tasks with that specific status.\n\n**`taskStatus` values**: `PLANNED`, `IN_PROGRESS`, `DONE`, `SKIPPED`\n\n**Responses**\n- `200 OK`\n- `400 Bad Request` — no active arc\n- `401 Unauthorized`"
+          },
+          "response": []
         }
       ]
     },
