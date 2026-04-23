@@ -42,6 +42,11 @@ public class UserService {
         return repository.save(user);
     }
 
+    public User findOrCreateGoogleUser(@NotNull String email, String name) {
+        return userLoader.getUserByEmail(email)
+                .orElseGet(() -> repository.save(new User(name, email)));
+    }
+
     public void delete(@NotNull UserId id) {
         final var user = userLoader.getUserIfExists(id);
         repository.delete(user);

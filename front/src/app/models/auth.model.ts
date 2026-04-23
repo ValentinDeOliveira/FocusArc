@@ -13,6 +13,10 @@ export interface RefreshRequestDto {
     refreshToken: string;
 }
 
+export interface GoogleAuthRequestDto {
+    idToken: string;
+}
+
 export interface AuthResponseDto {
   accessToken: string;
   refreshToken: string;
