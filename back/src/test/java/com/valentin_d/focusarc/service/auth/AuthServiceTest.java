@@ -1,11 +1,15 @@
 package com.valentin_d.focusarc.service.auth;
 
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
+import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
+import com.valentin_d.focusarc.exception.auth.InvalidGoogleTokenException;
 import com.valentin_d.focusarc.exception.auth.InvalidTokenException;
 import com.valentin_d.focusarc.exception.user.InvalidCredentialsException;
 import com.valentin_d.focusarc.model.auth.RefreshRequestDto;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.user.UserLoader;
 import com.valentin_d.focusarc.service.user.UserService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -15,9 +19,12 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
 
+import java.security.GeneralSecurityException;
 import java.util.Optional;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
+import static com.valentin_d.focusarc.fixtures.factory.auth.AuthFactory.aGoogleAuthRequestDto;
 import static com.valentin_d.focusarc.fixtures.factory.auth.AuthFactory.aLoginDto;
 import static com.valentin_d.focusarc.fixtures.factory.auth.AuthFactory.aRefreshRequestDto;
 import static com.valentin_d.focusarc.fixtures.factory.auth.RegisterRequestDtoFactory.aRegisterRequestDto;
@@ -34,8 +41,15 @@ class AuthServiceTest {
     private UserService userService;
     @Mock
     private UserLoader userLoader;
+    @Mock
+    private GoogleIdTokenVerifier googleIdTokenVerifier;
     @InjectMocks
     private AuthService authService;
+
+    @BeforeEach
+    void injectGoogleVerifier() {
+        ReflectionTestUtils.setField(authService, "googleIdTokenVerifier", googleIdTokenVerifier);
+    }
 
     @Test
     void shouldRegister_whenCreationSucess() {
@@ -109,6 +123,58 @@ class AuthServiceTest {
         when(jwtService.isTokenValid(dto.refreshToken(), user)).thenReturn(false);
 
         assertRefreshInvalid(dto);
+    }
+
+    @Test
+    void shouldLoginWithGoogle_whenTokenIsValid() throws Exception {
+        final var dto = aGoogleAuthRequestDto();
+        final var user = aUser();
+        final var idToken = mock(GoogleIdToken.class);
+        final var payload = mock(GoogleIdToken.Payload.class);
+
+        when(googleIdTokenVerifier.verify(dto.idToken())).thenReturn(idToken);
+        when(idToken.getPayload()).thenReturn(payload);
+        when(payload.getEmailVerified()).thenReturn(true);
+        when(payload.getEmail()).thenReturn(user.getEmail());
+        when(payload.get("name")).thenReturn("Test User");
+        when(userService.findOrCreateGoogleUser(user.getEmail(), "Test User")).thenReturn(user);
+
+        authService.loginWithGoogle(dto);
+
+        verify(userService).findOrCreateGoogleUser(user.getEmail(), "Test User");
+        verifyGenerateTokensCalled(user);
+    }
+
+    @Test
+    void shouldThrowInvalidGoogleTokenException_whenVerifierThrowsException() throws Exception {
+        final var dto = aGoogleAuthRequestDto();
+        when(googleIdTokenVerifier.verify(dto.idToken())).thenThrow(GeneralSecurityException.class);
+
+        assertThatThrownBy(() -> authService.loginWithGoogle(dto))
+                .isInstanceOf(InvalidGoogleTokenException.class);
+    }
+
+    @Test
+    void shouldThrowInvalidGoogleTokenException_whenTokenIsNull() throws Exception {
+        final var dto = aGoogleAuthRequestDto();
+        when(googleIdTokenVerifier.verify(dto.idToken())).thenReturn(null);
+
+        assertThatThrownBy(() -> authService.loginWithGoogle(dto))
+                .isInstanceOf(InvalidGoogleTokenException.class);
+    }
+
+    @Test
+    void shouldThrowInvalidGoogleTokenException_whenEmailNotVerified() throws Exception {
+        final var dto = aGoogleAuthRequestDto();
+        final var idToken = mock(GoogleIdToken.class);
+        final var payload = mock(GoogleIdToken.Payload.class);
+
+        when(googleIdTokenVerifier.verify(dto.idToken())).thenReturn(idToken);
+        when(idToken.getPayload()).thenReturn(payload);
+        when(payload.getEmailVerified()).thenReturn(false);
+
+        assertThatThrownBy(() -> authService.loginWithGoogle(dto))
+                .isInstanceOf(InvalidGoogleTokenException.class);
     }
 
     private void verifyGenerateTokensCalled(final User user) {

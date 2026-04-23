@@ -6,6 +6,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
+import static com.valentin_d.focusarc.fixtures.factory.auth.AuthFactory.aGoogleAuthRequestDto;
 import static com.valentin_d.focusarc.fixtures.factory.auth.AuthFactory.aLoginDto;
 import static com.valentin_d.focusarc.fixtures.factory.auth.AuthFactory.aRefreshRequestDto;
 import static com.valentin_d.focusarc.fixtures.factory.auth.AuthResponseDtoFactory.anAuthResponseDto;
@@ -57,6 +58,20 @@ class AuthControllerTest extends BaseSecurityControllerTest {
         final var json = toJson(refreshDto);
 
         final var actions = mvcPostWithUser(ROOT + "/refresh", json, user)
+                .andExpect(status().isOk());
+
+        authResponseAssertion.assertSingleJson(actions, authResponse);
+    }
+
+    @Test
+    void shouldLoginWithGoogle_whenTokenIsValid() throws Exception {
+        final var googleDto = aGoogleAuthRequestDto();
+        final var authResponse = anAuthResponseDto();
+
+        when(service.loginWithGoogle(googleDto)).thenReturn(authResponse);
+        final var json = toJson(googleDto);
+
+        final var actions = mvcPostWithUser(ROOT + "/google", json, user)
                 .andExpect(status().isOk());
 
         authResponseAssertion.assertSingleJson(actions, authResponse);
