@@ -5,7 +5,7 @@ import {FormControl, ReactiveFormsModule} from '@angular/forms';
     selector: 'app-password-field',
     imports: [ReactiveFormsModule],
     templateUrl: './password-field.html',
-    styleUrl: '../form-shared.css',
+    styleUrl: '../../login-page/form-shared.css',
 })
 export class PasswordField {
     @Input({ required: true }) control!: FormControl;

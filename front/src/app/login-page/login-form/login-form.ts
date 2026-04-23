@@ -2,7 +2,7 @@ import {Component, inject, OnInit, signal} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {AuthService} from '../../core/services/auth.service';
-import {PasswordField} from '../password-field/password-field';
+import {PasswordField} from '../../shared/password-field/password-field';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ApiErrorType} from '../../models/api-error.model';
 
