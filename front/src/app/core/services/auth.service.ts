@@ -1,7 +1,7 @@
 import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {AuthResponseDto, LoginRequestDto, RefreshRequestDto, RegisterRequestDto} from '../../models/auth.model';
+import {AuthResponseDto, GoogleAuthRequestDto, LoginRequestDto, RefreshRequestDto, RegisterRequestDto} from '../../models/auth.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -18,5 +18,9 @@ export class AuthService {
 
     refresh(dto: RefreshRequestDto): Observable<AuthResponseDto> {
         return this.http.post<AuthResponseDto>(`${this.baseUrl}/refresh`, dto);
+    }
+
+    loginWithGoogle(dto: GoogleAuthRequestDto): Observable<AuthResponseDto> {
+        return this.http.post<AuthResponseDto>(`${this.baseUrl}/google`, dto);
     }
 }

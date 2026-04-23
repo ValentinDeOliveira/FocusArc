@@ -1,0 +1,32 @@
+@if (error()) {
+  <p class="form-error-banner">{{ error() }}</p>
+}
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+  <div class="field">
+    <label for="reg-name">Name</label>
+    <input id="reg-name" type="text" formControlName="name" placeholder="Your name" autocomplete="name" />
+    @if (form.get('name')?.invalid && form.get('name')?.touched) {
+      <span class="field-error">Name is required.</span>
+    }
+  </div>
+
+  <div class="field">
+    <label for="reg-email">Email address</label>
+    <input id="reg-email" type="email" formControlName="email" placeholder="you@example.com" autocomplete="email" />
+    @if (form.get('email')?.invalid && form.get('email')?.touched) {
+      <span class="field-error">Enter a valid email.</span>
+    }
+  </div>
+
+  <app-password-field
+    inputId="reg-password"
+    placeholder="Min. 8 characters"
+    [control]="$any(form.get('password'))"
+    autocomplete="new-password"
+  />
+
+  <button type="submit" class="submit-btn" [disabled]="loading()">
+    {{ loading() ? 'Creating account…' : 'Create account' }}
+  </button>
+</form>

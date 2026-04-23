@@ -97,4 +97,18 @@ public class AuthControllerIntegrationTest extends BaseAuthIntegrationTest {
         final var response = request(URL + "/register", HttpMethod.POST, dto, Void.class);
         assertionHelper.assertBadRequest(response);
     }
+
+    @Test
+    void shouldNotLoginWithGoogle_whenTokenIsBlank() {
+        final var dto = aGoogleAuthRequestDtoWithToken("");
+        final var response = request(URL + "/google", HttpMethod.POST, dto, Void.class);
+        assertionHelper.assertBadRequest(response);
+    }
+
+    @Test
+    void shouldNotLoginWithGoogle_whenTokenIsInvalid() {
+        final var dto = aGoogleAuthRequestDtoWithToken("invalid-google-token");
+        final var response = request(URL + "/google", HttpMethod.POST, dto, Void.class);
+        assertionHelper.assertUnauthorized(response);
+    }
 }

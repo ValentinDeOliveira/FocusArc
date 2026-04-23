@@ -6,7 +6,7 @@ title: V1 Roadmap
 # V1 Roadmap
 
 ## Backend
-
+- [ ] Have an endpoint for getting active arc
 
 ## Frontend
 

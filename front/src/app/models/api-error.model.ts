@@ -1,5 +1,7 @@
 export enum ApiErrorType {
     NoChapterForArcException = 'NoChapterForArcException',
+    EmailAlreadyExistsException = 'EmailAlreadyExistsException',
+    InvalidCredentialsException = 'InvalidCredentialsException'
 }
 
 export interface ApiError {

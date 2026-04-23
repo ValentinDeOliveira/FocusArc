@@ -1,6 +1,7 @@
 package com.valentin_d.focusarc.controller;
 
 import com.valentin_d.focusarc.model.auth.AuthResponseDto;
+import com.valentin_d.focusarc.model.auth.GoogleAuthRequestDto;
 import com.valentin_d.focusarc.model.auth.LoginRequestDto;
 import com.valentin_d.focusarc.model.auth.RefreshRequestDto;
 import com.valentin_d.focusarc.model.auth.RegisterRequestDto;
@@ -44,5 +45,11 @@ public class AuthController {
     @PostMapping("/refresh")
     public ResponseEntity<AuthResponseDto> refresh(@Valid @RequestBody final RefreshRequestDto dto) {
         return ResponseEntity.ok(authService.refresh(dto));
+    }
+
+    @Operation(summary = "Authenticate or register with a Google ID token")
+    @PostMapping("/google")
+    public ResponseEntity<AuthResponseDto> google(@Valid @RequestBody final GoogleAuthRequestDto dto) {
+        return ResponseEntity.ok(authService.loginWithGoogle(dto));
     }
 }
