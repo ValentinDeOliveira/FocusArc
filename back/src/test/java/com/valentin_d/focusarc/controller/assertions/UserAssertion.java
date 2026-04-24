@@ -11,5 +11,6 @@ public class UserAssertion extends BaseAssertion<User> {
         expect(actions, path, "name", expected.getName());
         expect(actions, path, "email", expected.getEmail());
         expect(actions, path, "lastLogin", formatDateTime(expected.getLastLogin()));
+        expect(actions, path, "authProvider", expected.getAuthProvider().name());
     }
 }

@@ -1,6 +1,7 @@
 package com.valentin_d.focusarc.fixtures.user;
 
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.user.AuthProvider;
 import com.valentin_d.focusarc.model.user.User;
 import lombok.Builder;
 
@@ -21,8 +22,10 @@ public class UserBuilder {
     private final LocalDateTime lastLogin = NOW;
     @Builder.Default
     private final String password = "password123";
+    @Builder.Default
+    private final AuthProvider authProvider = AuthProvider.LOCAL;
 
     public User build() {
-        return new User(id, name, email, lastLogin, password);
+        return new User(id, name, email, lastLogin, password, authProvider);
     }
 }

@@ -3,6 +3,7 @@ package com.valentin_d.focusarc.service.user;
 import com.valentin_d.focusarc.dto.user.UserUpdateDto;
 import com.valentin_d.focusarc.model.auth.RegisterRequestDto;
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.user.AuthProvider;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.repository.UserRepository;
 import jakarta.validation.constraints.NotNull;
@@ -25,7 +26,8 @@ public class UserService {
         userLoader.assertEmailDoNotExist(registerDto.email());
 
         final var user = new User(registerDto.name(), registerDto.email(),
-                passwordEncoder.encode(registerDto.password()));
+                passwordEncoder.encode(registerDto.password()),
+                AuthProvider.LOCAL);
 
         return repository.save(user);
     }
@@ -44,7 +46,7 @@ public class UserService {
 
     public User findOrCreateGoogleUser(@NotNull String email, String name) {
         return userLoader.getUserByEmail(email)
-                .orElseGet(() -> repository.save(new User(name, email)));
+                .orElseGet(() -> repository.save(new User(name, email, AuthProvider.GOOGLE)));
     }
 
     public void delete(@NotNull UserId id) {

@@ -9,6 +9,7 @@ import com.valentin_d.focusarc.model.tag.Tag;
 import com.valentin_d.focusarc.model.tag.TagColor;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
+import com.valentin_d.focusarc.model.user.AuthProvider;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.repository.*;
 import com.valentin_d.focusarc.service.auth.JwtService;
@@ -56,7 +57,7 @@ public class DevSeedController {
         tagRepository.deleteAll();
         userRepository.deleteAll();
 
-        final var user = new User("Dev User", SEED_EMAIL, passwordEncoder.encode(SEED_PASSWORD));
+        final var user = new User("Dev User", SEED_EMAIL, passwordEncoder.encode(SEED_PASSWORD), AuthProvider.LOCAL);
         userRepository.save(user);
 
         final var tagWork    = tagRepository.save(new Tag(user.getId(), "Work",     TagColor.BLUE)).getId();

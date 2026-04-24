@@ -2,6 +2,7 @@ package com.valentin_d.focusarc.integration;
 
 import com.valentin_d.focusarc.integration.base.BaseAuthIntegrationTest;
 import com.valentin_d.focusarc.model.auth.AuthResponseDto;
+import com.valentin_d.focusarc.model.user.AuthProvider;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.HttpMethod;
 
@@ -26,6 +27,7 @@ public class AuthControllerIntegrationTest extends BaseAuthIntegrationTest {
         assertEquals(user.getEmail(), dto.email());
         assertNotEquals(user.getPassword(), dto.password());
         assertNotNull(user.getId());
+        assertEquals(AuthProvider.LOCAL, user.getAuthProvider());
 
         final var authResponse = response.getBody();
         assertNotNull(authResponse.accessToken());

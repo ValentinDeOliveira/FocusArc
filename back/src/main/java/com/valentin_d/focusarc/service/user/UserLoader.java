@@ -1,8 +1,10 @@
 package com.valentin_d.focusarc.service.user;
 
+import com.valentin_d.focusarc.exception.user.AccountAlreadyExistsWithProviderException;
 import com.valentin_d.focusarc.exception.user.EmailAlreadyExistsException;
 import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.user.AuthProvider;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.repository.UserRepository;
 import com.valentin_d.focusarc.service.BaseService;
@@ -30,7 +32,16 @@ public class UserLoader extends BaseService {
 
     public void assertEmailDoNotExist(String email) {
         if (userRepository.existsByEmail(email)) {
+            if (userRepository.existsByEmailAndAuthProvider(email, AuthProvider.GOOGLE)) {
+                throw new AccountAlreadyExistsWithProviderException(email, AuthProvider.GOOGLE);
+            }
             throw new EmailAlreadyExistsException(email);
+        }
+    }
+
+    public void assertUserNotFromProvider(String email, AuthProvider authProvider) {
+        if (userRepository.existsByEmailAndAuthProvider(email, authProvider)) {
+            throw new AccountAlreadyExistsWithProviderException(email, authProvider);
         }
     }
 }
