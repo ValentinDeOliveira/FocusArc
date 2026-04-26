@@ -10,7 +10,7 @@
     </div>
 
     <div class="dates-container">
-        <app-date-select label= "Start date" defaultToday/>
-        <app-date-select label= "End date"/>
+        <app-date-select label="Start date" defaultToday [min]="today" (dateChange)="startDate.set($event)" />
+        <app-date-select label="End date" [min]="startDate() ?? today" />
     </div>
 </app-card-page-layout>

@@ -1,4 +1,4 @@
-import {Component, inject} from '@angular/core';
+import {Component, inject, signal} from '@angular/core';
 import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angular/forms';
 import {CardPageLayout} from '../../shared/card-page-layout/card-page-layout';
 import {ArcCreationStepper} from '../arc-creation-stepper/arc-creation-stepper';
@@ -21,6 +21,9 @@ import {DateSelect} from '../../shared/date-select/date-select';
 })
 export class ArcCreation {
     private fb = inject(FormBuilder);
+
+    today = new Date();
+    startDate = signal<Date | null>(null);
 
     form = this.fb.group({
         email: ['', [Validators.required, Validators.email]],

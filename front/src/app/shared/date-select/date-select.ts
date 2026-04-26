@@ -1,4 +1,4 @@
-import {booleanAttribute, Component, input} from '@angular/core';
+import {booleanAttribute, Component, input, output} from '@angular/core';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 
 @Component({
@@ -16,11 +16,13 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/m
 })
 export class DateSelect {
     label = input.required<string>();
+    min = input<Date | null>(null);
+    defaultToday = input(false, { transform: booleanAttribute });
+    dateChange = output<Date | null>();
 
     get id(): string {
         return `date-${this.label().toLowerCase().replace(/\s+/g, '-')}`;
     }
-    defaultToday = input(false, { transform: booleanAttribute });
 
     get placeholder(): string {
         return new Intl.DateTimeFormat(navigator.language, {

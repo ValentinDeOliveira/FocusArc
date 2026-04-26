@@ -1,7 +1,7 @@
 <div class="field">
     <label [for]="id">{{ label() }}</label>
     <div class="input-icon-wrap">
-        <input [id]="id" type="text" [matDatepicker]="picker" [placeholder]="placeholder" [value]="defaultDate" />
+        <input [id]="id" type="text" [matDatepicker]="picker" [placeholder]="placeholder" [value]="defaultDate" [min]="min()" (dateChange)="dateChange.emit($event.value)" />
         <mat-datepicker-toggle class="date-toggle" [for]="picker" />
         <mat-datepicker #picker />
     </div>
