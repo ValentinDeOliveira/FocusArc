@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.Map;
 
 @RestControllerAdvice
@@ -13,12 +14,17 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(ApiException.class)
     public ResponseEntity<Map<String, Object>> handleApiErrors(ApiException ex) {
-        final var response = Map.<String, Object>of(
-                "timestamp", Instant.now(),
-                "status", ex.getStatus().value(),
-                "error", ex.getClass().getSimpleName(),
-                "message", ex.getMessage()
-        );
+        var response = new HashMap<String, Object>();
+
+        response.put("timestamp", Instant.now());
+        response.put("status", ex.getStatus().value());
+        response.put("error", ex.getClass().getSimpleName());
+        response.put("message", ex.getMessage());
+
+        if (ex.getDetails() != null) {
+            response.put("details", ex.getDetails());
+        }
+
         return ResponseEntity.status(ex.getStatus()).body(response);
     }
 }

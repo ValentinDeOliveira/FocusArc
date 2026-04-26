@@ -32,9 +32,8 @@ public class UserLoader extends BaseService {
 
     public void assertEmailDoNotExist(String email) {
         if (userRepository.existsByEmail(email)) {
-            if (userRepository.existsByEmailAndAuthProvider(email, AuthProvider.GOOGLE)) {
-                throw new AccountAlreadyExistsWithProviderException(email, AuthProvider.GOOGLE);
-            }
+            assertUserNotFromProvider(email, AuthProvider.GOOGLE);
+
             throw new EmailAlreadyExistsException(email);
         }
     }

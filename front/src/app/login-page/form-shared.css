@@ -17,10 +17,10 @@
 .field input[type='text'],
 .field input[type='password'] {
     width: 100%;
-    padding: 0.6875rem 0.875rem;
-    border: 1.5px solid var(--color-border);
+    padding: 0.7rem 0.875rem;
+    border: 2px solid var(--color-border);
     border-radius: 0.625rem;
-    font-size: 0.9375rem;
+    font-size: 0.95rem;
     color: var(--color-text);
     background: var(--color-surface);
     outline: none;
@@ -89,9 +89,9 @@
 
 .form-error-banner {
     font-size: 0.875rem;
-    color: #dc2626;
-    background: #fef2f2;
-    border: 1px solid #fecaca;
+    color: var(--color-warning-text);
+    background: var(--color-warning-bg-secondary);
+    border: 1px solid var(--color-warning-border);
     border-radius: 0.5rem;
     padding: 0.625rem 0.875rem;
     margin: 0 0 0.5rem;
@@ -99,7 +99,7 @@
 
 .field-error {
     font-size: 0.8125rem;
-    color: #dc2626;
+    color: var(--color-warning-text)
 }
 
 .divider {
