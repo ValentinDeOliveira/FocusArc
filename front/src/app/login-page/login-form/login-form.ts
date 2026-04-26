@@ -1,10 +1,10 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
+import {HttpErrorResponse} from '@angular/common/http';
 import {AuthService} from '../../core/services/auth.service';
 import {PasswordField} from '../../shared/password-field/password-field';
-import {HttpErrorResponse} from '@angular/common/http';
-import {ApiErrorType} from '../../models/api-error.model';
+import {ApiErrorType, Provider} from '../../models/api-error.model';
 
 @Component({
     selector: 'app-login-form',
@@ -73,8 +73,16 @@ export class LoginForm implements OnInit {
     }
 
     getErrorMessage(error: HttpErrorResponse): string {
-        if (error.error.error == ApiErrorType.InvalidCredentialsException) {
+        if (error.error.error === ApiErrorType.InvalidCredentialsException) {
             return 'Invalid email or password.';
+        }
+        if (error.error.error === ApiErrorType.AccountAlreadyExistsWithProviderException) {
+            if (error.error.details.provider === Provider.Google) {
+                return 'This email is linked to a Google account. Sign in with Google instead.';
+            }
+            if (error.error.details.provider === Provider.Local) {
+                return 'This email is linked to an account. Sign in with email and password instead.';
+            }
         }
 
         return 'Login failed. Please try again.';

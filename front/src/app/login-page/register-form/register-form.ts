@@ -1,4 +1,4 @@
-import {Component, inject, signal} from '@angular/core';
+import {Component, inject, NgZone, OnInit, signal} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {AuthService} from '../../core/services/auth.service';
@@ -12,10 +12,11 @@ import {ApiErrorType} from '../../models/api-error.model';
     templateUrl: './register-form.html',
     styleUrl: '../form-shared.css',
 })
-export class RegisterForm {
+export class RegisterForm implements OnInit {
     private fb = inject(FormBuilder);
     private authService = inject(AuthService);
     private router = inject(Router);
+    private ngZone = inject(NgZone);
 
     loading = signal(false);
     error = signal<string | null>(null);
@@ -25,6 +26,33 @@ export class RegisterForm {
         email: ['', [Validators.required, Validators.email]],
         password: ['', [Validators.required, Validators.minLength(8)]],
     });
+
+    ngOnInit(): void {
+        google.accounts.id.initialize({
+            client_id: '468172227016-rb385r55f5hlm995o0mnfg2ldj7s85jl.apps.googleusercontent.com',
+            callback: ({ credential }) => this.ngZone.run(() => this.handleGoogleCredential(credential)),
+        });
+    }
+
+    registerWithGoogle(): void {
+        google.accounts.id.prompt();
+    }
+
+    handleGoogleCredential(idToken: string): void {
+        this.loading.set(true);
+        this.error.set(null);
+        this.authService.loginWithGoogle({ idToken }).subscribe({
+            next: (res) => {
+                localStorage.setItem('token', res.accessToken);
+                localStorage.setItem('refreshToken', res.refreshToken);
+                void this.router.navigate(['/']);
+            },
+            error: () => {
+                this.error.set('Google sign-up failed. Please try again.');
+                this.loading.set(false);
+            },
+        });
+    }
 
     onSubmit(): void {
         this.form.markAllAsTouched();

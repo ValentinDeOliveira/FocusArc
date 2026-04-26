@@ -35,6 +35,9 @@
     --color-warning-text:   #c2410c;
     --color-warning:        #f97316;
 
+    --color-warning-bg-secondary: #fef2f2;
+    --color-warning-border: #fecaca;
+
     --color-in-progress-bg:   #dbeafe;
     --color-in-progress-text: #1d4ed8;
 

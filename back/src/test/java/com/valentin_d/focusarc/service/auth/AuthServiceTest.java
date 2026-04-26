@@ -4,8 +4,10 @@ import com.google.api.client.googleapis.auth.oauth2.GoogleIdToken;
 import com.google.api.client.googleapis.auth.oauth2.GoogleIdTokenVerifier;
 import com.valentin_d.focusarc.exception.auth.InvalidGoogleTokenException;
 import com.valentin_d.focusarc.exception.auth.InvalidTokenException;
+import com.valentin_d.focusarc.exception.user.AccountAlreadyExistsWithProviderException;
 import com.valentin_d.focusarc.exception.user.InvalidCredentialsException;
 import com.valentin_d.focusarc.model.auth.RefreshRequestDto;
+import com.valentin_d.focusarc.model.user.AuthProvider;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.user.UserLoader;
 import com.valentin_d.focusarc.service.user.UserService;
@@ -18,15 +20,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.core.Authentication;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.security.GeneralSecurityException;
 import java.util.Optional;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
-import static com.valentin_d.focusarc.fixtures.factory.auth.AuthFactory.aGoogleAuthRequestDto;
-import static com.valentin_d.focusarc.fixtures.factory.auth.AuthFactory.aLoginDto;
-import static com.valentin_d.focusarc.fixtures.factory.auth.AuthFactory.aRefreshRequestDto;
+import static com.valentin_d.focusarc.fixtures.factory.auth.AuthFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.auth.RegisterRequestDtoFactory.aRegisterRequestDto;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
@@ -83,6 +83,17 @@ class AuthServiceTest {
 
         assertThatThrownBy(() -> authService.login(dto))
                 .isInstanceOf(InvalidCredentialsException.class);
+    }
+
+    @Test
+    void shouldThrowExceptionOnLogin_whenAccountAlreadyExistsOnGoogle() {
+        final var dto = aLoginDto();
+
+        doThrow(new AccountAlreadyExistsWithProviderException(dto.email(), AuthProvider.GOOGLE))
+                .when(userLoader).assertUserNotFromProvider(dto.email(), AuthProvider.GOOGLE);
+
+        assertThatThrownBy(() -> authService.login(dto))
+                .isInstanceOf(AccountAlreadyExistsWithProviderException.class);
     }
 
     @Test
@@ -155,12 +166,30 @@ class AuthServiceTest {
     }
 
     @Test
-    void shouldThrowInvalidGoogleTokenException_whenTokenIsNull() throws Exception {
+    void shouldThrowInvalidGoogleTokenExceptionOnLoginWithGoogle_whenTokenIsNull() throws Exception {
         final var dto = aGoogleAuthRequestDto();
         when(googleIdTokenVerifier.verify(dto.idToken())).thenReturn(null);
 
         assertThatThrownBy(() -> authService.loginWithGoogle(dto))
                 .isInstanceOf(InvalidGoogleTokenException.class);
+    }
+
+    @Test
+    void shouldThrowAccountAlreadyExistsWithProviderExceptionOnLoginWithGoogle_whenUserHasLocalAccount() throws Exception {
+        final var dto = aGoogleAuthRequestDto();
+        final var user = aUser();
+        final var idToken = mock(GoogleIdToken.class);
+        final var payload = mock(GoogleIdToken.Payload.class);
+
+        when(googleIdTokenVerifier.verify(dto.idToken())).thenReturn(idToken);
+        when(idToken.getPayload()).thenReturn(payload);
+        when(payload.getEmailVerified()).thenReturn(true);
+        when(payload.getEmail()).thenReturn(user.getEmail());
+        doThrow(new AccountAlreadyExistsWithProviderException(user.getEmail(), AuthProvider.LOCAL))
+                .when(userLoader).assertUserNotFromProvider(user.getEmail(), AuthProvider.LOCAL);
+
+        assertThatThrownBy(() -> authService.loginWithGoogle(dto))
+                .isInstanceOf(AccountAlreadyExistsWithProviderException.class);
     }
 
     @Test

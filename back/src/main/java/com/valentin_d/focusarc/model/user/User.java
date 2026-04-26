@@ -28,21 +28,14 @@ public class User implements UserDetails {
     // TODO: add field for timezone
     @Getter(AccessLevel.NONE)
     private String password;
+    private AuthProvider authProvider;
 
-    public User(final UserId userId, final String name, final String email) {
-        this(userId, name, email, LocalDateTime.now(), null);
+    public User(final String name, final String email, final AuthProvider authProvider) {
+        this(UserId.random(), name, email,  LocalDateTime.now(),null, authProvider);
     }
 
-    public User(final String name, final String email) {
-        this(UserId.random(), name, email);
-    }
-
-    public User(final UserId userId, final String name, final String email, final LocalDateTime lastLogin) {
-        this(userId, name, email, lastLogin, null);
-    }
-
-    public User(final String name, final String email, final String password) {
-        this(UserId.random(), name, email, LocalDateTime.now(), password);
+    public User(final String name, final String email, final String password, final AuthProvider authProvider) {
+        this(UserId.random(), name, email, LocalDateTime.now(), password, authProvider);
     }
 
     @Override

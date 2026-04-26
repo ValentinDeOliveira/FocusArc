@@ -7,11 +7,8 @@ import com.google.api.client.json.gson.GsonFactory;
 import com.valentin_d.focusarc.exception.auth.InvalidGoogleTokenException;
 import com.valentin_d.focusarc.exception.auth.InvalidTokenException;
 import com.valentin_d.focusarc.exception.user.InvalidCredentialsException;
-import com.valentin_d.focusarc.model.auth.AuthResponseDto;
-import com.valentin_d.focusarc.model.auth.GoogleAuthRequestDto;
-import com.valentin_d.focusarc.model.auth.LoginRequestDto;
-import com.valentin_d.focusarc.model.auth.RefreshRequestDto;
-import com.valentin_d.focusarc.model.auth.RegisterRequestDto;
+import com.valentin_d.focusarc.model.auth.*;
+import com.valentin_d.focusarc.model.user.AuthProvider;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.user.UserLoader;
 import com.valentin_d.focusarc.service.user.UserService;
@@ -53,6 +50,7 @@ public class AuthService {
 
     public AuthResponseDto login(final LoginRequestDto dto) {
         try {
+            userLoader.assertUserNotFromProvider(dto.email(), AuthProvider.GOOGLE);
             final var authToken = new UsernamePasswordAuthenticationToken(dto.email(), dto.password());
             final var auth = authenticationManager.authenticate(authToken);
             final var user = (User) auth.getPrincipal();
@@ -76,6 +74,9 @@ public class AuthService {
 
         final var payload = idToken.getPayload();
         final var email = payload.getEmail();
+
+        userLoader.assertUserNotFromProvider(email, AuthProvider.LOCAL);
+
         final var name = (String) payload.get("name");
 
         final var user = userService.findOrCreateGoogleUser(email, name);
