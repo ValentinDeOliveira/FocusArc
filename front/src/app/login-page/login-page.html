@@ -1,27 +1,19 @@
-<div class="login-bg">
-  <div class="login-wrapper">
-
-    <div class="login-header">
-      <h1>{{ activeTab() === 'login' ? 'Welcome back' : 'Create account' }}</h1>
-      <p>{{ activeTab() === 'login' ? 'Sign in to continue tracking your focus.' : 'Start tracking your focus today.' }}</p>
-    </div>
-
-    <div class="login-card">
-      <div class="tab-switcher">
-        <button class="tab-btn" [class.active]="activeTab() === 'login'" (click)="setTab('login')">
-          Sign in
-        </button>
-        <button class="tab-btn" [class.active]="activeTab() === 'register'" (click)="setTab('register')">
-          Create account
-        </button>
-      </div>
-
-      @if (activeTab() === 'login') {
-        <app-login-form />
-      } @else {
-        <app-register-form />
-      }
-    </div>
-
+<app-card-page-layout
+  [title]="activeTab() === 'login' ? 'Welcome back' : 'Create account'"
+  [subtitle]="activeTab() === 'login' ? 'Sign in to continue tracking your focus.' : 'Start tracking your focus today.'"
+>
+  <div class="tab-switcher">
+    <button class="tab-btn" [class.active]="activeTab() === 'login'" (click)="setTab('login')">
+      Sign in
+    </button>
+    <button class="tab-btn" [class.active]="activeTab() === 'register'" (click)="setTab('register')">
+      Create account
+    </button>
   </div>
-</div>
+
+  @if (activeTab() === 'login') {
+    <app-login-form />
+  } @else {
+    <app-register-form />
+  }
+</app-card-page-layout>

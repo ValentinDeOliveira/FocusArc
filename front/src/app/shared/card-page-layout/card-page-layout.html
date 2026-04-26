@@ -1,0 +1,12 @@
+<div class="page-bg">
+  <div class="page-wrapper" [class.wide]="wide()">
+    <ng-content select="[slot=stepper]" />
+    <div class="page-header">
+      <h1>{{ title() }}</h1>
+      <p>{{ subtitle() }}</p>
+    </div>
+    <div class="page-card">
+      <ng-content />
+    </div>
+  </div>
+</div>

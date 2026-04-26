@@ -1,4 +1,4 @@
-@import '../form-shared.css';
+@import '../../shared/form-shared.css';
 
 .login-row {
     display: flex;

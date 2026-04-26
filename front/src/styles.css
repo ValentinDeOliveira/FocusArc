@@ -1,4 +1,6 @@
 @import 'tailwindcss';
+@import '@angular/cdk/overlay-prebuilt.css';
+@import '@angular/material/prebuilt-themes/azure-blue.css';
 
 #toast-container > div {
     width: 30%;

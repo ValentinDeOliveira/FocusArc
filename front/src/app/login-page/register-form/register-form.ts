@@ -10,7 +10,7 @@ import {ApiErrorType} from '../../models/api-error.model';
     selector: 'app-register-form',
     imports: [ReactiveFormsModule, PasswordField],
     templateUrl: './register-form.html',
-    styleUrl: '../form-shared.css',
+    styleUrl: '../../shared/form-shared.css',
 })
 export class RegisterForm implements OnInit {
     private fb = inject(FormBuilder);

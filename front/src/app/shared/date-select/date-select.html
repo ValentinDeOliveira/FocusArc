@@ -1,0 +1,8 @@
+<div class="field">
+    <label [for]="id">{{ label() }}</label>
+    <div class="input-icon-wrap">
+        <input [id]="id" type="text" [matDatepicker]="picker" [placeholder]="placeholder" [value]="defaultDate" />
+        <mat-datepicker-toggle class="date-toggle" [for]="picker" />
+        <mat-datepicker #picker />
+    </div>
+</div>
