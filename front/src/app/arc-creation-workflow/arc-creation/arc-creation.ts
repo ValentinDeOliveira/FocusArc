@@ -3,6 +3,8 @@ import {FormBuilder, FormsModule, ReactiveFormsModule, Validators} from '@angula
 import {CardPageLayout} from '../../shared/card-page-layout/card-page-layout';
 import {ArcCreationStepper} from '../arc-creation-stepper/arc-creation-stepper';
 import {DateSelect} from '../../shared/date-select/date-select';
+import {MatIcon} from '@angular/material/icon';
+import {PrimaryButton} from '../../shared/primary-button/primary-button';
 
 @Component({
     selector: 'app-arc-creation',
@@ -12,6 +14,8 @@ import {DateSelect} from '../../shared/date-select/date-select';
         CardPageLayout,
         ArcCreationStepper,
         DateSelect,
+        MatIcon,
+        PrimaryButton,
     ],
     templateUrl: './arc-creation.html',
     styleUrls: [
