@@ -12,6 +12,7 @@ export class InputField {
     placeholder = input('');
     type = input('text');
     error = input<string | null>(null);
+    value = input<string>('');
     valueChange = output<string>();
 
     private computedId = computed(() => this.label().toLowerCase().replace(/\s+/g, '-'));

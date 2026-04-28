@@ -4,6 +4,7 @@
         [id]="effectiveId()"
         [type]="type()"
         [placeholder]="placeholder()"
+        [value]="value()"
         [class.has-error]="error()"
         (input)="valueChange.emit($any($event.target).value)"
     />

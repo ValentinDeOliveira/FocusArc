@@ -1,0 +1,51 @@
+.field {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.field label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.time-box {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    gap: 2px;
+    padding: 0.7rem 0.875rem;
+    border: 2px solid var(--color-border);
+    border-radius: 0.625rem;
+    background: var(--color-surface);
+    transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.time-box:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-shadow);
+}
+
+.time-input {
+    width: 2ch;
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    color: var(--color-text);
+    outline: none;
+    text-align: center;
+    -moz-appearance: textfield;
+}
+
+.time-input::-webkit-outer-spin-button,
+.time-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.colon {
+    font-size: 0.95rem;
+    color: var(--color-text);
+    user-select: none;
+}

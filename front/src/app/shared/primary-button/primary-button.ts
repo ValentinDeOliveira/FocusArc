@@ -13,4 +13,5 @@ import {RouterLink} from '@angular/router';
 export class PrimaryButton {
     @Input() fullWidth = false;
     @Input() routerLink?: string | any[];
+    @Input() disabled = false;
 }

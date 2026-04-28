@@ -63,6 +63,16 @@
     color: #fff;
 }
 
+.time-duration-row {
+    display: flex;
+    gap: 10px;
+    align-items: flex-end;
+}
+
+.time-duration-row app-time-field {
+    flex: 1;
+}
+
 .duration-wrapper {
     display: flex;
     flex-direction: column;
@@ -103,4 +113,10 @@
     border-color: var(--color-primary, #3b5bdb);
     color: var(--color-primary, #3b5bdb);
     font-weight: 500;
+}
+
+.n-days-recurrence {
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }

@@ -15,6 +15,12 @@
     background-color: var(--color-primary-hover);
 }
 
+.btn:disabled {
+    background-color: var(--color-primary);
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 .btn.full-width {
     width: 100%;
     border-radius: 10px;

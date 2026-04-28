@@ -18,25 +18,22 @@
                     <button
                         class="day-pill"
                         [class.active]="selectedDays().has(day)"
-                        (click)="toggleDay(day)"
-                    >{{ day }}</button>
+                        (click)="toggleDay(day)">
+                        {{ day }}
+                    </button>
                 }
             </div>
         </div>
     } @else if (selected() === RecurrenceType.EVERY_N_DAYS) {
-        <div style="display: flex; align-items: center; gap: 8px;">
+        <div class="n-days-recurrence">
             <span>Every</span>
-            <input type="number" max="6" min="1" [defaultValue]="2" style="width: 72px;" />
+            <input type="number" max="6" min="1" [value]="everyNDays()" (change)="everyNDays.set(+$any($event.target).value)" style="width: 72px;" />
             <span>days</span>
         </div>
     }
 
-    <div style="display: flex; gap: 10px">
-        <app-input-field
-            label="Start time"
-            type="text"
-            placeholder="e.g Morning run, Deep work block..."
-        />
+    <div class="time-duration-row">
+        <app-time-field label="Start time" (timeChange)="startTime.set($event)" />
 
         <div class="duration-wrapper">
             <label>Duration</label>

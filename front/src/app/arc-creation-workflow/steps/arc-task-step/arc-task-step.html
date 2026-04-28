@@ -9,15 +9,42 @@
         <p class="subtitle">Add recurring tasks that repeat inside your arc. You can always edit these later.</p>
     </div>
 
-    <div class="fields-row">
-        <app-input-field label="Task name" type="text" placeholder="e.g Morning run, Deep work block..."/>
-        <app-input-field label="Tag (optional)" id="task-tag" type="text" placeholder="Select or create a tag"/>
+    <div>
+        <span>New task ({{tasks().length}} / {{MAX_NUMBER_OF_TASKS}}) </span>
     </div>
 
-    <app-arc-task-recurrence/>
+    <div class="fields-row">
+        <app-input-field label="Task name" type="text" placeholder="e.g Morning run, Deep work block..." [value]="taskName()" (valueChange)="taskName.set($event)" />
+        <app-input-field label="Tag (optional)" id="task-tag" type="text" placeholder="Select or create a tag" [value]="taskTag()" (valueChange)="taskTag.set($event)" />
+    </div>
 
-    <app-primary-btn [fullWidth]="true">
-        Continue to tasks
-        <mat-icon>arrow_right_alt</mat-icon>
+    <app-arc-task-recurrence />
+
+    <app-primary-btn [fullWidth]="true" (click)="addTask()" [disabled]="tasks().length === MAX_NUMBER_OF_TASKS">
+        Add task
+        <mat-icon>add</mat-icon>
     </app-primary-btn>
+
+    @if (tasks().length > 0) {
+        <div class="task-list">
+            @for (task of tasks(); track task.id) {
+                <div class="task-card">
+                    <div class="task-info">
+                        <span class="task-name">{{ task.name }}</span>
+                        <span class="task-summary">{{ taskSummary(task) }}</span>
+                    </div>
+                    <button class="task-remove" (click)="removeTask(task.id)">✕</button>
+                </div>
+            }
+        </div>
+
+        <app-week-schedule [tasks]="tasks()" />
+    }
+
+    @if (tasks().length > 0) {
+        <app-primary-btn [fullWidth]="true" (click)="nextStep.emit()">
+            Continue
+            <mat-icon>arrow_right_alt</mat-icon>
+        </app-primary-btn>
+    }
 </app-card-page-layout>

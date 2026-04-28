@@ -18,3 +18,53 @@
 .fields-row app-input-field {
     flex: 1;
 }
+
+.task-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.task-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    border: 1.5px solid var(--color-border);
+    border-radius: 0.75rem;
+    background: var(--color-surface);
+}
+
+.task-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.task-name {
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--color-text);
+}
+
+.task-summary {
+    font-size: 0.8rem;
+    color: var(--color-text-muted);
+}
+
+.task-remove {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    font-size: 0.8rem;
+    padding: 4px 8px;
+    border-radius: 0.375rem;
+    transition: background 0.15s, color 0.15s;
+}
+
+.task-remove:hover {
+    background: var(--color-surface-hover);
+    color: var(--color-text);
+}

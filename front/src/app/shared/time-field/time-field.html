@@ -1,0 +1,24 @@
+<div class="field">
+    <label>{{ label() }}</label>
+    <div class="time-box">
+        <input
+            class="time-input"
+            type="number"
+            min="0"
+            max="23"
+            [value]="pad(hours())"
+            (input)="onHoursInput($event)"
+            (blur)="onHoursBlur($event)"
+        />
+        <span class="colon">:</span>
+        <input
+            class="time-input"
+            type="number"
+            min="0"
+            max="59"
+            [value]="pad(minutes())"
+            (input)="onMinutesInput($event)"
+            (blur)="onMinutesBlur($event)"
+        />
+    </div>
+</div>
