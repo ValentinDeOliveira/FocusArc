@@ -1,0 +1,13 @@
+<div class="field">
+    @if (label()) {<label [for]="effectiveId()">{{ label() }}</label>}
+    <input
+        [id]="effectiveId()"
+        type="number"
+        [placeholder]="placeholder()"
+        [attr.min]="min()"
+        [attr.max]="max()"
+        [step]="step()"
+        [value]="value() ?? defaultValue()"
+        (change)="value.set(+$any($event.target).value)"
+    />
+</div>

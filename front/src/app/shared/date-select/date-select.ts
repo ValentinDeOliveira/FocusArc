@@ -1,4 +1,4 @@
-import {booleanAttribute, Component, input, output} from '@angular/core';
+import {booleanAttribute, Component, effect, input, OnInit, output, signal, untracked} from '@angular/core';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 
 @Component({
@@ -14,11 +14,35 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/m
         '../form-shared.css',
     ],
 })
-export class DateSelect {
+export class DateSelect implements OnInit {
     label = input.required<string>();
     min = input<Date | null>(null);
     defaultToday = input(false, { transform: booleanAttribute });
+    error = input<string | null>(null);
+    value = input<Date | null | undefined>(undefined);
     dateChange = output<Date | null>();
+
+    selectedDate = signal<Date | null>(null);
+
+    constructor() {
+        effect(() => {
+            const external = this.value();
+            if (external !== undefined) {
+                untracked(() => this.selectedDate.set(external));
+            }
+        });
+    }
+
+    ngOnInit(): void {
+        if (this.defaultToday()) {
+            this.selectedDate.set(new Date());
+        }
+    }
+
+    onDateChange(value: Date | null): void {
+        this.selectedDate.set(value);
+        this.dateChange.emit(value);
+    }
 
     get id(): string {
         return `date-${this.label().toLowerCase().replace(/\s+/g, '-')}`;
@@ -38,9 +62,5 @@ export class DateSelect {
             }
         })
         .join('');
-    }
-
-    get defaultDate(): Date | null {
-        return this.defaultToday() ? new Date() : null;
     }
 }

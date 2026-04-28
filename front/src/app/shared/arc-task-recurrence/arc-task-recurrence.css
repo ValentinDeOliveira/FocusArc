@@ -1,0 +1,106 @@
+.recurrence {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.recurrence label {
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+.pill-group {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.pill {
+    padding: 6px 16px;
+    border-radius: 999px;
+    border: 1.5px solid var(--color-border, #d1d5db);
+    background: transparent;
+    font-size: 0.875rem;
+    cursor: pointer;
+    color: inherit;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.pill.active {
+    border-color: var(--color-primary, #3b5bdb);
+    color: var(--color-primary, #3b5bdb);
+    font-weight: 500;
+}
+
+.days-section {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+.day-group {
+    display: flex;
+    gap: 8px;
+}
+
+.day-pill {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: 1.5px solid var(--color-border, #d1d5db);
+    background: transparent;
+    font-size: 0.8rem;
+    font-weight: 500;
+    cursor: pointer;
+    color: inherit;
+    transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+
+.day-pill.active {
+    background: var(--color-primary, #3b5bdb);
+    border-color: var(--color-primary, #3b5bdb);
+    color: #fff;
+}
+
+.duration-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.duration-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.duration-row app-number-field {
+    width: 80px;
+}
+
+.duration-unit {
+    font-size: 0.875rem;
+}
+
+.duration-presets {
+    display: flex;
+    gap: 6px;
+}
+
+.preset-chip {
+    padding: 4px 10px;
+    border-radius: 999px;
+    border: 1.5px solid var(--color-border, #d1d5db);
+    background: transparent;
+    font-size: 0.8rem;
+    cursor: pointer;
+    color: inherit;
+    transition: border-color 0.15s, color 0.15s;
+}
+
+.preset-chip.active {
+    border-color: var(--color-primary, #3b5bdb);
+    color: var(--color-primary, #3b5bdb);
+    font-weight: 500;
+}

@@ -1,0 +1,13 @@
+<div class="field">
+    <label [for]="effectiveId()">{{ label() }}</label>
+    <input
+        [id]="effectiveId()"
+        [type]="type()"
+        [placeholder]="placeholder()"
+        [class.has-error]="error()"
+        (input)="valueChange.emit($any($event.target).value)"
+    />
+    @if (error()) {
+        <span class="field-error">{{ error() }}</span>
+    }
+</div>

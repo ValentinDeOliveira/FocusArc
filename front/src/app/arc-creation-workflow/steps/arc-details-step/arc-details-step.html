@@ -1,0 +1,29 @@
+<app-card-page-layout
+    title="Create your Arc"
+    subtitle="Define a goal and time span to start tracking your focus."
+    wide
+>
+    <app-arc-creation-stepper slot="stepper" />
+    <div class="card-header">
+        <h2 class="title">Arc creation</h2>
+        <p class="subtitle">An arc is a focused chapter of work with a clear timeline. Everything you track lives inside one.</p>
+    </div>
+
+    <app-input-field
+        label="Arc name"
+        type="text"
+        placeholder="e.g Q2 Growth, Learn Rust, Ship v1..."
+        [error]="arcNameError()"
+        (valueChange)="arcName.set($event)"
+    />
+
+    <div class="dates-container">
+        <app-date-select label="Start date" defaultToday [min]="today" (dateChange)="startDate.set($event)" />
+        <app-date-select label="End date" [min]="startDate() ?? today" [value]="endDate()" [error]="endDateError()" (dateChange)="endDate.set($event)" />
+    </div>
+
+    <app-primary-btn [fullWidth]="true" (click)="goToNextStep()">
+        Continue to tasks
+        <mat-icon>arrow_right_alt</mat-icon>
+    </app-primary-btn>
+</app-card-page-layout>
