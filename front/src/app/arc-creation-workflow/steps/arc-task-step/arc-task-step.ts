@@ -8,6 +8,9 @@ import {InputField} from '../../../shared/input-field/input-field';
 import {WeekSchedule} from '../../../shared/week-schedule/week-schedule';
 import {ArcTask} from '../../../shared/arc-task.model';
 import {ToastrService} from 'ngx-toastr';
+import {Tag} from '../../../models/tag.model';
+import {TagService} from '../../../core/services/tag.service';
+import {TagDot} from '../../../shared/tag-dot/tag-dot';
 
 @Component({
     selector: 'app-arc-task-step',
@@ -19,6 +22,7 @@ import {ToastrService} from 'ngx-toastr';
         ArcTaskRecurrence,
         InputField,
         WeekSchedule,
+        TagDot,
     ],
     templateUrl: './arc-task-step.html',
     styleUrls: [
@@ -33,8 +37,12 @@ export class ArcTaskStep {
     taskName = signal('');
     taskTag = signal('');
     tasks = signal<ArcTask[]>([]);
+    currentTag = signal<Tag | undefined>(undefined);
 
     private recurrence = viewChild.required(ArcTaskRecurrence);
+    private tags = signal<Tag[]>([]);
+
+    private tagService = inject(TagService);
 
     toastr = inject(ToastrService);
 
@@ -57,16 +65,28 @@ export class ArcTaskStep {
             }
         }
 
+        // TODO: fix after setting up creating account
+        if (this.taskTag().trim() !== '') {
+            this.tagService.create({
+                label: this.taskTag(),
+                color: "RED"
+            }).subscribe(tag => {
+                this.tags().push(tag);
+                this.currentTag.set(tag);
+            });
+        }
+
         const config = this.recurrence().config();
         this.tasks.update(list => [...list, {
             id: crypto.randomUUID(),
             name,
-            tag: this.taskTag().trim() || undefined,
+            tag: this.currentTag(),
             ...config,
         }]);
         this.taskName.set('');
         this.taskTag.set('');
         this.recurrence().reset();
+        this.currentTag.set(undefined);
     }
 
     removeTask(id: string): void {

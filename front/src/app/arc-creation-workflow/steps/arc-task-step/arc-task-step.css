@@ -10,6 +10,22 @@
     margin-bottom: 10px;
 }
 
+.task-form-card {
+    border: 2px solid var(--color-border);
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.task-counter {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text-secondary);
+}
+
 .fields-row {
     display: flex;
     gap: 16px;
@@ -17,6 +33,11 @@
 
 .fields-row app-input-field {
     flex: 1;
+}
+
+.add-task-row {
+    display: flex;
+    justify-content: flex-end;
 }
 
 .task-list {
