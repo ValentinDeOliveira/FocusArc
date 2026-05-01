@@ -8,7 +8,6 @@ import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.service.tag.TagService;
 import com.valentin_d.focusarc.util.ResponseUtil;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -37,10 +36,9 @@ public class TagController {
     }
 
     @Operation(summary = "Get all tags for the authenticated user")
-    @ApiResponse(responseCode = "204", description = "No tags found")
     @GetMapping("/me")
     public ResponseEntity<List<Tag>> getAllForCurrentUser(@AuthenticationPrincipal final User user) {
-        return ResponseUtil.wrapOrNoContent(service.findAllForUser(user.getId()));
+        return ResponseEntity.ok(service.findAllForUser(user.getId()));
     }
 
     @Operation(summary = "Create a new tag")

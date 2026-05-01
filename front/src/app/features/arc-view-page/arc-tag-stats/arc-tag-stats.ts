@@ -1,7 +1,6 @@
 import {Component, inject, Input} from '@angular/core';
-import {TagStatDto} from '../../../models/tag.model';
+import {TAG_COLORS, TagStatDto} from '../../../models/tag.model';
 import {TagStore} from '../../../core/stores/tag.store';
-import {TAG_COLORS} from '../../../shared/tag-dot/tag-dot';
 import {ArcStatsBase, StatRow} from '../../../shared/arc-stats-base/arc-stats-base';
 
 @Component({

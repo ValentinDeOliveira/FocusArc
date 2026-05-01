@@ -1,3 +1,8 @@
+:host {
+    display: inline-flex;
+    align-items: center;
+}
+
 .tag-dot {
     display: inline-block;
     width: 12px;

@@ -16,7 +16,7 @@ export class TagPicker {
     protected isOpen = false;
     protected tagStore = inject(TagStore);
 
-    protected select(tag: Tag | null) {
+    protected select(tag: Tag | null = null) {
         this.tagChange.emit(tag);
         this.isOpen = false;
     }

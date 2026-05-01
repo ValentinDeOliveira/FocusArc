@@ -32,7 +32,7 @@
             @for (task of tasks(); track task.id) {
                 <div class="task-card">
                     @if (task.tag) {
-                        <app-tag-dot  [tag]="task.tag"/>
+                        <app-tag-pill [tag]="task.tag"/>
                     }
                     <div class="task-info">
                         <span class="task-name">{{ task.name }}</span>

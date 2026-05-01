@@ -5,6 +5,7 @@ import {AuthService} from '../../core/services/auth.service';
 import {PasswordField} from '../../shared/password-field/password-field';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ApiErrorType} from '../../models/api-error.model';
+import {AuthResponseDto} from '../../models/auth.model';
 
 @Component({
     selector: 'app-register-form',
@@ -42,11 +43,7 @@ export class RegisterForm implements OnInit {
         this.loading.set(true);
         this.error.set(null);
         this.authService.loginWithGoogle({ idToken }).subscribe({
-            next: (res) => {
-                localStorage.setItem('token', res.accessToken);
-                localStorage.setItem('refreshToken', res.refreshToken);
-                void this.router.navigate(['/']);
-            },
+            next: (res) => this.continueToArcCreation(res),
             error: () => {
                 this.error.set('Google sign-up failed. Please try again.');
                 this.loading.set(false);
@@ -61,7 +58,7 @@ export class RegisterForm implements OnInit {
         this.error.set(null);
         const { name, email, password } = this.form.value;
         this.authService.register({ name: name!, email: email!, password: password! }).subscribe({
-            next: () => this.router.navigate(['/']),
+            next: (res) => this.continueToArcCreation(res),
             error: (error: HttpErrorResponse) => {
                 this.error.set(this.getErrorMessage(error));
                 this.loading.set(false);
@@ -75,5 +72,11 @@ export class RegisterForm implements OnInit {
         }
 
         return 'Registration failed. Please try again.';
+    }
+
+    private continueToArcCreation(authResponse: AuthResponseDto) {
+        localStorage.setItem('token', authResponse.accessToken);
+        localStorage.setItem('refreshToken', authResponse.refreshToken);
+        void this.router.navigate(['/arc-creation']);
     }
 }

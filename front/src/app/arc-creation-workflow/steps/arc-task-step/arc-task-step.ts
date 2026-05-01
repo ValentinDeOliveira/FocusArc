@@ -1,4 +1,4 @@
-import {Component, inject, output, signal, viewChild} from '@angular/core';
+import {Component, inject, OnInit, output, signal, viewChild} from '@angular/core';
 import {ArcCreationStepper} from '../../arc-creation-stepper/arc-creation-stepper';
 import {CardPageLayout} from '../../../shared/card-page-layout/card-page-layout';
 import {MatIcon} from '@angular/material/icon';
@@ -10,7 +10,7 @@ import {ArcTask} from '../../../shared/arc-task.model';
 import {ToastrService} from 'ngx-toastr';
 import {Tag} from '../../../models/tag.model';
 import {TagService} from '../../../core/services/tag.service';
-import {TagDot} from '../../../shared/tag-dot/tag-dot';
+import {TagPill} from '../../../shared/tag-pill/tag-pill';
 
 @Component({
     selector: 'app-arc-task-step',
@@ -22,7 +22,7 @@ import {TagDot} from '../../../shared/tag-dot/tag-dot';
         ArcTaskRecurrence,
         InputField,
         WeekSchedule,
-        TagDot,
+        TagPill,
     ],
     templateUrl: './arc-task-step.html',
     styleUrls: [
@@ -30,14 +30,13 @@ import {TagDot} from '../../../shared/tag-dot/tag-dot';
         '../../../shared/form-shared.css'
     ]
 })
-export class ArcTaskStep {
+export class ArcTaskStep implements OnInit {
     nextStep = output();
     MAX_NUMBER_OF_TASKS = 5;
 
     taskName = signal('');
     taskTag = signal('');
     tasks = signal<ArcTask[]>([]);
-    currentTag = signal<Tag | undefined>(undefined);
 
     private recurrence = viewChild.required(ArcTaskRecurrence);
     private tags = signal<Tag[]>([]);
@@ -45,6 +44,12 @@ export class ArcTaskStep {
     private tagService = inject(TagService);
 
     toastr = inject(ToastrService);
+
+    ngOnInit() {
+        this.tagService.getAllForUser().subscribe(tags => {
+            this.tags.set(tags);
+        });
+    }
 
     addTask(): void {
         const name = this.taskName().trim();
@@ -65,28 +70,23 @@ export class ArcTaskStep {
             }
         }
 
-        // TODO: fix after setting up creating account
-        if (this.taskTag().trim() !== '') {
-            this.tagService.create({
-                label: this.taskTag(),
-                color: "RED"
-            }).subscribe(tag => {
-                this.tags().push(tag);
-                this.currentTag.set(tag);
-            });
-        }
-
         const config = this.recurrence().config();
-        this.tasks.update(list => [...list, {
-            id: crypto.randomUUID(),
-            name,
-            tag: this.currentTag(),
-            ...config,
-        }]);
+
+        if (this.taskTag().trim() !== '') {
+            this.tagService.create({ label: this.taskTag(), color: "RED" }).subscribe(tag => {
+                this.tags.update(list => [...list, tag]);
+                this.pushTask(name, config, tag);
+            });
+        } else {
+            this.pushTask(name, config, undefined);
+        }
+    }
+
+    private pushTask(name: string, config: Omit<ArcTask, 'id' | 'name' | 'tag'>, tag: Tag | undefined): void {
+        this.tasks.update(list => [...list, { id: crypto.randomUUID(), name, tag, ...config }]);
         this.taskName.set('');
         this.taskTag.set('');
         this.recurrence().reset();
-        this.currentTag.set(undefined);
     }
 
     removeTask(id: string): void {

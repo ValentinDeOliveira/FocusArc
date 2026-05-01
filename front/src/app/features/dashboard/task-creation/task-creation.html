@@ -6,7 +6,7 @@
     </app-task-row>
 } @else {
     <app-task-row>
-        <app-tag-picker [selectedTag]="selectedTag" (tagChange)="selectedTag = $event"/>
+        <app-tag-picker [selectedTag]="selectedTag" (tagChange)="onTagChange($event)"/>
         <app-task-info-edit
             (nameChange)="name = $event"
             (scheduledAtChange)="scheduledAt = $event"
