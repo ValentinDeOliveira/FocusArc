@@ -1,4 +1,4 @@
-export type TagColor = 'RED' | 'ORANGE' | 'YELLOW' | 'GREEN' | 'TEAL' | 'BLUE' | 'PURPLE' | 'PINK' | 'GRAY';
+export type TagColor = 'RED' | 'ORANGE' | 'YELLOW' | 'GREEN' | 'TEAL' | 'BLUE' | 'PURPLE' | 'PINK';
 export const TAG_COLORS: Record<TagColor, string> = {
     RED: '#ef4444',
     ORANGE: '#f59e0b',
@@ -7,8 +7,7 @@ export const TAG_COLORS: Record<TagColor, string> = {
     TEAL: '#14b8a6',
     BLUE: '#6366f1',
     PURPLE: '#a855f7',
-    PINK: '#ec4899',
-    GRAY: '#6b7280',
+    PINK: '#ec4899'
 };
 
 export interface Tag {

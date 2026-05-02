@@ -31,7 +31,8 @@
     gap: 16px;
 }
 
-.fields-row app-input-field {
+.fields-row app-input-field,
+.fields-row app-tag-selector {
     flex: 1;
 }
 

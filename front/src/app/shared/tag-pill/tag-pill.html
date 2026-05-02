@@ -1,4 +1,4 @@
-<div [style.border-color]="color(tag)" class="tag-pill">
+<div [style.border-color]="color(tag)" [style.background-color]="color(tag) + '1a'" class="tag-pill">
     <app-tag-dot [tag]="tag"/>
     <span [style.color]="color(tag)">{{tag.label}}</span>
 </div>

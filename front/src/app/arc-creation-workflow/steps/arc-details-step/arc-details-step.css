@@ -1,6 +1,7 @@
 .dates-container {
     display: flex;
     justify-content: space-between;
+    gap: 10px;
 }
 
 .card-header .title {
