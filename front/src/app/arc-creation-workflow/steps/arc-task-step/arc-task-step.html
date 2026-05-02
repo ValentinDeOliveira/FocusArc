@@ -34,13 +34,15 @@
     @if (tasks().length > 0) {
         <div class="task-list">
             @for (task of tasks(); track task.id) {
-                <div class="task-card">
-                    @if (task.tag) {
-                        <app-tag-pill [tag]="task.tag"/>
-                    }
+                <div class="task-card" [style.border-left-color]="tagColor(task.tag)">
                     <div class="task-info">
                         <span class="task-name">{{ task.name }}</span>
-                        <span class="task-summary">{{ taskSummary(task) }}</span>
+                        <div class="task-meta">
+                            <span class="task-summary">{{ taskSummary(task) }}</span>
+                            @if (task.tag) {
+                                <app-tag-pill [tag]="task.tag"/>
+                            }
+                        </div>
                     </div>
                     <button class="task-remove" (click)="removeTask(task.id)">✕</button>
                 </div>
@@ -49,11 +51,12 @@
 
         <app-week-schedule [tasks]="tasks()" />
     }
-
-    @if (tasks().length > 0) {
-        <app-primary-btn [fullWidth]="true" (click)="nextStep.emit()">
-            Continue
-            <mat-icon>arrow_right_alt</mat-icon>
-        </app-primary-btn>
-    }
+    <div class="button-container">
+        <app-primary-btn ghost>Skip</app-primary-btn>
+        @if (tasks().length > 0) {
+            <app-primary-btn (click)="nextStep.emit()">
+                Go to dashboard
+            </app-primary-btn>
+        }
+    </div>
 </app-card-page-layout>

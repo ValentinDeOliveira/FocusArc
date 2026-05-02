@@ -10,13 +10,14 @@
     margin-bottom: 0.75rem;
 }
 
-::ng-deep .cal-week-view {
+.calendar-scroll {
     border: 2px solid var(--color-border);
     border-radius: 0.75rem;
-    overflow: hidden;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 380px;
 }
 
-::ng-deep .cal-week-view .cal-time-events {
-    max-height: 380px;
-    overflow-y: auto;
+::ng-deep .cal-week-view {
+    overflow: visible;
 }

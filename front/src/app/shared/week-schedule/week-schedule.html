@@ -1,12 +1,14 @@
 <div class="schedule-wrapper">
     <h3 class="schedule-title">THIS WEEK'S SCHEDULE</h3>
-    <mwl-calendar-week-view
-        [viewDate]="viewDate"
-        [events]="calendarEvents()"
-        [dayStartHour]="7"
-        [dayEndHour]="21"
-        [weekStartsOn]="1"
-        [hourSegments]="1"
-        [hourSegmentHeight]="60"
-    />
+    <div class="calendar-scroll">
+        <mwl-calendar-week-view
+            [viewDate]="viewDate"
+            [events]="calendarEvents()"
+            [dayStartHour]="5"
+            [dayEndHour]="23"
+            [weekStartsOn]="1"
+            [hourSegments]="1"
+            [hourSegmentHeight]="60"
+        />
+    </div>
 </div>

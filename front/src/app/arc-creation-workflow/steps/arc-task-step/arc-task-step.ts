@@ -8,7 +8,7 @@ import {InputField} from '../../../shared/input-field/input-field';
 import {WeekSchedule} from '../../../shared/week-schedule/week-schedule';
 import {ArcTask} from '../../../shared/arc-task.model';
 import {ToastrService} from 'ngx-toastr';
-import {Tag} from '../../../models/tag.model';
+import {color, Tag} from '../../../models/tag.model';
 import {TagPill} from '../../../shared/tag-pill/tag-pill';
 import {TagSelector} from '../../../shared/tag-selector/tag-selector';
 
@@ -34,6 +34,7 @@ import {TagSelector} from '../../../shared/tag-selector/tag-selector';
 export class ArcTaskStep {
     nextStep = output();
     MAX_NUMBER_OF_TASKS = 5;
+    protected readonly tagColor = color;
 
     taskName = signal('');
     tasks = signal<ArcTask[]>([]);
