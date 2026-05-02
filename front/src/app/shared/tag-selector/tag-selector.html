@@ -36,6 +36,7 @@
                         class="swatch"
                         [class.selected]="pendingColor() === key"
                         [style.background-color]="TAG_COLORS[key]"
+                        [title]="key | capitalize"
                         (click)="selectColor(key)"
                     ></button>
                 }

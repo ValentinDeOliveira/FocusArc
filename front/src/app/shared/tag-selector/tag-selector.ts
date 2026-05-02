@@ -4,10 +4,11 @@ import {TAG_COLORS, TAG_COLORS_KEYS} from '../../models/tag-colors';
 import {TagService} from '../../core/services/tag.service';
 import {TagPill} from '../tag-pill/tag-pill';
 import {MatIcon} from '@angular/material/icon';
+import {CapitalizePipe} from '../pipes/capitalize.pipe';
 
 @Component({
     selector: 'app-tag-selector',
-    imports: [TagPill, MatIcon],
+    imports: [TagPill, MatIcon, CapitalizePipe],
     templateUrl: './tag-selector.html',
     styleUrl: './tag-selector.css',
     host: { '(click)': '$event.stopPropagation()' }
@@ -17,7 +18,7 @@ export class TagSelector implements OnInit {
     tagChange = output<Tag | null>();
 
     protected newTagName = signal('');
-    protected pendingColor = signal<TagColor>('BLUE');
+    protected pendingColor = signal<TagColor>('RED');
     protected isOpen = signal(false);
 
     protected readonly TAG_COLORS = TAG_COLORS;
