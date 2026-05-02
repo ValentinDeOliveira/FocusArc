@@ -1,0 +1,7 @@
+.date-toggle {
+    position: absolute;
+    right: 0.25rem;
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+}

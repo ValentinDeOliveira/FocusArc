@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {booleanAttribute, Component, Input} from '@angular/core';
 import {RouterLink} from '@angular/router';
 
 @Component({
@@ -13,4 +13,6 @@ import {RouterLink} from '@angular/router';
 export class PrimaryButton {
     @Input() fullWidth = false;
     @Input() routerLink?: string | any[];
+    @Input() disabled = false;
+    @Input({ transform: booleanAttribute }) ghost = false;
 }

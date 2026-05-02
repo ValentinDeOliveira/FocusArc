@@ -15,7 +15,8 @@
 
 .field input[type='email'],
 .field input[type='text'],
-.field input[type='password'] {
+.field input[type='password'],
+input[type='number'] {
     width: 100%;
     padding: 0.7rem 0.875rem;
     border: 2px solid var(--color-border);
@@ -31,6 +32,10 @@
 .field input:focus {
     border-color: var(--color-primary);
     box-shadow: 0 0 0 3px var(--color-primary-shadow);
+}
+
+.field input.has-error {
+    border-color: var(--color-warning-text);
 }
 
 .field input::placeholder {

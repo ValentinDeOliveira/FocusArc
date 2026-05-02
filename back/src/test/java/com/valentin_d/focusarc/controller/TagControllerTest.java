@@ -15,9 +15,7 @@ import java.util.Optional;
 import static com.valentin_d.focusarc.fixtures.factory.TagFactory.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @WebMvcTest(TagController.class)
@@ -58,11 +56,11 @@ class TagControllerTest extends BaseSecurityControllerTest {
     }
 
     @Test
-    void shouldReturnNoContent_whenUserHasNoTags() throws Exception {
+    void shouldReturnOk_whenUserHasNoTags() throws Exception {
         when(tagService.findAllForUser(user.getId())).thenReturn(List.of());
 
         mvcGetWithUser(ROOT + "/me", user)
-                .andExpect(status().isNoContent());
+                .andExpect(status().isOk());
     }
 
     @Test

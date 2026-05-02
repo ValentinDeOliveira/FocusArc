@@ -42,6 +42,10 @@ export class TaskCreation {
         this.isTaskCreation = true;
     }
 
+    protected onTagChange(tag: Tag | null) {
+        this.selectedTag = tag;
+    }
+
     protected cancel() {
         this.isTaskCreation = false;
         this.name = '';

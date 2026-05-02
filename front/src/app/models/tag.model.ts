@@ -1,4 +1,4 @@
-export type TagColor = 'RED' | 'ORANGE' | 'YELLOW' | 'GREEN' | 'TEAL' | 'BLUE' | 'PURPLE' | 'PINK' | 'GRAY';
+export type TagColor = 'RED' | 'ORANGE' | 'YELLOW' | 'GREEN' | 'TEAL' | 'BLUE' | 'PURPLE' | 'PINK';
 
 export interface Tag {
     id: string;
@@ -22,3 +22,4 @@ export interface TagStatDto {
     total: number;
     done: number;
 }
+

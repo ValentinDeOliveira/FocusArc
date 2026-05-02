@@ -1,0 +1,8 @@
+<div>
+    @if (currentStep() == 1) {
+        <app-arc-details-step (nextStep)="currentStep.set(2)"/>
+    }
+    @if (currentStep() == 2) {
+        <app-arc-task-step/>
+    }
+</div>

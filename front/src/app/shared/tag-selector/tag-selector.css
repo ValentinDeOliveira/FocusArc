@@ -1,0 +1,152 @@
+:host {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.optional {
+    color: var(--color-text-secondary);
+    font-weight: 400;
+}
+
+.trigger {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    padding: 0.7rem 0.875rem;
+    border: 2px solid var(--color-border);
+    border-radius: 0.625rem;
+    background: var(--color-surface);
+    transition: border-color 0.15s, box-shadow 0.15s;
+    box-sizing: border-box;
+    cursor: text;
+}
+
+.trigger.open,
+.trigger:focus-within {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 3px var(--color-primary-shadow);
+}
+
+.name-input {
+    flex: 1;
+    min-width: 0;
+    padding: 0;
+    border: none;
+    background: transparent;
+    font-size: 0.95rem;
+    color: var(--color-text);
+    outline: none;
+}
+
+.name-input::placeholder {
+    color: var(--color-text-faint);
+}
+
+.clear-icon {
+    display: flex;
+    align-items: center;
+    font-size: 1rem;
+    color: var(--color-text-muted);
+    flex-shrink: 0;
+    cursor: pointer;
+    margin-left: auto;
+    transition: color 0.12s;
+}
+
+.clear-icon:hover {
+    color: var(--color-text);
+}
+
+.chevron {
+    display: flex;
+    align-items: center;
+    font-size: 1.1rem;
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+    cursor: pointer;
+}
+
+.dropdown {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    background: var(--color-surface);
+    border: 2px solid var(--color-border);
+    border-radius: 0.75rem;
+    z-index: 100;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+.options {
+    display: flex;
+    flex-direction: column;
+    padding: 6px;
+    gap: 2px;
+}
+
+.option {
+    display: flex;
+    align-items: center;
+    padding: 6px 8px;
+    border: none;
+    border-radius: 0.5rem;
+    background: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background 0.12s;
+}
+
+.option:hover {
+    background: var(--color-surface-hover);
+}
+
+.new-section {
+    border-top: 1.5px solid var(--color-border);
+    padding: 8px 10px 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.new-label {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--color-text-secondary);
+}
+
+.swatches {
+    display: flex;
+    gap: 5px;
+}
+
+.swatch {
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    cursor: pointer;
+    padding: 0;
+    flex-shrink: 0;
+    transition: transform 0.1s, border-color 0.1s;
+}
+
+.swatch:hover {
+    transform: scale(1.15);
+}
+
+.swatch.selected {
+    border-color: var(--color-text);
+    transform: scale(1.15);
+}

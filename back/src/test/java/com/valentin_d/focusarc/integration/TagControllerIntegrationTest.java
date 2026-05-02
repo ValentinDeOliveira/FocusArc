@@ -75,10 +75,10 @@ class TagControllerIntegrationTest extends BaseTagControllerIntegrationTest {
     }
 
     @Test
-    void shouldReturnNoContent_whenUserHasNoTags() {
+    void shouldReturnOk_whenUserHasNoTags() {
         final var response = request(URL + "/me", HttpMethod.GET, Void.class);
 
-        assertionHelper.assertNoContent(response);
+        assertionHelper.assertOk(response);
     }
 
     @ParameterizedTest

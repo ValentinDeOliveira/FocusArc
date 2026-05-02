@@ -1,0 +1,11 @@
+<div class="stepper">
+  @for (step of steps; track step; let i = $index) {
+    @if (i > 0) {
+      <div class="stepper-line"></div>
+    }
+    <div class="stepper-step" [class.active]="activeStep() === i + 1">
+      <div class="stepper-circle">{{ i + 1 }}</div>
+      <span class="stepper-label">{{ step }}</span>
+    </div>
+  }
+</div>

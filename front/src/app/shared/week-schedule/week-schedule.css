@@ -1,0 +1,23 @@
+.schedule-wrapper {
+    margin-top: 1.5rem;
+}
+
+.schedule-title {
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    color: var(--color-text-muted);
+    margin-bottom: 0.75rem;
+}
+
+.calendar-scroll {
+    border: 2px solid var(--color-border);
+    border-radius: 0.75rem;
+    overflow-x: hidden;
+    overflow-y: auto;
+    max-height: 380px;
+}
+
+::ng-deep .cal-week-view {
+    overflow: visible;
+}

@@ -1,0 +1,15 @@
+.tag-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    border-radius: 50px;
+    border: 1px solid;
+    padding: 3px 7px 3px 5px;
+}
+
+.tag-pill span {
+    line-height: 1;
+    display: block;
+    position: relative;
+    top: -1px;
+}

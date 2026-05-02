@@ -9,10 +9,30 @@
     cursor: pointer;
     transition: background-color 0.15s ease;
     white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
 }
 
 .btn:hover {
     background-color: var(--color-primary-hover);
+}
+
+.btn:disabled {
+    background-color: var(--color-primary);
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.btn.ghost {
+    background-color: transparent;
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+}
+
+.btn.ghost:hover {
+    background-color: var(--color-surface-hover);
+    color: var(--color-text);
 }
 
 .btn.full-width {
