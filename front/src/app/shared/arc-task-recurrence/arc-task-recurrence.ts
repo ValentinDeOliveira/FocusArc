@@ -51,6 +51,7 @@ export class ArcTaskRecurrence {
 
     toggleDay(day: string): void {
         this.selectedDays.update(set => {
+            if (set.has(day) && set.size === 1) return set;
             const next = new Set(set);
             next.has(day) ? next.delete(day) : next.add(day);
             return next;

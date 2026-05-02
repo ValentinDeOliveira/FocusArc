@@ -13,7 +13,13 @@
         <span class="task-counter">New task ({{tasks().length}} / {{MAX_NUMBER_OF_TASKS}})</span>
 
         <div class="fields-row">
-            <app-input-field label="Task name" type="text" placeholder="e.g Morning run, Deep work block..." [value]="taskName()" (valueChange)="taskName.set($event)" />
+            <app-input-field
+                label="Task name"
+                type="text"
+                placeholder="e.g Morning run, Deep work block..."
+                [value]="taskName()"
+                [error]="taskNameError()"
+                (valueChange)="taskName.set($event)" />
 
             <app-tag-selector
                 [selectedTag]="selectedTag()"
@@ -34,7 +40,7 @@
     @if (tasks().length > 0) {
         <div class="task-list">
             @for (task of tasks(); track task.id) {
-                <div class="task-card" [style.border-left-color]="tagColor(task.tag)">
+                <div class="task-card" [style.border-left-color]="task.tag ? tagColor(task.tag.color) : null">
                     <div class="task-info">
                         <span class="task-name">{{ task.name }}</span>
                         <div class="task-meta">
@@ -54,7 +60,7 @@
     <div class="button-container">
         <app-primary-btn ghost>Skip</app-primary-btn>
         @if (tasks().length > 0) {
-            <app-primary-btn (click)="nextStep.emit()">
+            <app-primary-btn (click)="goToNextStep()">
                 Go to dashboard
             </app-primary-btn>
         }

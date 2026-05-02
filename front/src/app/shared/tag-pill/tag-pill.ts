@@ -1,5 +1,7 @@
 import {Component, Input} from '@angular/core';
-import {color, Tag} from '../../models/tag.model';
+import {Tag} from '../../models/tag.model';
+import {color, colorBg} from '../../models/tag-colors';
+
 import {TagDot} from '../tag-dot/tag-dot';
 
 @Component({
@@ -13,4 +15,5 @@ import {TagDot} from '../tag-dot/tag-dot';
 export class TagPill {
     @Input() tag!: Tag;
     protected readonly color = color;
+    protected readonly colorBg = colorBg;
 }

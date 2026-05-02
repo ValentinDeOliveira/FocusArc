@@ -1,5 +1,6 @@
 import {Component, inject, Input} from '@angular/core';
-import {TAG_COLORS, TagStatDto} from '../../../models/tag.model';
+import {TagStatDto} from '../../../models/tag.model';
+import {colorOrNeutral} from '../../../models/tag-colors';
 import {TagStore} from '../../../core/stores/tag.store';
 import {ArcStatsBase, StatRow} from '../../../shared/arc-stats-base/arc-stats-base';
 
@@ -21,7 +22,7 @@ export class ArcTagStats {
                 const tag = this.tagStore.byId(s.tagId);
                 return {
                     label: tag?.label ?? '?',
-                    color: tag ? TAG_COLORS[tag.color] : '#6b7280',
+                    color: colorOrNeutral(tag?.color),
                     done: s.done,
                     total: s.total,
                     pct: Math.round((s.done / s.total) * 100),

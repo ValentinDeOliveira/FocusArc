@@ -2,14 +2,7 @@ import {Component, computed, input} from '@angular/core';
 import {CalendarDateFormatter, CalendarEvent, CalendarWeekViewComponent, DateFormatterParams} from 'angular-calendar';
 import {ArcTask} from '../arc-task.model';
 import {RecurrenceType} from '../arc-task-recurrence/arc-task-recurrence';
-import {Tag, TAG_COLORS} from '../../models/tag.model';
-import {EventColor} from 'calendar-utils';
-
-function eventColor(tag?: Tag): EventColor {
-    const primary = tag ? TAG_COLORS[tag.color] : '#3b5bdb';
-    // Appends '33' (20% opacity in hex) to get a light tint for secondary
-    return { primary, secondary: primary + '33', secondaryText: primary };
-}
+import {eventColor} from '../../models/tag-colors';
 
 class WeekScheduleDateFormatter extends CalendarDateFormatter {
     override weekViewColumnHeader({date, locale}: DateFormatterParams): string {
@@ -72,7 +65,7 @@ export class WeekSchedule {
                     title: task.name,
                     start,
                     end: new Date(start.getTime() + durationMs),
-                    color: eventColor(task.tag),
+                    color: eventColor(task.tag?.color),
                 });
             }
         }

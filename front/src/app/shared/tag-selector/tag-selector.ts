@@ -1,5 +1,6 @@
 import {Component, HostListener, inject, input, OnInit, output, signal} from '@angular/core';
-import {Tag, TAG_COLORS, TagColor} from '../../models/tag.model';
+import {Tag, TagColor} from '../../models/tag.model';
+import {TAG_COLORS, TAG_COLORS_KEYS} from '../../models/tag-colors';
 import {TagService} from '../../core/services/tag.service';
 import {TagPill} from '../tag-pill/tag-pill';
 import {MatIcon} from '@angular/material/icon';
@@ -15,14 +16,15 @@ export class TagSelector implements OnInit {
     selectedTag = input<Tag | null>(null);
     tagChange = output<Tag | null>();
 
-    newTagName = signal('');
-    pendingColor = signal<TagColor>('BLUE');
-    isOpen = signal(false);
+    protected newTagName = signal('');
+    protected pendingColor = signal<TagColor>('BLUE');
+    protected isOpen = signal(false);
 
-    readonly tagColorKeys = Object.keys(TAG_COLORS) as TagColor[];
+    protected readonly TAG_COLORS = TAG_COLORS;
+    protected readonly TAG_COLORS_KEYS = TAG_COLORS_KEYS;
 
     private tags = signal<Tag[]>([]);
-    availableTags = this.tags.asReadonly();
+    protected availableTags = this.tags.asReadonly();
 
     private tagService = inject(TagService);
 
@@ -31,21 +33,21 @@ export class TagSelector implements OnInit {
     }
 
     @HostListener('document:click')
-    closeDropdown() {
+    protected closeDropdown() {
         if (this.isOpen()) {
             this.commitPending();
         }
         this.isOpen.set(false);
     }
 
-    openDropdown() {
+    protected openDropdown() {
         if (!this.isOpen()) {
             this.pendingColor.set(this.selectedTag()?.color ?? 'BLUE');
         }
         this.isOpen.set(true);
     }
 
-    toggleDropdown(event: Event) {
+    protected toggleDropdown(event: Event) {
         event.stopPropagation();
         if (this.isOpen()) {
             this.commitPending();
@@ -56,20 +58,20 @@ export class TagSelector implements OnInit {
         }
     }
 
-    removeTag(event: Event): void {
+    protected removeTag(event: Event): void {
         event.stopPropagation();
         this.emitAndResetTag();
     }
 
-    selectTag(tag: Tag) {
+    protected selectTag(tag: Tag) {
         this.emitAndResetTag(tag);
     }
 
-    selectColor(color: TagColor) {
+    protected selectColor(color: TagColor) {
         this.pendingColor.set(color);
     }
 
-    createTagOnEnter(event: Event) {
+    protected createTagOnEnter(event: Event) {
         event.preventDefault();
         this.commitPending();
         this.isOpen.set(false);
@@ -100,6 +102,4 @@ export class TagSelector implements OnInit {
         this.newTagName.set('');
         this.isOpen.set(false);
     }
-
-    protected readonly TAG_COLORS = TAG_COLORS;
 }

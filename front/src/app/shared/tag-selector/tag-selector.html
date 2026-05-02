@@ -31,7 +31,7 @@
         <div class="new-section">
             <span class="new-label">New tag color</span>
             <div class="swatches">
-                @for (key of tagColorKeys; track key) {
+                @for (key of TAG_COLORS_KEYS; track key) {
                     <button
                         class="swatch"
                         [class.selected]="pendingColor() === key"

@@ -1,5 +1,6 @@
 import {Component, Input} from '@angular/core';
-import {color, Tag} from '../../models/tag.model';
+import {Tag} from '../../models/tag.model';
+import {color} from '../../models/tag-colors';
 
 
 @Component({

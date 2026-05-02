@@ -1,1 +1,1 @@
-<span class="tag-dot" [style.background-color]="color(tag)" [title]="tag?.label ?? ''"></span>
+<span class="tag-dot" [style.background-color]="tag ? color(tag.color) : null" [title]="tag?.label ?? ''"></span>

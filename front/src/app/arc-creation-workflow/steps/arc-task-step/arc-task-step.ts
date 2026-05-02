@@ -1,4 +1,4 @@
-import {Component, inject, output, signal, viewChild} from '@angular/core';
+import {Component, computed, inject, output, signal, viewChild} from '@angular/core';
 import {ArcCreationStepper} from '../../arc-creation-stepper/arc-creation-stepper';
 import {CardPageLayout} from '../../../shared/card-page-layout/card-page-layout';
 import {MatIcon} from '@angular/material/icon';
@@ -8,7 +8,8 @@ import {InputField} from '../../../shared/input-field/input-field';
 import {WeekSchedule} from '../../../shared/week-schedule/week-schedule';
 import {ArcTask} from '../../../shared/arc-task.model';
 import {ToastrService} from 'ngx-toastr';
-import {color, Tag} from '../../../models/tag.model';
+import {Tag} from '../../../models/tag.model';
+import {color} from '../../../models/tag-colors';
 import {TagPill} from '../../../shared/tag-pill/tag-pill';
 import {TagSelector} from '../../../shared/tag-selector/tag-selector';
 
@@ -39,11 +40,18 @@ export class ArcTaskStep {
     taskName = signal('');
     tasks = signal<ArcTask[]>([]);
     selectedTag = signal<Tag | null>(null);
+    submittedTask = signal(false);
+    submitted = signal(false);
+
+    taskNameError = computed(() =>
+        this.submittedTask() && !this.taskName().trim() ? 'Name your task' : null
+    );
 
     private recurrence = viewChild.required(ArcTaskRecurrence);
     private toastr = inject(ToastrService);
 
     addTask(): void {
+        this.submittedTask.set(true);
         const name = this.taskName().trim();
         if (!name) return;
 
@@ -70,6 +78,7 @@ export class ArcTaskStep {
         this.taskName.set('');
         this.selectedTag.set(null);
         this.recurrence().reset();
+        this.submittedTask.set(false);
     }
 
     removeTask(id: string): void {
@@ -78,6 +87,11 @@ export class ArcTaskStep {
 
     taskSummary(task: ArcTask): string {
         return [task.recurrence, task.startTime, `${task.duration} min`].join(' · ');
+    }
+
+    goToNextStep() {
+        this.submitted.set(true);
+        this.nextStep.emit();
     }
 
     private getTime(startTime: string, duration: number): number[] {
