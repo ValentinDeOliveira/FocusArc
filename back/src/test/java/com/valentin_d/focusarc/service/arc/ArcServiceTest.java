@@ -7,15 +7,29 @@ import com.valentin_d.focusarc.exception.arc.ArcAlreadyExistsException;
 import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
 import com.valentin_d.focusarc.exception.arc.NoActiveArcException;
 import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
+import com.valentin_d.focusarc.fixtures.arc.ArcBuilder;
 import com.valentin_d.focusarc.model.arc.Arc;
+import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.TagId;
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.task.TaskRecurrence;
 import com.valentin_d.focusarc.model.task.TaskStatus;
+import com.valentin_d.focusarc.repository.ArcRepository;
+import com.valentin_d.focusarc.service.chapter.ChapterLoader;
+import com.valentin_d.focusarc.service.chapter.ChapterService;
+import com.valentin_d.focusarc.service.task.TaskLoader;
+import com.valentin_d.focusarc.service.task.TaskService;
+import com.valentin_d.focusarc.service.user.UserLoader;
+import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -25,13 +39,32 @@ import java.util.stream.Stream;
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapterWithArcId;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapterWithScheduledDateAndArcIdAndCompletedMinutesAndAllTasksCompleted;
+import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskRecurrenceDto;
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-class ArcServiceTest extends BaseArcServiceTest {
+@ExtendWith(MockitoExtension.class)
+class ArcServiceTest {
+    @Mock
+    private ArcRepository arcRepository;
+    @Mock
+    private ArcLoader arcLoader;
+    @Mock
+    private UserLoader userLoader;
+    @Mock
+    private ChapterService chapterService;
+    @Mock
+    private ChapterLoader chapterLoader;
+    @Mock
+    private TaskLoader taskLoader;
+    @Mock
+    private TaskService taskService;
+    @InjectMocks
+    private ArcService arcService;
+
 
     @Test
     void shouldCreateArc_whenUserDoesExist() {
@@ -364,6 +397,43 @@ class ArcServiceTest extends BaseArcServiceTest {
         assertThat(result).containsExactlyInAnyOrderElementsOf(expectedStats);
     }
 
+
+    @Test
+    void shouldThrowException_whenArcDoesNotExist_onMassCreate() {
+        final var userId = UserId.random();
+        final var arcId = ArcId.random();
+
+        doThrowArcDoesNotExistForUser(arcId, userId);
+
+        assertThatThrownBy(() -> arcService.massCreate(List.of(aTaskRecurrenceDto(new TaskRecurrence.Daily())), arcId, userId))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(chapterLoader, never()).findAllByArc(any());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideArcWithMissingDate")
+    void shouldThrowException_whenDateIsInvalid_onMassCreate(@NotNull final Arc arc) {
+        when(arcLoader.getArcIfExistsForUser(arc.getId(), arc.getOwner())).thenReturn(arc);
+
+        assertThatThrownBy(() -> arcService.massCreate(List.of(aTaskRecurrenceDto(new TaskRecurrence.Daily())), arc.getId(), arc.getOwner()))
+                .isInstanceOf(IllegalStateException.class);
+
+        verify(chapterLoader, never()).findAllByArc(any());
+    }
+
+    private static Stream<Arc> provideArcWithMissingDate() {
+        return Stream.of(
+                ArcBuilder.builder().owner(UserId.random()).startDate(null).build().build(),
+                ArcBuilder.builder().owner(UserId.random()).endDate(null).build().build()
+        );
+    }
+
+    private void doThrowArcDoesNotExistForUser(final ArcId arcId, final UserId userId) {
+        doThrow(new ArcDoesNotExistForUserException(arcId, userId))
+                .when(arcLoader)
+                .getArcIfExistsForUser(arcId, userId);
+    }
 
     private void doThrowUserDoesNotExist(final UserId userId) {
         doThrow(new UserDoesNotExistException(userId))
