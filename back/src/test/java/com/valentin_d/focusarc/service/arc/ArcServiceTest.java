@@ -1,10 +1,9 @@
-package com.valentin_d.focusarc.service;
+package com.valentin_d.focusarc.service.arc;
 
 import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
 import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.exception.InvalidDateRangeException;
 import com.valentin_d.focusarc.exception.arc.ArcAlreadyExistsException;
-import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistException;
 import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
 import com.valentin_d.focusarc.exception.arc.NoActiveArcException;
 import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
@@ -12,22 +11,11 @@ import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.TagId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.task.TaskStatus;
-import com.valentin_d.focusarc.repository.ArcRepository;
-import com.valentin_d.focusarc.service.arc.ArcLoader;
-import com.valentin_d.focusarc.service.arc.ArcService;
-import com.valentin_d.focusarc.service.chapter.ChapterLoader;
-import com.valentin_d.focusarc.service.chapter.ChapterService;
-import com.valentin_d.focusarc.service.task.TaskLoader;
-import com.valentin_d.focusarc.service.user.UserLoader;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -43,22 +31,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class ArcServiceTest {
-    @Mock
-    private ArcRepository arcRepository;
-    @Mock
-    private ArcLoader arcLoader;
-    @Mock
-    private UserLoader userLoader;
-    @Mock
-    private ChapterService chapterService;
-    @Mock
-    private ChapterLoader chapterLoader;
-    @Mock
-    private TaskLoader taskLoader;
-    @InjectMocks
-    private ArcService arcService;
+class ArcServiceTest extends BaseArcServiceTest {
 
     @Test
     void shouldCreateArc_whenUserDoesExist() {
@@ -114,7 +87,7 @@ class ArcServiceTest {
         final var arc = anArcWithOwnerId(user.getId());
         final var updateDto = anArcUpdateDto();
 
-        when(arcLoader.getArcIfExists(eq(arc.getId()))).thenReturn(arc);
+        when(arcLoader.getArcIfExistsForUser(eq(arc.getId()), eq(user.getId()))).thenReturn(arc);
 
         when(arcRepository.save(any(Arc.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -136,7 +109,7 @@ class ArcServiceTest {
         final var arc = anArcWithOwnerId(user.getId());
         final var updateDto = anArcUpdateDtoWithStartAndEndDate(now, now.minusDays(15));
 
-        when(arcLoader.getArcIfExists(eq(arc.getId()))).thenReturn(arc);
+        when(arcLoader.getArcIfExistsForUser(eq(arc.getId()), eq(user.getId()))).thenReturn(arc);
 
         assertThatThrownBy(() -> arcService.update(user.getId(), arc.getId(), updateDto))
                 .isInstanceOf(InvalidDateRangeException.class);
@@ -148,11 +121,10 @@ class ArcServiceTest {
         final var arc = anArcWithOwnerId(user.getId());
         final var updateDto = anArcUpdateDto();
 
-        when(arcLoader.getArcIfExists(eq(arc.getId())))
-                .thenThrow((new ArcDoesNotExistException(arc.getId())));
+        doThrowArcDoesNotExistForUser(arc.getId(), user.getId());
 
         assertThatThrownBy(() -> arcService.update(user.getId(), arc.getId(), updateDto))
-                .isInstanceOf(ArcDoesNotExistException.class)
+                .isInstanceOf(ArcDoesNotExistForUserException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
         verify(arcRepository, never()).save(any(Arc.class));
@@ -163,7 +135,7 @@ class ArcServiceTest {
         final var user = aUser();
         final var arc = anArcWithOwnerId(user.getId());
 
-        when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
+        when(arcLoader.getArcIfExistsForUser(arc.getId(), user.getId())).thenReturn(arc);
 
         arcService.delete(user.getId(), arc.getId());
 
@@ -176,11 +148,10 @@ class ArcServiceTest {
         final var user = aUser();
         final var arc = anArcWithOwnerId(user.getId());
 
-        when(arcLoader.getArcIfExists(eq(arc.getId())))
-                .thenThrow((new ArcDoesNotExistException(arc.getId())));
+        doThrowArcDoesNotExistForUser(arc.getId(), user.getId());
 
         assertThatThrownBy(() -> arcService.delete(user.getId(), arc.getId()))
-                .isInstanceOf(ArcDoesNotExistException.class)
+                .isInstanceOf(ArcDoesNotExistForUserException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
         verify(arcRepository, never()).delete(any(Arc.class));
@@ -242,8 +213,7 @@ class ArcServiceTest {
         final var arc = anArcWithOwnerId(owner.getId());
         final var updateDto = anArcUpdateDto();
 
-        when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
-        doThrowArcDoesNotExistForUser(arc, attacker.getId());
+        doThrowArcDoesNotExistForUser(arc.getId(), attacker.getId());
 
         assertThatThrownBy(() -> arcService.update(attacker.getId(), arc.getId(), updateDto))
                 .isInstanceOf(ArcDoesNotExistForUserException.class);
@@ -257,8 +227,7 @@ class ArcServiceTest {
         final var attacker = aUser();
         final var arc = anArcWithOwnerId(owner.getId());
 
-        when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
-        doThrowArcDoesNotExistForUser(arc, attacker.getId());
+        doThrowArcDoesNotExistForUser(arc.getId(), attacker.getId());
 
         assertThatThrownBy(() -> arcService.delete(attacker.getId(), arc.getId()))
                 .isInstanceOf(ArcDoesNotExistForUserException.class);
@@ -402,9 +371,4 @@ class ArcServiceTest {
                 .assertUserExists(eq(userId));
     }
 
-    private void doThrowArcDoesNotExistForUser(final Arc arc, final UserId userId) {
-        doThrow(new ArcDoesNotExistForUserException(arc.getId(), userId))
-                .when(arcLoader)
-                .assertOwnership(arc, userId);
-    }
 }

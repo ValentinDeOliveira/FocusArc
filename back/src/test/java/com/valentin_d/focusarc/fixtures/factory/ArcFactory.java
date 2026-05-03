@@ -32,6 +32,10 @@ public final class ArcFactory {
         return ArcBuilder.builder().owner(ownerId).status(status).build().build();
     }
 
+    public static Arc anArcWithOwnerAndStartAndEndDates(final UserId ownerId, final LocalDate start, final LocalDate end) {
+        return ArcBuilder.builder().owner(ownerId).startDate(start).endDate(end).build().build();
+    }
+
     public static ArcCreationDto anArcCreationDto() {
         return ArcCreationDtoBuilder.builder().build().build();
     }

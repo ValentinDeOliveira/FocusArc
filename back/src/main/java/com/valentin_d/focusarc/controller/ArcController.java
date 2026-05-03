@@ -4,6 +4,7 @@ import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.arc.ArcSummaryResponseDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
+import com.valentin_d.focusarc.dto.task.TaskRecurrenceDto;
 import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.id.ArcId;
@@ -101,5 +102,14 @@ public class ArcController {
     public ResponseEntity<List<TaskStatsDto>> getTasksStats(@AuthenticationPrincipal final User user) {
         final var stats = service.getTaskStats(user.getId());
         return ResponseEntity.ok(stats);
+    }
+
+    @Operation(summary = "Create multiple task depending on recurrence")
+    @PostMapping("/{arcId}/tasks/init")
+    public ResponseEntity<Void> massCreate(@AuthenticationPrincipal final User user,
+                                           @PathVariable final ArcId arcId,
+                                           @Valid @RequestBody final List<TaskRecurrenceDto> taskRecurrenceDtos) {
+        service.massCreate(taskRecurrenceDtos, arcId, user.getId());
+        return ResponseEntity.noContent().build();
     }
 }
