@@ -19,6 +19,7 @@ import java.time.Instant;
 import java.time.LocalDate;
 
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArc;
+import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwnerAndStartAndEndDates;
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwnerIdAndStatus;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.TagFactory.aTagWithOwnerId;
@@ -44,6 +45,10 @@ public class DomainFixture {
 
     public Arc arcForUser(final UserId userId, final ArcStatus arcStatus) {
         return arcRepository.save(anArcWithOwnerIdAndStatus(userId, arcStatus));
+    }
+
+    public Arc arcForUserWithDates(final UserId userId, final LocalDate start, final LocalDate end) {
+        return arcRepository.save(anArcWithOwnerAndStartAndEndDates(userId, start, end));
     }
 
     public Chapter chapter() {

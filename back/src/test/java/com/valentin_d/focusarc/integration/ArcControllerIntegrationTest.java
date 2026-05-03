@@ -5,9 +5,12 @@ import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
 import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.integration.base.BaseArcControllerIntegrationTest;
+import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.arc.Arc;
 import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.ArcId;
+import com.valentin_d.focusarc.model.task.Task;
+import com.valentin_d.focusarc.model.task.TaskRecurrence;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -15,12 +18,17 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.http.HttpMethod;
 
+import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.temporal.TemporalAdjusters;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 import static com.mongodb.assertions.Assertions.assertNotNull;
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskRecurrenceDto;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -273,5 +281,63 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         final var response = request(URL + "/task-stats", HttpMethod.GET, Void.class);
 
         assertionHelper.assertBadRequest(response);
+    }
+
+    @Test
+    void shouldCreateChaptersAndTasksForEachDay_whenRecurrenceIsDaily() {
+        final var start = LocalDate.now().plusDays(1);
+        final var end = start.plusDays(2); // 3 days total
+        final var arc = domainFixture.arcForUserWithDates(user.getId(), start, end);
+
+        final var response = request(massCreateUrl(arc.getId()), HttpMethod.POST,
+                List.of(aTaskRecurrenceDto(new TaskRecurrence.Daily())), Void.class);
+
+        assertionHelper.assertNoContent(response);
+
+        final var chapters = request(chaptersForArcUrl(arc.getId()), HttpMethod.GET, Chapter[].class);
+        assertThat(chapters.getBody()).hasSize(3);
+
+        final var firstChapterId = chapters.getBody()[0].getId();
+        final var tasks = request(tasksForChapterUrl(firstChapterId), HttpMethod.GET, Task[].class);
+        assertThat(tasks.getBody()).hasSize(1);
+    }
+
+    @Test
+    void shouldReuseExistingChapter_whenChapterAlreadyExistsForDate_onMassCreate() {
+        final var start = LocalDate.now().plusDays(1);
+        final var arc = domainFixture.arcForUserWithDates(user.getId(), start, start);
+        domainFixture.chapterForArcWithDate(arc.getId(), start);
+
+        final var response = request(massCreateUrl(arc.getId()), HttpMethod.POST,
+                List.of(aTaskRecurrenceDto(new TaskRecurrence.Daily())), Void.class);
+
+        assertionHelper.assertNoContent(response);
+
+        final var chapters = request(chaptersForArcUrl(arc.getId()), HttpMethod.GET, Chapter[].class);
+        assertThat(chapters.getBody()).hasSize(1);
+    }
+
+    @Test
+    void shouldCreateTasksOnlyOnMatchingDays_whenRecurrenceIsDaysOfWeek() {
+        final var monday = LocalDate.now().with(TemporalAdjusters.next(DayOfWeek.MONDAY));
+        final var friday = monday.plusDays(4);
+        final var arc = domainFixture.arcForUserWithDates(user.getId(), monday, friday);
+        final var recurrence = new TaskRecurrence.DaysOfWeek(Set.of(DayOfWeek.MONDAY, DayOfWeek.WEDNESDAY));
+
+        final var response = request(massCreateUrl(arc.getId()), HttpMethod.POST,
+                List.of(aTaskRecurrenceDto(recurrence)), Void.class);
+
+        assertionHelper.assertNoContent(response);
+
+        final var chapters = request(chaptersForArcUrl(arc.getId()), HttpMethod.GET, Chapter[].class);
+        assertThat(chapters.getBody()).hasSize(2); // only Mon and Wed
+    }
+
+    @Test
+    void shouldReturnNotFound_whenArcDoesNotExist_onMassCreate() {
+        final var response = request(massCreateUrl(ArcId.random()), HttpMethod.POST,
+                List.of(aTaskRecurrenceDto(new TaskRecurrence.Daily())), Void.class);
+
+        assertionHelper.assertNotFound(response);
     }
 }

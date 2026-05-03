@@ -6,9 +6,11 @@ import com.valentin_d.focusarc.controller.assertions.TagTaskStatsAssertion;
 import com.valentin_d.focusarc.controller.assertions.TaskStatsAssertion;
 import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
 import com.valentin_d.focusarc.dto.task.TaskStatsDto;
+import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
 import com.valentin_d.focusarc.exception.arc.NoActiveArcException;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.TagId;
+import com.valentin_d.focusarc.model.task.TaskRecurrence;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.service.arc.ArcService;
 import org.junit.jupiter.api.Test;
@@ -19,6 +21,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
+import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskRecurrenceDto;
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -184,7 +187,34 @@ class ArcControllerTest extends BaseSecurityControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    @Test
+    void shouldReturnNoContent_whenMassCreateIsSuccessful() throws Exception {
+        final var arc = anArcWithOwnerId(user.getId());
+        final var body = toJson(List.of(aTaskRecurrenceDto(new TaskRecurrence.Daily())));
+
+        mvcPostWithUser(massCreateUrl(arc.getId()), body, user)
+                .andExpect(status().isNoContent());
+
+        verify(arcService).massCreate(any(), eq(arc.getId()), eq(user.getId()));
+    }
+
+    @Test
+    void shouldReturnNotFound_whenArcDoesNotExist_onMassCreate() throws Exception {
+        final var arcId = ArcId.random();
+        final var body = toJson(List.of(aTaskRecurrenceDto(new TaskRecurrence.Daily())));
+
+        doThrow(new ArcDoesNotExistForUserException(arcId, user.getId()))
+                .when(arcService).massCreate(any(), eq(arcId), eq(user.getId()));
+
+        mvcPostWithUser(massCreateUrl(arcId), body, user)
+                .andExpect(status().isNotFound());
+    }
+
     private String arcUrl(ArcId arcId) {
         return ROOT + "/" + arcId.id();
+    }
+
+    private String massCreateUrl(ArcId arcId) {
+        return ROOT + "/" + arcId.id() + "/tasks/init";
     }
 }
