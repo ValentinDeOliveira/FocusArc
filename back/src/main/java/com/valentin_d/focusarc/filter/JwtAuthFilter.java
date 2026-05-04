@@ -14,6 +14,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
 @Component
@@ -31,14 +32,13 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(final HttpServletRequest request, @NonNull final HttpServletResponse response,
+    protected void doFilterInternal(final @NonNull HttpServletRequest request, @NonNull final HttpServletResponse response,
                                     @NonNull final FilterChain filterChain) throws ServletException, IOException {
-        final var authHeader = request.getHeader("Authorization");
-        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+        final var token = extractToken(request);
+        if (token == null) {
             filterChain.doFilter(request, response);
             return;
         }
-        final var token = authHeader.substring(7);
 
         final var username = jwtService.extractUsername(token);
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -46,11 +46,30 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             if (jwtService.isTokenValid(token, userDetails)) {
                 final var authToken = new UsernamePasswordAuthenticationToken(
                         userDetails, null, userDetails.getAuthorities());
-
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    private String extractToken(final HttpServletRequest request) {
+        final var cookies = request.getCookies();
+
+        if (cookies != null) {
+            final var accessToken = Arrays.stream(cookies)
+                    .filter(cookie -> cookie.getName().equals("access_token")).findFirst();
+            if (accessToken.isPresent()) {
+                return accessToken.get().getValue();
+            }
+        }
+
+        final var authHeader = request.getHeader("Authorization");
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        }
+
+        return null;
     }
 }

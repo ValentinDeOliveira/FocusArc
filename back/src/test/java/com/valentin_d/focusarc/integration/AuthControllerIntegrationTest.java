@@ -1,24 +1,28 @@
 package com.valentin_d.focusarc.integration;
 
 import com.valentin_d.focusarc.integration.base.BaseAuthIntegrationTest;
-import com.valentin_d.focusarc.model.auth.AuthResponseDto;
 import com.valentin_d.focusarc.model.user.AuthProvider;
 import org.junit.jupiter.api.Test;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 
+import static com.mongodb.assertions.Assertions.assertNotNull;
 import static com.valentin_d.focusarc.fixtures.factory.auth.AuthFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.auth.RegisterRequestDtoFactory.aRegisterRequestDto;
 import static com.valentin_d.focusarc.fixtures.factory.auth.RegisterRequestDtoFactory.aRegisterRequestDtoWithMail;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class AuthControllerIntegrationTest extends BaseAuthIntegrationTest {
+
     @Test
     void shouldCreateUserAndReturnToken_whenDataIsValid() {
         final var dto = aRegisterRequestDto();
 
-        final var response = request(URL + "/register", HttpMethod.POST, dto, AuthResponseDto.class);
-        assertionHelper.assertCreated(response);
-        assertNotNull(response.getBody());
+        final var response = request(URL + "/register", HttpMethod.POST, dto, Void.class);
+        assertEquals(HttpStatus.CREATED, response.getStatusCode());
+        assertAuthCookiesPresent(response);
 
         final var optUser = userLoader.getUserByEmail(dto.email());
         assertTrue(optUser.isPresent());
@@ -28,10 +32,6 @@ public class AuthControllerIntegrationTest extends BaseAuthIntegrationTest {
         assertNotEquals(user.getPassword(), dto.password());
         assertNotNull(user.getId());
         assertEquals(AuthProvider.LOCAL, user.getAuthProvider());
-
-        final var authResponse = response.getBody();
-        assertNotNull(authResponse.accessToken());
-        assertNotNull(authResponse.refreshToken());
     }
 
     @Test
@@ -47,17 +47,12 @@ public class AuthControllerIntegrationTest extends BaseAuthIntegrationTest {
     @Test
     void shouldLoginUser_whenDataIsValid() {
         final var registerDto = aRegisterRequestDto();
-        // save user with encrypted password
-        request(URL + "/register", HttpMethod.POST, registerDto, AuthResponseDto.class);
+        request(URL + "/register", HttpMethod.POST, registerDto, Void.class);
 
         final var loginDto = aLoginDtoWithMailAndPassword(registerDto.email(), registerDto.password());
-        final var response = request(URL + "/login", HttpMethod.POST, loginDto, AuthResponseDto.class);
+        final var response = request(URL + "/login", HttpMethod.POST, loginDto, Void.class);
         assertionHelper.assertOk(response);
-        assertNotNull(response.getBody());
-
-        final var authResponse = response.getBody();
-        assertNotNull(authResponse.accessToken());
-        assertNotNull(authResponse.refreshToken());
+        assertAuthCookiesPresent(response);
     }
 
     @Test
@@ -71,24 +66,22 @@ public class AuthControllerIntegrationTest extends BaseAuthIntegrationTest {
     @Test
     void shouldRefreshToken_whenUserExists() {
         final var registerDto = aRegisterRequestDto();
-        // save user with encrypted password
-        final var registerResponse = request(URL + "/register", HttpMethod.POST, registerDto, AuthResponseDto.class);
-        assertNotNull(registerResponse.getBody());
+        final var registerResponse = request(URL + "/register", HttpMethod.POST, registerDto, Void.class);
+        final var refreshToken = extractCookieValue(registerResponse, "refresh_token");
+        assertNotNull(refreshToken);
 
-        final var refreshDto = aRefreshRequestDtoWithToken(registerResponse.getBody().refreshToken());
-        final var response = request(URL + "/refresh", HttpMethod.POST, refreshDto, AuthResponseDto.class);
+        final var headers = new HttpHeaders();
+        headers.add(HttpHeaders.COOKIE, "refresh_token=" + refreshToken);
+        final var response = request(URL + "/refresh", HttpMethod.POST, new HttpEntity<>(null, headers), Void.class);
         assertionHelper.assertOk(response);
-        assertNotNull(response.getBody());
-
-        final var authResponse = response.getBody();
-        assertNotNull(authResponse.accessToken());
-        assertNotNull(authResponse.refreshToken());
+        assertAuthCookiesPresent(response);
     }
 
     @Test
     void shouldNotRefreshToken_whenTokenInvalid() {
-        final var refreshDto = aRefreshRequestDto();
-        final var response = request(URL + "/refresh", HttpMethod.POST, refreshDto, Void.class);
+        final var headers = new HttpHeaders();
+        headers.add(HttpHeaders.COOKIE, "refresh_token=invalid-token");
+        final var response = request(URL + "/refresh", HttpMethod.POST, new HttpEntity<>(null, headers), Void.class);
         assertionHelper.assertUnauthorized(response);
         assertNull(response.getBody());
     }
@@ -112,5 +105,6 @@ public class AuthControllerIntegrationTest extends BaseAuthIntegrationTest {
         final var dto = aGoogleAuthRequestDtoWithToken("invalid-google-token");
         final var response = request(URL + "/google", HttpMethod.POST, dto, Void.class);
         assertionHelper.assertUnauthorized(response);
+        assertNull(response.getBody());
     }
 }

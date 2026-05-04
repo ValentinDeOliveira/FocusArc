@@ -112,7 +112,6 @@ export class ArcTaskStep {
             tagId: task.tag?.id,
         }));
 
-        console.log(dtos);
         this.arcService.massCreate(arcId!, dtos).subscribe();
 
         this.nextStep.emit();
