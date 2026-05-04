@@ -1,5 +1,5 @@
-import {RecurrenceType} from './arc-task-recurrence/arc-task-recurrence';
 import {Tag} from '../models/tag.model';
+import {RecurrenceType} from '../models/recurrence.model';
 
 export interface ArcTask {
     id: string;

@@ -56,7 +56,7 @@ public class ArcService {
         userLoader.assertUserExists(userId);
         arcLoader.assertNotAnotherActiveArc(userId);
 
-        final var arc = new Arc(userId, dto.name(), dto.totalEstimatedMinutes(), dto.startDate(), dto.endDate());
+        final var arc = new Arc(userId, dto.name(), dto.startDate(), dto.endDate());
         return arcRepository.save(arc);
     }
 

@@ -14,6 +14,8 @@ export interface Arc {
 export interface ArcCreationDto {
     name: string;
     totalEstimatedMinutes: number;
+    startDate: string;
+    endDate: string;
 }
 
 export interface ArcUpdateDto {

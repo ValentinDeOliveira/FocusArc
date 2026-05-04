@@ -40,10 +40,6 @@ public final class ArcFactory {
         return ArcCreationDtoBuilder.builder().build().build();
     }
 
-    public static ArcCreationDto anArcCreationDtoWithEstimatedMinutes(final int minutes) {
-        return ArcCreationDtoBuilder.builder().totalEstimatedMinutes(minutes).build().build();
-    }
-
     public static ArcUpdateDto anArcUpdateDto() {
         return ArcUpdateDtoBuilder.builder().build().build();
     }

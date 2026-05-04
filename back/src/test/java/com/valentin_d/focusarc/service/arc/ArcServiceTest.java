@@ -79,7 +79,7 @@ class ArcServiceTest {
         assertEquals(userId, result.getOwner());
         assertEquals(creationDto.name(), result.getName());
         assertEquals(0, result.getTotalCompletedMinutes());
-        assertEquals(creationDto.totalEstimatedMinutes(), result.getTotalEstimatedMinutes());
+        assertEquals(0, result.getTotalEstimatedMinutes());
 
         verify(arcRepository).save(any(Arc.class));
     }

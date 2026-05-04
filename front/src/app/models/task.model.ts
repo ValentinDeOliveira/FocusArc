@@ -1,3 +1,5 @@
+import {TaskRecurrencePayload} from './recurrence.model';
+
 export enum TaskStatus {
     PLANNED = 'PLANNED',
     IN_PROGRESS = 'IN_PROGRESS',
@@ -46,3 +48,10 @@ export interface TaskStatDto {
     done: number;
 }
 
+export interface TaskRecurrenceDto {
+    estimatedMinutes: number;
+    recurrence: TaskRecurrencePayload;
+    scheduledAt: string;
+    name: string;
+    tagId?: string;
+}

@@ -7,6 +7,9 @@ import {DateSelect} from '../../../shared/date-select/date-select';
 import {PrimaryButton} from '../../../shared/primary-button/primary-button';
 import {InputField} from '../../../shared/input-field/input-field';
 import {ToastrService} from 'ngx-toastr';
+import {ArcService} from '../../../core/services/arc.service';
+import {ArcCreationDto} from '../../../models/arc.model';
+import {ContextStore} from '../../../core/stores/context.store';
 
 @Component({
     selector: 'app-arc-details-step',
@@ -30,6 +33,9 @@ export class ArcDetailsStep{
 
     toastr = inject(ToastrService);
     nextStep = output();
+
+    private arcService = inject(ArcService);
+    private contextStore = inject(ContextStore);
 
     constructor() {
         effect(() => {
@@ -59,6 +65,14 @@ export class ArcDetailsStep{
             return;
         }
 
+        const dto : ArcCreationDto = {
+            name: this.arcName(),
+            totalEstimatedMinutes: 0,
+            startDate: this.startDate().toISOString(),
+            endDate: this.endDate()!.toISOString(),
+        }
+
+        this.arcService.create(dto).subscribe(arc => this.contextStore.setArcId(arc.id));
         this.nextStep.emit();
     }
 }

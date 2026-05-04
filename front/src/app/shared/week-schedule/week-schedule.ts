@@ -1,8 +1,8 @@
 import {Component, computed, input} from '@angular/core';
 import {CalendarDateFormatter, CalendarEvent, CalendarWeekViewComponent, DateFormatterParams} from 'angular-calendar';
 import {ArcTask} from '../arc-task.model';
-import {RecurrenceType} from '../arc-task-recurrence/arc-task-recurrence';
 import {eventColor} from '../../models/tag-colors';
+import {RecurrenceType} from '../../models/recurrence.model';
 
 class WeekScheduleDateFormatter extends CalendarDateFormatter {
     override weekViewColumnHeader({date, locale}: DateFormatterParams): string {

@@ -44,7 +44,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         final var arc = response.getBody();
         assertNotNull(arc);
 
-        assertEquals(dto.totalEstimatedMinutes(), arc.getTotalEstimatedMinutes());
+        assertEquals(0, arc.getTotalEstimatedMinutes());
         assertEquals(arc.getOwner(), user.getId());
         assertEquals(dto.name(), arc.getName());
         assertEquals(0, arc.getTotalCompletedMinutes());
@@ -158,22 +158,6 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
         final var response = request(URL, HttpMethod.DELETE, Void.class);
 
         assertionHelper.assertNoContent(response);
-    }
-
-    @ParameterizedTest
-    @MethodSource("provideInvalidTotalEstimatedMinutes")
-    void shouldReturnBadRequestOnCreate_whenTotalEstimatedMinutesIsNotPositive(final int minutes) {
-        final var response = request(URL, HttpMethod.POST,
-                anArcCreationDtoWithEstimatedMinutes(minutes), Void.class);
-
-        assertionHelper.assertBadRequest(response);
-    }
-
-    private static Stream<Arguments> provideInvalidTotalEstimatedMinutes() {
-        return Stream.of(
-                Arguments.of(0),
-                Arguments.of(-1)
-        );
     }
 
     @Test

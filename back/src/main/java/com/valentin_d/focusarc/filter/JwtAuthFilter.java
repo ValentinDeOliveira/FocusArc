@@ -14,12 +14,21 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.List;
 
 @Component
 @RequiredArgsConstructor
 public class JwtAuthFilter extends OncePerRequestFilter {
     private final JwtService jwtService;
     private final UserDetailsService userDetailsService;
+
+    private static final List<String> PUBLIC_PREFIXES = List.of("/auth/");
+
+    @Override
+    protected boolean shouldNotFilter(final HttpServletRequest request) {
+        final var path = request.getServletPath();
+        return PUBLIC_PREFIXES.stream().anyMatch(path::startsWith);
+    }
 
     @Override
     protected void doFilterInternal(final HttpServletRequest request, @NonNull final HttpServletResponse response,

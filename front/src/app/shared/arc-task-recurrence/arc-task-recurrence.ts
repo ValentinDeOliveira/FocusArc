@@ -1,12 +1,7 @@
 import {Component, computed, signal} from '@angular/core';
 import {NumberField} from '../number-field/number-field';
 import {TimeField} from '../time-field/time-field';
-
-export enum RecurrenceType {
-    DAILY = 'Daily',
-    DAYS_OF_WEEK = 'Days of week',
-    EVERY_N_DAYS = 'Every N Days',
-}
+import {RecurrenceLabel, RecurrenceType} from '../../models/recurrence.model';
 
 export interface RecurrenceConfig {
     recurrence: RecurrenceType;
@@ -32,6 +27,7 @@ export class ArcTaskRecurrence {
     readonly options = Object.values(RecurrenceType);
     selected = signal<RecurrenceType>(RecurrenceType.DAILY);
     protected readonly RecurrenceType = RecurrenceType;
+    protected readonly RecurrenceLabel = RecurrenceLabel;
 
     readonly days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
     selectedDays = signal<Set<string>>(new Set(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']));

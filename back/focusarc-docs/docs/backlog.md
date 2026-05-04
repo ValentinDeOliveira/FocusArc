@@ -18,6 +18,7 @@ title: Backlog
 - [ ] Assert `name` is not null on `Task.update`
 - [ ] Find a way to differenciate `no tag` and `remove tag` on `Task.update`
 - [ ] Modify summary endpoint to get total number of chapters from the back
+- [ ] set default `estimatedMinutes` in `ArcCreationDto` to 0 (will be populated by chapters & tasks)
 
 ## Tests
 - [ ] Check inheritence in `RecalculationIntegrationTest`
