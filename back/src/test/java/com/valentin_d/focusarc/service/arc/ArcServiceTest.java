@@ -1,24 +1,26 @@
-package com.valentin_d.focusarc.service;
+package com.valentin_d.focusarc.service.arc;
 
 import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
 import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.exception.InvalidDateRangeException;
 import com.valentin_d.focusarc.exception.arc.ArcAlreadyExistsException;
-import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistException;
 import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
 import com.valentin_d.focusarc.exception.arc.NoActiveArcException;
 import com.valentin_d.focusarc.exception.user.UserDoesNotExistException;
+import com.valentin_d.focusarc.fixtures.arc.ArcBuilder;
 import com.valentin_d.focusarc.model.arc.Arc;
+import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.TagId;
 import com.valentin_d.focusarc.model.id.UserId;
+import com.valentin_d.focusarc.model.task.TaskRecurrence;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.repository.ArcRepository;
-import com.valentin_d.focusarc.service.arc.ArcLoader;
-import com.valentin_d.focusarc.service.arc.ArcService;
 import com.valentin_d.focusarc.service.chapter.ChapterLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
 import com.valentin_d.focusarc.service.task.TaskLoader;
+import com.valentin_d.focusarc.service.task.TaskService;
 import com.valentin_d.focusarc.service.user.UserLoader;
+import jakarta.validation.constraints.NotNull;
 import org.junit.jupiter.api.Named;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -37,6 +39,7 @@ import java.util.stream.Stream;
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapterWithArcId;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapterWithScheduledDateAndArcIdAndCompletedMinutesAndAllTasksCompleted;
+import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskRecurrenceDto;
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
@@ -57,8 +60,11 @@ class ArcServiceTest {
     private ChapterLoader chapterLoader;
     @Mock
     private TaskLoader taskLoader;
+    @Mock
+    private TaskService taskService;
     @InjectMocks
     private ArcService arcService;
+
 
     @Test
     void shouldCreateArc_whenUserDoesExist() {
@@ -73,7 +79,7 @@ class ArcServiceTest {
         assertEquals(userId, result.getOwner());
         assertEquals(creationDto.name(), result.getName());
         assertEquals(0, result.getTotalCompletedMinutes());
-        assertEquals(creationDto.totalEstimatedMinutes(), result.getTotalEstimatedMinutes());
+        assertEquals(0, result.getTotalEstimatedMinutes());
 
         verify(arcRepository).save(any(Arc.class));
     }
@@ -114,7 +120,7 @@ class ArcServiceTest {
         final var arc = anArcWithOwnerId(user.getId());
         final var updateDto = anArcUpdateDto();
 
-        when(arcLoader.getArcIfExists(eq(arc.getId()))).thenReturn(arc);
+        when(arcLoader.getArcIfExistsForUser(eq(arc.getId()), eq(user.getId()))).thenReturn(arc);
 
         when(arcRepository.save(any(Arc.class)))
                 .thenAnswer(invocation -> invocation.getArgument(0));
@@ -136,7 +142,7 @@ class ArcServiceTest {
         final var arc = anArcWithOwnerId(user.getId());
         final var updateDto = anArcUpdateDtoWithStartAndEndDate(now, now.minusDays(15));
 
-        when(arcLoader.getArcIfExists(eq(arc.getId()))).thenReturn(arc);
+        when(arcLoader.getArcIfExistsForUser(eq(arc.getId()), eq(user.getId()))).thenReturn(arc);
 
         assertThatThrownBy(() -> arcService.update(user.getId(), arc.getId(), updateDto))
                 .isInstanceOf(InvalidDateRangeException.class);
@@ -148,11 +154,10 @@ class ArcServiceTest {
         final var arc = anArcWithOwnerId(user.getId());
         final var updateDto = anArcUpdateDto();
 
-        when(arcLoader.getArcIfExists(eq(arc.getId())))
-                .thenThrow((new ArcDoesNotExistException(arc.getId())));
+        doThrowArcDoesNotExistForUser(arc.getId(), user.getId());
 
         assertThatThrownBy(() -> arcService.update(user.getId(), arc.getId(), updateDto))
-                .isInstanceOf(ArcDoesNotExistException.class)
+                .isInstanceOf(ArcDoesNotExistForUserException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
         verify(arcRepository, never()).save(any(Arc.class));
@@ -163,7 +168,7 @@ class ArcServiceTest {
         final var user = aUser();
         final var arc = anArcWithOwnerId(user.getId());
 
-        when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
+        when(arcLoader.getArcIfExistsForUser(arc.getId(), user.getId())).thenReturn(arc);
 
         arcService.delete(user.getId(), arc.getId());
 
@@ -176,11 +181,10 @@ class ArcServiceTest {
         final var user = aUser();
         final var arc = anArcWithOwnerId(user.getId());
 
-        when(arcLoader.getArcIfExists(eq(arc.getId())))
-                .thenThrow((new ArcDoesNotExistException(arc.getId())));
+        doThrowArcDoesNotExistForUser(arc.getId(), user.getId());
 
         assertThatThrownBy(() -> arcService.delete(user.getId(), arc.getId()))
-                .isInstanceOf(ArcDoesNotExistException.class)
+                .isInstanceOf(ArcDoesNotExistForUserException.class)
                 .hasMessageContaining(String.valueOf(arc.getId().id()));
 
         verify(arcRepository, never()).delete(any(Arc.class));
@@ -242,8 +246,7 @@ class ArcServiceTest {
         final var arc = anArcWithOwnerId(owner.getId());
         final var updateDto = anArcUpdateDto();
 
-        when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
-        doThrowArcDoesNotExistForUser(arc, attacker.getId());
+        doThrowArcDoesNotExistForUser(arc.getId(), attacker.getId());
 
         assertThatThrownBy(() -> arcService.update(attacker.getId(), arc.getId(), updateDto))
                 .isInstanceOf(ArcDoesNotExistForUserException.class);
@@ -257,8 +260,7 @@ class ArcServiceTest {
         final var attacker = aUser();
         final var arc = anArcWithOwnerId(owner.getId());
 
-        when(arcLoader.getArcIfExists(arc.getId())).thenReturn(arc);
-        doThrowArcDoesNotExistForUser(arc, attacker.getId());
+        doThrowArcDoesNotExistForUser(arc.getId(), attacker.getId());
 
         assertThatThrownBy(() -> arcService.delete(attacker.getId(), arc.getId()))
                 .isInstanceOf(ArcDoesNotExistForUserException.class);
@@ -396,15 +398,47 @@ class ArcServiceTest {
     }
 
 
+    @Test
+    void shouldThrowException_whenArcDoesNotExist_onMassCreate() {
+        final var userId = UserId.random();
+        final var arcId = ArcId.random();
+
+        doThrowArcDoesNotExistForUser(arcId, userId);
+
+        assertThatThrownBy(() -> arcService.massCreate(List.of(aTaskRecurrenceDto(new TaskRecurrence.Daily())), arcId, userId))
+                .isInstanceOf(ArcDoesNotExistForUserException.class);
+
+        verify(chapterLoader, never()).findAllByArc(any());
+    }
+
+    @ParameterizedTest
+    @MethodSource("provideArcWithMissingDate")
+    void shouldThrowException_whenDateIsInvalid_onMassCreate(@NotNull final Arc arc) {
+        when(arcLoader.getArcIfExistsForUser(arc.getId(), arc.getOwner())).thenReturn(arc);
+
+        assertThatThrownBy(() -> arcService.massCreate(List.of(aTaskRecurrenceDto(new TaskRecurrence.Daily())), arc.getId(), arc.getOwner()))
+                .isInstanceOf(IllegalStateException.class);
+
+        verify(chapterLoader, never()).findAllByArc(any());
+    }
+
+    private static Stream<Arc> provideArcWithMissingDate() {
+        return Stream.of(
+                ArcBuilder.builder().owner(UserId.random()).startDate(null).build().build(),
+                ArcBuilder.builder().owner(UserId.random()).endDate(null).build().build()
+        );
+    }
+
+    private void doThrowArcDoesNotExistForUser(final ArcId arcId, final UserId userId) {
+        doThrow(new ArcDoesNotExistForUserException(arcId, userId))
+                .when(arcLoader)
+                .getArcIfExistsForUser(arcId, userId);
+    }
+
     private void doThrowUserDoesNotExist(final UserId userId) {
         doThrow(new UserDoesNotExistException(userId))
                 .when(userLoader)
                 .assertUserExists(eq(userId));
     }
 
-    private void doThrowArcDoesNotExistForUser(final Arc arc, final UserId userId) {
-        doThrow(new ArcDoesNotExistForUserException(arc.getId(), userId))
-                .when(arcLoader)
-                .assertOwnership(arc, userId);
-    }
 }

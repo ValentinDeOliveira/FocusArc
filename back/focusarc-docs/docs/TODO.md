@@ -7,7 +7,8 @@ title: V1 Roadmap
 
 ## Backend
 - [ ] Have an endpoint for getting active arc
-
+- [ ] Securize API keys
+- [ ] Move ids from DTO (eg: TaskCreationDto contains ChapterId, might be better to give that id at controller level)
 ## Frontend
 
 - [ ] Add a page to create an arc 

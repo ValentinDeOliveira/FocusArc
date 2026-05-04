@@ -38,10 +38,9 @@ public class ArcLoader extends BaseService {
         return arcRepository.findByOwnerAndStatus(userId, ArcStatus.ACTIVE).orElseThrow(() -> new NoActiveArcException(userId));
     }
 
-    public void assertOwnership(Arc arc, UserId userId) {
-        if (!arc.getOwner().equals(userId)) {
-            throw new ArcDoesNotExistForUserException(arc.getId(), userId);
-        }
+    public Arc getArcIfExistsForUser(ArcId arcId, UserId userId) {
+        return arcRepository.findByIdAndOwner(arcId, userId)
+                .orElseThrow(() -> new ArcDoesNotExistForUserException(arcId, userId));
     }
 
     public void assertArcExistsForUser(ArcId arcId, UserId userId) {

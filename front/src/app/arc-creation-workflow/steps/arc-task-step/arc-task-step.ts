@@ -12,6 +12,10 @@ import {Tag} from '../../../models/tag.model';
 import {color} from '../../../models/tag-colors';
 import {TagPill} from '../../../shared/tag-pill/tag-pill';
 import {TagSelector} from '../../../shared/tag-selector/tag-selector';
+import {ContextStore} from '../../../core/stores/context.store';
+import {ArcService} from '../../../core/services/arc.service';
+import {TaskRecurrenceDto} from '../../../models/task.model';
+import {RecurrenceLabel, toRecurrencePayload} from '../../../models/recurrence.model';
 
 @Component({
     selector: 'app-arc-task-step',
@@ -49,6 +53,8 @@ export class ArcTaskStep {
 
     private recurrence = viewChild.required(ArcTaskRecurrence);
     private toastr = inject(ToastrService);
+    private arcService = inject(ArcService);
+    private contextStore = inject(ContextStore);
 
     addTask(): void {
         this.submittedTask.set(true);
@@ -86,12 +92,36 @@ export class ArcTaskStep {
     }
 
     taskSummary(task: ArcTask): string {
-        return [task.recurrence, task.startTime, `${task.duration} min`].join(' · ');
+        return [RecurrenceLabel[task.recurrence], task.startTime, `${task.duration} min`].join(' · ');
     }
 
     goToNextStep() {
         this.submitted.set(true);
+
+        const arcId = this.contextStore.currentArcId();
+        if (arcId === null) {
+            this.toastr.error('An error occurred.');
+            return;
+        }
+
+        const dtos: TaskRecurrenceDto[] = this.tasks().map(task => ({
+            name: task.name,
+            estimatedMinutes: task.duration,
+            recurrence: toRecurrencePayload(task),
+            scheduledAt: this.toInstant(task.startTime),
+            tagId: task.tag?.id,
+        }));
+
+        this.arcService.massCreate(arcId!, dtos).subscribe();
+
         this.nextStep.emit();
+    }
+
+    private toInstant(startTime: string): string {
+        const [hours, minutes] = startTime.split(':').map(Number);
+        const d = new Date();
+        d.setHours(hours, minutes, 0, 0);
+        return d.toISOString();
     }
 
     private getTime(startTime: string, duration: number): number[] {

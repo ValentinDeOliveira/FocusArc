@@ -47,7 +47,7 @@ abstract class BaseSecurityControllerTest extends BaseControllerTest {
         return mvcPatch(url, json, getAuth(user));
     }
 
-    private RequestPostProcessor getAuth(final User user) {
+    protected RequestPostProcessor getAuth(final User user) {
         return authentication(new UsernamePasswordAuthenticationToken(
                 user, user.getPassword(), user.getAuthorities()
         ));

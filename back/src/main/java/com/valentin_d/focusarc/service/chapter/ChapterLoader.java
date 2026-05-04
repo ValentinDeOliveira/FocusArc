@@ -13,6 +13,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -23,6 +24,10 @@ public class ChapterLoader extends BaseService {
         return fetchOrThrow(chapterRepository, chapterId, () -> new ChapterDoesNotExistException(chapterId));
     }
 
+    public Optional<Chapter> getChapterByScheduledDate(ArcId arcId, LocalDate scheduledDate) {
+        return chapterRepository.findByArcAndScheduledDate(arcId, scheduledDate);
+    }
+
     public void assertNotAlreadyExists(ArcId arcId, LocalDate scheduledDate) {
         if (chapterRepository.existsByArcAndScheduledDate(arcId, scheduledDate)) {
             throw new ChapterAlreadyExistsException(arcId, scheduledDate);
@@ -30,7 +35,7 @@ public class ChapterLoader extends BaseService {
     }
 
     public Chapter findByDate(ArcId arcId, LocalDate scheduledDate) {
-        return chapterRepository.findByArcAndScheduledDate(arcId, scheduledDate)
+        return getChapterByScheduledDate(arcId, scheduledDate)
                 .orElseThrow(() -> new NoChapterForArcException(arcId, scheduledDate));
     }
 

@@ -219,7 +219,6 @@ public class TaskService {
         if (dto.tagId() != null) task.setTagId(dto.tagId());
     }
 
-
     private void assertNotOverlapping(@NotNull ChapterId chapterId,
                                       @Positive @Max(MINUTES_PER_DAY) int estimatedMinutes,
                                       @FutureOrPresent Instant scheduledAt) {
@@ -228,7 +227,6 @@ public class TaskService {
             throw new TaskOverlapException(chapterId, scheduledAt, estimatedEnd);
         }
     }
-
 
     private void assertNotOverlapping(@NotNull ChapterId chapterId,
                                       @Positive @Max(MINUTES_PER_DAY) int estimatedMinutes,

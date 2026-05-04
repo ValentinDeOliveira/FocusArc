@@ -3,6 +3,6 @@
         <app-arc-details-step (nextStep)="currentStep.set(2)"/>
     }
     @if (currentStep() == 2) {
-        <app-arc-task-step/>
+        <app-arc-task-step (nextStep)="goToDashboard()"/>
     }
 </div>

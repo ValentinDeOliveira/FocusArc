@@ -4,6 +4,7 @@ import com.valentin_d.focusarc.dto.arc.ArcCreationDto;
 import com.valentin_d.focusarc.dto.arc.ArcSummaryResponseDto;
 import com.valentin_d.focusarc.dto.arc.ArcUpdateDto;
 import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
+import com.valentin_d.focusarc.dto.task.TaskRecurrenceDto;
 import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.exception.InvalidDateRangeException;
 import com.valentin_d.focusarc.model.Chapter;
@@ -16,6 +17,7 @@ import com.valentin_d.focusarc.repository.ArcRepository;
 import com.valentin_d.focusarc.service.chapter.ChapterLoader;
 import com.valentin_d.focusarc.service.chapter.ChapterService;
 import com.valentin_d.focusarc.service.task.TaskLoader;
+import com.valentin_d.focusarc.service.task.TaskService;
 import com.valentin_d.focusarc.service.user.UserLoader;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -38,6 +40,7 @@ public class ArcService {
     private final ChapterService chapterService;
     private final ChapterLoader chapterLoader;
     private final TaskLoader taskLoader;
+    private final TaskService taskService;
 
     public Optional<Arc> findByIdAndOwnerId(@NotNull ArcId arcId, @NotNull UserId ownerId) {
         return arcLoader.getArcByIdAndOwnerId(arcId, ownerId);
@@ -53,13 +56,12 @@ public class ArcService {
         userLoader.assertUserExists(userId);
         arcLoader.assertNotAnotherActiveArc(userId);
 
-        final var arc = new Arc(userId, dto.name(), dto.totalEstimatedMinutes(), dto.startDate(), dto.endDate());
+        final var arc = new Arc(userId, dto.name(), dto.startDate(), dto.endDate());
         return arcRepository.save(arc);
     }
 
     public Arc update(@NotNull UserId userId, @NotNull ArcId arcId, @NotNull ArcUpdateDto updateDto) {
-        final var arc = arcLoader.getArcIfExists(arcId);
-        arcLoader.assertOwnership(arc, userId);
+        final var arc = arcLoader.getArcIfExistsForUser(arcId, userId);
 
         final var effectiveStart = updateDto.startDate() != null ? updateDto.startDate() : arc.getStartDate();
         final var effectiveEnd   = updateDto.endDate()   != null ? updateDto.endDate()   : arc.getEndDate();
@@ -77,8 +79,7 @@ public class ArcService {
     }
 
     public void delete(@NotNull UserId userId, @NotNull ArcId arcId) {
-        final var arc = arcLoader.getArcIfExists(arcId);
-        arcLoader.assertOwnership(arc, userId);
+        final var arc = arcLoader.getArcIfExistsForUser(arcId, userId);
         chapterService.deleteAllForArc(arcId, userId);
         arcRepository.delete(arc);
     }
@@ -120,6 +121,19 @@ public class ArcService {
         return taskLoader.getTaskStatsForChapters(getChaptersForUser(userId));
     }
 
+    public void massCreate(@NotNull List<TaskRecurrenceDto> taskMassCreationDto,
+                           @NotNull ArcId arcId,
+                           @NotNull UserId userId) {
+        final var arc = arcLoader.getArcIfExistsForUser(arcId, userId);
+
+        if (arc.getStartDate() == null || arc.getEndDate() == null) {
+            throw new IllegalStateException("Arc must have a start and end date for mass task creation");
+        }
+
+        new MassTaskCreator(arc, userId, chapterLoader, chapterService, taskService)
+                .execute(taskMassCreationDto);
+    }
+
     private List<ChapterId> getChaptersForUser(UserId userId) {
         userLoader.assertUserExists(userId);
 
@@ -153,4 +167,5 @@ public class ArcService {
         }
         return streak;
     }
+
 }

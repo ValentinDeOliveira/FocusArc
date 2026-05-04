@@ -37,11 +37,7 @@ export class LoginForm implements OnInit {
         this.loading.set(true);
         this.error.set(null);
         this.authService.loginWithGoogle({ idToken }).subscribe({
-            next: (res) => {
-                localStorage.setItem('token', res.accessToken);
-                localStorage.setItem('refreshToken', res.refreshToken);
-                this.router.navigate(['/']);
-            },
+            next: () => void this.router.navigate(['/']),
             error: () => {
                 this.error.set('Google sign-in failed. Please try again.');
                 this.loading.set(false);
@@ -61,10 +57,7 @@ export class LoginForm implements OnInit {
         const { email, password } = this.form.value;
         this.authService.login({ email: email!, password: password! })
             .subscribe({
-                next: (response) => {
-                    localStorage.setItem('token', response.accessToken);
-                    void this.router.navigate(['/'])
-                },
+                next: () => void this.router.navigate(['/']),
                 error: (error: HttpErrorResponse) => {
                     this.error.set(this.getErrorMessage(error));
                     this.loading.set(false);

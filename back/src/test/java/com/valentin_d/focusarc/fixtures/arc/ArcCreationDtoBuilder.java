@@ -10,13 +10,11 @@ public class ArcCreationDtoBuilder {
     @Builder.Default
     private final String name = "Default Arc";
     @Builder.Default
-    private final int totalEstimatedMinutes = 120;
-    @Builder.Default
     private final LocalDate startDate = LocalDate.now();
     @Builder.Default
     private final LocalDate endDate = LocalDate.now().plusDays(10);
 
     public ArcCreationDto build() {
-        return new ArcCreationDto(name, totalEstimatedMinutes, startDate, endDate);
+        return new ArcCreationDto(name, startDate, endDate);
     }
 }

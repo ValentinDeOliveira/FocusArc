@@ -52,6 +52,10 @@ public class Arc {
         this(ArcId.random(), userId, name, totalEstimatedMinutes, startDate, endDate);
     }
 
+    public Arc(final UserId userId, final String name, final LocalDate startDate, final LocalDate endDate) {
+        this(ArcId.random(), userId, name, 0, startDate, endDate);
+    }
+
     public void recalculateCompletedMinutes(final List<Chapter> chapters) {
         this.totalCompletedMinutes = chapters.stream().mapToInt(Chapter::getCompletedMinutes).sum();
     }

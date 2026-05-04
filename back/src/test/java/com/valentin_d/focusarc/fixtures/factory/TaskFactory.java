@@ -2,14 +2,13 @@ package com.valentin_d.focusarc.fixtures.factory;
 
 import com.valentin_d.focusarc.dto.task.TaskCompleteDto;
 import com.valentin_d.focusarc.dto.task.TaskCreationDto;
+import com.valentin_d.focusarc.dto.task.TaskRecurrenceDto;
 import com.valentin_d.focusarc.dto.task.TaskUpdateDto;
-import com.valentin_d.focusarc.fixtures.task.TaskBuilder;
-import com.valentin_d.focusarc.fixtures.task.TaskCompleteDtoBuilder;
-import com.valentin_d.focusarc.fixtures.task.TaskCreationDtoBuilder;
-import com.valentin_d.focusarc.fixtures.task.TaskUpdateDtoBuilder;
+import com.valentin_d.focusarc.fixtures.task.*;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.model.id.TagId;
 import com.valentin_d.focusarc.model.task.Task;
+import com.valentin_d.focusarc.model.task.TaskRecurrence;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 
 import java.time.Instant;
@@ -78,6 +77,15 @@ public final class TaskFactory {
         return TaskCreationDtoBuilder.builder()
                 .chapterId(chapterId).scheduledAt(scheduledAt).estimatedMinutes(estimatedMinutes).tagId(null)
                 .build().build();
+    }
+
+    public static TaskRecurrenceDto aTaskRecurrenceDto(final TaskRecurrence recurrence) {
+        return TaskRecurrenceDtoBuilder.builder().recurrence(recurrence).build().build();
+    }
+
+    public static TaskRecurrenceDto aTaskRecurrenceDtoWithScheduledAt(final TaskRecurrence recurrence,
+                                                                      final Instant scheduledAt) {
+        return TaskRecurrenceDtoBuilder.builder().recurrence(recurrence).scheduledAt(scheduledAt).build().build();
     }
 
     public static TaskCompleteDto aTaskCompleteDto() {
