@@ -25,6 +25,10 @@ export class ArcService {
         return this.http.get<Arc[]>(`${this.baseUrl}/me`);
     }
 
+    getActive(): Observable<Arc> {
+        return this.http.get<Arc>(`${this.baseUrl}/me/active`);
+    }
+
     create(dto: ArcCreationDto): Observable<Arc> {
         return this.http.post<Arc>(`${this.baseUrl}`, dto);
     }

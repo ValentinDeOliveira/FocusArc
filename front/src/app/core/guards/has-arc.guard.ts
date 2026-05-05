@@ -8,11 +8,8 @@ export const hasArcGuard: CanActivateFn = () => {
     const arcService = inject(ArcService);
     const router = inject(Router);
 
-    return arcService.getAll().pipe(
-        map(arcs => {
-            const hasActiveArc = arcs.some(arc => arc.status === 'ACTIVE');
-            return hasActiveArc ? true : router.createUrlTree(['/arc-creation']);
-        }),
+    return arcService.getActive().pipe(
+        map(() => true),
         catchError((error: HttpErrorResponse) => {
             if (error.status === 404) {
                 return of(router.createUrlTree(['/arc-creation']));
