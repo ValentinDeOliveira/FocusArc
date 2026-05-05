@@ -67,7 +67,7 @@ class TagServiceTest {
     @Test
     void shouldReturnTag_whenIdAndOwnerMatch() {
         final var tag = aTag();
-        when(tagLoader.getTagByIdAndOwner(tag.getId(), tag.getOwner())).thenReturn(Optional.of(tag));
+        when(tagLoader.findTagByIdAndOwner(tag.getId(), tag.getOwner())).thenReturn(Optional.of(tag));
 
         final var result = tagService.findByIdAndOwnerId(tag.getId(), tag.getOwner());
 
@@ -76,7 +76,7 @@ class TagServiceTest {
 
     @Test
     void shouldReturnEmpty_whenIdOrOwnerDoNotMatch() {
-        when(tagLoader.getTagByIdAndOwner(any(), any())).thenReturn(Optional.empty());
+        when(tagLoader.findTagByIdAndOwner(any(), any())).thenReturn(Optional.empty());
 
         final var result = tagService.findByIdAndOwnerId(TagId.random(), UserId.random());
 
@@ -87,9 +87,9 @@ class TagServiceTest {
     void shouldReturnAllTags_whenUserExists() {
         final var user = aUser();
         final var tag = aTagWithOwnerId(user.getId());
-        when(tagRepository.findAllByOwner(user.getId())).thenReturn(List.of(tag));
+        when(tagLoader.getAllByOwner(user.getId())).thenReturn(List.of(tag));
 
-        final var result = tagService.findAllForUser(user.getId());
+        final var result = tagService.getAllForUser(user.getId());
 
         assertThat(result).containsExactly(tag);
     }
@@ -99,7 +99,7 @@ class TagServiceTest {
         final var userId = UserId.random();
         doThrowUserDoesNotExist(userId);
 
-        assertThatThrownBy(() -> tagService.findAllForUser(userId))
+        assertThatThrownBy(() -> tagService.getAllForUser(userId))
                 .isInstanceOf(UserDoesNotExistException.class);
 
         verify(tagRepository, never()).findAllByOwner(any());
@@ -202,7 +202,7 @@ class TagServiceTest {
     void shouldDeleteAllTags_whenUserExists() {
         final var user = aUser();
         final var tag = aTagWithOwnerId(user.getId());
-        when(tagRepository.findAllByOwner(user.getId())).thenReturn(List.of(tag));
+        when(tagLoader.getAllByOwner(user.getId())).thenReturn(List.of(tag));
 
         tagService.deleteAllForUser(user.getId());
 

@@ -197,7 +197,7 @@ class ArcServiceTest {
         final var user = aUser();
         final var arc = anArcWithOwnerId(user.getId());
 
-        when(arcRepository.findAllByOwner(user.getId())).thenReturn(List.of(arc));
+        when(arcLoader.getAllByOwner(user.getId())).thenReturn(List.of(arc));
 
         arcService.deleteAllForUser(user.getId());
 
@@ -221,7 +221,7 @@ class ArcServiceTest {
     @Test
     void shouldGetAllArcsForUser_whenUserExists() {
         final var arc = anArc();
-        when(arcRepository.findAllByOwner(arc.getOwner())).thenReturn(List.of(arc));
+        when(arcLoader.getAllByOwner(arc.getOwner())).thenReturn(List.of(arc));
 
         final var result = arcService.findAllForUser(arc.getOwner());
 

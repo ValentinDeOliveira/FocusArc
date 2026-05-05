@@ -24,7 +24,7 @@ public class ChapterLoader extends BaseLoader {
         return fetchOrThrow(chapterRepository, chapterId, () -> new ChapterDoesNotExistException(chapterId));
     }
 
-    public Optional<Chapter> getChapterByScheduledDate(ArcId arcId, LocalDate scheduledDate) {
+    public Optional<Chapter> findChapterByScheduledDate(ArcId arcId, LocalDate scheduledDate) {
         return chapterRepository.findByArcAndScheduledDate(arcId, scheduledDate);
     }
 
@@ -34,8 +34,8 @@ public class ChapterLoader extends BaseLoader {
         }
     }
 
-    public Chapter findByDate(ArcId arcId, LocalDate scheduledDate) {
-        return getChapterByScheduledDate(arcId, scheduledDate)
+    public Chapter getChapterByDate(ArcId arcId, LocalDate scheduledDate) {
+        return findChapterByScheduledDate(arcId, scheduledDate)
                 .orElseThrow(() -> new NoChapterForArcException(arcId, scheduledDate));
     }
 

@@ -10,6 +10,7 @@ import com.valentin_d.focusarc.service.BaseLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -21,7 +22,7 @@ public class TagLoader extends BaseLoader {
         return fetchOrThrow(tagRepository, tagId, () -> new TagDoesNotExistException(tagId));
     }
 
-    public Optional<Tag> getTagByIdAndOwner(final TagId tagId, final UserId owner) {
+    public Optional<Tag> findTagByIdAndOwner(final TagId tagId, final UserId owner) {
         return tagRepository.findByIdAndOwner(tagId, owner);
     }
 
@@ -36,5 +37,9 @@ public class TagLoader extends BaseLoader {
         if (!tagRepository.existsByIdAndOwner(tagId, owner)) {
             throw new TagDoesNotExistForUserException();
         }
+    }
+
+    public List<Tag> getAllByOwner(final UserId owner) {
+        return tagRepository.findAllByOwner(owner);
     }
 }

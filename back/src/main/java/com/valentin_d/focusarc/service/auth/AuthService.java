@@ -91,12 +91,13 @@ public class AuthService {
             throw new InvalidTokenException();
         }
 
-        final var user = userLoader.getUserByEmail(email)
+        final var user = userLoader.findUserByEmail(email)
                 .orElseThrow(InvalidTokenException::new);
 
         if (!jwtService.isTokenValid(dto.refreshToken(), user)) {
             throw new InvalidTokenException();
         }
+
         return new AuthResponseDto(jwtService.generateToken(user), jwtService.generateRefreshToken(user));
     }
 }

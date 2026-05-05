@@ -26,7 +26,7 @@ public class UserLoader extends BaseLoader {
         existsOrThrow(userRepository, userId, () -> new UserDoesNotExistException(userId));
     }
 
-    public Optional<User> getUserByEmail(String email) {
+    public Optional<User> findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
@@ -42,5 +42,9 @@ public class UserLoader extends BaseLoader {
         if (userRepository.existsByEmailAndAuthProvider(email, authProvider)) {
             throw new AccountAlreadyExistsWithProviderException(email, authProvider);
         }
+    }
+
+    public Optional<User> findById(UserId userId) {
+        return userRepository.findById(userId);
     }
 }

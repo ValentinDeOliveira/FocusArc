@@ -39,12 +39,12 @@ class ContextLoaderTest {
         final var chapter = aChapterWithArcId(arc.getId());
 
         when(arcLoader.getActiveArcForUser(userId)).thenReturn(arc);
-        when(chapterLoader.findByDate(eq(arc.getId()), any())).thenReturn(chapter);
+        when(chapterLoader.getChapterByDate(eq(arc.getId()), any())).thenReturn(chapter);
 
         service.getChapterFromUserId(userId);
         verify(userLoader).assertUserExists(userId);
         verify(arcLoader).getActiveArcForUser(userId);
-        verify(chapterLoader).findByDate(eq(arc.getId()), any());
+        verify(chapterLoader).getChapterByDate(eq(arc.getId()), any());
     }
 
     @Test
@@ -61,7 +61,7 @@ class ContextLoaderTest {
 
         verify(userLoader).assertUserExists(userId);
         verify(arcLoader, never()).getActiveArcForUser(any(UserId.class));
-        verify(chapterLoader, never()).findByDate(any(ArcId.class), any(LocalDate.class));
+        verify(chapterLoader, never()).getChapterByDate(any(ArcId.class), any(LocalDate.class));
     }
 
     @Test
@@ -77,7 +77,7 @@ class ContextLoaderTest {
 
         verify(userLoader).assertUserExists(userId);
         verify(arcLoader).getActiveArcForUser(userId);
-        verify(chapterLoader, never()).findByDate(any(ArcId.class), any(LocalDate.class));
+        verify(chapterLoader, never()).getChapterByDate(any(ArcId.class), any(LocalDate.class));
     }
 
     @Test
@@ -86,7 +86,7 @@ class ContextLoaderTest {
         final var arc = anArc();
 
         when(arcLoader.getActiveArcForUser(userId)).thenReturn(arc);
-        when(chapterLoader.findByDate(eq(arc.getId()), any(LocalDate.class)))
+        when(chapterLoader.getChapterByDate(eq(arc.getId()), any(LocalDate.class)))
                 .thenThrow(new NoChapterForArcException(arc.getId(), LocalDate.now()));
 
         assertThatThrownBy(() -> service.getChapterFromUserId(userId))
@@ -95,6 +95,6 @@ class ContextLoaderTest {
 
         verify(userLoader).assertUserExists(userId);
         verify(arcLoader).getActiveArcForUser(userId);
-        verify(chapterLoader).findByDate(eq(arc.getId()), any(LocalDate.class));
+        verify(chapterLoader).getChapterByDate(eq(arc.getId()), any(LocalDate.class));
     }
 }

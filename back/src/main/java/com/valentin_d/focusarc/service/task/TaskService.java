@@ -42,7 +42,7 @@ public class TaskService {
 
     public Optional<Task> findById(@NotNull TaskId taskId,
                                    @NotNull UserId userId) {
-        final var optTask = taskLoader.getTask(taskId);
+        final var optTask = taskLoader.findTask(taskId);
 
         if (optTask.isEmpty()) {
             return Optional.empty();
@@ -58,7 +58,7 @@ public class TaskService {
                                         @NotNull UserId userId) {
         contextLoader.assertChapterForUser(chapterId, userId);
 
-        return taskRepository.findAllByChapterOrderByStartAtAsc(chapterId);
+        return taskLoader.getTasksForChapter(chapterId);
     }
 
     public Task create(@NotNull TaskCreationDto dto,
@@ -124,7 +124,7 @@ public class TaskService {
     }
 
     public void deleteTasksForChapter(@NotNull ChapterId chapterId) {
-        final var tasks = taskRepository.findAllByChapterOrderByStartAtAsc(chapterId);
+        final var tasks = taskLoader.getTasksForChapter(chapterId);
         taskRepository.deleteAll(tasks);
 
         chapterRecalculationService.recalculateEstimatedMinutes(chapterId);

@@ -13,6 +13,7 @@ import com.valentin_d.focusarc.service.BaseLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
@@ -24,7 +25,7 @@ public class ArcLoader extends BaseLoader {
         return fetchOrThrow(arcRepository, arcId, () -> new ArcDoesNotExistException(arcId));
     }
 
-    public Optional<Arc> getArcByIdAndOwnerId(ArcId arcId, UserId ownerId) {
+    public Optional<Arc> findArcByIdAndOwnerId(ArcId arcId, UserId ownerId) {
         return arcRepository.findByIdAndOwner(arcId, ownerId);
     }
 
@@ -51,5 +52,9 @@ public class ArcLoader extends BaseLoader {
         if (!arcRepository.existsByIdAndOwner(arcId, userId)) {
             throw new ArcDoesNotExistForUserException(arcId, userId);
         }
+    }
+
+    public List<Arc> getAllByOwner(UserId userId) {
+        return arcRepository.findAllByOwner(userId);
     }
 }

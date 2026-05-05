@@ -37,7 +37,7 @@ public class TaskLoader extends BaseLoader {
         return taskRepository.findAllByChapterAndStatusIn(chapterId, PENDING);
     }
 
-    public Optional<Task> getTask(TaskId taskId) {
+    public Optional<Task> findTask(TaskId taskId) {
         return taskRepository.findById(taskId);
     }
 
