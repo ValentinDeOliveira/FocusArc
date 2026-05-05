@@ -6,7 +6,7 @@ import com.valentin_d.focusarc.model.id.TagId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.tag.Tag;
 import com.valentin_d.focusarc.repository.TagRepository;
-import com.valentin_d.focusarc.service.BaseService;
+import com.valentin_d.focusarc.service.BaseLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -14,7 +14,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class TagLoader extends BaseService {
+public class TagLoader extends BaseLoader {
     private final TagRepository tagRepository;
 
     public Tag getTagIfExists(final TagId tagId) {

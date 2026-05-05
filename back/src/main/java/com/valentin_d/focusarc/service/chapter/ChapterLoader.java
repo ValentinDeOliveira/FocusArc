@@ -7,7 +7,7 @@ import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.repository.ChapterRepository;
-import com.valentin_d.focusarc.service.BaseService;
+import com.valentin_d.focusarc.service.BaseLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class ChapterLoader extends BaseService {
+public class ChapterLoader extends BaseLoader {
     private final ChapterRepository chapterRepository;
 
     public Chapter getChapterIfExists(ChapterId chapterId) {

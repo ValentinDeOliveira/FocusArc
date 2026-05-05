@@ -9,7 +9,7 @@ import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
-import com.valentin_d.focusarc.service.BaseService;
+import com.valentin_d.focusarc.service.BaseLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,7 +17,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class ArcLoader extends BaseService {
+public class ArcLoader extends BaseLoader {
     private final ArcRepository arcRepository;
 
     public Arc getArcIfExists(ArcId arcId) {

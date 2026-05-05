@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class ContextLoader extends BaseService {
+public class ContextLoader extends BaseLoader {
     private final UserLoader userLoader;
     private final ArcLoader arcLoader;
     private final ChapterLoader chapterLoader;
