@@ -50,6 +50,13 @@ public class ArcController {
         return ResponseUtil.wrapOrNoContent(userArcs);
     }
 
+    @Operation(summary = "Get active arc for authenticated user")
+    @GetMapping("/me/active")
+    public ResponseEntity<Arc> getActiveArc(@AuthenticationPrincipal final User user) {
+        final var arc = service.findActiveArcForUser(user.getId());
+        return ResponseUtil.wrapOrNotFound(arc);
+    }
+
     @Operation(summary = "Create a new arc")
     @ApiResponse(responseCode = "400", description = "User already has an active arc")
     @PostMapping

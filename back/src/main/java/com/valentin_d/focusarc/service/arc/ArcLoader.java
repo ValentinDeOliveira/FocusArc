@@ -35,7 +35,11 @@ public class ArcLoader extends BaseService {
     }
 
     public Arc getActiveArcForUser(UserId userId) {
-        return arcRepository.findByOwnerAndStatus(userId, ArcStatus.ACTIVE).orElseThrow(() -> new NoActiveArcException(userId));
+        return findActiveArcForUser(userId).orElseThrow(() -> new NoActiveArcException(userId));
+    }
+
+    public Optional<Arc> findActiveArcForUser(UserId userId) {
+        return arcRepository.findByOwnerAndStatus(userId, ArcStatus.ACTIVE);
     }
 
     public Arc getArcIfExistsForUser(ArcId arcId, UserId userId) {

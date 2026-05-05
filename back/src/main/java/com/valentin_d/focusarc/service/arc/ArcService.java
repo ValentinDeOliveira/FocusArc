@@ -52,6 +52,12 @@ public class ArcService {
         return arcRepository.findAllByOwner(userId);
     }
 
+    public Optional<Arc> findActiveArcForUser(@NotNull UserId userId) {
+        userLoader.assertUserExists(userId);
+
+        return arcLoader.findActiveArcForUser(userId);
+    }
+
     public Arc create(@NotNull UserId userId, @NotNull ArcCreationDto dto) {
         userLoader.assertUserExists(userId);
         arcLoader.assertNotAnotherActiveArc(userId);
