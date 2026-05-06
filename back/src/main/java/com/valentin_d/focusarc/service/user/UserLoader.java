@@ -7,7 +7,7 @@ import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.user.AuthProvider;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.repository.UserRepository;
-import com.valentin_d.focusarc.service.BaseService;
+import com.valentin_d.focusarc.service.BaseLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class UserLoader extends BaseService {
+public class UserLoader extends BaseLoader {
     private final UserRepository userRepository;
 
     public User getUserIfExists(UserId userId) {
@@ -26,7 +26,7 @@ public class UserLoader extends BaseService {
         existsOrThrow(userRepository, userId, () -> new UserDoesNotExistException(userId));
     }
 
-    public Optional<User> getUserByEmail(String email) {
+    public Optional<User> findUserByEmail(String email) {
         return userRepository.findByEmail(email);
     }
 
@@ -42,5 +42,9 @@ public class UserLoader extends BaseService {
         if (userRepository.existsByEmailAndAuthProvider(email, authProvider)) {
             throw new AccountAlreadyExistsWithProviderException(email, authProvider);
         }
+    }
+
+    public Optional<User> findById(UserId userId) {
+        return userRepository.findById(userId);
     }
 }

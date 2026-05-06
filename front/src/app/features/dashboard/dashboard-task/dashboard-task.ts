@@ -1,6 +1,5 @@
 import {Component, Input, output} from '@angular/core';
 import {Task} from '../../../models/task.model';
-import {DatePipe} from '@angular/common';
 import {PrimaryButton} from '../../../shared/primary-button/primary-button';
 import {TaskInfo} from '../../../shared/task-info/task-info';
 import {isTaskEnded} from '../../../utils/task.utils';
@@ -12,7 +11,6 @@ import {Tag} from '../../../models/tag.model';
         PrimaryButton,
         TaskInfo,
     ],
-    providers: [DatePipe],
     templateUrl: './dashboard-task.html',
     styleUrl: './dashboard-task.css',
 })

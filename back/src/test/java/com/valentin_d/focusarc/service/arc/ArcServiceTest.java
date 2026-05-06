@@ -33,6 +33,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.stream.Stream;
 
@@ -44,6 +45,7 @@ import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -195,7 +197,7 @@ class ArcServiceTest {
         final var user = aUser();
         final var arc = anArcWithOwnerId(user.getId());
 
-        when(arcRepository.findAllByOwner(user.getId())).thenReturn(List.of(arc));
+        when(arcLoader.getAllByOwner(user.getId())).thenReturn(List.of(arc));
 
         arcService.deleteAllForUser(user.getId());
 
@@ -219,7 +221,7 @@ class ArcServiceTest {
     @Test
     void shouldGetAllArcsForUser_whenUserExists() {
         final var arc = anArc();
-        when(arcRepository.findAllByOwner(arc.getOwner())).thenReturn(List.of(arc));
+        when(arcLoader.getAllByOwner(arc.getOwner())).thenReturn(List.of(arc));
 
         final var result = arcService.findAllForUser(arc.getOwner());
 
@@ -237,6 +239,30 @@ class ArcServiceTest {
                 .hasMessageContaining(String.valueOf(arc.getOwner().id()));
 
         verify(arcRepository, never()).findAllByOwner(any(UserId.class));
+    }
+
+    @Test
+    void shouldGetActiveArcForUser_whenUserExists() {
+        final var arc = anArc();
+        when(arcLoader.findActiveArcForUser(arc.getOwner())).thenReturn(Optional.of(arc));
+
+        final var result = arcService.findActiveArcForUser(arc.getOwner());
+
+        assertTrue(result.isPresent());
+        assertEquals(arc, result.get());
+    }
+
+    @Test
+    void shouldThrowExceptionOnGetActiveArcForUser_whenUserDoesNotExists() {
+        final var arc = anArc();
+
+        doThrowUserDoesNotExist(arc.getOwner());
+
+        assertThatThrownBy(() -> arcService.findActiveArcForUser(arc.getOwner()))
+                .isInstanceOf(UserDoesNotExistException.class)
+                .hasMessageContaining(String.valueOf(arc.getOwner().id()));
+
+        verify(arcLoader, never()).findActiveArcForUser(any(UserId.class));
     }
 
     @Test

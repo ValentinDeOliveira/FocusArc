@@ -8,6 +8,7 @@ import com.valentin_d.focusarc.dto.tag.TagTaskStatsDto;
 import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
 import com.valentin_d.focusarc.exception.arc.NoActiveArcException;
+import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.TagId;
 import com.valentin_d.focusarc.model.task.TaskRecurrence;
@@ -77,6 +78,26 @@ class ArcControllerTest extends BaseSecurityControllerTest {
 
         mvcGetWithUser(ROOT + "/me", aUser())
                 .andExpect(status().isNoContent());
+    }
+
+    @Test
+    void shouldReturnActiveArc_whenUserIdExists() throws Exception {
+        final var arc = anArcWithOwnerIdAndStatus(user.getId(), ArcStatus.ACTIVE);
+
+        when(arcService.findActiveArcForUser(user.getId())).thenReturn(Optional.of(arc));
+
+        final var actions = mvcGetWithUser(ROOT + "/me/active", user)
+                .andExpect(status().isOk());
+
+        arcAssertion.assertSingleJson(actions, arc);
+    }
+
+    @Test
+    void shouldReturnNoContent_whenUserHasNoActiveArcs() throws Exception {
+        when(arcService.findActiveArcForUser(any())).thenReturn(Optional.empty());
+
+        mvcGetWithUser(ROOT + "/me/active", aUser())
+                .andExpect(status().isNotFound());
     }
 
     @Test

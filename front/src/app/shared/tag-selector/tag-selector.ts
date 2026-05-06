@@ -1,6 +1,6 @@
 import {Component, HostListener, inject, input, OnInit, output, signal} from '@angular/core';
-import {Tag, TagColor} from '../../models/tag.model';
-import {TAG_COLORS, TAG_COLORS_KEYS} from '../../models/tag-colors';
+import {Tag} from '../../models/tag.model';
+import {TAG_COLORS, TAG_COLORS_KEYS, TagColor} from '../../models/tag-colors';
 import {TagService} from '../../core/services/tag.service';
 import {TagPill} from '../tag-pill/tag-pill';
 import {MatIcon} from '@angular/material/icon';
@@ -43,7 +43,7 @@ export class TagSelector implements OnInit {
 
     protected openDropdown() {
         if (!this.isOpen()) {
-            this.pendingColor.set(this.selectedTag()?.color ?? 'BLUE');
+            this.pendingColor.set(this.selectedTag()?.color ?? 'RED');
         }
         this.isOpen.set(true);
     }
@@ -54,7 +54,7 @@ export class TagSelector implements OnInit {
             this.commitPending();
             this.isOpen.set(false);
         } else {
-            this.pendingColor.set(this.selectedTag()?.color ?? 'BLUE');
+            this.pendingColor.set(this.selectedTag()?.color ?? 'RED');
             this.isOpen.set(true);
         }
     }
@@ -80,6 +80,7 @@ export class TagSelector implements OnInit {
 
     private commitPending() {
         const tag = this.selectedTag();
+
         if (tag) {
             // tag has not been updated
             if (this.pendingColor() === tag.color) return;
@@ -91,6 +92,7 @@ export class TagSelector implements OnInit {
         } else {
             const label = this.newTagName().trim();
             if (!label) return;
+
             this.tagService.create({ label, color: this.pendingColor() }).subscribe(created => {
                 this.tags.update(list => [...list, created]);
                 this.emitAndResetTag(created);

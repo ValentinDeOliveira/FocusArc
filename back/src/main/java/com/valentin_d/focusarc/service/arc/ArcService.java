@@ -43,13 +43,19 @@ public class ArcService {
     private final TaskService taskService;
 
     public Optional<Arc> findByIdAndOwnerId(@NotNull ArcId arcId, @NotNull UserId ownerId) {
-        return arcLoader.getArcByIdAndOwnerId(arcId, ownerId);
+        return arcLoader.findArcByIdAndOwnerId(arcId, ownerId);
     }
 
     public List<Arc> findAllForUser(@NotNull UserId userId) {
         userLoader.assertUserExists(userId);
 
-        return arcRepository.findAllByOwner(userId);
+        return arcLoader.getAllByOwner(userId);
+    }
+
+    public Optional<Arc> findActiveArcForUser(@NotNull UserId userId) {
+        userLoader.assertUserExists(userId);
+
+        return arcLoader.findActiveArcForUser(userId);
     }
 
     public Arc create(@NotNull UserId userId, @NotNull ArcCreationDto dto) {
@@ -87,7 +93,7 @@ public class ArcService {
     public void deleteAllForUser(@NotNull UserId userId) {
         userLoader.assertUserExists(userId);
 
-        final var arcs = arcRepository.findAllByOwner(userId);
+        final var arcs = arcLoader.getAllByOwner(userId);
         arcs.forEach(arc -> chapterService.deleteAllForArc(arc.getId(), userId));
         arcRepository.deleteAll(arcs);
     }

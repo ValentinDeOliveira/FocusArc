@@ -7,6 +7,13 @@ export enum TaskStatus {
     SKIPPED = 'SKIPPED'
 }
 
+export const TaskStatusLabel: Record<TaskStatus, string> = {
+    [TaskStatus.PLANNED]: 'Planned',
+    [TaskStatus.IN_PROGRESS]: 'In Progress',
+    [TaskStatus.DONE]: 'Done',
+    [TaskStatus.SKIPPED]: 'Skipped',
+};
+
 export interface Task {
     id: string;
     chapterId: string;

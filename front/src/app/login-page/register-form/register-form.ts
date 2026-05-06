@@ -1,10 +1,9 @@
-import {Component, inject, NgZone, OnInit, signal} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
-import {AuthService} from '../../core/services/auth.service';
-import {PasswordField} from '../../shared/password-field/password-field';
 import {HttpErrorResponse} from '@angular/common/http';
+import {PasswordField} from '../../shared/password-field/password-field';
 import {ApiErrorType} from '../../models/api-error.model';
+import {AuthFormBase} from '../auth-form-base';
 
 @Component({
     selector: 'app-register-form',
@@ -12,14 +11,10 @@ import {ApiErrorType} from '../../models/api-error.model';
     templateUrl: './register-form.html',
     styleUrl: '../../shared/form-shared.css',
 })
-export class RegisterForm implements OnInit {
+export class RegisterForm extends AuthFormBase {
     private fb = inject(FormBuilder);
-    private authService = inject(AuthService);
-    private router = inject(Router);
-    private ngZone = inject(NgZone);
 
-    loading = signal(false);
-    error = signal<string | null>(null);
+    protected override readonly googleErrorMessage = 'Google sign-up failed. Please try again.';
 
     form = this.fb.group({
         name: ['', Validators.required],
@@ -27,27 +22,8 @@ export class RegisterForm implements OnInit {
         password: ['', [Validators.required, Validators.minLength(8)]],
     });
 
-    ngOnInit(): void {
-        google.accounts.id.initialize({
-            client_id: '468172227016-rb385r55f5hlm995o0mnfg2ldj7s85jl.apps.googleusercontent.com',
-            callback: ({ credential }) => this.ngZone.run(() => this.handleGoogleCredential(credential)),
-        });
-    }
-
-    registerWithGoogle(): void {
-        google.accounts.id.prompt();
-    }
-
-    handleGoogleCredential(idToken: string): void {
-        this.loading.set(true);
-        this.error.set(null);
-        this.authService.loginWithGoogle({ idToken }).subscribe({
-            next: () => this.continueToArcCreation(),
-            error: () => {
-                this.error.set('Google sign-up failed. Please try again.');
-                this.loading.set(false);
-            },
-        });
+    protected override onGoogleSuccess(): void {
+        void this.router.navigate(['/arc-creation']);
     }
 
     onSubmit(): void {
@@ -57,7 +33,7 @@ export class RegisterForm implements OnInit {
         this.error.set(null);
         const { name, email, password } = this.form.value;
         this.authService.register({ name: name!, email: email!, password: password! }).subscribe({
-            next: () => this.continueToArcCreation(),
+            next: () => void this.router.navigate(['/arc-creation']),
             error: (error: HttpErrorResponse) => {
                 this.error.set(this.getErrorMessage(error));
                 this.loading.set(false);
@@ -69,11 +45,6 @@ export class RegisterForm implements OnInit {
         if (error.error.error == ApiErrorType.EmailAlreadyExistsException) {
             return 'An account already exists with this email, please try to login';
         }
-
         return 'Registration failed. Please try again.';
-    }
-
-    private continueToArcCreation(): void {
-        void this.router.navigate(['/arc-creation']);
     }
 }

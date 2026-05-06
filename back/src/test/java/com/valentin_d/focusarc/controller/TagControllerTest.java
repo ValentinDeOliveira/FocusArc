@@ -47,7 +47,7 @@ class TagControllerTest extends BaseSecurityControllerTest {
     @Test
     void shouldReturnListOfTags_whenUserHasTags() throws Exception {
         final var tag = aTagWithOwnerId(user.getId());
-        when(tagService.findAllForUser(user.getId())).thenReturn(List.of(tag));
+        when(tagService.getAllForUser(user.getId())).thenReturn(List.of(tag));
 
         final var actions = mvcGetWithUser(ROOT + "/me", user)
                 .andExpect(status().isOk());
@@ -57,7 +57,7 @@ class TagControllerTest extends BaseSecurityControllerTest {
 
     @Test
     void shouldReturnOk_whenUserHasNoTags() throws Exception {
-        when(tagService.findAllForUser(user.getId())).thenReturn(List.of());
+        when(tagService.getAllForUser(user.getId())).thenReturn(List.of());
 
         mvcGetWithUser(ROOT + "/me", user)
                 .andExpect(status().isOk());

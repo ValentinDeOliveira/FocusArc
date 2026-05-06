@@ -1,10 +1,9 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, inject} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
-import {Router} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
-import {AuthService} from '../../core/services/auth.service';
 import {PasswordField} from '../../shared/password-field/password-field';
 import {ApiErrorType, Provider} from '../../models/api-error.model';
+import {AuthFormBase} from '../auth-form-base';
 
 @Component({
     selector: 'app-login-form',
@@ -12,13 +11,10 @@ import {ApiErrorType, Provider} from '../../models/api-error.model';
     templateUrl: './login-form.html',
     styleUrl: './login-form.css',
 })
-export class LoginForm implements OnInit {
+export class LoginForm extends AuthFormBase {
     private fb = inject(FormBuilder);
-    private authService = inject(AuthService);
-    private router = inject(Router);
 
-    loading = signal(false);
-    error = signal<string | null>(null);
+    protected override readonly googleErrorMessage = 'Google sign-in failed. Please try again.';
 
     form = this.fb.group({
         email: ['', [Validators.required, Validators.email]],
@@ -26,27 +22,8 @@ export class LoginForm implements OnInit {
         rememberMe: [false],
     });
 
-    ngOnInit(): void {
-        google.accounts.id.initialize({
-            client_id: '468172227016-rb385r55f5hlm995o0mnfg2ldj7s85jl.apps.googleusercontent.com',
-            callback: ({ credential }) => this.handleGoogleCredential(credential),
-        });
-    }
-
-    handleGoogleCredential(idToken: string): void {
-        this.loading.set(true);
-        this.error.set(null);
-        this.authService.loginWithGoogle({ idToken }).subscribe({
-            next: () => void this.router.navigate(['/']),
-            error: () => {
-                this.error.set('Google sign-in failed. Please try again.');
-                this.loading.set(false);
-            },
-        });
-    }
-
-    loginWithGoogle(): void {
-        google.accounts.id.prompt();
+    protected override onGoogleSuccess(): void {
+        void this.router.navigate(['/']);
     }
 
     onSubmit(): void {
@@ -55,14 +32,13 @@ export class LoginForm implements OnInit {
         this.loading.set(true);
         this.error.set(null);
         const { email, password } = this.form.value;
-        this.authService.login({ email: email!, password: password! })
-            .subscribe({
-                next: () => void this.router.navigate(['/']),
-                error: (error: HttpErrorResponse) => {
-                    this.error.set(this.getErrorMessage(error));
-                    this.loading.set(false);
-                }
-            });
+        this.authService.login({ email: email!, password: password! }).subscribe({
+            next: () => void this.router.navigate(['/']),
+            error: (error: HttpErrorResponse) => {
+                this.error.set(this.getErrorMessage(error));
+                this.loading.set(false);
+            },
+        });
     }
 
     getErrorMessage(error: HttpErrorResponse): string {
@@ -77,7 +53,6 @@ export class LoginForm implements OnInit {
                 return 'This email is linked to an account. Sign in with email and password instead.';
             }
         }
-
         return 'Login failed. Please try again.';
     }
 }

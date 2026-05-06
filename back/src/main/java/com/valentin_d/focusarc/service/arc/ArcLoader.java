@@ -9,22 +9,23 @@ import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
-import com.valentin_d.focusarc.service.BaseService;
+import com.valentin_d.focusarc.service.BaseLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class ArcLoader extends BaseService {
+public class ArcLoader extends BaseLoader {
     private final ArcRepository arcRepository;
 
     public Arc getArcIfExists(ArcId arcId) {
         return fetchOrThrow(arcRepository, arcId, () -> new ArcDoesNotExistException(arcId));
     }
 
-    public Optional<Arc> getArcByIdAndOwnerId(ArcId arcId, UserId ownerId) {
+    public Optional<Arc> findArcByIdAndOwnerId(ArcId arcId, UserId ownerId) {
         return arcRepository.findByIdAndOwner(arcId, ownerId);
     }
 
@@ -35,7 +36,11 @@ public class ArcLoader extends BaseService {
     }
 
     public Arc getActiveArcForUser(UserId userId) {
-        return arcRepository.findByOwnerAndStatus(userId, ArcStatus.ACTIVE).orElseThrow(() -> new NoActiveArcException(userId));
+        return findActiveArcForUser(userId).orElseThrow(() -> new NoActiveArcException(userId));
+    }
+
+    public Optional<Arc> findActiveArcForUser(UserId userId) {
+        return arcRepository.findByOwnerAndStatus(userId, ArcStatus.ACTIVE);
     }
 
     public Arc getArcIfExistsForUser(ArcId arcId, UserId userId) {
@@ -47,5 +52,9 @@ public class ArcLoader extends BaseService {
         if (!arcRepository.existsByIdAndOwner(arcId, userId)) {
             throw new ArcDoesNotExistForUserException(arcId, userId);
         }
+    }
+
+    public List<Arc> getAllByOwner(UserId userId) {
+        return arcRepository.findAllByOwner(userId);
     }
 }

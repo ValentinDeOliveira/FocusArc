@@ -7,7 +7,7 @@ import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.ChapterId;
 import com.valentin_d.focusarc.repository.ChapterRepository;
-import com.valentin_d.focusarc.service.BaseService;
+import com.valentin_d.focusarc.service.BaseLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -17,14 +17,14 @@ import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class ChapterLoader extends BaseService {
+public class ChapterLoader extends BaseLoader {
     private final ChapterRepository chapterRepository;
 
     public Chapter getChapterIfExists(ChapterId chapterId) {
         return fetchOrThrow(chapterRepository, chapterId, () -> new ChapterDoesNotExistException(chapterId));
     }
 
-    public Optional<Chapter> getChapterByScheduledDate(ArcId arcId, LocalDate scheduledDate) {
+    public Optional<Chapter> findChapterByScheduledDate(ArcId arcId, LocalDate scheduledDate) {
         return chapterRepository.findByArcAndScheduledDate(arcId, scheduledDate);
     }
 
@@ -34,8 +34,8 @@ public class ChapterLoader extends BaseService {
         }
     }
 
-    public Chapter findByDate(ArcId arcId, LocalDate scheduledDate) {
-        return getChapterByScheduledDate(arcId, scheduledDate)
+    public Chapter getChapterByDate(ArcId arcId, LocalDate scheduledDate) {
+        return findChapterByScheduledDate(arcId, scheduledDate)
                 .orElseThrow(() -> new NoChapterForArcException(arcId, scheduledDate));
     }
 

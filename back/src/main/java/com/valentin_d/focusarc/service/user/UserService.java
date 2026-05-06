@@ -18,7 +18,7 @@ import java.util.Optional;
 @Validated
 @RequiredArgsConstructor
 public class UserService {
-    private final UserRepository repository;
+    private final UserRepository userRepository;
     private final UserLoader userLoader;
     private final PasswordEncoder passwordEncoder;
 
@@ -29,11 +29,11 @@ public class UserService {
                 passwordEncoder.encode(registerDto.password()),
                 AuthProvider.LOCAL);
 
-        return repository.save(user);
+        return userRepository.save(user);
     }
 
     public Optional<User> findById(@NotNull UserId id) {
-        return repository.findById(id);
+        return userLoader.findById(id);
     }
 
     public User update(@NotNull UserId id, @NotNull UserUpdateDto dto) {
@@ -41,16 +41,16 @@ public class UserService {
 
         if (dto.name() != null) user.setName(dto.name());
 
-        return repository.save(user);
+        return userRepository.save(user);
     }
 
     public User findOrCreateGoogleUser(@NotNull String email, String name) {
-        return userLoader.getUserByEmail(email)
-                .orElseGet(() -> repository.save(new User(name, email, AuthProvider.GOOGLE)));
+        return userLoader.findUserByEmail(email)
+                .orElseGet(() -> userRepository.save(new User(name, email, AuthProvider.GOOGLE)));
     }
 
     public void delete(@NotNull UserId id) {
         final var user = userLoader.getUserIfExists(id);
-        repository.delete(user);
+        userRepository.delete(user);
     }
 }

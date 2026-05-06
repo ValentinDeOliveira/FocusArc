@@ -38,7 +38,7 @@ public class TagController {
     @Operation(summary = "Get all tags for the authenticated user")
     @GetMapping("/me")
     public ResponseEntity<List<Tag>> getAllForCurrentUser(@AuthenticationPrincipal final User user) {
-        return ResponseEntity.ok(service.findAllForUser(user.getId()));
+        return ResponseEntity.ok(service.getAllForUser(user.getId()));
     }
 
     @Operation(summary = "Create a new tag")

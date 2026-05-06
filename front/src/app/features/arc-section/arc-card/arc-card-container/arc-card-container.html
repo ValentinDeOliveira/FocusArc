@@ -4,7 +4,7 @@
         <div class="image-text top">
             <span class="arc-name">{{ name }}</span>
             <br/>
-            <span class="arc-date"> {{ formatDate(arc.startDate) }} → {{formatDate(arc.endDate)}} </span>
+            <span class="arc-date"> {{ formatDateShort(arc.startDate) }} → {{ formatDateShort(arc.endDate) }} </span>
         </div>
         <div class="image-text bottom">
             <app-arc-progress-bar [progress]="progress"/>

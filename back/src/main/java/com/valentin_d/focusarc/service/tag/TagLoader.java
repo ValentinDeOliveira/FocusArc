@@ -6,22 +6,23 @@ import com.valentin_d.focusarc.model.id.TagId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.model.tag.Tag;
 import com.valentin_d.focusarc.repository.TagRepository;
-import com.valentin_d.focusarc.service.BaseService;
+import com.valentin_d.focusarc.service.BaseLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
-public class TagLoader extends BaseService {
+public class TagLoader extends BaseLoader {
     private final TagRepository tagRepository;
 
     public Tag getTagIfExists(final TagId tagId) {
         return fetchOrThrow(tagRepository, tagId, () -> new TagDoesNotExistException(tagId));
     }
 
-    public Optional<Tag> getTagByIdAndOwner(final TagId tagId, final UserId owner) {
+    public Optional<Tag> findTagByIdAndOwner(final TagId tagId, final UserId owner) {
         return tagRepository.findByIdAndOwner(tagId, owner);
     }
 
@@ -36,5 +37,9 @@ public class TagLoader extends BaseService {
         if (!tagRepository.existsByIdAndOwner(tagId, owner)) {
             throw new TagDoesNotExistForUserException();
         }
+    }
+
+    public List<Tag> getAllByOwner(final UserId owner) {
+        return tagRepository.findAllByOwner(owner);
     }
 }

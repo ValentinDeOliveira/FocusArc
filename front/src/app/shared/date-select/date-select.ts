@@ -1,4 +1,5 @@
 import {booleanAttribute, Component, effect, input, OnInit, output, signal, untracked} from '@angular/core';
+import {toKebabCase} from '../../utils/string.utils';
 import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/material/datepicker';
 
 @Component({
@@ -45,9 +46,10 @@ export class DateSelect implements OnInit {
     }
 
     get id(): string {
-        return `date-${this.label().toLowerCase().replace(/\s+/g, '-')}`;
+        return `date-${toKebabCase(this.label())}`;
     }
 
+    // Display MM/DD/YYYY or DD/MM/YYYY depending on user
     get placeholder(): string {
         return new Intl.DateTimeFormat(navigator.language, {
             year: 'numeric', month: '2-digit', day: '2-digit',

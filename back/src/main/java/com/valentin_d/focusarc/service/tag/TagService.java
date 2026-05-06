@@ -24,12 +24,12 @@ public class TagService {
     private final UserLoader userLoader;
 
     public Optional<Tag> findByIdAndOwnerId(@NotNull TagId tagId, @NotNull UserId ownerId) {
-        return tagLoader.getTagByIdAndOwner(tagId, ownerId);
+        return tagLoader.findTagByIdAndOwner(tagId, ownerId);
     }
 
-    public List<Tag> findAllForUser(@NotNull UserId userId) {
+    public List<Tag> getAllForUser(@NotNull UserId userId) {
         userLoader.assertUserExists(userId);
-        return tagRepository.findAllByOwner(userId);
+        return tagLoader.getAllByOwner(userId);
     }
 
     public Tag create(@NotNull UserId userId, @NotNull TagCreationDto dto) {
@@ -56,6 +56,8 @@ public class TagService {
 
     public void deleteAllForUser(@NotNull UserId userId) {
         userLoader.assertUserExists(userId);
-        tagRepository.deleteAll(tagRepository.findAllByOwner(userId));
+
+        final var tags = tagLoader.getAllByOwner(userId);
+        tagRepository.deleteAll(tags);
     }
 }

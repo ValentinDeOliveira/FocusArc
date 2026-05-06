@@ -101,7 +101,7 @@ class AuthServiceTest {
         final var user = aUser();
         final var dto = aRefreshRequestDto();
         when(jwtService.extractUsername(dto.refreshToken())).thenReturn(user.getEmail());
-        when(userLoader.getUserByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(userLoader.findUserByEmail(user.getEmail())).thenReturn(Optional.of(user));
         when(jwtService.isTokenValid(dto.refreshToken(), user)).thenReturn(true);
 
         authService.refresh(dto);
@@ -120,7 +120,7 @@ class AuthServiceTest {
     void shouldThrowInvalidTokenException_whenUserNotFound() {
         final var dto = aRefreshRequestDto();
         when(jwtService.extractUsername(dto.refreshToken())).thenReturn("unknown@example.com");
-        when(userLoader.getUserByEmail("unknown@example.com")).thenReturn(Optional.empty());
+        when(userLoader.findUserByEmail("unknown@example.com")).thenReturn(Optional.empty());
 
         assertRefreshInvalid(dto);
     }
@@ -130,7 +130,7 @@ class AuthServiceTest {
         final var user = aUser();
         final var dto = aRefreshRequestDto();
         when(jwtService.extractUsername(dto.refreshToken())).thenReturn(user.getEmail());
-        when(userLoader.getUserByEmail(user.getEmail())).thenReturn(Optional.of(user));
+        when(userLoader.findUserByEmail(user.getEmail())).thenReturn(Optional.of(user));
         when(jwtService.isTokenValid(dto.refreshToken(), user)).thenReturn(false);
 
         assertRefreshInvalid(dto);

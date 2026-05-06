@@ -2,7 +2,6 @@ import {Component, DestroyRef, inject, OnInit, signal} from '@angular/core';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
 import {Chapter} from '../../models/chapter.model';
 import {ActivatedRoute} from '@angular/router';
-import {DatePipe} from '@angular/common';
 import {ArcViewChapter, ChapterState} from './arc-view-chapter/arc-view-chapter';
 import {ContextStore} from '../../core/stores/context.store';
 import {ArcSummaryResponseDto} from '../../models/arc.model';
@@ -23,7 +22,6 @@ import {TaskStatDto} from '../../models/task.model';
         ArcTagStats,
         ArcTaskStats,
     ],
-    providers: [DatePipe]
 })
 export class ArcViewPage implements OnInit {
     private route = inject(ActivatedRoute);

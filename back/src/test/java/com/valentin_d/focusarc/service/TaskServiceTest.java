@@ -173,7 +173,7 @@ class TaskServiceTest {
         final var chapter = aChapter();
         final var task = aTaskWithChapterId(chapter.getId());
 
-        when(taskRepository.findAllByChapterOrderByStartAtAsc(chapter.getId())).thenReturn(List.of(task));
+        when(taskLoader.getTasksForChapter(chapter.getId())).thenReturn(List.of(task));
 
         service.deleteAllForChapter(chapter.getId(), user.getId());
 
@@ -202,7 +202,7 @@ class TaskServiceTest {
         final var user = aUser();
         final var chapter = aChapter();
         final var task = aTaskWithChapterId(chapter.getId());
-        when(taskRepository.findAllByChapterOrderByStartAtAsc(chapter.getId())).thenReturn(List.of(task));
+        when(taskLoader.getTasksForChapter(chapter.getId())).thenReturn(List.of(task));
 
         final var result = service.findAllForChapter(chapter.getId(), user.getId());
 

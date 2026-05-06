@@ -21,9 +21,8 @@ export class ArcProgress implements OnInit {
     arc = signal<Arc | undefined>(undefined);
 
     ngOnInit(): void {
-        // TODO: get active arc instead of fetching all
-        this.arcService.getAll().subscribe(arcs => {
-            this.arc.set(Object.values(arcs).at(0));
+        this.arcService.getActive().subscribe(arc => {
+            this.arc.set(arc);
         });
         this.arcService.getSummary().subscribe(summary => {
             this.contextStore.setSummary(summary);

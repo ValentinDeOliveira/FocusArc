@@ -24,7 +24,7 @@ public class AuthControllerIntegrationTest extends BaseAuthIntegrationTest {
         assertEquals(HttpStatus.CREATED, response.getStatusCode());
         assertAuthCookiesPresent(response);
 
-        final var optUser = userLoader.getUserByEmail(dto.email());
+        final var optUser = userLoader.findUserByEmail(dto.email());
         assertTrue(optUser.isPresent());
 
         final var user = optUser.get();

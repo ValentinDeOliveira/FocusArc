@@ -9,7 +9,7 @@ import com.valentin_d.focusarc.model.id.TaskId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskStatus;
 import com.valentin_d.focusarc.repository.TaskRepository;
-import com.valentin_d.focusarc.service.BaseService;
+import com.valentin_d.focusarc.service.BaseLoader;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -22,7 +22,7 @@ import static java.util.stream.Collectors.groupingBy;
 
 @Component
 @RequiredArgsConstructor
-public class TaskLoader extends BaseService {
+public class TaskLoader extends BaseLoader {
     private final TaskRepository taskRepository;
 
     public Task getTaskIfExists(TaskId taskId) {
@@ -37,7 +37,7 @@ public class TaskLoader extends BaseService {
         return taskRepository.findAllByChapterAndStatusIn(chapterId, PENDING);
     }
 
-    public Optional<Task> getTask(TaskId taskId) {
+    public Optional<Task> findTask(TaskId taskId) {
         return taskRepository.findById(taskId);
     }
 
