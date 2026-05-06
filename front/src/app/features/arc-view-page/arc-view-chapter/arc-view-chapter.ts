@@ -1,4 +1,12 @@
 import {Component, inject, Input, OnInit, signal} from '@angular/core';
+import {Chapter} from '../../../models/chapter.model';
+import {MatIcon} from '@angular/material/icon';
+import {formatDateFull, formatDateLong} from '../../../utils/date.utils';
+import {MatIconButton} from '@angular/material/button';
+import {Task} from '../../../models/task.model';
+import {TaskService} from '../../../core/services/task.service';
+import {TaskInfo} from '../../../shared/task-info/task-info';
+import {TagStore} from '../../../core/stores/tag.store';
 
 export enum ChapterState {
     DONE = 'done',
@@ -6,14 +14,6 @@ export enum ChapterState {
     IN_PROGRESS = 'in-progress',
     PLANNED = 'planned'
 }
-import {Chapter} from '../../../models/chapter.model';
-import {MatIcon} from '@angular/material/icon';
-import {formatDateFull, formatDateLong} from '../../../shared/utils/date-utils';
-import {MatIconButton} from '@angular/material/button';
-import {Task} from '../../../models/task.model';
-import {TaskService} from '../../../core/services/task.service';
-import {TaskInfo} from '../../../shared/task-info/task-info';
-import {TagStore} from '../../../core/stores/tag.store';
 
 @Component({
     selector: 'app-arc-view-chapter',

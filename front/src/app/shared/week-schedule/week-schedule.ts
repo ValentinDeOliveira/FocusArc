@@ -3,7 +3,7 @@ import {CalendarDateFormatter, CalendarEvent, CalendarWeekViewComponent, DateFor
 import {ArcTask} from '../arc-task.model';
 import {eventColor} from '../../models/tag-colors';
 import {RecurrenceType} from '../../models/recurrence.model';
-import {DAY_OF_WEEK_INDEX, DayOfWeek, getWeekStart} from '../utils/date-utils';
+import {DAY_OF_WEEK_INDEX, DayOfWeek, getWeekStart} from '../../utils/date.utils';
 import {parseTime} from '../../utils/time.utils';
 
 class WeekScheduleDateFormatter extends CalendarDateFormatter {

@@ -3,7 +3,7 @@ import {TaskService} from '../../../core/services/task.service';
 import {Task, TaskCompletedDto} from '../../../models/task.model';
 import {DashboardTask} from '../dashboard-task/dashboard-task';
 import {ChapterService} from '../../../core/services/chapter.service';
-import {formatDateLong} from '../../../shared/utils/date-utils';
+import {formatDateLong} from '../../../utils/date.utils';
 import {formatMinutes} from '../../../utils/time.utils';
 import {DashboardTaskTimer} from '../dashboard-task-timer/dashboard-task-timer';
 import {TagStore} from '../../../core/stores/tag.store';

@@ -1,7 +1,7 @@
 import {Component, Input, OnInit} from '@angular/core';
 import {MatCard, MatCardActions, MatCardContent} from '@angular/material/card';
 import {NgOptimizedImage} from '@angular/common';
-import {formatDateShort} from '../../../../shared/utils/date-utils';
+import {formatDateShort} from '../../../../utils/date.utils';
 import {ArcProgressBar} from '../arc-progress-bar/arc-progress-bar';
 import {MatIcon} from '@angular/material/icon';
 import {Arc} from '../../../../models/arc.model';

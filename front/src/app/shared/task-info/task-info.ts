@@ -2,7 +2,7 @@ import {Component, inject, Input} from '@angular/core';
 import {Tag} from '../../models/tag.model';
 import {formatMinutes} from '../../utils/time.utils';
 import {Task, TaskUpdateDto} from '../../models/task.model';
-import {formatTimeHHmm} from '../utils/date-utils';
+import {formatTimeHHmm} from '../../utils/date.utils';
 import {TaskService} from '../../core/services/task.service';
 import {ArcService} from '../../core/services/arc.service';
 import {TaskRow} from '../task-row/task-row';
