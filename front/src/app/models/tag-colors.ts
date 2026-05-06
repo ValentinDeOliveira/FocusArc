@@ -1,4 +1,4 @@
-import {TagColor} from './tag.model';
+export type TagColor = 'RED' | 'ORANGE' | 'YELLOW' | 'GREEN' | 'TEAL' | 'BLUE' | 'PURPLE' | 'PINK';
 
 export const TAG_COLORS: Record<TagColor, string> = {
     RED: '#ef4444',

@@ -1,4 +1,5 @@
 import {Component, input, output, signal} from '@angular/core';
+import {padTime} from '../../utils/time.utils';
 
 @Component({
     selector: 'app-time-field',
@@ -13,9 +14,7 @@ export class TimeField {
     hours = signal(9);
     minutes = signal(0);
 
-    pad(val: number): string {
-        return val.toString().padStart(2, '0');
-    }
+    pad = padTime;
 
     onHoursInput(event: Event): void {
         const el = event.target as HTMLInputElement;
@@ -34,14 +33,14 @@ export class TimeField {
     }
 
     onHoursBlur(event: Event): void {
-        (event.target as HTMLInputElement).value = this.pad(this.hours());
+        (event.target as HTMLInputElement).value = padTime(this.hours());
     }
 
     onMinutesBlur(event: Event): void {
-        (event.target as HTMLInputElement).value = this.pad(this.minutes());
+        (event.target as HTMLInputElement).value = padTime(this.minutes());
     }
 
     private emit(): void {
-        this.timeChange.emit(`${this.pad(this.hours())}:${this.pad(this.minutes())}`);
+        this.timeChange.emit(`${padTime(this.hours())}:${padTime(this.minutes())}`);
     }
 }

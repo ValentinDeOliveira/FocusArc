@@ -1,4 +1,5 @@
 import {Component, computed, input, output} from '@angular/core';
+import {toKebabCase} from '../../utils/string.utils';
 
 @Component({
     selector: 'app-input-field',
@@ -15,6 +16,6 @@ export class InputField {
     value = input<string>('');
     valueChange = output<string>();
 
-    private computedId = computed(() => this.label().toLowerCase().replace(/\s+/g, '-'));
+    private computedId = computed(() => toKebabCase(this.label()));
     effectiveId = computed(() => this.id() || this.computedId());
 }

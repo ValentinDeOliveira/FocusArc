@@ -2,10 +2,11 @@ import {Component, computed, signal} from '@angular/core';
 import {NumberField} from '../number-field/number-field';
 import {TimeField} from '../time-field/time-field';
 import {RecurrenceLabel, RecurrenceType} from '../../models/recurrence.model';
+import {DAY_ABBREV_TO_ENUM, DayOfWeek} from '../utils/date-utils';
 
 export interface RecurrenceConfig {
     recurrence: RecurrenceType;
-    daysOfWeek: string[];
+    daysOfWeek: DayOfWeek[];
     everyNDays: number;
     startTime: string;
     duration: number;
@@ -39,7 +40,7 @@ export class ArcTaskRecurrence {
 
     config = computed<RecurrenceConfig>(() => ({
         recurrence: this.selected(),
-        daysOfWeek: [...this.selectedDays()],
+        daysOfWeek: [...this.selectedDays()].map(d => DAY_ABBREV_TO_ENUM[d]),
         everyNDays: this.everyNDays(),
         startTime: this.startTime(),
         duration: this.duration(),

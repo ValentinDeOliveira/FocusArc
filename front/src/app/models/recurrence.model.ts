@@ -15,12 +15,12 @@ export const RecurrenceLabel: Record<RecurrenceType, string> = {
 export type TaskRecurrencePayload =
     | { type: RecurrenceType.DAILY }
     | { type: RecurrenceType.EVERY_N_DAYS; n: number }
-    | { type: RecurrenceType.DAYS_OF_WEEK; daysOfWeek: string[] };
+    | { type: RecurrenceType.DAYS_OF_WEEK; days: string[] };
 
 export function toRecurrencePayload(task: ArcTask): TaskRecurrencePayload {
     switch (task.recurrence) {
         case RecurrenceType.DAILY:        return { type: RecurrenceType.DAILY };
         case RecurrenceType.EVERY_N_DAYS: return { type: RecurrenceType.EVERY_N_DAYS, n: task.everyNDays! };
-        case RecurrenceType.DAYS_OF_WEEK: return { type: RecurrenceType.DAYS_OF_WEEK, daysOfWeek: task.daysOfWeek! };
+        case RecurrenceType.DAYS_OF_WEEK: return { type: RecurrenceType.DAYS_OF_WEEK, days: task.daysOfWeek! };
     }
 }

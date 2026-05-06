@@ -1,4 +1,5 @@
 import {Component, computed, input, model} from '@angular/core';
+import {toKebabCase} from '../../utils/string.utils';
 
 @Component({
     selector: 'app-number-field',
@@ -17,7 +18,7 @@ export class NumberField {
     defaultValue = input<number>(1);
     value = model<number | null>(null);
 
-    private computedId = computed(() => this.label().toLowerCase().replace(/\s+/g, '-') || 'number-field');
+    private computedId = computed(() => toKebabCase(this.label()) || 'number-field');
     effectiveId = computed(() => this.id() || this.computedId());
     protected readonly HTMLInputElement = HTMLInputElement;
 }

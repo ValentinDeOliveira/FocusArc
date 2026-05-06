@@ -3,7 +3,7 @@ import {TaskService} from '../../../core/services/task.service';
 import {Task, TaskCompletedDto} from '../../../models/task.model';
 import {DashboardTask} from '../dashboard-task/dashboard-task';
 import {ChapterService} from '../../../core/services/chapter.service';
-import {DatePipe} from '@angular/common';
+import {formatDateLong} from '../../../shared/utils/date-utils';
 import {formatMinutes} from '../../../utils/time.utils';
 import {DashboardTaskTimer} from '../dashboard-task-timer/dashboard-task-timer';
 import {TagStore} from '../../../core/stores/tag.store';
@@ -23,14 +23,12 @@ import {ApiErrorType} from '../../../models/api-error.model';
         DashboardTaskTimer,
         TaskCreation
     ],
-    providers: [DatePipe],
     templateUrl: './dashboard-resume.html',
     styleUrl: './dashboard-resume.css',
 })
 export class DashboardResume implements OnInit {
     private taskService = inject(TaskService);
     private chapterService = inject(ChapterService);
-    private datePipe = inject(DatePipe);
     protected tagStore = inject(TagStore);
     private contextStore = inject(ContextStore);
     private arcService = inject(ArcService);
@@ -66,7 +64,7 @@ export class DashboardResume implements OnInit {
     }
 
     todayDate() {
-        return this.datePipe.transform(Date.now(), "MMMM d");
+        return formatDateLong(Date.now());
     }
 
     getPlannedTime() {

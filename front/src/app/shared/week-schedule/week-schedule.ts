@@ -3,6 +3,8 @@ import {CalendarDateFormatter, CalendarEvent, CalendarWeekViewComponent, DateFor
 import {ArcTask} from '../arc-task.model';
 import {eventColor} from '../../models/tag-colors';
 import {RecurrenceType} from '../../models/recurrence.model';
+import {DAY_OF_WEEK_INDEX, DayOfWeek, getWeekStart} from '../utils/date-utils';
+import {parseTime} from '../../utils/time.utils';
 
 class WeekScheduleDateFormatter extends CalendarDateFormatter {
     override weekViewColumnHeader({date, locale}: DateFormatterParams): string {
@@ -14,9 +16,6 @@ class WeekScheduleDateFormatter extends CalendarDateFormatter {
     }
 }
 
-const DAY_INDEX: Record<string, number> = {
-    Mon: 0, Tue: 1, Wed: 2, Thu: 3, Fri: 4, Sat: 5, Sun: 6,
-};
 
 
 @Component({
@@ -31,33 +30,16 @@ export class WeekSchedule {
 
     readonly viewDate = new Date();
 
-    private readonly monday = (() => {
-        const d = new Date();
-        const day = d.getDay();
-        d.setDate(d.getDate() + (day === 0 ? -6 : 1 - day));
-        d.setHours(0, 0, 0, 0);
-        return d;
-    })();
+    private readonly monday = getWeekStart();
 
     calendarEvents = computed<CalendarEvent[]>(() => {
         const events: CalendarEvent[] = [];
 
         for (const task of this.tasks()) {
-            const [h, m] = task.startTime.split(':').map(Number);
-            const durationMs = task.duration * 60 * 1000;
+            const [h, m] = parseTime(task.startTime);
+            const durationMs = task.duration * 60 *  1000;
 
-            let activeDays: number[];
-            if (task.recurrence === RecurrenceType.DAILY) {
-                activeDays = [0, 1, 2, 3, 4, 5, 6];
-            } else if (task.recurrence === RecurrenceType.DAYS_OF_WEEK) {
-                activeDays = (task.daysOfWeek ?? []).map(d => DAY_INDEX[d]).filter(d => d !== undefined);
-            } else {
-                activeDays = [];
-                const n = task.everyNDays ?? 2;
-                for (let i = 0; i < 7; i += n) activeDays.push(i);
-            }
-
-            for (const offset of activeDays) {
+            for (const offset of this.getActiveDays(task)) {
                 const start = new Date(this.monday);
                 start.setDate(this.monday.getDate() + offset);
                 start.setHours(h, m, 0, 0);
@@ -69,7 +51,23 @@ export class WeekSchedule {
                 });
             }
         }
-
         return events;
     });
+
+    private getActiveDays(task: ArcTask): number[] {
+        switch (task.recurrence) {
+            case RecurrenceType.DAILY:
+                return [0, 1, 2, 3, 4, 5, 6];
+            case RecurrenceType.DAYS_OF_WEEK:
+                return (task.daysOfWeek ?? []).map(d => DAY_OF_WEEK_INDEX[d as DayOfWeek]).filter(d => d !== undefined);
+            case RecurrenceType.EVERY_N_DAYS:
+                const activeDays = [];
+                const n = task.everyNDays ?? 2;
+                for (let i = 0; i < 7; i += n) activeDays.push(i);
+                return activeDays;
+            default:
+                const _: never = task.recurrence;
+                throw new Error(`Unhandled recurrence type: ${_}`);
+        }
+    }
 }

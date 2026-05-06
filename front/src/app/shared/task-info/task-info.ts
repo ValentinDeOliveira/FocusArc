@@ -2,7 +2,7 @@ import {Component, inject, Input} from '@angular/core';
 import {Tag} from '../../models/tag.model';
 import {formatMinutes} from '../../utils/time.utils';
 import {Task, TaskUpdateDto} from '../../models/task.model';
-import {DatePipe} from '@angular/common';
+import {formatTimeHHmm} from '../utils/date-utils';
 import {TaskService} from '../../core/services/task.service';
 import {ArcService} from '../../core/services/arc.service';
 import {TaskRow} from '../task-row/task-row';
@@ -17,7 +17,6 @@ import {isTaskEnded} from '../../utils/task.utils';
         TaskRow,
         TagPicker,
     ],
-    providers: [DatePipe],
     templateUrl: './task-info.html',
     styleUrl: './task-info.css',
 })
@@ -25,17 +24,12 @@ export class TaskInfo {
     @Input() task!: Task;
     @Input() tag: Tag | null = null;
 
-    private datePipe = inject(DatePipe);
     private taskService = inject(TaskService);
     private arcService = inject(ArcService);
 
-    formatTime(date: string) {
-        return this.datePipe.transform(date, 'HH:mm');
-    }
-
-    getEstimatedMinutes() {
-        return formatMinutes(this.task.estimatedMinutes);
-    }
+    protected readonly formatTimeHHmm = formatTimeHHmm;
+    protected readonly formatMinutes = formatMinutes;
+    protected readonly isTaskEnded = isTaskEnded;
 
     updateTag(updatedTag: Tag | null) {
         this.tag = updatedTag;
@@ -49,7 +43,4 @@ export class TaskInfo {
         });
     }
 
-    get isTaskEnded() {
-        return isTaskEnded(this.task);
-    }
 }

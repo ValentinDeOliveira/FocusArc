@@ -1,4 +1,4 @@
-export type TagColor = 'RED' | 'ORANGE' | 'YELLOW' | 'GREEN' | 'TEAL' | 'BLUE' | 'PURPLE' | 'PINK';
+import {TagColor} from './tag-colors';
 
 export interface Tag {
     id: string;

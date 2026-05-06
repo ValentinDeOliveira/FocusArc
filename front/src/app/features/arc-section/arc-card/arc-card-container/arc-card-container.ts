@@ -1,6 +1,7 @@
-import {Component, inject, Input, OnInit} from '@angular/core';
+import {Component, Input, OnInit} from '@angular/core';
 import {MatCard, MatCardActions, MatCardContent} from '@angular/material/card';
-import {DatePipe, NgOptimizedImage} from '@angular/common';
+import {NgOptimizedImage} from '@angular/common';
+import {formatDateShort} from '../../../../shared/utils/date-utils';
 import {ArcProgressBar} from '../arc-progress-bar/arc-progress-bar';
 import {MatIcon} from '@angular/material/icon';
 import {Arc} from '../../../../models/arc.model';
@@ -17,7 +18,6 @@ import {PrimaryButton} from '../../../../shared/primary-button/primary-button';
         MatIcon,
         PrimaryButton,
     ],
-    providers: [DatePipe],
     templateUrl: './arc-card-container.html',
     styleUrl: './arc-card-container.css',
 })
@@ -25,16 +25,11 @@ export class ArcCardContainer implements OnInit {
     @Input({ required: true }) arc!: Arc;
     @Input({ required: true }) nbChapterCompleted!: number;
     @Input({ required: true }) nbChapterTotal!: number;
-    private datePipe = inject(DatePipe);
-
     name!: string;
+    protected readonly formatDateShort = formatDateShort;
 
     ngOnInit(): void {
         this.name = this.arc.name + ' Arc';
-    }
-
-    formatDate(date: string) {
-        return this.datePipe.transform(date, 'MMM d');
     }
 
     get progress(): number {
