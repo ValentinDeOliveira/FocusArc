@@ -16,6 +16,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -115,7 +116,7 @@ public class ArcController {
     @PostMapping("/{arcId}/tasks/init")
     public ResponseEntity<Void> massCreate(@AuthenticationPrincipal final User user,
                                            @PathVariable final ArcId arcId,
-                                           @Valid @RequestBody final List<TaskRecurrenceDto> taskRecurrenceDtos) {
+                                           @Valid @RequestBody @Size(max = 5) final List<TaskRecurrenceDto> taskRecurrenceDtos) {
         service.massCreate(taskRecurrenceDtos, arcId, user.getId());
         return ResponseEntity.noContent().build();
     }

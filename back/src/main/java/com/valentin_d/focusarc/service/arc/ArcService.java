@@ -20,6 +20,7 @@ import com.valentin_d.focusarc.service.task.TaskLoader;
 import com.valentin_d.focusarc.service.task.TaskService;
 import com.valentin_d.focusarc.service.user.UserLoader;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
@@ -127,7 +128,7 @@ public class ArcService {
         return taskLoader.getTaskStatsForChapters(getChaptersForUser(userId));
     }
 
-    public void massCreate(@NotNull List<TaskRecurrenceDto> taskMassCreationDto,
+    public void massCreate(@NotNull @Size(max = 5) List<TaskRecurrenceDto> taskMassCreationDto,
                            @NotNull ArcId arcId,
                            @NotNull UserId userId) {
         final var arc = arcLoader.getArcIfExistsForUser(arcId, userId);

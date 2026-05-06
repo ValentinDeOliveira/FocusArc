@@ -1,6 +1,7 @@
 package com.valentin_d.focusarc.model.auth;
 
-import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
+import com.valentin_d.focusarc.util.validation.ValidEmail;
+import com.valentin_d.focusarc.util.validation.ValidPassword;
 
-public record LoginRequestDto(@NotBlank @Email String email, @NotBlank String password) {}
+public record LoginRequestDto(@ValidEmail String email,
+                              @ValidPassword String password) {}

@@ -7,6 +7,8 @@ public class ValidDateRangeValidator implements ConstraintValidator<ValidDateRan
     @Override
     public boolean isValid(DateRangeValidatable value, ConstraintValidatorContext context) {
         if (value.startDate() == null || value.endDate() == null) return true;
-        return value.endDate().isAfter(value.startDate());
+        return value.endDate().isAfter(value.startDate())
+                // limit end date to be at most 1 year after start date
+                && !value.endDate().isAfter(value.startDate().plusYears(1));
     }
 }
