@@ -1,4 +1,4 @@
-import {Component, computed, input} from '@angular/core';
+import {Component, computed, Injectable, input} from '@angular/core';
 import {CalendarDateFormatter, CalendarEvent, CalendarWeekViewComponent, DateFormatterParams} from 'angular-calendar';
 import {ArcTask} from '../arc-task.model';
 import {eventColor} from '../../models/tag-colors';
@@ -6,6 +6,7 @@ import {RecurrenceType} from '../../models/recurrence.model';
 import {DAY_OF_WEEK_INDEX, DayOfWeek, getWeekStart} from '../../utils/date.utils';
 import {parseTime} from '../../utils/time.utils';
 
+@Injectable()
 class WeekScheduleDateFormatter extends CalendarDateFormatter {
     override weekViewColumnHeader({date, locale}: DateFormatterParams): string {
         return new Intl.DateTimeFormat(locale, {weekday: 'short'}).format(date).toUpperCase();
