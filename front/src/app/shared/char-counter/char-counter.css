@@ -1,0 +1,7 @@
+.char-counter {
+    font-size: 0.8125rem;
+    color: var(--color-text-secondary);
+    text-align: right;
+    display: block;
+    min-height: 1em;
+}

@@ -1,5 +1,5 @@
 import {Component, computed, effect, inject, output, signal, untracked} from '@angular/core';
-import {MatIcon} from '@angular/material/icon';
+import {FIELD_LIMITS} from '../../../shared/field-limits';
 import {isAfter} from '../../../utils/date.utils';
 import {CardPageLayout} from '../../../shared/card-page-layout/card-page-layout';
 import {ArcCreationStepper} from '../../arc-creation-stepper/arc-creation-stepper';
@@ -17,14 +17,14 @@ import {ContextStore} from '../../../core/stores/context.store';
         CardPageLayout,
         ArcCreationStepper,
         DateSelect,
-        MatIcon,
         PrimaryButton,
         InputField,
     ],
     templateUrl: './arc-details-step.html',
     styleUrl: './arc-details-step.css',
 })
-export class ArcDetailsStep{
+export class ArcDetailsStep {
+    protected readonly FIELD_LIMITS = FIELD_LIMITS;
     today = new Date();
     startDate = signal(this.today);
     endDate = signal<Date | null>(null);

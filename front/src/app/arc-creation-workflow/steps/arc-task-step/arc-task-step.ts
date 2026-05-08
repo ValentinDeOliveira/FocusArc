@@ -1,4 +1,5 @@
 import {Component, computed, inject, output, signal, viewChild} from '@angular/core';
+import {FIELD_LIMITS} from '../../../shared/field-limits';
 import {ArcCreationStepper} from '../../arc-creation-stepper/arc-creation-stepper';
 import {CardPageLayout} from '../../../shared/card-page-layout/card-page-layout';
 import {MatIcon} from '@angular/material/icon';
@@ -39,6 +40,7 @@ import {RecurrenceLabel, toRecurrencePayload} from '../../../models/recurrence.m
 export class ArcTaskStep {
     nextStep = output();
     MAX_NUMBER_OF_TASKS = 5;
+    protected readonly FIELD_LIMITS = FIELD_LIMITS;
     protected readonly tagColor = color;
 
     taskName = signal('');

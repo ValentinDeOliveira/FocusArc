@@ -10,12 +10,15 @@
             type="text"
             placeholder="Select or create a tag"
             [value]="newTagName()"
+            [maxLength]="TAG_MAX_LENGTH"
             (input)="newTagName.set($any($event.target).value)"
             (keydown.enter)="createTagOnEnter($event)"
         />
     }
     <mat-icon class="chevron" (click)="toggleDropdown($event)">expand_more</mat-icon>
 </div>
+
+<app-char-counter [current]="selectedTag() ? 0 : newTagName().length" [max]="TAG_MAX_LENGTH" />
 
 @if (isOpen()) {
     <div class="dropdown">

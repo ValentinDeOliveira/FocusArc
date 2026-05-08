@@ -5,10 +5,12 @@ import {TagService} from '../../core/services/tag.service';
 import {TagPill} from '../tag-pill/tag-pill';
 import {MatIcon} from '@angular/material/icon';
 import {CapitalizePipe} from '../pipes/capitalize.pipe';
+import {CharCounter} from '../char-counter/char-counter';
+import {FIELD_LIMITS} from '../field-limits';
 
 @Component({
     selector: 'app-tag-selector',
-    imports: [TagPill, MatIcon, CapitalizePipe],
+    imports: [TagPill, MatIcon, CapitalizePipe, CharCounter],
     templateUrl: './tag-selector.html',
     styleUrl: './tag-selector.css',
     host: { '(click)': '$event.stopPropagation()' }
@@ -20,6 +22,8 @@ export class TagSelector implements OnInit {
     protected newTagName = signal('');
     protected pendingColor = signal<TagColor>('RED');
     protected isOpen = signal(false);
+
+    protected readonly TAG_MAX_LENGTH = FIELD_LIMITS.TAG_NAME;
 
     protected readonly TAG_COLORS = TAG_COLORS;
     protected readonly TAG_COLORS_KEYS = TAG_COLORS_KEYS;

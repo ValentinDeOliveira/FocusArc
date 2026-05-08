@@ -19,7 +19,9 @@
                 placeholder="e.g Morning run, Deep work block..."
                 [value]="taskName()"
                 [error]="taskNameError()"
-                (valueChange)="taskName.set($event)" />
+                (valueChange)="taskName.set($event)"
+                [maxLength]="FIELD_LIMITS.TASK_NAME"
+            />
 
             <app-tag-selector
                 [selectedTag]="selectedTag()"
