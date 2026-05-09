@@ -3,13 +3,15 @@
 }
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-  <div class="field">
-    <label for="login-email">Email address</label>
-    <input id="login-email" type="email" formControlName="email" placeholder="you@example.com" autocomplete="email" />
-    @if (form.get('email')?.invalid && form.get('email')?.touched) {
-      <span class="field-error">Enter a valid email.</span>
-    }
-  </div>
+  <app-form-input-field
+    label="Email address"
+    inputId="login-email"
+    type="email"
+    placeholder="you@example.com"
+    autocomplete="email"
+    [control]="$any(form.get('email'))"
+    errorMessage="Enter a valid email."
+  />
 
   <app-password-field
     inputId="login-password"

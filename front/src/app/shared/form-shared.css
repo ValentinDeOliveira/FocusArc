@@ -1,45 +1,17 @@
 /* Shared styles for login-form and register-form */
 
-.field {
-    display: flex;
-    flex-direction: column;
-    gap: 0.375rem;
+form {
+    padding-top: 1.5rem;
+}
+
+form app-password-field {
+    padding-bottom: 0.75rem;
+}
+
+app-form-input-field,
+app-password-field {
+    display: block;
     margin-bottom: 1rem;
-}
-
-.field label {
-    font-size: 0.875rem;
-    font-weight: 500;
-    color: var(--color-text);
-}
-
-.field input[type='email'],
-.field input[type='text'],
-.field input[type='password'],
-input[type='number'] {
-    width: 100%;
-    padding: 0.7rem 0.875rem;
-    border: 2px solid var(--color-border);
-    border-radius: 0.625rem;
-    font-size: 0.95rem;
-    color: var(--color-text);
-    background: var(--color-surface);
-    outline: none;
-    transition: border-color 0.15s, box-shadow 0.15s;
-    box-sizing: border-box;
-}
-
-.field input:focus {
-    border-color: var(--color-primary);
-    box-shadow: 0 0 0 3px var(--color-primary-shadow);
-}
-
-.field input.has-error {
-    border-color: var(--color-warning-text);
-}
-
-.field input::placeholder {
-    color: var(--color-text-faint);
 }
 
 .input-icon-wrap {
@@ -50,23 +22,6 @@ input[type='number'] {
 
 .input-icon-wrap input {
     padding-right: 2.75rem;
-}
-
-.eye-btn {
-    position: absolute;
-    right: 0.75rem;
-    background: none;
-    border: none;
-    cursor: pointer;
-    color: var(--color-text-muted);
-    display: flex;
-    align-items: center;
-    padding: 0;
-    line-height: 1;
-}
-
-.eye-btn:hover {
-    color: var(--color-text);
 }
 
 .submit-btn {
@@ -80,7 +35,7 @@ input[type='number'] {
     font-weight: 600;
     cursor: pointer;
     transition: background 0.15s;
-    margin-top: 0.25rem;
+    margin-top: 1rem;
 }
 
 .submit-btn:hover:not(:disabled) {
@@ -100,11 +55,6 @@ input[type='number'] {
     border-radius: 0.5rem;
     padding: 0.625rem 0.875rem;
     margin: 0 0 0.5rem;
-}
-
-.field-error {
-    font-size: 0.8125rem;
-    color: var(--color-warning-text)
 }
 
 .divider {
