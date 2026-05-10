@@ -32,10 +32,7 @@ import {RecurrenceLabel, toRecurrencePayload} from '../../../models/recurrence.m
         TagSelector,
     ],
     templateUrl: './arc-task-step.html',
-    styleUrls: [
-        './arc-task-step.css',
-        '../../../shared/form-shared.css'
-    ]
+    styleUrl: './arc-task-step.css'
 })
 export class ArcTaskStep {
     nextStep = output();
