@@ -1,4 +1,4 @@
-import {Component, computed, inject, output, signal, viewChild} from '@angular/core';
+import {Component, computed, inject, output, signal, ViewChild, viewChild} from '@angular/core';
 import {FIELD_LIMITS} from '../../../shared/field-limits';
 import {ArcCreationStepper} from '../../arc-creation-stepper/arc-creation-stepper';
 import {CardPageLayout} from '../../../shared/card-page-layout/card-page-layout';
@@ -35,6 +35,8 @@ import {RecurrenceLabel, toRecurrencePayload} from '../../../models/recurrence.m
     styleUrl: './arc-task-step.css'
 })
 export class ArcTaskStep {
+    @ViewChild(TagSelector) tagField!: TagSelector;
+
     nextStep = output();
     MAX_NUMBER_OF_TASKS = 5;
     protected readonly FIELD_LIMITS = FIELD_LIMITS;
@@ -55,7 +57,8 @@ export class ArcTaskStep {
     private arcService = inject(ArcService);
     private contextStore = inject(ContextStore);
 
-    addTask(): void {
+    addTask(event: Event): void {
+        event.stopPropagation();
         this.submittedTask.set(true);
         const name = this.taskName().trim();
         if (!name) return;
@@ -74,16 +77,18 @@ export class ArcTaskStep {
         }
 
         const config = this.recurrence().config();
-        this.tasks.update(list => [...list, {
-            id: crypto.randomUUID(),
-            name,
-            tag: this.selectedTag() ?? undefined,
-            ...config
-        }]);
-        this.taskName.set('');
-        this.selectedTag.set(null);
-        this.recurrence().reset();
-        this.submittedTask.set(false);
+        this.tagField.flushPending().subscribe(tag => {
+            this.tasks.update(list => [...list, {
+                id: crypto.randomUUID(),
+                name,
+                tag: tag ?? undefined,
+                ...config
+            }]);
+            this.taskName.set('');
+            this.selectedTag.set(null);
+            this.recurrence().reset();
+            this.submittedTask.set(false);
+        });
     }
 
     removeTask(id: string): void {

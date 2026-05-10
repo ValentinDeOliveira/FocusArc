@@ -21,7 +21,7 @@ export interface RecurrenceConfig {
     templateUrl: './arc-task-recurrence.html',
     styleUrls: [
         './arc-task-recurrence.css',
-        '../../shared/form-shared.css'
+        '../../shared/input-field/input-field.css'
     ],
 })
 export class ArcTaskRecurrence {

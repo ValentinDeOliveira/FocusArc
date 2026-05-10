@@ -1,4 +1,5 @@
 import {Component, HostListener, inject, input, OnInit, output, signal} from '@angular/core';
+import {Observable, of, tap} from 'rxjs';
 import {Tag} from '../../models/tag.model';
 import {TAG_COLORS, TAG_COLORS_KEYS, TagColor} from '../../models/tag-colors';
 import {TagService} from '../../core/services/tag.service';
@@ -40,7 +41,7 @@ export class TagSelector implements OnInit {
     @HostListener('document:click')
     protected closeDropdown() {
         if (this.isOpen()) {
-            this.commitPending();
+            this.flushPending().subscribe();
         }
         this.isOpen.set(false);
     }
@@ -55,7 +56,7 @@ export class TagSelector implements OnInit {
     protected toggleDropdown(event: Event) {
         event.stopPropagation();
         if (this.isOpen()) {
-            this.commitPending();
+            this.flushPending().subscribe();
             this.isOpen.set(false);
         } else {
             this.pendingColor.set(this.selectedTag()?.color ?? 'RED');
@@ -78,30 +79,46 @@ export class TagSelector implements OnInit {
 
     protected createTagOnEnter(event: Event) {
         event.preventDefault();
-        this.commitPending();
+        this.flushPending().subscribe();
         this.isOpen.set(false);
     }
 
-    private commitPending() {
+    flushPending(): Observable<Tag | null> {
+        this.isOpen.set(false);
         const tag = this.selectedTag();
 
         if (tag) {
-            // tag has not been updated
-            if (this.pendingColor() === tag.color) return;
+            return this.updateTag(tag);
+        }
 
-            this.tagService.update(tag.id, { label: tag.label, color: this.pendingColor() }).subscribe(updated => {
-                this.tags.update(list => list.map(t => t.id === updated.id ? updated : t));
-                this.tagChange.emit(updated);
-            });
-        } else {
-            const label = this.newTagName().trim();
-            if (!label) return;
+        const label = this.newTagName().trim();
+        if (!label) {
+            return of(null);
+        }
 
-            this.tagService.create({ label, color: this.pendingColor() }).subscribe(created => {
+        const fetchedTag = this.tags().find(value => value.label === label);
+        if (fetchedTag) {
+            return this.updateTag(fetchedTag);
+        }
+
+        return this.tagService.create({ label, color: this.pendingColor() }).pipe(
+            tap(created => {
                 this.tags.update(list => [...list, created]);
                 this.emitAndResetTag(created);
-            });
-        }
+            })
+        );
+    }
+
+    private updateTag(tag: Tag) {
+        // tag has not been updated
+        if (this.pendingColor() === tag.color) return of(tag);
+
+        return this.tagService.update(tag.id, { label: tag.label, color: this.pendingColor() }).pipe(
+            tap(updated => {
+                this.tags.update(list => list.map(t => t.id === updated.id ? updated : t));
+                this.tagChange.emit(updated);
+            })
+        );
     }
 
     private emitAndResetTag(tag: Tag | null = null){

@@ -32,7 +32,7 @@
         <app-arc-task-recurrence />
 
         <div class="add-task-row">
-            <app-primary-btn (click)="addTask()" [disabled]="tasks().length === MAX_NUMBER_OF_TASKS">
+            <app-primary-btn (click)="addTask($event)" [disabled]="tasks().length === MAX_NUMBER_OF_TASKS">
                 <mat-icon>add</mat-icon>
                 Add task
             </app-primary-btn>
