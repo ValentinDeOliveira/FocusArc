@@ -1,49 +1,51 @@
 <label class="label">Tag <span class="optional">(optional)</span></label>
 
-<div class="trigger" [class.open]="isOpen()" (click)="openDropdown()">
-    @if (selectedTag()) {
-        <app-tag-pill [tag]="selectedTag()!"/>
-        <mat-icon class="clear-icon" (click)="removeTag($event)">close</mat-icon>
-    } @else {
-        <input
-            class="name-input"
-            type="text"
-            placeholder="Select or create a tag"
-            [value]="newTagName()"
-            [maxLength]="TAG_MAX_LENGTH"
-            (input)="newTagName.set($any($event.target).value)"
-            (keydown.enter)="createTagOnEnter($event)"
-        />
+<div class="trigger-container">
+    <div class="trigger" [class.open]="isOpen()" (click)="openDropdown()">
+        @if (selectedTag()) {
+            <app-tag-pill [tag]="selectedTag()!"/>
+            <mat-icon class="clear-icon" (click)="removeTag($event)">close</mat-icon>
+        } @else {
+            <input
+                class="name-input"
+                type="text"
+                placeholder="Select or create a tag"
+                [value]="newTagName()"
+                [maxLength]="TAG_MAX_LENGTH"
+                (input)="newTagName.set($any($event.target).value)"
+                (keydown.enter)="createTagOnEnter($event)"
+            />
+        }
+        <mat-icon class="chevron" (click)="toggleDropdown($event)">expand_more</mat-icon>
+    </div>
+
+    @if (isOpen()) {
+        <div class="dropdown">
+            @if (availableTags().length > 0) {
+                <div class="options">
+                    @for (tag of availableTags(); track tag.id) {
+                        <button class="option" (click)="selectTag(tag)">
+                            <app-tag-pill [tag]="tag"/>
+                        </button>
+                    }
+                </div>
+            }
+            <div class="new-section">
+                <span class="new-label">New tag color</span>
+                <div class="swatches">
+                    @for (key of TAG_COLORS_KEYS; track key) {
+                        <button
+                            class="swatch"
+                            [class.selected]="pendingColor() === key"
+                            [style.background-color]="TAG_COLORS[key]"
+                            [title]="key | capitalize"
+                            (click)="selectColor(key)"
+                        ></button>
+                    }
+                </div>
+            </div>
+        </div>
     }
-    <mat-icon class="chevron" (click)="toggleDropdown($event)">expand_more</mat-icon>
 </div>
 
 <app-char-counter [current]="selectedTag() ? 0 : newTagName().length" [max]="TAG_MAX_LENGTH" />
-
-@if (isOpen()) {
-    <div class="dropdown">
-        @if (availableTags().length > 0) {
-            <div class="options">
-                @for (tag of availableTags(); track tag.id) {
-                    <button class="option" (click)="selectTag(tag)">
-                        <app-tag-pill [tag]="tag"/>
-                    </button>
-                }
-            </div>
-        }
-        <div class="new-section">
-            <span class="new-label">New tag color</span>
-            <div class="swatches">
-                @for (key of TAG_COLORS_KEYS; track key) {
-                    <button
-                        class="swatch"
-                        [class.selected]="pendingColor() === key"
-                        [style.background-color]="TAG_COLORS[key]"
-                        [title]="key | capitalize"
-                        (click)="selectColor(key)"
-                    ></button>
-                }
-            </div>
-        </div>
-    </div>
-}

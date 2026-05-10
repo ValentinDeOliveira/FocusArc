@@ -10,12 +10,12 @@
     flex: 1;
     padding: 0.5rem 1rem;
     border: none;
-    border-radius: 0.6rem;
+    border-radius: 0.5rem;
     font-size: 0.9375rem;
     font-weight: 500;
     cursor: pointer;
     background: transparent;
-    color: var(--color-text-muted);
+    color: var(--color-text-secondary);
     transition: background 0.15s, color 0.15s, box-shadow 0.15s;
 }
 
