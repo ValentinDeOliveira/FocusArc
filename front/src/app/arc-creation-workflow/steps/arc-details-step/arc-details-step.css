@@ -1,17 +1,18 @@
 .dates-container {
     display: flex;
     justify-content: space-between;
-    gap: 10px;
+    gap: 16px;
+    margin-bottom: 1.5rem;
 }
 
 .card-header .title {
     font-size: 1.5rem;
     font-weight: 600;
-    margin-bottom: 6px;
+    margin-bottom: 0.3rem;
 }
 
 .card-header .subtitle {
     font-size: 1rem;
     color: var(--color-text-secondary);
-    margin-bottom: 10px;
+    margin-bottom: 1rem;
 }

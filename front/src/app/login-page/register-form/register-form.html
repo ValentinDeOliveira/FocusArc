@@ -3,21 +3,24 @@
 }
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
-  <div class="field">
-    <label for="reg-name">Name</label>
-    <input id="reg-name" type="text" formControlName="name" placeholder="Your name" autocomplete="name" />
-    @if (form.get('name')?.invalid && form.get('name')?.touched) {
-      <span class="field-error">Name is required.</span>
-    }
-  </div>
+  <app-form-input-field
+    label="Name"
+    inputId="reg-name"
+    placeholder="Your name"
+    autocomplete="name"
+    [control]="$any(form.get('name'))"
+    errorMessage="Name is required."
+  />
 
-  <div class="field">
-    <label for="reg-email">Email address</label>
-    <input id="reg-email" type="email" formControlName="email" placeholder="you@example.com" autocomplete="email" />
-    @if (form.get('email')?.invalid && form.get('email')?.touched) {
-      <span class="field-error">Enter a valid email.</span>
-    }
-  </div>
+  <app-form-input-field
+    label="Email address"
+    inputId="reg-email"
+    type="email"
+    placeholder="you@example.com"
+    autocomplete="email"
+    [control]="$any(form.get('email'))"
+    errorMessage="Enter a valid email."
+  />
 
   <app-password-field
     inputId="reg-password"

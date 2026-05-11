@@ -28,7 +28,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
-import static com.valentin_d.focusarc.shared.TimeConstraints.MINUTES_PER_DAY;
+import static com.valentin_d.focusarc.shared.TimeConstraints.MAX_MINUTES_PER_TASK;
 
 @Service
 @Validated
@@ -178,13 +178,13 @@ public class TaskService {
     }
 
     private void assertMinutes(int minutes) {
-        if (minutes < 0 || minutes > MINUTES_PER_DAY) {
+        if (minutes < 0 || minutes > MAX_MINUTES_PER_TASK) {
             throw new TaskInvalidMinuteException(minutes);
         }
     }
 
     private void assertMinutes(TaskId taskId, int minutes) {
-        if (minutes < 0 || minutes > MINUTES_PER_DAY) {
+        if (minutes < 0 || minutes > MAX_MINUTES_PER_TASK) {
             throw new TaskInvalidMinuteException(taskId, minutes);
         }
     }
@@ -220,7 +220,7 @@ public class TaskService {
     }
 
     private void assertNotOverlapping(@NotNull ChapterId chapterId,
-                                      @Positive @Max(MINUTES_PER_DAY) int estimatedMinutes,
+                                      @Positive @Max(MAX_MINUTES_PER_TASK) int estimatedMinutes,
                                       @FutureOrPresent Instant scheduledAt) {
         final var estimatedEnd = scheduledAt.plus(estimatedMinutes, ChronoUnit.MINUTES);
         if (taskLoader.existForChapterAtTime(chapterId, scheduledAt, estimatedEnd)) {
@@ -229,7 +229,7 @@ public class TaskService {
     }
 
     private void assertNotOverlapping(@NotNull ChapterId chapterId,
-                                      @Positive @Max(MINUTES_PER_DAY) int estimatedMinutes,
+                                      @Positive @Max(MAX_MINUTES_PER_TASK) int estimatedMinutes,
                                       @FutureOrPresent Instant scheduledAt,
                                       @NotNull TaskId taskId) {
         final var estimatedEnd = scheduledAt.plus(estimatedMinutes, ChronoUnit.MINUTES);

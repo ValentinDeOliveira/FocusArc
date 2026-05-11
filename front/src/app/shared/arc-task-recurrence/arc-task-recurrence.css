@@ -6,7 +6,6 @@
 
 .recurrence label {
     font-size: 0.875rem;
-    font-weight: 500;
 }
 
 .pill-group {
@@ -18,7 +17,7 @@
 .pill {
     padding: 6px 16px;
     border-radius: 999px;
-    border: 1.5px solid var(--color-border, #d1d5db);
+    border: 1px solid var(--color-border, #d1d5db);
     background: transparent;
     font-size: 0.875rem;
     cursor: pointer;
@@ -26,10 +25,11 @@
     transition: border-color 0.15s, color 0.15s;
 }
 
-.pill.active {
+.pill.active,
+.preset-chip.active {
     border-color: var(--color-primary, #3b5bdb);
+    background: color-mix(in srgb, var(--color-primary, #3b5bdb) 8%, transparent);
     color: var(--color-primary, #3b5bdb);
-    font-weight: 500;
 }
 
 .days-section {
@@ -51,7 +51,6 @@
     border: 1.5px solid var(--color-border, #d1d5db);
     background: transparent;
     font-size: 0.8rem;
-    font-weight: 500;
     cursor: pointer;
     color: inherit;
     transition: background 0.15s, color 0.15s, border-color 0.15s;
@@ -65,8 +64,8 @@
 
 .time-duration-row {
     display: flex;
-    gap: 10px;
-    align-items: flex-end;
+    gap: 16px;
+    align-items: flex-start;
 }
 
 .time-duration-row app-time-field {
@@ -76,7 +75,7 @@
 .duration-wrapper {
     display: flex;
     flex-direction: column;
-    gap: 6px;
+    flex: 1;
 }
 
 .duration-row {
@@ -101,18 +100,12 @@
 .preset-chip {
     padding: 4px 10px;
     border-radius: 999px;
-    border: 1.5px solid var(--color-border, #d1d5db);
+    border: 1px solid var(--color-border, #d1d5db);
     background: transparent;
     font-size: 0.8rem;
     cursor: pointer;
     color: inherit;
     transition: border-color 0.15s, color 0.15s;
-}
-
-.preset-chip.active {
-    border-color: var(--color-primary, #3b5bdb);
-    color: var(--color-primary, #3b5bdb);
-    font-weight: 500;
 }
 
 .n-days-recurrence {

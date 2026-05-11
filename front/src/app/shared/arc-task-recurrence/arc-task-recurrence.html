@@ -6,7 +6,9 @@
                 class="pill"
                 [class.active]="selected() === option"
                 (click)="selected.set(option)"
-            >{{ RecurrenceLabel[option] }}</button>
+            >
+                {{ RecurrenceLabel[option] }}
+            </button>
         }
     </div>
 
@@ -27,7 +29,7 @@
     } @else if (selected() === RecurrenceType.EVERY_N_DAYS) {
         <div class="n-days-recurrence">
             <span>Every</span>
-            <input type="number" max="6" min="1" [value]="everyNDays()" (change)="everyNDays.set(+$any($event.target).value)" style="width: 72px;" />
+            <app-number-field [min]="1" [max]="6" [(value)]="everyNDays" (change)="everyNDays.set(+$any($event.target).value)" />
             <span>days</span>
         </div>
     }

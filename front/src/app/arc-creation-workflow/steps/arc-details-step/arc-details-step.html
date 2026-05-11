@@ -1,5 +1,5 @@
 <app-card-page-layout
-    title="Create your Arc"
+    heading="Create your Arc"
     subtitle="Define a goal and time span to start tracking your focus."
 >
     <app-arc-creation-stepper slot="stepper" />
@@ -13,6 +13,7 @@
         type="text"
         placeholder="e.g Q2 Growth, Learn Rust, Ship v1..."
         [error]="arcNameError()"
+        [maxLength]="FIELD_LIMITS.ARC_NAME"
         (valueChange)="arcName.set($event)"
     />
 
@@ -23,6 +24,5 @@
 
     <app-primary-btn [fullWidth]="true" (click)="goToNextStep()">
         Continue to tasks
-        <mat-icon>arrow_right_alt</mat-icon>
     </app-primary-btn>
 </app-card-page-layout>

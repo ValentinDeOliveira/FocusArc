@@ -6,7 +6,7 @@ import {booleanAttribute, Component, input} from '@angular/core';
     styleUrl: './card-page-layout.css',
 })
 export class CardPageLayout {
-    title = input.required<string>();
+    heading = input.required<string>();
     subtitle = input.required<string>();
     wide = input(false, { transform: booleanAttribute });
 }

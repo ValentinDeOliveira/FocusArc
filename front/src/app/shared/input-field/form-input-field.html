@@ -1,0 +1,14 @@
+<div class="field">
+  <label [for]="effectiveId">{{ label }}</label>
+  <input
+    [id]="effectiveId"
+    [type]="type"
+    [formControl]="control"
+    [placeholder]="placeholder"
+    [attr.autocomplete]="autocomplete || null"
+    [class.has-error]="control.invalid && control.touched"
+  />
+  @if (control.invalid && control.touched) {
+    <span class="field-error">{{ errorMessage }}</span>
+  }
+</div>

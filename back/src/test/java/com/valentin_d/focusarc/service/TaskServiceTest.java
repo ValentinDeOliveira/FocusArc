@@ -36,7 +36,7 @@ import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapter;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.aChapterWithArcId;
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.UserFactory.aUser;
-import static com.valentin_d.focusarc.shared.TimeConstraints.MINUTES_PER_DAY;
+import static com.valentin_d.focusarc.shared.TimeConstraints.MAX_MINUTES_PER_TASK;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -371,7 +371,7 @@ class TaskServiceTest {
     private static Stream<Arguments> provideTaskCompleteDtos() {
         return Stream.of(
                 Arguments.of(aTaskCompleteDtoWithMinutes(-10)),
-                Arguments.of(aTaskCompleteDtoWithMinutes(MINUTES_PER_DAY + 1))
+                Arguments.of(aTaskCompleteDtoWithMinutes(MAX_MINUTES_PER_TASK + 1))
             );
     }
 

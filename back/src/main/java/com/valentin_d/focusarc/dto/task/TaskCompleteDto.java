@@ -1,8 +1,5 @@
 package com.valentin_d.focusarc.dto.task;
 
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Positive;
+import com.valentin_d.focusarc.util.validation.ValidMinutes;
 
-import static com.valentin_d.focusarc.shared.TimeConstraints.MINUTES_PER_DAY;
-
-public record TaskCompleteDto(@Positive @Max(MINUTES_PER_DAY) int completedMinutes){}
+public record TaskCompleteDto(@ValidMinutes int completedMinutes){}

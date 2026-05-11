@@ -12,7 +12,8 @@ import {MatDatepicker, MatDatepickerInput, MatDatepickerToggle} from '@angular/m
     templateUrl: './date-select.html',
     styleUrls: [
         './date-select.css',
-        '../form-shared.css',
+        '../input-field/input-field.css',
+        '../form-shared.css'
     ],
 })
 export class DateSelect implements OnInit {

@@ -2,12 +2,13 @@ import {Component, inject} from '@angular/core';
 import {FormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
 import {HttpErrorResponse} from '@angular/common/http';
 import {PasswordField} from '../../shared/password-field/password-field';
+import {FormInputField} from '../../shared/input-field/form-input-field';
 import {ApiErrorType} from '../../models/api-error.model';
 import {AuthFormBase} from '../auth-form-base';
 
 @Component({
     selector: 'app-register-form',
-    imports: [ReactiveFormsModule, PasswordField],
+    imports: [ReactiveFormsModule, PasswordField, FormInputField],
     templateUrl: './register-form.html',
     styleUrl: '../../shared/form-shared.css',
 })
