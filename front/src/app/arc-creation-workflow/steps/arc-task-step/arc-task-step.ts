@@ -116,9 +116,10 @@ export class ArcTaskStep {
             tagId: task.tag?.id,
         }));
 
-        this.arcService.massCreate(arcId!, dtos).subscribe();
-
-        this.nextStep.emit();
+        this.arcService.massCreate(arcId!, dtos).subscribe({
+            next: () => this.nextStep.emit(),
+            error: () => this.toastr.error('An error occurred.')
+        });
     }
 
     private toInstant(startTime: string): string {

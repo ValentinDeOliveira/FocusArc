@@ -4,20 +4,22 @@
     </div>
     <hr>
     <mat-card-content>
-        <div>
-            <mat-icon>schedule</mat-icon>
-            <span class="stat-left">Total focus time</span>
-            <span class="stat-right">{{ getCompletedTime() }}</span>
-        </div>
+        @if (shouldDisplayCompletedTime) {
+            <div>
+                <mat-icon>schedule</mat-icon>
+                <span class="stat-left">Total focus time</span>
+                <span class="stat-right">{{ completedTime }}</span>
+            </div>
+        }
         <div>
             <mat-icon>local_fire_department</mat-icon>
             <span class="stat-left">Streak</span>
-            <span class="stat-right">{{arcSummary.daysStreak}} days</span>
+            <span class="stat-right">{{arcSummary().daysStreak}} days</span>
         </div>
         <div>
             <mat-icon>date_range</mat-icon>
             <span class="stat-left">Remaining days</span>
-            <span class="stat-right">{{ getRemainingDays() }} days</span>
+            <span class="stat-right">{{ remainingDays }} days</span>
         </div>
     </mat-card-content>
 </mat-card>
