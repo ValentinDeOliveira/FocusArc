@@ -8,8 +8,7 @@ import {TaskService} from '../../../core/services/task.service';
 import {TagStore} from '../../../core/stores/tag.store';
 import {formatMinutes} from '../../../utils/time.utils';
 import {isTaskEnded} from '../../../utils/task.utils';
-import {TaskStatusBadge} from '../../../shared/task-status-badge/task-status-badge';
-import {TaskInfo} from '../../../shared/task-info/task-info';
+import {TaskInfoDashboard} from '../../../shared/task-info-dashboard/task-info-dashboard';
 
 export enum ChapterState {
     DONE = 'done',
@@ -23,8 +22,7 @@ export enum ChapterState {
     imports: [
         MatIcon,
         MatIconButton,
-        TaskStatusBadge,
-        TaskInfo
+        TaskInfoDashboard
     ],
     templateUrl: './arc-view-chapter.html',
     styleUrl: './arc-view-chapter.css',

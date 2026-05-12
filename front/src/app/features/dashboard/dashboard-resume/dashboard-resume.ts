@@ -16,8 +16,7 @@ import {HttpErrorResponse} from '@angular/common/http';
 import {ApiErrorType} from '../../../models/api-error.model';
 import {isTaskEnded} from '../../../utils/task.utils';
 import {PrimaryButton} from '../../../shared/primary-button/primary-button';
-import {TaskStatusBadge} from '../../../shared/task-status-badge/task-status-badge';
-import {TaskInfo} from '../../../shared/task-info/task-info';
+import {TaskInfoDashboard} from '../../../shared/task-info-dashboard/task-info-dashboard';
 
 @Component({
     selector: 'app-dashboard-resume',
@@ -25,8 +24,7 @@ import {TaskInfo} from '../../../shared/task-info/task-info';
         DashboardTaskTimer,
         TaskCreation,
         PrimaryButton,
-        TaskStatusBadge,
-        TaskInfo
+        TaskInfoDashboard
     ],
     templateUrl: './dashboard-resume.html',
     styleUrl: './dashboard-resume.css',
