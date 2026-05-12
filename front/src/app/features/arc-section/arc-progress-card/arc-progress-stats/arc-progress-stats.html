@@ -1,24 +1,30 @@
 <mat-card class="arc-progress-stats-container">
     <div class="arc-progress-header">
-        <span class="arc-progress-title">ARC PROGRESS</span>
+        <span class="arc-progress-title">ARC STATS</span>
     </div>
     <hr>
     <mat-card-content>
         @if (shouldDisplayCompletedTime) {
-            <div>
-                <mat-icon>schedule</mat-icon>
+            <div class="stat-row">
+                <div class="stat-icon icon-time">
+                    <mat-icon>schedule</mat-icon>
+                </div>
                 <span class="stat-left">Total focus time</span>
                 <span class="stat-right">{{ completedTime }}</span>
             </div>
         }
-        <div>
-            <mat-icon>local_fire_department</mat-icon>
+        <div class="stat-row">
+            <div class="stat-icon icon-streak">
+                <mat-icon>local_fire_department</mat-icon>
+            </div>
             <span class="stat-left">Streak</span>
             <span class="stat-right">{{arcSummary().daysStreak}} days</span>
         </div>
-        <div>
-            <mat-icon>date_range</mat-icon>
-            <span class="stat-left">Remaining days</span>
+        <div class="stat-row">
+            <div class="stat-icon icon-remaining">
+                <mat-icon>date_range</mat-icon>
+            </div>
+            <span class="stat-left">Remaining</span>
             <span class="stat-right">{{ remainingDays }} days</span>
         </div>
     </mat-card-content>

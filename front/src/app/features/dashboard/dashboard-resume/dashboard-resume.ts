@@ -1,9 +1,8 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
 import {TaskService} from '../../../core/services/task.service';
 import {Task, TaskCompletedDto} from '../../../models/task.model';
-import {DashboardTask} from '../dashboard-task/dashboard-task';
 import {ChapterService} from '../../../core/services/chapter.service';
-import {formatDateLong} from '../../../utils/date.utils';
+import {formatDateLong, formatTimeHHmm} from '../../../utils/date.utils';
 import {formatMinutes} from '../../../utils/time.utils';
 import {DashboardTaskTimer} from '../dashboard-task-timer/dashboard-task-timer';
 import {TagStore} from '../../../core/stores/tag.store';
@@ -15,13 +14,19 @@ import {ChapterSummaryResponseDto} from '../../../models/chapter.model';
 import {ArcService} from '../../../core/services/arc.service';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ApiErrorType} from '../../../models/api-error.model';
+import {isTaskEnded} from '../../../utils/task.utils';
+import {PrimaryButton} from '../../../shared/primary-button/primary-button';
+import {TaskStatusBadge} from '../../../shared/task-status-badge/task-status-badge';
+import {TaskInfo} from '../../../shared/task-info/task-info';
 
 @Component({
     selector: 'app-dashboard-resume',
     imports: [
-        DashboardTask,
         DashboardTaskTimer,
-        TaskCreation
+        TaskCreation,
+        PrimaryButton,
+        TaskStatusBadge,
+        TaskInfo
     ],
     templateUrl: './dashboard-resume.html',
     styleUrl: './dashboard-resume.css',
@@ -67,8 +72,16 @@ export class DashboardResume implements OnInit {
         return formatDateLong(Date.now());
     }
 
+    taskSummary(task: Task): string {
+        return [formatTimeHHmm(task.startAt) + ' - ' + formatTimeHHmm(task.endAt), formatMinutes(task.estimatedMinutes)].join(' · ');
+    }
+
     getPlannedTime() {
         return formatMinutes(this.chapterSummary()!.estimatedMinutes);
+    }
+
+    canStartTask(task: Task): boolean {
+        return !isTaskEnded(task) && !this.activeTask();
     }
 
     get getNumberOfCompletedTasks() {
@@ -108,4 +121,6 @@ export class DashboardResume implements OnInit {
             this.tasks.set(tasks);
         })
     }
+
+    protected readonly isTaskEnded = isTaskEnded;
 }

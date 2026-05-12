@@ -41,46 +41,12 @@
 }
 
 .task-list {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-    margin-top: 0.5rem;
-}
-
-.task-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 0.75rem 1rem;
-    border: 1px solid var(--color-border);
-    border-left-width: 4px;
-    border-radius: 0.75rem;
+    margin-top: 24px;
     background: var(--color-surface);
-    gap: 1rem;
-}
-
-.task-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    flex: 1;
-}
-
-.task-name {
-    font-weight: 600;
-    font-size: 0.95rem;
-    color: var(--color-text);
-}
-
-.task-meta {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.task-summary {
-    font-size: 0.8rem;
-    color: var(--color-text-muted);
+    border-radius: 8px;
+    border: 1px solid var(--color-border);
+    box-shadow: 0 4px 16px var(--color-primary-shadow), 0 1px 4px rgba(0, 0, 0, 0.06);
+    overflow: hidden;
 }
 
 .task-remove {

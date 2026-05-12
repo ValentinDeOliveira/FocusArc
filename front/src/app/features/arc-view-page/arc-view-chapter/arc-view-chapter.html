@@ -38,7 +38,13 @@
     @if (isChapterExpanded) {
         <div class="chapter-tasks">
             @for (task of tasks(); track task.id) {
-                <app-task-info [task]="task" [tag]="tagStore.byId(task.tagId)!"/>
+                <app-task-info
+                    [tag]="tagStore.byId(task.tagId)!"
+                    [name]="task.name"
+                    [summary]="taskSummary(task)"
+                    [strikethrough]="isTaskEnded(task)">
+                    <app-task-status-badge [status]="task.status"/>
+                </app-task-info>
             }
         </div>
     }

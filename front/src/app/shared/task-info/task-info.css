@@ -1,37 +1,37 @@
+.task-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.75rem 1rem;
+    background: var(--color-surface);
+    gap: 0.75rem;
+}
+
+.tag-indicator {
+    width: 3px;
+    align-self: stretch;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
 .task-info {
     display: flex;
     flex-direction: column;
     flex: 1;
-    min-width: 0;
 }
 
 .task-name {
-    font-size: 1.05rem;
-    font-weight: 500;
+    font-weight: 600;
     color: var(--color-text);
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
 }
 
-.task-name.line-through {
-    text-decoration: line-through;
-    color: var(--color-text-faint);
+.task-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
-.task-time {
-    font-size: 0.9rem;
-    color: var(--color-text-faint);
-    margin-top: 3px;
-}
-
-.task-duration {
-    font-size: 0.95rem;
+.task-summary {
+    font-size: 0.85rem;
     color: var(--color-text-muted);
-    background: var(--color-surface-subtle);
-    padding: 3px 10px;
-    border-radius: 6px;
-    white-space: nowrap;
-    min-width: 48px;
-    text-align: center;
 }

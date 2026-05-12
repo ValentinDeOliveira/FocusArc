@@ -1,12 +1,15 @@
 import {Component, inject, Input, OnInit, signal} from '@angular/core';
 import {Chapter} from '../../../models/chapter.model';
 import {MatIcon} from '@angular/material/icon';
-import {formatDateFull, formatDateLong} from '../../../utils/date.utils';
+import {formatDateFull, formatDateLong, formatTimeHHmm} from '../../../utils/date.utils';
 import {MatIconButton} from '@angular/material/button';
 import {Task} from '../../../models/task.model';
 import {TaskService} from '../../../core/services/task.service';
-import {TaskInfo} from '../../../shared/task-info/task-info';
 import {TagStore} from '../../../core/stores/tag.store';
+import {formatMinutes} from '../../../utils/time.utils';
+import {isTaskEnded} from '../../../utils/task.utils';
+import {TaskStatusBadge} from '../../../shared/task-status-badge/task-status-badge';
+import {TaskInfo} from '../../../shared/task-info/task-info';
 
 export enum ChapterState {
     DONE = 'done',
@@ -20,6 +23,7 @@ export enum ChapterState {
     imports: [
         MatIcon,
         MatIconButton,
+        TaskStatusBadge,
         TaskInfo
     ],
     templateUrl: './arc-view-chapter.html',
@@ -72,4 +76,10 @@ export class ArcViewChapter implements OnInit {
             this.tasks.set(tasks);
         });
     }
+
+    protected taskSummary(task: Task) {
+        return [formatTimeHHmm(task.startAt) + ' - ' + formatTimeHHmm(task.endAt), formatMinutes(task.estimatedMinutes)].join(' · ');
+    }
+
+    protected readonly isTaskEnded = isTaskEnded;
 }

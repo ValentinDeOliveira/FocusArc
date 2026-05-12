@@ -10,13 +10,12 @@ import {WeekSchedule} from '../../../shared/week-schedule/week-schedule';
 import {ArcTask} from '../../../shared/arc-task.model';
 import {ToastrService} from 'ngx-toastr';
 import {Tag} from '../../../models/tag.model';
-import {color} from '../../../models/tag-colors';
-import {TagPill} from '../../../shared/tag-pill/tag-pill';
 import {TagSelector} from '../../../shared/tag-selector/tag-selector';
 import {ContextStore} from '../../../core/stores/context.store';
 import {ArcService} from '../../../core/services/arc.service';
 import {TaskRecurrenceDto} from '../../../models/task.model';
 import {RecurrenceLabel, toRecurrencePayload} from '../../../models/recurrence.model';
+import {TaskInfo} from '../../../shared/task-info/task-info';
 
 @Component({
     selector: 'app-arc-task-step',
@@ -28,8 +27,9 @@ import {RecurrenceLabel, toRecurrencePayload} from '../../../models/recurrence.m
         ArcTaskRecurrence,
         InputField,
         WeekSchedule,
-        TagPill,
         TagSelector,
+        TaskInfo,
+
     ],
     templateUrl: './arc-task-step.html',
     styleUrl: './arc-task-step.css'
@@ -40,7 +40,6 @@ export class ArcTaskStep {
     nextStep = output();
     MAX_NUMBER_OF_TASKS = 5;
     protected readonly FIELD_LIMITS = FIELD_LIMITS;
-    protected readonly tagColor = color;
 
     taskName = signal('');
     tasks = signal<ArcTask[]>([]);

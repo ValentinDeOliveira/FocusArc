@@ -18,7 +18,12 @@
     }
     <div class="task-list-card">
         @for (task of tasks(); track task.id) {
-            <app-dashboard-task [task]="task" [tag]="tagStore.byId(task.tagId)!" [hasActiveTask]="!!activeTask()" (started)="setActiveTask($event)" />
+            <app-task-info [name]="task.name" [summary]="taskSummary(task)" [tag]="tagStore.byId(task.tagId)!" [strikethrough]="isTaskEnded(task)">
+                <app-task-status-badge [status]="task.status"/>
+                @if (canStartTask(task)) {
+                    <app-primary-btn (click)="setActiveTask(task)">Start</app-primary-btn>
+                }
+            </app-task-info>
             <div class="task-divider"></div>
         }
         <app-task-creation (taskCreated)="onTaskCreated()"/>
