@@ -1,3 +1,29 @@
+.add-task-btn mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+    line-height: 18px;
+}
+
+.add-task-btn {
+    width: 100%;
+    padding: 0.8rem 1rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    font-size: 1.15rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.3rem;
+}
+
+.add-task-btn:hover {
+    color: var(--color-primary);
+    background: var(--color-surface-hover);
+}
+
 .cancel-btn {
     background: none;
     border: none;
