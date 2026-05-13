@@ -34,24 +34,5 @@
         </div>
     }
 
-    <div class="time-duration-row">
-        <app-time-field label="Start time" (timeChange)="startTime.set($event)" />
-
-        <div class="duration-wrapper">
-            <label>Duration</label>
-            <div class="duration-row">
-                <app-number-field [min]="5" [max]="480" [step]="5" [(value)]="duration" />
-                <span class="duration-unit">min</span>
-                <div class="duration-presets">
-                    @for (preset of durationPresets; track preset) {
-                        <button
-                            class="preset-chip"
-                            [class.active]="duration() === preset"
-                            (click)="duration.set(preset)"
-                        >{{ preset }}m</button>
-                    }
-                </div>
-            </div>
-        </div>
-    </div>
+    <app-task-time-duration [(startTime)]="startTime" [(duration)]="duration" displayPresets />
 </div>

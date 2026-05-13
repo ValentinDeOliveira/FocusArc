@@ -2,11 +2,9 @@
     <button class="add-task-btn" (click)="addTask()"><mat-icon>add</mat-icon> Add task</button>
 } @else {
     <app-task-row>
-        <app-task-info-edit
-            (nameChange)="name = $event"
-            (scheduledAtChange)="scheduledAt = $event"
-            (estimatedMinutesChange)="estimatedMinutes = $event"
-        />
+        <app-task-name-field (valueChange)="nameChange.emit($event)" />
+        <app-task-time-duration/>
+        <app-tag-selector/>
         <button class="cancel-btn" (click)="cancel()">
             <mat-icon>close</mat-icon>
         </button>
