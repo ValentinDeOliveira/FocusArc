@@ -1,5 +1,7 @@
 <div class="field">
-    @if (label()) {<label [for]="effectiveId()">{{ label() }}</label>}
+    @if (label()) {
+        <label [for]="effectiveId()">{{ label() }}</label>
+    }
     <input
         [id]="effectiveId()"
         type="number"
