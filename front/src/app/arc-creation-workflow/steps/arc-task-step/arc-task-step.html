@@ -13,15 +13,7 @@
         <span class="task-counter">New task ({{tasks().length}} / {{MAX_NUMBER_OF_TASKS}})</span>
 
         <div class="fields-row">
-            <app-input-field
-                label="Task name"
-                type="text"
-                placeholder="e.g Morning run, Deep work block..."
-                [value]="taskName()"
-                [error]="taskNameError()"
-                (valueChange)="taskName.set($event)"
-                [maxLength]="FIELD_LIMITS.TASK_NAME"
-            />
+            <app-task-name-field />
 
             <app-tag-selector
                 [selectedTag]="selectedTag()"

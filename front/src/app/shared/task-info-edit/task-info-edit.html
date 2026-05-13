@@ -1,11 +1,4 @@
-<input
-    class="task-name-input"
-    type="text"
-    [(ngModel)]="name"
-    (ngModelChange)="nameChange.emit($event)"
-    placeholder="Task name"
-    autofocus
-/>
+<app-task-name-field (valueChange)="nameChange.emit($event)" />
 <div class="task-time-row">
     <input
         class="task-time-input"

@@ -2,7 +2,6 @@
     <button class="add-task-btn" (click)="addTask()"><mat-icon>add</mat-icon> Add task</button>
 } @else {
     <app-task-row>
-        <app-tag-picker [selectedTag]="selectedTag" (tagChange)="onTagChange($event)"/>
         <app-task-info-edit
             (nameChange)="name = $event"
             (scheduledAtChange)="scheduledAt = $event"

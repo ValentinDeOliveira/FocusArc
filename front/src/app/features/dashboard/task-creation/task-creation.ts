@@ -2,7 +2,6 @@ import {Component, inject, output} from '@angular/core';
 import {PrimaryButton} from '../../../shared/primary-button/primary-button';
 import {MatIcon} from '@angular/material/icon';
 import {Tag} from '../../../models/tag.model';
-import {TagPicker} from '../../../shared/tag-picker/tag-picker';
 import {TaskRow} from '../../../shared/task-row/task-row';
 import {TaskInfoEdit} from '../../../shared/task-info-edit/task-info-edit';
 import {TaskCreationDto} from '../../../models/task.model';
@@ -17,7 +16,6 @@ import {ToastrService} from 'ngx-toastr';
     imports: [
         PrimaryButton,
         MatIcon,
-        TagPicker,
         TaskRow,
         TaskInfoEdit,
     ],
