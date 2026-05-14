@@ -1,6 +1,4 @@
 .layout {
-    display: flex;
-    min-height: 100vh;
     background-color: var(--color-bg);
 }
 
@@ -23,10 +21,27 @@
 .sidebar {
     flex: 1;
     padding: 16px 16px 32px;
-    align-self: flex-start;
     position: sticky;
-    top: 32px;
-    display: flex;
-    flex-direction: column;
     gap: 16px;
+    min-width: 330px;
+}
+
+.stats-wrapper {
+    gap: 16px;
+}
+
+@media (max-width: 1024px) {
+    .main-content {
+        padding: 16px 5px 16px 20px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        gap: 8px;
+        padding: 16px 16px;
+    }
+    .stats-wrapper {
+        gap: 8px;
+    }
 }
