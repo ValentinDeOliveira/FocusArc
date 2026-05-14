@@ -6,9 +6,7 @@ import {TimeField} from '../time-field/time-field';
     selector: 'app-task-time-duration',
     imports: [NumberField, TimeField],
     templateUrl: './task-time-duration.html',
-    styleUrls: [
-        './task-time-duration.css',
-    ]
+    styleUrl: './task-time-duration.css',
 })
 export class TaskTimeDuration {
     startTime = model<string>('09:00');
