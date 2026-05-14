@@ -1,5 +1,8 @@
 @if (!isTaskCreation) {
-    <button class="add-task-btn" (click)="addTask()"><mat-icon>add</mat-icon> Add task</button>
+    <button class="add-task-btn" (click)="addTask()">
+        <mat-icon>add</mat-icon>
+        Add task
+    </button>
 } @else {
     <app-task-row>
         <app-task-name-field (valueChange)="nameChange.emit($event)" />

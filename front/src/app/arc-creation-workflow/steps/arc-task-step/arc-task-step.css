@@ -38,6 +38,7 @@
 .add-task-row {
     display: flex;
     justify-content: flex-end;
+    margin-top: 10px;
 }
 
 .task-list {
@@ -68,4 +69,5 @@
 .button-container {
     display: flex;
     justify-content: space-between;
+    margin-top: 16px;
 }
