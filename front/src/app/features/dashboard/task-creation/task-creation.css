@@ -33,6 +33,11 @@
     align-items: center;
     padding: 4px;
     border-radius: 6px;
+    align-self: center;
+}
+
+app-primary-btn {
+    align-self: center;
 }
 
 .cancel-btn:hover {
