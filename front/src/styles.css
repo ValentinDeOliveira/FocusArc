@@ -7,6 +7,10 @@
     margin-top: 16px;
 }
 
+html, body {
+    background-color: var(--color-bg);
+}
+
 :root {
     /* Primary */
     --color-primary:        #2563eb;
