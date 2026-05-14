@@ -20,6 +20,6 @@ export class ArcCreation {
     private router = inject(Router);
 
     goToDashboard() {
-        this.router.navigate(['/']);
+        void this.router.navigate(['/']);
     }
 }

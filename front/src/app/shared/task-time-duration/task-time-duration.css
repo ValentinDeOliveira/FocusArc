@@ -1,0 +1,55 @@
+.time-duration-row {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+}
+
+.time-duration-row app-time-field {
+    flex: 1;
+}
+
+.duration-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 0.375rem;
+}
+
+.duration-wrapper label {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--color-text);
+}
+
+.duration-row {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.duration-unit {
+    font-size: 0.875rem;
+}
+
+.duration-presets {
+    display: flex;
+    gap: 6px;
+}
+
+.preset-chip {
+    padding: 0.7rem 0.7rem;
+    border: 2px solid var(--color-border);
+    border-radius: 0.625rem;
+    font-size: 0.95rem;
+    cursor: pointer;
+    background: var(--color-surface);
+    color: var(--color-text);
+    outline: none;
+    transition: border-color 0.15s;
+    box-sizing: border-box;
+}
+
+.preset-chip.active {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    color: var(--color-primary);
+}

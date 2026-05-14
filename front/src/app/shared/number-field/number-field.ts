@@ -5,7 +5,7 @@ import {toKebabCase} from '../../utils/string.utils';
     selector: 'app-number-field',
     imports: [],
     templateUrl: './number-field.html',
-    styleUrls: ['./number-field.css', '../input-field/input-field.css'],
+    styleUrls: ['../input-field/input-field.css', './number-field.css'],
 })
 export class NumberField {
     label = input<string>('');

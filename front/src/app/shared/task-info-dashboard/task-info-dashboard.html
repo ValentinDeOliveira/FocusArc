@@ -1,0 +1,9 @@
+<app-task-info
+    [name]="task().name"
+    [summary]="taskSummary"
+    [strikethrough]="strikethrough()"
+    [tag]="tag()"
+>
+    <app-task-status-badge [status]="task().status"/>
+    <ng-content/>
+</app-task-info>

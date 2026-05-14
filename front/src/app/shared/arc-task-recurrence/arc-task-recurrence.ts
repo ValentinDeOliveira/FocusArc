@@ -1,8 +1,8 @@
 import {Component, computed, signal} from '@angular/core';
 import {NumberField} from '../number-field/number-field';
-import {TimeField} from '../time-field/time-field';
 import {RecurrenceLabel, RecurrenceType} from '../../models/recurrence.model';
 import {DAY_ABBREV_TO_ENUM, DayOfWeek} from '../../utils/date.utils';
+import {TaskTimeDuration} from '../task-time-duration/task-time-duration';
 
 export interface RecurrenceConfig {
     recurrence: RecurrenceType;
@@ -16,13 +16,10 @@ export interface RecurrenceConfig {
     selector: 'app-arc-task-recurrence',
     imports: [
         NumberField,
-        TimeField,
+        TaskTimeDuration,
     ],
     templateUrl: './arc-task-recurrence.html',
-    styleUrls: [
-        './arc-task-recurrence.css',
-        '../../shared/input-field/input-field.css'
-    ],
+    styleUrl: './arc-task-recurrence.css',
 })
 export class ArcTaskRecurrence {
     readonly options = Object.values(RecurrenceType);

@@ -1,4 +1,4 @@
-import {Component, Input} from '@angular/core';
+import {Component, input} from '@angular/core';
 import {TaskStatus, TaskStatusLabel} from '../../models/task.model';
 import {enumToCssClass} from '../../utils/string.utils';
 
@@ -8,11 +8,14 @@ import {enumToCssClass} from '../../utils/string.utils';
     styleUrl: './task-status-badge.css',
 })
 export class TaskStatusBadge {
-    @Input({required: true}) status!: TaskStatus;
+    status = input.required<TaskStatus>();
+    shouldDisplayPlanned = input(false);
 
     protected readonly enumToCssClass = enumToCssClass;
 
     get label(): string {
-        return TaskStatusLabel[this.status];
+        return TaskStatusLabel[this.status()];
     }
+
+    protected readonly TaskStatus = TaskStatus;
 }

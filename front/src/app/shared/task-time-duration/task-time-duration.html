@@ -1,0 +1,30 @@
+<div class="time-duration-row">
+    <app-time-field label="Start time" (timeChange)="startTime.set($event)" />
+
+    <div class="duration-wrapper">
+        <label>Duration</label>
+        <div class="duration-row">
+            <div class="duration-presets">
+                @for (preset of durationPresets; track preset) {
+                    <button
+                        class="preset-chip"
+                        [class.active]="!displayCustom() && duration() === preset"
+                        (click)="onClickPreset(preset)">
+                        {{ preset }}m
+                    </button>
+                }
+                @if (!displayCustom()) {
+                    <button
+                        class="preset-chip"
+                        (click)="onClickCustom()">
+                        Custom
+                    </button>
+                }
+            </div>
+            @if (displayCustom()) {
+                <app-number-field [defaultValue]="durationPresets[1]" [min]="5" [max]="480" [step]="5" [(value)]="duration" />
+                <span class="duration-unit">min</span>
+            }
+        </div>
+    </div>
+</div>

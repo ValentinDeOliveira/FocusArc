@@ -1,30 +1,34 @@
-import {Component, inject, output} from '@angular/core';
+import {Component, EventEmitter, inject, Output, output} from '@angular/core';
 import {PrimaryButton} from '../../../shared/primary-button/primary-button';
 import {MatIcon} from '@angular/material/icon';
 import {Tag} from '../../../models/tag.model';
-import {TagPicker} from '../../../shared/tag-picker/tag-picker';
 import {TaskRow} from '../../../shared/task-row/task-row';
-import {TaskInfoEdit} from '../../../shared/task-info-edit/task-info-edit';
 import {TaskCreationDto} from '../../../models/task.model';
 import {TaskService} from '../../../core/services/task.service';
 import {ContextStore} from '../../../core/stores/context.store';
 import {HttpErrorResponse} from '@angular/common/http';
 import {getTaskError} from '../../../models/errors/task-error.model';
 import {ToastrService} from 'ngx-toastr';
+import {TagSelector} from '../../../shared/tag-selector/tag-selector';
+import {TaskNameField} from '../../../shared/input-field/task-name-field/task-name-field';
+import {TaskTimeDuration} from '../../../shared/task-time-duration/task-time-duration';
 
 @Component({
     selector: 'app-task-creation',
     imports: [
         PrimaryButton,
         MatIcon,
-        TagPicker,
         TaskRow,
-        TaskInfoEdit,
+        TagSelector,
+        TaskNameField,
+        TaskTimeDuration,
     ],
     templateUrl: './task-creation.html',
     styleUrl: './task-creation.css',
 })
 export class TaskCreation {
+    @Output() nameChange = new EventEmitter<string>();
+
     protected isTaskCreation = false;
     protected name = '';
     protected scheduledAt = '';

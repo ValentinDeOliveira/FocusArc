@@ -1,7 +1,9 @@
 @if (arc() && contextStore.arcSummary()) {
-    <app-arc-card-container
-        [arc]="arc()!"
-        [nbChapterCompleted]="contextStore.arcSummary()!.nbChapterCompleted"
-        [nbChapterTotal]="getNbTotalChapter()"/>
-    <app-arc-progress-stats [arc]="arc()!" [arcSummary]="contextStore.arcSummary()!"/>
+    <div class="wrapper">
+        <app-arc-card-container
+            [arc]="arc()!"
+            [nbChapterCompleted]="contextStore.arcSummary()!.nbChapterCompleted"
+            [nbChapterTotal]="getNbTotalChapter()"/>
+        <app-arc-progress-stats [arc]="arc()!" [arcSummary]="contextStore.arcSummary()!"/>
+    </div>
 }

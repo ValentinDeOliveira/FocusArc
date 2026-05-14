@@ -38,7 +38,7 @@
     @if (isChapterExpanded) {
         <div class="chapter-tasks">
             @for (task of tasks(); track task.id) {
-                <app-task-info [task]="task" [tag]="tagStore.byId(task.tagId)!"/>
+                <app-task-info-dashboard [task]="task"/>
             }
         </div>
     }

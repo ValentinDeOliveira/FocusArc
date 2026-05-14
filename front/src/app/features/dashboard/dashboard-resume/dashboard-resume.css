@@ -32,5 +32,4 @@
 .task-divider {
     height: 1px;
     background-color: var(--color-surface-subtle);
-    margin: 0 20px;
 }

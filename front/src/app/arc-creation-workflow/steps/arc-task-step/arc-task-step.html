@@ -13,15 +13,7 @@
         <span class="task-counter">New task ({{tasks().length}} / {{MAX_NUMBER_OF_TASKS}})</span>
 
         <div class="fields-row">
-            <app-input-field
-                label="Task name"
-                type="text"
-                placeholder="e.g Morning run, Deep work block..."
-                [value]="taskName()"
-                [error]="taskNameError()"
-                (valueChange)="taskName.set($event)"
-                [maxLength]="FIELD_LIMITS.TASK_NAME"
-            />
+            <app-task-name-field />
 
             <app-tag-selector
                 [selectedTag]="selectedTag()"
@@ -42,18 +34,9 @@
     @if (tasks().length > 0) {
         <div class="task-list">
             @for (task of tasks(); track task.id) {
-                <div class="task-card" [style.border-left-color]="task.tag ? tagColor(task.tag.color) : null">
-                    <div class="task-info">
-                        <span class="task-name">{{ task.name }}</span>
-                        <div class="task-meta">
-                            <span class="task-summary">{{ taskSummary(task) }}</span>
-                            @if (task.tag) {
-                                <app-tag-pill [tag]="task.tag"/>
-                            }
-                        </div>
-                    </div>
+                <app-task-info [name]="task.name" [summary]="taskSummary(task)" [tag]="task.tag ?? null">
                     <button class="task-remove" (click)="removeTask(task.id)">✕</button>
-                </div>
+                </app-task-info>
             }
         </div>
 

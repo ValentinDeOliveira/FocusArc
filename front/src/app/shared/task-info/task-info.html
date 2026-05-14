@@ -1,10 +1,14 @@
-<app-task-row class="hoverable">
-    <app-tag-picker [selectedTag]="tag" (tagChange)="updateTag($event)"/>
+<div class="task-card">
+    <div class="tag-indicator" [style.background-color]="tag() ? tagColor(tag()!.color) : 'transparent'"></div>
     <div class="task-info">
-        <span class="task-name" [class.line-through]="isTaskEnded(task)">{{ task.name }}</span>
-        <span class="task-time">{{ formatTimeHHmm(task.startAt) + ' - ' + formatTimeHHmm(task.endAt) }}</span>
+        <span class="task-name" [class.line-through]="strikethrough()">{{ name() }}</span>
+        <div class="task-meta">
+            <span class="task-summary">{{ summary() }}</span>
+            @if (tag()) {
+                <app-tag-pill [tag]="tag()!"/>
+            }
+        </div>
     </div>
-    <app-task-status-badge [status]="task.status"/>
-    <span class="task-duration">{{ formatMinutes(task.estimatedMinutes) }}</span>
+
     <ng-content/>
-</app-task-row>
+</div>
