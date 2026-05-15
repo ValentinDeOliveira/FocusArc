@@ -1,0 +1,20 @@
+@use '@angular/material' as mat;
+
+$font: system-ui, -apple-system, 'Segoe UI', sans-serif;
+
+$theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+  ),
+  typography: (
+    brand-family: $font,
+    plain-family: $font,
+  ),
+));
+
+@include mat.core();
+
+:root {
+  @include mat.all-component-themes($theme);
+}
