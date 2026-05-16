@@ -21,4 +21,12 @@ export class NumberField {
     private computedId = computed(() => toKebabCase(this.label()) || 'number-field');
     effectiveId = computed(() => this.id() || this.computedId());
     protected readonly HTMLInputElement = HTMLInputElement;
+
+    protected onValueChange(raw: number): void {
+        const s = this.step();
+        const mn = this.min() ?? 0;
+        const mx = this.max() ?? 1000;
+        const snapped = Math.round((raw - mn) / s) * s + mn;
+        this.value.set(Math.min(mx, Math.max(mn, snapped)));
+    }
 }

@@ -4,6 +4,14 @@
  * They must be imported globally from styles.css.
  */
 
+.duration-menu-panel .custom-label,
+.duration-menu-panel .custom-input,
+.duration-menu-panel .custom-unit,
+.duration-menu-panel .mat-mdc-menu-item .mat-mdc-menu-item-text {
+    font-size: 1.05rem !important;
+    color: var(--color-text);
+}
+
 .duration-menu-panel .mat-mdc-menu-item.option-active {
     color: var(--color-primary);
     background: color-mix(in srgb, var(--color-primary) 8%, transparent);
@@ -25,20 +33,4 @@
 
 .duration-menu-panel .custom-menu-row.option-active {
     background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-}
-
-.duration-menu-panel .custom-label {
-    font-size: 1rem;
-    color: var(--color-text);
-    flex: 1;
-}
-
-.duration-menu-panel .custom-input {
-    flex: 1;
-    font-size: 0.95rem;
-}
-
-.duration-menu-panel .custom-unit {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
 }

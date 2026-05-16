@@ -10,6 +10,6 @@
         [attr.max]="max()"
         [step]="step()"
         [value]="value() ?? defaultValue()"
-        (change)="value.set(+$any($event.target).value)"
+        (change)="onValueChange(+$any($event.target).value)"
     />
 </div>
