@@ -1,0 +1,44 @@
+/*
+ * These styles target the mat-menu overlay panel which renders outside the
+ * component's DOM (CDK portal), so ViewEncapsulation cannot reach them.
+ * They must be imported globally from styles.css.
+ */
+
+.duration-menu-panel .mat-mdc-menu-item.option-active {
+    color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+    font-weight: 500;
+}
+
+.duration-menu-panel .custom-menu-row {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    min-height: 48px;
+    padding: 0 1rem;
+    cursor: pointer;
+}
+
+.duration-menu-panel .custom-menu-row:hover {
+    background: rgba(0, 0, 0, 0.04);
+}
+
+.duration-menu-panel .custom-menu-row.option-active {
+    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.duration-menu-panel .custom-label {
+    font-size: 1rem;
+    color: var(--color-text);
+    flex: 1;
+}
+
+.duration-menu-panel .custom-input {
+    flex: 1;
+    font-size: 0.95rem;
+}
+
+.duration-menu-panel .custom-unit {
+    font-size: 0.875rem;
+    color: var(--color-text-secondary);
+}

@@ -1,51 +1,6 @@
 @import 'tailwindcss';
 @import '@angular/cdk/overlay-prebuilt.css';
 
-.duration-menu-panel .mat-mdc-menu-item.option-active {
-    color: var(--color-primary);
-    background: color-mix(in srgb, var(--color-primary) 8%, transparent);
-    font-weight: 500;
-}
-
-.duration-menu-panel .custom-menu-row {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    padding: 0.5rem 1rem 0.75rem;
-    border-top: 1px solid var(--color-border);
-}
-
-.duration-menu-panel .custom-label {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
-    white-space: nowrap;
-}
-
-.duration-menu-panel .custom-label.active {
-    color: var(--color-primary);
-    font-weight: 500;
-}
-
-.duration-menu-panel .custom-input {
-    width: 4rem;
-    padding: 0.3rem 0.5rem;
-    border: 1.5px solid var(--color-border);
-    border-radius: 0.4rem;
-    font-size: 0.95rem;
-    color: var(--color-text);
-    background: var(--color-surface);
-    outline: none;
-    text-align: center;
-}
-
-.duration-menu-panel .custom-input:focus {
-    border-color: var(--color-primary);
-}
-
-.duration-menu-panel .custom-unit {
-    font-size: 0.875rem;
-    color: var(--color-text-secondary);
-}
 
 #toast-container > div {
     width: 30%;

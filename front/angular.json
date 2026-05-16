@@ -24,7 +24,13 @@
                 "input": "public"
               }
             ],
-            "styles": ["node_modules/ngx-toastr/toastr.css", "node_modules/angular-calendar/css/angular-calendar.css", "src/theme.scss", "src/styles.css"]
+            "styles": [
+              "node_modules/ngx-toastr/toastr.css",
+              "node_modules/angular-calendar/css/angular-calendar.css",
+              "src/theme.scss",
+              "src/styles.css",
+              "src/app/shared/task-time-duration/task-time-duration.global.css"
+            ]
           },
           "configurations": {
             "production": {

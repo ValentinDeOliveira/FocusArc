@@ -46,18 +46,20 @@
                     {{ preset }}m
                 </button>
             }
-            <div class="custom-menu-row" (click)="$event.stopPropagation()">
-                <span class="custom-label" [class.active]="displayCustom()">Custom</span>
-                <input
-                    class="custom-input"
-                    type="number"
-                    min="5"
-                    max="480"
-                    step="5"
-                    [value]="displayCustom() ? duration() : durationPresets[1]"
-                    (input)="onCustomInput($any($event.target).value)"
-                />
-                <span class="custom-unit">min</span>
+            <div class="custom-menu-row" [class.option-active]="displayCustom()" (click)="$event.stopPropagation()">
+                @if (!displayCustom()) {
+                    <span class="custom-label" (click)="selectCustomMobile()">Custom</span>
+                } @else {
+                    <app-number-field
+                        class="custom-input"
+                        [defaultValue]="durationPresets[1]"
+                        [min]="5"
+                        [max]="480"
+                        [step]="5"
+                        [(value)]="duration"
+                    />
+                    <span class="custom-unit">m</span>
+                }
             </div>
         </mat-menu>
     </div>

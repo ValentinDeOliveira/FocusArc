@@ -33,6 +33,10 @@ export class TaskTimeDuration {
         this.displayCustom.set(true);
     }
 
+    protected selectCustomMobile() {
+        this.displayCustom.set(true);
+    }
+
     protected onClickPreset(preset: number) {
         this.displayCustom.set(false);
         this.duration.set(preset);
