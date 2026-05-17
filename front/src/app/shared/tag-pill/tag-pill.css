@@ -4,7 +4,8 @@
     gap: 5px;
     border-radius: 50px;
     border: 1px solid;
-    padding: 3px 7px 3px 5px;
+    padding: 5px 10px 5px 7px;
+    font-size: 1.15rem;
 }
 
 .tag-pill span {

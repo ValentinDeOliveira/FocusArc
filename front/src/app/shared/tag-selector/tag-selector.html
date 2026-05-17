@@ -32,10 +32,10 @@
             }
             <div class="new-section flex flex-col">
                 <span class="new-label">New tag color</span>
-                <div class="swatches flex">
+                <div class="swatches flex flex-wrap">
                     @for (key of TAG_COLORS_KEYS; track key) {
                         <button
-                            class="swatch"
+                            class="swatch w-8 h-8"
                             [class.selected]="pendingColor() === key"
                             [style.background-color]="TAG_COLORS[key]"
                             [title]="key | capitalize"
