@@ -31,7 +31,6 @@ export class ArcTaskRecurrence {
     selectedDays = signal<Set<string>>(new Set(['Mon', 'Tue', 'Wed', 'Thu', 'Fri']));
 
     duration = signal(30);
-    readonly durationPresets = [15, 30, 60];
     startTime = signal('09:00');
     everyNDays = signal(2);
 

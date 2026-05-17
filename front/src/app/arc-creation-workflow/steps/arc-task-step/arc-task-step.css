@@ -65,7 +65,7 @@
     margin-top: 16px;
 }
 
-@media (max-width: 739px) {
+@media (max-width: 639px) {
     .task-counter {
         margin-bottom: 10px;
     }

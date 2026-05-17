@@ -1,9 +1,9 @@
-<div class="recurrence">
+<div class="recurrence flex flex-col">
     <label>Recurrence</label>
-    <div class="pill-group">
+    <div class="pill-group flex flex-wrap">
         @for (option of options; track option) {
             <button
-                class="pill"
+                class="pill flex-1 sm:flex-none h-12 sm:h-auto"
                 [class.active]="selected() === option"
                 (click)="selected.set(option)"
             >
@@ -13,12 +13,12 @@
     </div>
 
     @if (selected() === RecurrenceType.DAYS_OF_WEEK) {
-        <div class="days-section">
+        <div class="days-section flex flex-col">
             <label>Days</label>
-            <div class="day-group">
+            <div class="day-group flex">
                 @for (day of days; track day) {
                     <button
-                        class="day-pill"
+                        class="day-pill flex-1 sm:flex-none sm:w-11 h-12 sm:h-11"
                         [class.active]="selectedDays().has(day)"
                         (click)="toggleDay(day)">
                         {{ day }}
@@ -27,7 +27,7 @@
             </div>
         </div>
     } @else if (selected() === RecurrenceType.EVERY_N_DAYS) {
-        <div class="n-days-recurrence">
+        <div class="n-days-recurrence flex items-center">
             <span>Every</span>
             <app-number-field [min]="1" [max]="6" [(value)]="everyNDays" (change)="everyNDays.set(+$any($event.target).value)" />
             <span>days</span>

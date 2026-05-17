@@ -1,6 +1,4 @@
 .recurrence {
-    display: flex;
-    flex-direction: column;
     gap: 8px;
 }
 
@@ -9,9 +7,7 @@
 }
 
 .pill-group {
-    display: flex;
     gap: 8px;
-    flex-wrap: wrap;
 }
 
 .pill {
@@ -32,22 +28,17 @@
 }
 
 .days-section {
-    display: flex;
-    flex-direction: column;
     gap: 8px;
     width: 100%;
 }
 
 .day-group {
-    display: flex;
     gap: 8px;
 }
 
 .day-pill {
-    width: 44px;
-    height: 44px;
     border-radius: 10px;
-    border: 1.5px solid var(--color-border, #d1d5db);
+    border: 2px solid var(--color-border, #d1d5db);
     background: transparent;
     font-size: 0.8rem;
     cursor: pointer;
@@ -62,7 +53,5 @@
 }
 
 .n-days-recurrence {
-    display: flex;
-    align-items: center;
     gap: 8px;
 }
