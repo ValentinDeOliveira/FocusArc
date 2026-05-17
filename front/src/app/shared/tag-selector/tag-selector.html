@@ -1,7 +1,7 @@
 <label class="label">Tag <span class="optional">(optional)</span></label>
 
 <div class="trigger-container">
-    <div class="trigger" [class.open]="isOpen()" (click)="openDropdown()">
+    <div class="trigger flex" [class.open]="isOpen()" (click)="openDropdown()">
         @if (selectedTag()) {
             <app-tag-pill [tag]="selectedTag()!"/>
             <mat-icon class="clear-icon" (click)="removeTag($event)">close</mat-icon>

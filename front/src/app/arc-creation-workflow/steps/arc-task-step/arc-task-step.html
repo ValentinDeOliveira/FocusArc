@@ -9,10 +9,10 @@
         <p class="subtitle">Add recurring tasks that repeat inside your arc. You can always edit these later.</p>
     </div>
 
-    <div class="task-form-card">
+    <div class="task-form-card flex flex-col">
         <span class="task-counter">New task ({{tasks().length}} / {{MAX_NUMBER_OF_TASKS}})</span>
 
-        <div class="fields-row">
+        <div class="fields-row flex flex-col sm:flex-row">
             <app-task-name-field />
 
             <app-tag-selector
@@ -23,7 +23,7 @@
 
         <app-arc-task-recurrence />
 
-        <div class="add-task-row">
+        <div class="add-task-row flex justify-end">
             <app-primary-btn (click)="addTask($event)" [disabled]="tasks().length === MAX_NUMBER_OF_TASKS">
                 <mat-icon>add</mat-icon>
                 Add task
@@ -42,7 +42,7 @@
 
         <app-week-schedule [tasks]="tasks()" />
     }
-    <div class="button-container">
+    <div class="button-container flex justify-between">
         <app-primary-btn ghost>Skip</app-primary-btn>
         @if (tasks().length > 0) {
             <app-primary-btn (click)="goToNextStep()">
