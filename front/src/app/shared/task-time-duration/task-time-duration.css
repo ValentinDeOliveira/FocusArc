@@ -93,6 +93,9 @@
 }
 
 
+:host(.compact) .duration-desktop { display: none; }
+:host(.compact) .duration-mobile { display: flex; flex-direction: column; gap: 0.375rem; }
+
 @media (max-width: 640px) {
     .time-duration-row {
         flex-direction: column;

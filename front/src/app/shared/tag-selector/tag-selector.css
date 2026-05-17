@@ -32,7 +32,6 @@
     transition: border-color 0.15s, box-shadow 0.15s;
     box-sizing: border-box;
     cursor: text;
-    align-items: center;
 }
 
 .trigger.open,
@@ -57,8 +56,6 @@
 }
 
 .clear-icon {
-    display: flex;
-    align-items: center;
     font-size: 1rem;
     height: 1em;
     width: 1em;
@@ -74,8 +71,6 @@
 }
 
 .chevron {
-    display: flex;
-    align-items: center;
     font-size: 1.1rem;
     height: 1em;
     width: 1em;
@@ -98,15 +93,11 @@
 }
 
 .options {
-    display: flex;
-    flex-direction: column;
     padding: 6px;
     gap: 2px;
 }
 
 .option {
-    display: flex;
-    align-items: center;
     padding: 6px 8px;
     border: none;
     border-radius: 0.5rem;
@@ -123,8 +114,6 @@
 .new-section {
     border-top: 1px solid var(--color-border);
     padding: 8px 10px 10px;
-    display: flex;
-    flex-direction: column;
     gap: 8px;
 }
 
@@ -137,7 +126,6 @@
 }
 
 .swatches {
-    display: flex;
     gap: 5px;
 }
 

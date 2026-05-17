@@ -1,16 +1,16 @@
 @if (!isTaskCreation) {
-    <button class="add-task-btn" (click)="addTask()">
+    <button class="add-task-btn flex items-center justify-center" (click)="addTask()">
         <mat-icon>add</mat-icon>
         Add task
     </button>
 } @else {
-    <app-task-row>
-        <app-task-name-field (valueChange)="nameChange.emit($event)" />
-        <app-task-time-duration/>
-        <app-tag-selector/>
-        <button class="cancel-btn" (click)="cancel()">
-            <mat-icon>close</mat-icon>
-        </button>
-        <app-primary-btn (click)="confirm()">Add</app-primary-btn>
+    <app-task-row class="flex flex-col lg:flex-row lg:flex-wrap">
+        <app-task-name-field class="flex-1 min-w-0" (valueChange)="nameChange.emit($event)" />
+        <app-task-time-duration compact/>
+        <app-tag-selector class="flex-1 min-w-0"/>
+        <div class=" flex items-center gap-3 lg:basis-full lg:justify-center">
+            <app-primary-btn class="flex-1" ghost (click)="cancel()">Cancel</app-primary-btn>
+            <app-primary-btn class="flex-1" (click)="confirm()">Add</app-primary-btn>
+        </div>
     </app-task-row>
 }

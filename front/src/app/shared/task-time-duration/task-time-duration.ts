@@ -1,15 +1,17 @@
-import {Component, model, signal} from '@angular/core';
+import {booleanAttribute, Component, input, model, signal} from '@angular/core';
 import {MatMenu, MatMenuItem, MatMenuTrigger} from '@angular/material/menu';
 import {NumberField} from '../number-field/number-field';
 import {TimeField} from '../time-field/time-field';
 
 @Component({
     selector: 'app-task-time-duration',
+    host: { '[class.compact]': 'compact()' },
     imports: [NumberField, TimeField, MatMenu, MatMenuItem, MatMenuTrigger],
     templateUrl: './task-time-duration.html',
     styleUrl: './task-time-duration.css',
 })
 export class TaskTimeDuration {
+    compact = input(false, { transform: booleanAttribute });
     startTime = model<string>('09:00');
     duration = model<number>(30);
     displayCustom = signal(false);
