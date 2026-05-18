@@ -66,4 +66,8 @@ export class DateSelect implements OnInit {
         })
         .join('');
     }
+
+    get maxDate() {
+        return new Date(new Date().setFullYear(new Date().getFullYear() + 1));
+    }
 }

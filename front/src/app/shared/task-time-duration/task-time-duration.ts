@@ -23,14 +23,6 @@ export class TaskTimeDuration {
         this.duration.set(preset);
     }
 
-    protected onCustomInput(raw: string) {
-        const value = Math.min(480, Math.max(5, Number(raw)));
-        if (!isNaN(value)) {
-            this.displayCustom.set(true);
-            this.duration.set(value);
-        }
-    }
-
     protected onClickCustom() {
         this.displayCustom.set(true);
     }
@@ -42,5 +34,10 @@ export class TaskTimeDuration {
     protected onClickPreset(preset: number) {
         this.displayCustom.set(false);
         this.duration.set(preset);
+    }
+
+    reset() {
+        this.duration.set(30);
+        this.startTime.set('09:00');
     }
 }

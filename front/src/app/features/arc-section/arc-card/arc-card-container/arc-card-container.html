@@ -11,9 +11,11 @@
         </div>
     </div>
     <span class="content-container">
-        <mat-card-content class="number-chapters">
-            {{ nbChapterCompleted }} / {{ nbChapterTotal }} chapters completed!
-        </mat-card-content>
+        @if (nbChapterTotal > 0) {
+            <mat-card-content class="number-chapters">
+                {{ nbChapterCompleted }} / {{ nbChapterTotal }} chapters completed!
+            </mat-card-content>
+        }
         <mat-card-actions class="button-container">
             <app-primary-btn [fullWidth]="true" routerLink="/arc">
                 View Arc

@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, Output, output} from '@angular/core';
+import {Component, EventEmitter, inject, Output, output, ViewChild} from '@angular/core';
 import {PrimaryButton} from '../../../shared/primary-button/primary-button';
 import {MatIcon} from '@angular/material/icon';
 import {Tag} from '../../../models/tag.model';
@@ -28,15 +28,14 @@ import {TaskTimeDuration} from '../../../shared/task-time-duration/task-time-dur
 })
 export class TaskCreation {
     @Output() nameChange = new EventEmitter<string>();
+    @ViewChild(TaskTimeDuration) taskTimeDuration!: TaskTimeDuration;
 
     protected isTaskCreation = false;
     protected name = '';
-    protected scheduledAt = '';
     protected estimatedMinutes: number | null = null;
     protected selectedTag: Tag | null = null;
 
     toastr = inject(ToastrService);
-
 
     private contextStore = inject(ContextStore);
     private taskService = inject(TaskService);
@@ -46,21 +45,17 @@ export class TaskCreation {
         this.isTaskCreation = true;
     }
 
-    protected onTagChange(tag: Tag | null) {
-        this.selectedTag = tag;
-    }
-
     protected cancel() {
         this.isTaskCreation = false;
         this.name = '';
-        this.scheduledAt = '';
         this.estimatedMinutes = null;
         this.selectedTag = null;
+        this.taskTimeDuration.reset();
     }
 
     protected confirm() {
         const today = new Date();
-        const [hours, minutes] = this.scheduledAt.split(':').map(Number);
+        const [hours, minutes] = this.taskTimeDuration.startTime().split(':').map(Number);
         today.setHours(hours, minutes, 0, 0);
 
         const dto: TaskCreationDto = {
