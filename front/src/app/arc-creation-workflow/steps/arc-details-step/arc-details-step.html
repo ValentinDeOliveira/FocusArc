@@ -17,7 +17,7 @@
         (valueChange)="arcName.set($event)"
     />
 
-    <div class="dates-container">
+    <div class="dates-container flex flex-col sm:flex-row">
         <app-date-select label="Start date" defaultToday [min]="today" (dateChange)="startDate.set($event ?? today)" />
         <app-date-select label="End date" [min]="startDate()" [value]="endDate()" [error]="endDateError()" (dateChange)="endDate.set($event)" />
     </div>

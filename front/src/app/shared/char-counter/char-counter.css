@@ -5,3 +5,9 @@
     display: block;
     min-height: 1em;
 }
+
+@media (max-width: 639px) {
+    .char-counter {
+        min-height: 0;
+    }
+}

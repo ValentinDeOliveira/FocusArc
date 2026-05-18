@@ -10,6 +10,7 @@
             [min]="min()"
             [class.has-error]="error()"
             (dateChange)="onDateChange($event.value)"
+            [max]="maxDate"
         />
         <mat-datepicker-toggle class="date-toggle" [for]="picker" />
         <mat-datepicker #picker />

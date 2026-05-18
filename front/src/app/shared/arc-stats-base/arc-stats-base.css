@@ -3,8 +3,6 @@ mat-card.tag-stats-card {
     border-radius: 16px !important;
     box-shadow: 0 4px 16px var(--color-primary-shadow), 0 1px 4px rgba(0, 0, 0, 0.08) !important;
     padding: 16px 20px 20px !important;
-    display: flex;
-    flex-direction: column;
     gap: 12px;
 }
 
@@ -17,19 +15,14 @@ mat-card.tag-stats-card {
 }
 
 .rows {
-    display: flex;
-    flex-direction: column;
     gap: 12px;
 }
 
 .stat-row {
-    display: flex;
-    flex-direction: column;
     gap: 6px;
 }
 
 .row-header {
-    display: flex;
     align-items: center;
     gap: 8px;
 }
@@ -74,4 +67,10 @@ mat-card.tag-stats-card {
     border-radius: 3px;
     transition: width 0.4s ease;
     min-width: 0;
+}
+
+@media (max-width: 768px) {
+    .rows {
+        gap: 6px;
+    }
 }

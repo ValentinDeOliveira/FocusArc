@@ -1,7 +1,8 @@
 <div class="time-duration-row">
     <app-time-field label="Start time" (timeChange)="startTime.set($event)" />
 
-    <div class="duration-wrapper">
+    <!-- Desktop: preset chips -->
+    <div class="duration-wrapper duration-desktop">
         <label>Duration</label>
         <div class="duration-row">
             <div class="duration-presets">
@@ -14,9 +15,7 @@
                     </button>
                 }
                 @if (!displayCustom()) {
-                    <button
-                        class="preset-chip"
-                        (click)="onClickCustom()">
+                    <button class="preset-chip" (click)="onClickCustom()">
                         Custom
                     </button>
                 }
@@ -26,5 +25,42 @@
                 <span class="duration-unit">min</span>
             }
         </div>
+    </div>
+
+    <!-- Mobile: mat-menu dropdown -->
+    <div class="duration-wrapper duration-mobile">
+        <label>Duration</label>
+        <button class="mobile-trigger" [matMenuTriggerFor]="durationMenu">
+            <svg class="clock-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span>{{ duration() }}m</span>
+            <svg class="chevron" width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M2 4L6 8L10 4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </button>
+
+        <mat-menu #durationMenu="matMenu" class="duration-menu-panel">
+            @for (preset of durationPresets; track preset) {
+                <button mat-menu-item [class.option-active]="!displayCustom() && duration() === preset" (click)="selectPresetMobile(preset)">
+                    {{ preset }}m
+                </button>
+            }
+            <div class="custom-menu-row" [class.option-active]="displayCustom()" (click)="$event.stopPropagation()">
+                @if (!displayCustom()) {
+                    <span class="custom-label" (click)="selectCustomMobile()">Custom</span>
+                } @else {
+                    <app-number-field
+                        class="custom-input"
+                        [defaultValue]="durationPresets[1]"
+                        [min]="5"
+                        [max]="480"
+                        [step]="5"
+                        [(value)]="duration"
+                    />
+                    <span class="custom-unit">m</span>
+                }
+            </div>
+        </mat-menu>
     </div>
 </div>

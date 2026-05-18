@@ -1,16 +1,11 @@
 .layout {
-    display: flex;
-    min-height: 100vh;
     background-color: var(--color-bg);
 }
 
 .main-content {
     flex: 3;
-    padding: 32px 48px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
+    padding: 40px 36px;
+    gap: 6px;
 }
 
 .arc-title {
@@ -23,10 +18,30 @@
 .sidebar {
     flex: 1;
     padding: 16px 16px 32px;
-    align-self: flex-start;
-    position: sticky;
-    top: 32px;
-    display: flex;
-    flex-direction: column;
     gap: 16px;
+    min-width: 330px;
+}
+
+.stats-wrapper {
+    gap: 16px;
+}
+
+@media (max-width: 1024px) {
+    .main-content {
+        padding: 16px 10px 16px 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .sidebar {
+        gap: 8px;
+        padding: 16px 8px;
+    }
+    .stats-wrapper {
+        gap: 8px;
+    }
+    .main-content {
+        gap: 4px;
+        padding: 8px 4px;
+    }
 }

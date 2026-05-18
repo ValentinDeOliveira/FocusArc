@@ -1,5 +1,5 @@
-<div class="layout">
-    <div class="main-content">
+<div class="layout flex flex-col md:flex-row">
+    <div class="main-content flex flex-col">
         <h1 class="arc-title">{{ arcSummary?.name }}</h1>
         @for (chapter of chapters; track chapter.id; let i = $index) {
             <app-arc-view-chapter
@@ -10,9 +10,11 @@
         }
     </div>
 
-    <aside class="sidebar">
-        <app-arc-donut-chart [counts]="chapterCounts" />
-        <app-arc-tag-stats [tagStats]="tagStats()" />
-        <app-arc-task-stats [taskStats]="taskStats()"/>
+    <aside class="sidebar flex items-center md:flex-col md:items-start md:sticky md:top-0 md:h-screen md:justify-center">
+        <app-arc-donut-chart class="w-1/2 md:w-full" [counts]="chapterCounts" />
+        <div class="stats-wrapper flex flex-col w-1/2 md:w-full">
+            <app-arc-tag-stats [tagStats]="tagStats()" />
+            <app-arc-task-stats [taskStats]="taskStats()"/>
+        </div>
     </aside>
 </div>

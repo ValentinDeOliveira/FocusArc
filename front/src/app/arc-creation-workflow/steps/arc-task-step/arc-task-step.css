@@ -14,8 +14,6 @@
     border: 2px solid var(--color-border);
     border-radius: 12px;
     padding: 20px;
-    display: flex;
-    flex-direction: column;
 }
 
 .task-counter {
@@ -26,7 +24,6 @@
 }
 
 .fields-row {
-    display: flex;
     gap: 16px;
 }
 
@@ -36,8 +33,6 @@
 }
 
 .add-task-row {
-    display: flex;
-    justify-content: flex-end;
     margin-top: 10px;
 }
 
@@ -67,7 +62,20 @@
 }
 
 .button-container {
-    display: flex;
-    justify-content: space-between;
     margin-top: 16px;
+}
+
+@media (max-width: 639px) {
+    .task-counter {
+        margin-bottom: 10px;
+    }
+
+    .fields-row {
+        gap: 0;
+    }
+
+    .task-form-card {
+        border: none;
+        padding: 0;
+    }
 }

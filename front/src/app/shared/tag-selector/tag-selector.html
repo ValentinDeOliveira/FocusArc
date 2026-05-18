@@ -1,10 +1,10 @@
 <label class="label">Tag <span class="optional">(optional)</span></label>
 
 <div class="trigger-container">
-    <div class="trigger" [class.open]="isOpen()" (click)="openDropdown()">
+    <div class="trigger flex items-center" [class.open]="isOpen()" (click)="openDropdown()">
         @if (selectedTag()) {
             <app-tag-pill [tag]="selectedTag()!"/>
-            <mat-icon class="clear-icon" (click)="removeTag($event)">close</mat-icon>
+            <mat-icon class="clear-icon flex items-center" (click)="removeTag($event)">close</mat-icon>
         } @else {
             <input
                 class="name-input"
@@ -16,26 +16,26 @@
                 (keydown.enter)="createTagOnEnter($event)"
             />
         }
-        <mat-icon class="chevron" (click)="toggleDropdown($event)">expand_more</mat-icon>
+        <mat-icon class="chevron flex items-center" (click)="toggleDropdown($event)">expand_more</mat-icon>
     </div>
 
     @if (isOpen()) {
         <div class="dropdown">
             @if (availableTags().length > 0) {
-                <div class="options">
+                <div class="options flex flex-col">
                     @for (tag of availableTags(); track tag.id) {
-                        <button class="option" (click)="selectTag(tag)">
+                        <button class="option flex items-center" (click)="selectTag(tag)">
                             <app-tag-pill [tag]="tag"/>
                         </button>
                     }
                 </div>
             }
-            <div class="new-section">
+            <div class="new-section flex flex-col">
                 <span class="new-label">New tag color</span>
-                <div class="swatches">
+                <div class="swatches flex flex-wrap">
                     @for (key of TAG_COLORS_KEYS; track key) {
                         <button
-                            class="swatch"
+                            class="swatch w-8 h-8"
                             [class.selected]="pendingColor() === key"
                             [style.background-color]="TAG_COLORS[key]"
                             [title]="key | capitalize"

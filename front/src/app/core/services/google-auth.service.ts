@@ -11,14 +11,26 @@ export class GoogleAuthService {
         this.callback = callback;
         if (!this.initialized) {
             this.initialized = true;
-            google.accounts.id.initialize({
-                client_id: GOOGLE_CLIENT_ID,
-                callback: ({ credential }) => this.callback?.(credential),
-            });
+            this.whenGoogleReady(() =>
+                google.accounts.id.initialize({
+                    client_id: GOOGLE_CLIENT_ID,
+                    callback: ({ credential }) => this.callback?.(credential),
+                })
+            );
         }
     }
 
     prompt(): void {
-        google.accounts.id.prompt();
+        if (typeof google !== 'undefined') {
+            google.accounts.id.prompt();
+        }
+    }
+
+    private whenGoogleReady(fn: () => void): void {
+        if (typeof google !== 'undefined') {
+            fn();
+        } else {
+            (window as Window & { onGoogleLibraryLoad?: () => void }).onGoogleLibraryLoad = fn;
+        }
     }
 }

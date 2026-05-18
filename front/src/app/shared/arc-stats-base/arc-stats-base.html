@@ -1,10 +1,10 @@
 @if (rows.length > 0) {
     <mat-card class="tag-stats-card">
         <span class="card-title">{{ cardLabel }}</span>
-        <div class="rows">
+        <div class="rows flex flex-col">
             @for (row of rows; track row.label) {
-                <div class="stat-row">
-                    <div class="row-header">
+                <div class="stat-row flex flex-col">
+                    <div class="row-header flex">
                         <span class="dot" [style.background-color]="row.color"></span>
                         <span class="label">{{ row.label }}</span>
                         <span class="count">{{ row.done }}<span class="total"> / {{ row.total }}</span></span>

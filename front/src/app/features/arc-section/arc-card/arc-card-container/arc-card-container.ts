@@ -33,6 +33,10 @@ export class ArcCardContainer implements OnInit {
     }
 
     get progress(): number {
+        if (this.nbChapterCompleted == 0 || this.nbChapterTotal === 0) {
+            return 0;
+        }
+
         return Math.floor((this.nbChapterCompleted / this.nbChapterTotal) * 100);
     }
 }

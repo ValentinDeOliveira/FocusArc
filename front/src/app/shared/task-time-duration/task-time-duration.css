@@ -53,3 +53,57 @@
     background: color-mix(in srgb, var(--color-primary) 8%, transparent);
     color: var(--color-primary);
 }
+
+/* Mobile — hidden on desktop */
+.duration-mobile {
+    display: none;
+}
+
+.mobile-trigger {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.7rem 0.875rem;
+    border: 2px solid var(--color-border);
+    border-radius: 0.625rem;
+    font-size: 0.95rem;
+    color: var(--color-text);
+    background: var(--color-surface);
+    cursor: pointer;
+    transition: border-color 0.15s;
+}
+
+.mobile-trigger:focus-visible {
+    border-color: var(--color-primary);
+    outline: none;
+}
+
+.clock-icon {
+    color: var(--color-text-secondary);
+    flex-shrink: 0;
+}
+
+.mobile-trigger span {
+    flex: 1;
+}
+
+.chevron {
+    flex-shrink: 0;
+    color: var(--color-text-secondary);
+}
+
+
+:host(.compact) .duration-desktop { display: none; }
+:host(.compact) .duration-mobile { display: flex; flex-direction: column; gap: 0.375rem; }
+
+@media (max-width: 640px) {
+    .duration-desktop {
+        display: none;
+    }
+
+    .duration-mobile {
+        display: flex;
+        flex-direction: column;
+        gap: 0.375rem;
+    }
+}
