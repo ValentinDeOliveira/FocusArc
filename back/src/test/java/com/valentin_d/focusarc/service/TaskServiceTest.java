@@ -75,7 +75,7 @@ class TaskServiceTest {
         assertEquals(creationDto.description(), result.getDescription());
 
         verify(contextLoader).assertChapterForUser(creationDto.chapterId(), user.getId());
-        verify(tagLoader).assertTagsForUser(user.getId(), creationDto.tagId());
+        verify(tagLoader).assertTagForUser(user.getId(), creationDto.tagId());
         verify(taskLoader).existForChapterAtTime(eq(creationDto.chapterId()), eq(creationDto.scheduledAt()), any(Instant.class));
         verify(taskRepository).save(any(Task.class));
         verify(chapterRecalculationService).recalculateEstimatedMinutes(creationDto.chapterId());
@@ -109,7 +109,7 @@ class TaskServiceTest {
         final var updated = service.update(task.getId(), updateDto, user.getId());
 
         verify(contextLoader).assertChapterForUser(task.getChapter(), user.getId());
-        verify(tagLoader).assertTagsForUser(user.getId(), updateDto.tagId());
+        verify(tagLoader).assertTagForUser(user.getId(), updateDto.tagId());
         verify(taskLoader).existForChapterAtTimeExcluding(eq(task.getChapter()), eq(task.getId()),
                 eq(updateDto.scheduledAt()), any(Instant.class));
         verify(taskRepository).save(task);

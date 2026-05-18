@@ -65,7 +65,7 @@ public class TaskService {
                        @NotNull UserId userId) {
         contextLoader.assertChapterForUser(dto.chapterId(), userId);
 
-        tagLoader.assertTagsForUser(userId, dto.tagId());
+        tagLoader.assertTagForUser(userId, dto.tagId());
         assertMinutes(dto.estimatedMinutes());
         assertNotOverlapping(dto.chapterId(), dto.estimatedMinutes(), dto.scheduledAt());
 
@@ -88,7 +88,7 @@ public class TaskService {
                        @NotNull TaskUpdateDto taskUpdateDto,
                        @NotNull UserId userId) {
         final var task = taskLoader.getTaskIfExists(taskId);
-        tagLoader.assertTagsForUser(userId, taskUpdateDto.tagId());
+        tagLoader.assertTagForUser(userId, taskUpdateDto.tagId());
         contextLoader.assertChapterForUser(task.getChapter(), userId);
         final var beforeUpdateTask = task.snapshot();
 
