@@ -25,6 +25,6 @@
             </app-task-info-dashboard>
             <div class="task-divider"></div>
         }
-        <app-task-creation (taskCreated)="onTaskCreated()"/>
+        <app-task-creation (taskCreated)="onTaskCreated()" [shouldCreateChapter]="tasks().length === 0"/>
     </div>
 </div>

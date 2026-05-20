@@ -1,8 +1,8 @@
-<div class="time-duration-row">
-    <app-time-field label="Start time" (timeChange)="startTime.set($event)" />
+<div class="time-duration-row flex items-baseline">
+    <app-time-field label="Start time" (timeChange)="startTime.set($event)" [verifyInvalidTime]="verifyInvalidTime()" />
 
     <!-- Desktop: preset chips -->
-    <div class="duration-wrapper duration-desktop">
+    <div class="duration-wrapper duration-desktop flex flex-col">
         <label>Duration</label>
         <div class="duration-row">
             <div class="duration-presets">
@@ -28,7 +28,7 @@
     </div>
 
     <!-- Mobile: mat-menu dropdown -->
-    <div class="duration-wrapper duration-mobile">
+    <div class="duration-wrapper duration-mobile flex flex-col">
         <label>Duration</label>
         <button class="mobile-trigger" [matMenuTriggerFor]="durationMenu">
             <svg class="clock-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

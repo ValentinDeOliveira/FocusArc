@@ -12,6 +12,7 @@ import {TimeField} from '../time-field/time-field';
 })
 export class TaskTimeDuration {
     compact = input(false, { transform: booleanAttribute });
+    verifyInvalidTime = input(false, { transform: booleanAttribute });
     startTime = model<string>('09:00');
     duration = model<number>(30);
     displayCustom = signal(false);

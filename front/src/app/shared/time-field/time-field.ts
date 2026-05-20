@@ -1,5 +1,5 @@
-import {Component, input, output, signal} from '@angular/core';
-import {padTime} from '../../utils/time.utils';
+import {booleanAttribute, Component, input, OnInit, output, signal} from '@angular/core';
+import {isTimeAfterNow, padTime} from '../../utils/time.utils';
 
 @Component({
     selector: 'app-time-field',
@@ -7,14 +7,21 @@ import {padTime} from '../../utils/time.utils';
     templateUrl: './time-field.html',
     styleUrl: './time-field.css',
 })
-export class TimeField {
+export class TimeField implements OnInit {
     label = input.required<string>();
     timeChange = output<string>();
 
     hours = signal(9);
     minutes = signal(0);
+    verifyInvalidTime = input(false, { transform: booleanAttribute });
 
-    pad = padTime;
+    protected readonly pad = padTime;
+
+    ngOnInit(): void {
+        const now = new Date();
+        this.hours.set(now.getHours());
+        this.minutes.set(now.getMinutes() + 1);
+    }
 
     onHoursInput(event: Event): void {
         const el = event.target as HTMLInputElement;
@@ -40,7 +47,12 @@ export class TimeField {
         (event.target as HTMLInputElement).value = padTime(this.minutes());
     }
 
+    get hasErrors() {
+        return this.verifyInvalidTime() && !isTimeAfterNow(this.hours(), this.minutes())
+    }
+
     private emit(): void {
         this.timeChange.emit(`${padTime(this.hours())}:${padTime(this.minutes())}`);
     }
+
 }

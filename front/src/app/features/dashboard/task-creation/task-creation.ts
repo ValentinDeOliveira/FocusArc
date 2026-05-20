@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, Output, output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, inject, input, Output, output, ViewChild} from '@angular/core';
 import {PrimaryButton} from '../../../shared/primary-button/primary-button';
 import {MatIcon} from '@angular/material/icon';
 import {Tag} from '../../../models/tag.model';
@@ -12,6 +12,8 @@ import {ToastrService} from 'ngx-toastr';
 import {TagSelector} from '../../../shared/tag-selector/tag-selector';
 import {TaskNameField} from '../../../shared/input-field/task-name-field/task-name-field';
 import {TaskTimeDuration} from '../../../shared/task-time-duration/task-time-duration';
+import {ChapterService} from '../../../core/services/chapter.service';
+import {ChapterCreationDto} from '../../../models/chapter.model';
 
 @Component({
     selector: 'app-task-creation',
@@ -29,17 +31,19 @@ import {TaskTimeDuration} from '../../../shared/task-time-duration/task-time-dur
 export class TaskCreation {
     @Output() nameChange = new EventEmitter<string>();
     @ViewChild(TaskTimeDuration) taskTimeDuration!: TaskTimeDuration;
+    @ViewChild(TaskNameField) taskNameField!: TaskNameField;
+
+    shouldCreateChapter = input.required<boolean>();
+    taskCreated = output<void>();
 
     protected isTaskCreation = false;
-    protected name = '';
-    protected estimatedMinutes: number | null = null;
     protected selectedTag: Tag | null = null;
 
     toastr = inject(ToastrService);
 
     private contextStore = inject(ContextStore);
     private taskService = inject(TaskService);
-    taskCreated = output<void>();
+    private chapterService = inject(ChapterService);
 
     protected addTask() {
         this.isTaskCreation = true;
@@ -47,10 +51,9 @@ export class TaskCreation {
 
     protected cancel() {
         this.isTaskCreation = false;
-        this.name = '';
-        this.estimatedMinutes = null;
         this.selectedTag = null;
         this.taskTimeDuration.reset();
+        this.taskNameField.reset();
     }
 
     protected confirm() {
@@ -58,13 +61,32 @@ export class TaskCreation {
         const [hours, minutes] = this.taskTimeDuration.startTime().split(':').map(Number);
         today.setHours(hours, minutes, 0, 0);
 
+        if (this.shouldCreateChapter()) {
+            const chapterDto: ChapterCreationDto = {
+                arcId: this.contextStore.currentArcId()!,
+                estimatedMinutes: this.taskTimeDuration.duration(),
+                scheduledDate: today.toISOString()
+            }
+
+            this.chapterService.create(chapterDto).subscribe(chapter => {
+                this.contextStore.setChapterId(chapter.id);
+                this.createTask(today);
+            })
+        } else {
+            this.createTask(today);
+        }
+    }
+
+    private createTask(creationDate: Date) {
         const dto: TaskCreationDto = {
             chapterId: this.contextStore.currentChapterId()!,
-            estimatedMinutes: this.estimatedMinutes!,
-            scheduledAt: today.toISOString(),
+            estimatedMinutes: this.taskTimeDuration.duration(),
+            scheduledAt: creationDate.toISOString(),
             tagId: !!this.selectedTag ? this.selectedTag.id : null,
-            name: this.name
+            name: this.taskNameField.getValue()
         }
+
+        console.log(dto);
 
         this.taskService.create(dto).subscribe({
             next: () => {

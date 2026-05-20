@@ -55,3 +55,13 @@
     color: var(--color-text);
     user-select: none;
 }
+
+.time-box.has-error {
+    border-color: var(--color-warning-text);
+}
+
+.field-error {
+    font-size: 0.8125rem;
+    color: var(--color-warning-text);
+    white-space: nowrap;
+}
