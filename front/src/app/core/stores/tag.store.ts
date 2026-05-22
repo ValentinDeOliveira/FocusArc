@@ -22,4 +22,18 @@ export class TagStore {
     byId(id: string): Tag | null {
         return this.tagMap().get(id) ?? null;
     }
+
+    byLabel(label: string): Tag | null {
+        return this.tags().find(value => value.label === label) ?? null;
+    }
+
+    add(tag: Tag): void {
+        this.tags.update(list => [...list, tag]);
+    }
+
+    upsert(tag: Tag): void {
+        this.tags.update(list =>
+            list.some(t => t.id === tag.id) ? list.map(t => t.id === tag.id ? tag : t) : [...list, tag]
+        );
+    }
 }

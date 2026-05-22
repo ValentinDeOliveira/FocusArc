@@ -64,14 +64,6 @@ class ChapterControllerTest extends BaseSecurityControllerTest {
     }
 
     @Test
-    void shouldReturnNoContent_whenArcHasNoChapters() throws Exception {
-        when(chapterService.findAllForArc(any(ArcId.class), eq(user.getId()))).thenReturn(List.of());
-
-        mvcGetWithUser(chapterByArcUrl(ArcId.random()), user)
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
     void shouldReturnNotFound_whenArcDoesNotExist() throws Exception {
         when(chapterService.findAllForArc(any(ArcId.class), eq(user.getId()))).thenThrow(new ArcDoesNotExistException(ArcId.random()));
 

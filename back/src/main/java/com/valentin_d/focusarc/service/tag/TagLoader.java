@@ -32,7 +32,7 @@ public class TagLoader extends BaseLoader {
         }
     }
 
-    public void assertTagsForUser(final UserId owner, final TagId tagId) {
+    public void assertTagForUser(final UserId owner, final TagId tagId) {
         if (tagId == null) return;
         if (!tagRepository.existsByIdAndOwner(tagId, owner)) {
             throw new TagDoesNotExistForUserException();

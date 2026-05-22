@@ -1,4 +1,4 @@
-<app-arc-stats-base cardLabel="TASKS BY TAG" [rows]="rows">
+<app-arc-stats-base cardLabel="TASKS BY TAG" [rows]="rows" [hasContent]="completedRows.length > 0">
     @if (completedRows.length > 0) {
         <div class="completed-overflow">
             <span class="completed-overflow-icon">✓</span>

@@ -39,7 +39,6 @@ export class ArcViewPage implements OnInit {
         this.chapters = this.route.snapshot.data['chapters'];
         this.arcSummary = this.contextStore.arcSummary();
         this.arcService.getTagStats().subscribe(s => this.tagStats.set(s));
-
         this.arcService.getTaskStats().subscribe(s => this.taskStats.set(s));
 
         this.arcService.statsChanged$

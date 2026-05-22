@@ -20,7 +20,6 @@ export class NumberField {
 
     private computedId = computed(() => toKebabCase(this.label()) || 'number-field');
     effectiveId = computed(() => this.id() || this.computedId());
-    protected readonly HTMLInputElement = HTMLInputElement;
 
     protected onValueChange(raw: number): void {
         const s = this.step();

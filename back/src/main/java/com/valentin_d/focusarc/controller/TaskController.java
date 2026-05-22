@@ -23,8 +23,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static com.valentin_d.focusarc.util.ResponseUtil.wrapOrNoContent;
-
 @Tag(name = "Tasks", description = "Work blocks within a chapter")
 @SecurityRequirement(name = "Bearer")
 @RestController
@@ -43,12 +41,11 @@ public class TaskController {
     }
 
     @Operation(summary = "Get all tasks for a chapter")
-    @ApiResponse(responseCode = "204", description = "No tasks found")
     @GetMapping("/chapters/{chapterId}")
     public ResponseEntity<List<Task>> getAllForChapter(@AuthenticationPrincipal final User user,
                                                        @PathVariable ChapterId chapterId) {
         final var chapterTasks = service.findAllForChapter(chapterId, user.getId());
-        return ResponseUtil.wrapOrNoContent(chapterTasks);
+        return ResponseEntity.ok(chapterTasks);
     }
 
     @Operation(summary = "Create a task")
@@ -117,10 +114,9 @@ public class TaskController {
 
     @Operation(summary = "Get today's tasks",
             description = "Tasks for today's chapter in the user's active arc. User resolved from JWT.")
-    @ApiResponse(responseCode = "204", description = "No tasks today")
     @GetMapping("/today")
     public ResponseEntity<List<Task>> getTodayTask(@AuthenticationPrincipal final User user) {
         final var task = service.getTodaysTasks(user.getId());
-        return wrapOrNoContent(task);
+        return ResponseEntity.ok(task);
     }
 }

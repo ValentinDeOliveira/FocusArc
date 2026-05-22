@@ -53,7 +53,7 @@ public class TaskLoader extends BaseLoader {
     }
 
     public void assertNoOtherTasksInProgressForChapter(ChapterId chapterId, TaskId taskId) {
-        if(taskRepository.existsByChapterAndStatus(chapterId, TaskStatus.IN_PROGRESS)) {
+        if(taskRepository.existsByChapterAndIdNotAndStatus(chapterId, taskId, TaskStatus.IN_PROGRESS)) {
             throw new TaskInProgressException(chapterId, taskId);
         }
     }

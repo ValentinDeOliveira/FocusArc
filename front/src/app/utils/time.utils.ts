@@ -19,6 +19,13 @@ export function formatMinutes(totalMinutes: number): string {
     return `${hours}h ${minutes}m`;
 }
 
+export function isTimeAfterNow(hours: number, minutes: number): boolean {
+    const now = new Date();
+    const selected = new Date();
+    selected.setHours(hours, minutes, 0, 0);
+    return selected > now;
+}
+
 export function formatSeconds(s: number): string {
     const m = Math.floor(s / 60);
     const sec = s % 60;

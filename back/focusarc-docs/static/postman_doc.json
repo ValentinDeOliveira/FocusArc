@@ -2,48 +2,26 @@
   "info": {
     "name": "FocusArc API",
     "_postman_id": "focusarc-api-v1",
-    "description": "FocusArc REST API — productivity app with a User → Arc → Chapter → Task hierarchy.\n\n**Quick start**\n1. Send `POST /auth/register` or `POST /auth/login` — the `accessToken` and `refreshToken` variables are saved automatically.\n2. Every other request inherits `Bearer {{accessToken}}` from the collection.\n3. User endpoints (`GET /users`, `PUT /users`, `DELETE /users`) operate on the authenticated user — no ID in the URL.",
+    "description": "FocusArc REST API — productivity app with a User → Arc → Chapter → Task hierarchy.\n\n**Quick start**\n1. Send `POST /auth/register` or `POST /auth/login` — auth tokens are set automatically as HTTP-only cookies.\n2. Postman stores and sends these cookies automatically for every subsequent request.\n3. User endpoints (`GET /users`, `PUT /users`, `DELETE /users`) operate on the authenticated user — no ID in the URL.",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
   "auth": {
-    "type": "bearer",
-    "bearer": [
-      {
-        "key": "token",
-        "value": "{{accessToken}}",
-        "type": "string"
-      }
-    ]
+    "type": "noauth"
   },
   "variable": [
-    { "key": "baseUrl",      "value": "http://localhost:8080/api", "type": "string" },
-    { "key": "accessToken",  "value": "", "type": "string" },
-    { "key": "refreshToken", "value": "", "type": "string" },
-    { "key": "arcId",        "value": "00000000-0000-0000-0000-000000000002", "type": "string" },
-    { "key": "chapterId",    "value": "00000000-0000-0000-0000-000000000003", "type": "string" },
-    { "key": "taskId",       "value": "00000000-0000-0000-0000-000000000004", "type": "string" },
-    { "key": "tagId",        "value": "00000000-0000-0000-0000-000000000005", "type": "string" }
+    { "key": "baseUrl",   "value": "http://localhost:8080/api", "type": "string" },
+    { "key": "arcId",     "value": "00000000-0000-0000-0000-000000000002", "type": "string" },
+    { "key": "chapterId", "value": "00000000-0000-0000-0000-000000000003", "type": "string" },
+    { "key": "taskId",    "value": "00000000-0000-0000-0000-000000000004", "type": "string" },
+    { "key": "tagId",     "value": "00000000-0000-0000-0000-000000000005", "type": "string" }
   ],
   "item": [
     {
       "name": "Auth",
-      "description": "Public endpoints — no Bearer token required.",
+      "description": "Public endpoints — no auth cookie required. After a successful login or register, the server sets HTTP-only auth cookies that Postman sends automatically on all subsequent requests.",
       "item": [
         {
           "name": "Register",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "const res = pm.response.json();",
-                  "if (res.accessToken)  pm.collectionVariables.set('accessToken',  res.accessToken);",
-                  "if (res.refreshToken) pm.collectionVariables.set('refreshToken', res.refreshToken);"
-                ]
-              }
-            }
-          ],
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
@@ -58,25 +36,12 @@
               "host": ["{{baseUrl}}"],
               "path": ["auth", "register"]
             },
-            "description": "Create a new account. Returns `accessToken` (15 min) and `refreshToken` (7 days). Both are saved automatically to collection variables.\n\n**Validations**\n- `name`: required\n- `email`: required, valid email, unique\n- `password`: required, min 8 chars\n\n**Responses**\n- `201 Created` — registration successful\n- `409 Conflict` — email already in use"
+            "description": "Create a new account. Auth tokens are set as HTTP-only cookies — no body is returned.\n\n**Validations**\n- `name`: required\n- `email`: required, valid email, unique\n- `password`: required, min 8 chars\n\n**Responses**\n- `201 Created` — registration successful, auth cookies set\n- `409 Conflict` — email already in use"
           },
           "response": []
         },
         {
           "name": "Login",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "const res = pm.response.json();",
-                  "if (res.accessToken)  pm.collectionVariables.set('accessToken',  res.accessToken);",
-                  "if (res.refreshToken) pm.collectionVariables.set('refreshToken', res.refreshToken);"
-                ]
-              }
-            }
-          ],
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
@@ -91,40 +56,55 @@
               "host": ["{{baseUrl}}"],
               "path": ["auth", "login"]
             },
-            "description": "Authenticate with email and password. Tokens are saved automatically.\n\n**Responses**\n- `200 OK` — login successful\n- `401 Unauthorized` — invalid credentials"
+            "description": "Authenticate with email and password. Auth tokens are set as HTTP-only cookies — no body is returned.\n\n**Responses**\n- `200 OK` — login successful, auth cookies set\n- `401 Unauthorized` — invalid credentials"
           },
           "response": []
         },
         {
           "name": "Refresh Token",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "const res = pm.response.json();",
-                  "if (res.accessToken)  pm.collectionVariables.set('accessToken',  res.accessToken);",
-                  "if (res.refreshToken) pm.collectionVariables.set('refreshToken', res.refreshToken);"
-                ]
-              }
-            }
-          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/auth/refresh",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "refresh"]
+            },
+            "description": "Exchange the refresh token cookie for a new token pair. The refresh token is read from the cookie automatically — no request body needed.\n\n**Responses**\n- `200 OK` — tokens refreshed, new auth cookies set\n- `401 Unauthorized` — refresh token missing, invalid, or expired"
+          },
+          "response": []
+        },
+        {
+          "name": "Google Login",
           "request": {
             "auth": { "type": "noauth" },
             "method": "POST",
             "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n  \"refreshToken\": \"{{refreshToken}}\"\n}",
+              "raw": "{\n  \"idToken\": \"<google-id-token>\"\n}",
               "options": { "raw": { "language": "json" } }
             },
             "url": {
-              "raw": "{{baseUrl}}/auth/refresh",
+              "raw": "{{baseUrl}}/auth/google",
               "host": ["{{baseUrl}}"],
-              "path": ["auth", "refresh"]
+              "path": ["auth", "google"]
             },
-            "description": "Exchange a refresh token for a new access + refresh token pair. New tokens are saved automatically.\n\n**Responses**\n- `200 OK` — tokens refreshed\n- `401 Unauthorized` — token invalid or expired"
+            "description": "Authenticate or register using a Google ID token. Auth cookies are set on success.\n\n**Responses**\n- `200 OK` — authenticated, auth cookies set\n- `401 Unauthorized` — invalid or expired Google ID token"
+          },
+          "response": []
+        },
+        {
+          "name": "Logout",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/auth/logout",
+              "host": ["{{baseUrl}}"],
+              "path": ["auth", "logout"]
+            },
+            "description": "Invalidate the current session by clearing auth cookies.\n\n**Responses**\n- `204 No Content` — cookies cleared"
           },
           "response": []
         }
@@ -132,7 +112,7 @@
     },
     {
       "name": "Users",
-      "description": "Authenticated user management. All endpoints operate on the caller — no `{id}` in the URL. Requires `Bearer {{accessToken}}`.",
+      "description": "Authenticated user management. All endpoints operate on the caller — no `{id}` in the URL.",
       "item": [
         {
           "name": "Get Current User",
@@ -226,7 +206,20 @@
               "host": ["{{baseUrl}}"],
               "path": ["arcs", "me"]
             },
-            "description": "Returns all arcs owned by the authenticated user.\n\n**Responses**\n- `200 OK` — list of arcs\n- `204 No Content` — no arcs found\n- `401 Unauthorized`"
+            "description": "Returns all arcs owned by the authenticated user.\n\n**Responses**\n- `200 OK` — list of arcs (empty array if none)\n- `401 Unauthorized`"
+          },
+          "response": []
+        },
+        {
+          "name": "Get Active Arc (current user)",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/arcs/me/active",
+              "host": ["{{baseUrl}}"],
+              "path": ["arcs", "me", "active"]
+            },
+            "description": "Returns the currently active arc for the authenticated user.\n\n**Responses**\n- `200 OK`\n- `401 Unauthorized`\n- `404 Not Found` — no active arc"
           },
           "response": []
         },
@@ -313,6 +306,25 @@
             "description": "Returns task counts grouped by status for the active arc. Each entry contains the status, total task count across all chapters, and the count of tasks with that specific status.\n\n**`taskStatus` values**: `PLANNED`, `IN_PROGRESS`, `DONE`, `SKIPPED`\n\n**Responses**\n- `200 OK`\n- `400 Bad Request` — no active arc\n- `401 Unauthorized`"
           },
           "response": []
+        },
+        {
+          "name": "Mass Create Tasks (recurrence)",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "[\n  {\n    \"name\": \"Deep work session\",\n    \"estimatedMinutes\": 60,\n    \"recurrence\": { \"type\": \"DAILY\" }\n  }\n]",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/arcs/{{arcId}}/tasks/init",
+              "host": ["{{baseUrl}}"],
+              "path": ["arcs", "{{arcId}}", "tasks", "init"]
+            },
+            "description": "Create recurring tasks across every day of the arc's date range. One chapter is created per day (or reused if it already exists). Supports `DAILY` or `DAYS_OF_WEEK` recurrence.\n\n**Validations**\n- Max 5 recurrence entries per request\n\n**Responses**\n- `204 No Content` — tasks created successfully\n- `400 Bad Request` — validation failure\n- `401 Unauthorized`\n- `404 Not Found` — arc not found"
+          },
+          "response": []
         }
       ]
     },
@@ -361,7 +373,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["chapters", "arcs", "{{arcId}}"]
             },
-            "description": "**Responses**\n- `200 OK` — list of chapters\n- `204 No Content` — arc has no chapters\n- `401 Unauthorized`"
+            "description": "**Responses**\n- `200 OK` — list of chapters (empty array if none)\n- `401 Unauthorized`"
           },
           "response": []
         },
@@ -419,7 +431,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["chapters", "summary"]
             },
-            "description": "Returns today's chapter summary for the authenticated user's active arc, including pending tasks and remaining time. The user is resolved from the JWT — no query parameter needed.\n\n**Responses**\n- `200 OK` — summary with tasks\n- `400 Bad Request` — no active arc\n- `401 Unauthorized`\n- `404 Not Found` — no chapter for today"
+            "description": "Returns today's chapter summary for the authenticated user's active arc, including pending tasks and remaining time. The user is resolved from the auth cookie — no query parameter needed.\n\n**Responses**\n- `200 OK` — summary with tasks\n- `400 Bad Request` — no active arc\n- `401 Unauthorized`\n- `404 Not Found` — no chapter for today"
           },
           "response": []
         }
@@ -470,7 +482,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["tasks", "chapters", "{{chapterId}}"]
             },
-            "description": "**Responses**\n- `200 OK` — list of tasks\n- `204 No Content` — chapter has no tasks\n- `401 Unauthorized`"
+            "description": "**Responses**\n- `200 OK` — list of tasks (empty array if none)\n- `401 Unauthorized`"
           },
           "response": []
         },
@@ -483,7 +495,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["tasks", "today"]
             },
-            "description": "Returns all tasks for today's chapter of the authenticated user's active arc. User resolved from JWT.\n\n**Responses**\n- `200 OK`\n- `204 No Content` — no tasks today\n- `401 Unauthorized`"
+            "description": "Returns all tasks for today's chapter of the authenticated user's active arc. User resolved from auth cookie.\n\n**Responses**\n- `200 OK` — list of tasks (empty array if none)\n- `401 Unauthorized`"
           },
           "response": []
         },
@@ -567,39 +579,6 @@
       ]
     },
     {
-      "name": "Dev",
-      "description": "Development-only endpoints. Active on all profiles except `test`. Use `POST /dev/seed` to wipe the database and populate it with a realistic multi-day dataset.",
-      "item": [
-        {
-          "name": "Seed Database",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "type": "text/javascript",
-                "exec": [
-                  "const res = pm.response.json();",
-                  "if (res.accessToken)  pm.collectionVariables.set('accessToken',  res.accessToken);",
-                  "if (res.refreshToken) pm.collectionVariables.set('refreshToken', res.refreshToken);"
-                ]
-              }
-            }
-          ],
-          "request": {
-            "auth": { "type": "noauth" },
-            "method": "POST",
-            "url": {
-              "raw": "{{baseUrl}}/dev/seed",
-              "host": ["{{baseUrl}}"],
-              "path": ["dev", "seed"]
-            },
-            "description": "Wipes all collections and inserts a realistic dataset ready for frontend development. Tokens are saved automatically.\n\n**Seeded data**\n- User: `dev@focusarc.com` / `password123`\n- Tags: Work (blue), Study (purple), Health (teal), Personal (green)\n- Arc: \"Spring 2026 Arc\", ACTIVE\n- Chapters: −3 days, −2 days, yesterday, **today**, tomorrow\n- Tasks: past days have DONE/SKIPPED tasks with completedMinutes; today has PLANNED + IN_PROGRESS; tomorrow has PLANNED\n\n**Responses**\n- `201 Created` — seed successful, returns `email`, `password`, `accessToken`, `refreshToken`"
-          },
-          "response": []
-        }
-      ]
-    },
-    {
       "name": "Tags",
       "description": "Tag management. Tags are user-defined labels (with a color) that can be attached to tasks.",
       "item": [
@@ -644,7 +623,7 @@
               "host": ["{{baseUrl}}"],
               "path": ["tags", "me"]
             },
-            "description": "Returns all tags owned by the authenticated user.\n\n**Responses**\n- `200 OK` — list of tags\n- `204 No Content` — no tags found\n- `401 Unauthorized`"
+            "description": "Returns all tags owned by the authenticated user.\n\n**Responses**\n- `200 OK` — list of tags (empty array if none)\n- `401 Unauthorized`"
           },
           "response": []
         },
@@ -690,6 +669,26 @@
               "path": ["tags"]
             },
             "description": "Deletes all tags owned by the authenticated user.\n\n**Responses**\n- `204 No Content`\n- `401 Unauthorized`"
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Dev",
+      "description": "Development-only endpoints. Active on all profiles except `test`. Use `POST /dev/seed` to wipe the database and populate it with a realistic multi-day dataset.",
+      "item": [
+        {
+          "name": "Seed Database",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "url": {
+              "raw": "{{baseUrl}}/dev/seed",
+              "host": ["{{baseUrl}}"],
+              "path": ["dev", "seed"]
+            },
+            "description": "Wipes all collections and inserts a realistic dataset ready for frontend development. Auth cookies are set automatically.\n\n**Seeded data**\n- User: `dev@focusarc.com` / `password123`\n- Tags: Work (blue), Study (purple), Health (teal), Personal (green)\n- Arc: \"Spring 2026 Arc\", ACTIVE\n- Chapters: −3 days, −2 days, yesterday, **today**, tomorrow\n- Tasks: past days have DONE/SKIPPED tasks with completedMinutes; today has PLANNED + IN_PROGRESS; tomorrow has PLANNED\n\n**Responses**\n- `201 Created` — seed successful, auth cookies set"
           },
           "response": []
         }

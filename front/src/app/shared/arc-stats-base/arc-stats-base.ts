@@ -18,4 +18,9 @@ export interface StatRow {
 export class ArcStatsBase {
     @Input({ required: true }) cardLabel!: string;
     @Input({ required: true }) rows!: StatRow[];
+    @Input() hasContent: boolean = false;
+
+    get shouldRender(): boolean {
+        return this.rows.length > 0 || this.hasContent;
+    }
 }

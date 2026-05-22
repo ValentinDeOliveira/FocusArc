@@ -3,6 +3,7 @@ import {Observable, of, tap} from 'rxjs';
 import {Tag} from '../../models/tag.model';
 import {TAG_COLORS, TAG_COLORS_KEYS, TagColor} from '../../models/tag-colors';
 import {TagService} from '../../core/services/tag.service';
+import {TagStore} from '../../core/stores/tag.store';
 import {TagPill} from '../tag-pill/tag-pill';
 import {MatIcon} from '@angular/material/icon';
 import {CapitalizePipe} from '../pipes/capitalize.pipe';
@@ -29,13 +30,13 @@ export class TagSelector implements OnInit {
     protected readonly TAG_COLORS = TAG_COLORS;
     protected readonly TAG_COLORS_KEYS = TAG_COLORS_KEYS;
 
-    private tags = signal<Tag[]>([]);
-    protected availableTags = this.tags.asReadonly();
-
+    private tagStore = inject(TagStore);
     private tagService = inject(TagService);
 
+    protected availableTags = this.tagStore.all;
+
     ngOnInit() {
-        this.tagService.getAllForUser().subscribe(tags => this.tags.set(tags));
+        this.tagStore.load().subscribe();
     }
 
     @HostListener('document:click')
@@ -96,14 +97,14 @@ export class TagSelector implements OnInit {
             return of(null);
         }
 
-        const fetchedTag = this.tags().find(value => value.label === label);
+        const fetchedTag = this.tagStore.byLabel(label);
         if (fetchedTag) {
             return this.updateTag(fetchedTag);
         }
 
         return this.tagService.create({ label, color: this.pendingColor() }).pipe(
             tap(created => {
-                this.tags.update(list => [...list, created]);
+                this.tagStore.add(created);
                 this.emitAndResetTag(created);
             })
         );
@@ -115,7 +116,7 @@ export class TagSelector implements OnInit {
 
         return this.tagService.update(tag.id, { label: tag.label, color: this.pendingColor() }).pipe(
             tap(updated => {
-                this.tags.update(list => list.map(t => t.id === updated.id ? updated : t));
+                this.tagStore.upsert(updated);
                 this.tagChange.emit(updated);
             })
         );

@@ -41,12 +41,11 @@ public class ChapterController {
     }
 
     @Operation(summary = "Get all chapters for an arc")
-    @ApiResponse(responseCode = "204", description = "No chapters found")
     @GetMapping("/arcs/{arcId}")
     public ResponseEntity<List<Chapter>> getAllForArc(@AuthenticationPrincipal final User user,
                                                       @PathVariable final ArcId arcId) {
         final var arcChapters = service.findAllForArc(arcId, user.getId());
-        return ResponseUtil.wrapOrNoContent(arcChapters);
+        return ResponseEntity.ok(arcChapters);
     }
 
     @Operation(summary = "Create a chapter for an arc")

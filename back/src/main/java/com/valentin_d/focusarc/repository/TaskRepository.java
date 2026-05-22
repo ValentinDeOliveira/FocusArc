@@ -25,4 +25,6 @@ public interface TaskRepository extends MongoRepository<Task, TaskId> {
             Collection<TaskStatus> status, TaskId id, Instant startAt, Instant endAt);
 
     boolean existsByChapterAndStatus(ChapterId chapter, TaskStatus status);
+
+    boolean existsByChapterAndIdNotAndStatus(ChapterId chapter, TaskId id, TaskStatus status);
 }

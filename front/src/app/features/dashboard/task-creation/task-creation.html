@@ -6,8 +6,12 @@
 } @else {
     <app-task-row class="flex flex-col lg:flex-row lg:flex-wrap">
         <app-task-name-field class="w-full flex-1 min-w-0" (valueChange)="nameChange.emit($event)" />
-        <app-task-time-duration class="w-full lg:w-auto" compact/>
-        <app-tag-selector class="w-full flex-1 min-w-0"/>
+        <app-task-time-duration class="w-full lg:w-auto" compact verifyInvalidTime/>
+        <app-tag-selector
+            class="w-full flex-1 min-w-0"
+            [selectedTag]="selectedTag()"
+            (tagChange)="selectedTag.set($event)"
+        />
         <div class="flex items-center self-center justify-center gap-3 basis-full xl:basis-auto xl:mt-2 xl:ml-auto xl:justify-normal xl:self-center">
             <app-primary-btn ghost (click)="cancel()">Cancel</app-primary-btn>
             <app-primary-btn (click)="confirm()">Add</app-primary-btn>
