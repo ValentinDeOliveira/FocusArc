@@ -8,6 +8,7 @@ import {RouterLink} from '@angular/router';
     styleUrl: './primary-button.css',
     host: {
         '[style.display]': 'fullWidth ? "block" : null',
+        '[style.width]': 'fullWidth ? "100%" : null',
     },
 })
 export class PrimaryButton {
@@ -15,4 +16,5 @@ export class PrimaryButton {
     @Input() routerLink?: string | any[];
     @Input() disabled = false;
     @Input({ transform: booleanAttribute }) ghost = false;
+    @Input({ transform: booleanAttribute }) light = false;
 }

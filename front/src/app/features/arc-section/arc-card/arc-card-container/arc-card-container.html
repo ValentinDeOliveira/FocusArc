@@ -1,26 +1,33 @@
 <mat-card class="arc-card-container">
     <div class="image-wrapper">
-        <img ngSrc="/arc-background.png" alt="arc-background" height="1024" width="1536" priority/>
-        <div class="image-text top">
+        <img class="block" ngSrc="/arc-background.png" alt="arc-background" height="768" width="1536" priority/>
+        <div class="card-header flex flex-col justify-start">
+            <span class="current-arc-label">Current Arc</span>
             <span class="arc-name">{{ name() }}</span>
-            <br/>
-            <span class="arc-date"> {{ formatDateShort(arc().startDate) }} → {{ formatDateShort(arc().endDate) }} </span>
-        </div>
-        <div class="image-text bottom">
-            <app-arc-progress-bar [progress]="progress"/>
+            <div class="arc-date flex items-center">
+                <mat-icon class="calendar-icon">calendar_today</mat-icon>
+                <span>{{ formatDateShort(arc().startDate) }} → {{ formatDateShort(arc().endDate) }}</span>
+            </div>
         </div>
     </div>
-    <span class="content-container">
-        @if (nbChapterTotal() > 0) {
-            <mat-card-content class="number-chapters">
-                {{ nbChapterCompleted() }} / {{ nbChapterTotal() }} chapters completed!
-            </mat-card-content>
-        }
+    <div class="content-container flex flex-col">
+        <div class="progress-section flex flex-col">
+            <div class="progress-header flex justify-between items-center">
+                @if (nbChapterTotal() > 0) {
+                    <span class="chapters-text">{{ nbChapterCompleted() }} / {{ nbChapterTotal() }} chapters</span>
+                } @else {
+                    <span class="chapters-text">No chapters yet</span>
+                }
+                <span class="progress-percent">{{ progress }}%</span>
+            </div>
+            <div class="progress-track">
+                <div class="progress-fill" [style.width.%]="progress"></div>
+            </div>
+        </div>
         <mat-card-actions class="button-container">
-            <app-primary-btn [fullWidth]="true" routerLink="/arc">
-                View Arc
-                <mat-icon>arrow_right_alt</mat-icon>
+            <app-primary-btn [fullWidth]="true" [light]="true" routerLink="/arc">
+                View arc
             </app-primary-btn>
         </mat-card-actions>
-    </span>
+    </div>
 </mat-card>

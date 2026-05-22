@@ -1,8 +1,7 @@
 import {Component, computed, input} from '@angular/core';
-import {MatCard, MatCardActions, MatCardContent} from '@angular/material/card';
+import {MatCard, MatCardActions} from '@angular/material/card';
 import {NgOptimizedImage} from '@angular/common';
 import {formatDateShort} from '../../../../utils/date.utils';
-import {ArcProgressBar} from '../arc-progress-bar/arc-progress-bar';
 import {MatIcon} from '@angular/material/icon';
 import {Arc} from '../../../../models/arc.model';
 import {PrimaryButton} from '../../../../shared/primary-button/primary-button';
@@ -11,10 +10,8 @@ import {PrimaryButton} from '../../../../shared/primary-button/primary-button';
     selector: 'app-arc-card-container',
     imports: [
         MatCard,
-        MatCardContent,
         MatCardActions,
         NgOptimizedImage,
-        ArcProgressBar,
         MatIcon,
         PrimaryButton,
     ],
