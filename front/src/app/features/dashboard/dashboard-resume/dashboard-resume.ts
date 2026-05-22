@@ -83,6 +83,10 @@ export class DashboardResume implements OnInit {
     }
 
     get getNumberOfCompletedTasks() {
+        if (this.tasks().length === 0) {
+            return 0;
+        }
+
         return this.tasks().filter((task) => task.status == "DONE").length;
     }
 
@@ -119,6 +123,4 @@ export class DashboardResume implements OnInit {
             this.tasks.set(tasks);
         })
     }
-
-    protected readonly isTaskEnded = isTaskEnded;
 }

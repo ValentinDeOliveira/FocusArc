@@ -46,7 +46,7 @@ public class ChapterController {
     public ResponseEntity<List<Chapter>> getAllForArc(@AuthenticationPrincipal final User user,
                                                       @PathVariable final ArcId arcId) {
         final var arcChapters = service.findAllForArc(arcId, user.getId());
-        return ResponseUtil.wrapOrNoContent(arcChapters);
+        return ResponseEntity.ok(arcChapters);
     }
 
     @Operation(summary = "Create a chapter for an arc")

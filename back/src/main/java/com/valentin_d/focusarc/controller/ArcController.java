@@ -48,7 +48,7 @@ public class ArcController {
     @GetMapping("/me")
     public ResponseEntity<List<Arc>> getAllForCurrentUser(@AuthenticationPrincipal final User user) {
         final var userArcs = service.findAllForUser(user.getId());
-        return ResponseUtil.wrapOrNoContent(userArcs);
+        return ResponseEntity.ok(userArcs);
     }
 
     @Operation(summary = "Get active arc for authenticated user")

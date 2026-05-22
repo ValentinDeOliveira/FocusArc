@@ -23,12 +23,8 @@
         />
     </div>
     <div class="flex justify-between items-center">
-        @if(hasErrors) {
-            <span class="field-error">
-                Time should be in the future
-            </span>
-        } @else {
-            <span style="flex: 1;"></span>
-        }
+        <span class="field-error" [class.invisible]="!hasErrors">
+            Time should be in the future
+        </span>
     </div>
 </div>

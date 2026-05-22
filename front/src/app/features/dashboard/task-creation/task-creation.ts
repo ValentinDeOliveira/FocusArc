@@ -1,4 +1,4 @@
-import {Component, EventEmitter, inject, input, Output, output, ViewChild} from '@angular/core';
+import {Component, EventEmitter, inject, input, Output, output, signal, ViewChild} from '@angular/core';
 import {PrimaryButton} from '../../../shared/primary-button/primary-button';
 import {MatIcon} from '@angular/material/icon';
 import {Tag} from '../../../models/tag.model';
@@ -34,10 +34,11 @@ export class TaskCreation {
     @ViewChild(TaskNameField) taskNameField!: TaskNameField;
 
     shouldCreateChapter = input.required<boolean>();
+    selectedTag = signal<Tag | null>(null);
+
     taskCreated = output<void>();
 
     protected isTaskCreation = false;
-    protected selectedTag: Tag | null = null;
 
     toastr = inject(ToastrService);
 
@@ -51,7 +52,7 @@ export class TaskCreation {
 
     protected cancel() {
         this.isTaskCreation = false;
-        this.selectedTag = null;
+        this.selectedTag.set(null);
         this.taskTimeDuration.reset();
         this.taskNameField.reset();
     }
@@ -82,16 +83,16 @@ export class TaskCreation {
             chapterId: this.contextStore.currentChapterId()!,
             estimatedMinutes: this.taskTimeDuration.duration(),
             scheduledAt: creationDate.toISOString(),
-            tagId: !!this.selectedTag ? this.selectedTag.id : null,
+            tagId: !!this.selectedTag ? this.selectedTag()!.id : null,
             name: this.taskNameField.getValue()
         }
-
         console.log(dto);
 
         this.taskService.create(dto).subscribe({
             next: () => {
                 this.taskCreated.emit();
                 this.isTaskCreation = false;
+                this.selectedTag.set(null);
             },
             error: (err: HttpErrorResponse) => {
                 const message = getTaskError(err.error?.error);
