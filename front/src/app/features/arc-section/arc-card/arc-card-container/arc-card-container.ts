@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, computed, input} from '@angular/core';
 import {MatCard, MatCardActions, MatCardContent} from '@angular/material/card';
 import {NgOptimizedImage} from '@angular/common';
 import {formatDateShort} from '../../../../utils/date.utils';
@@ -21,22 +21,18 @@ import {PrimaryButton} from '../../../../shared/primary-button/primary-button';
     templateUrl: './arc-card-container.html',
     styleUrl: './arc-card-container.css',
 })
-export class ArcCardContainer implements OnInit {
-    @Input({ required: true }) arc!: Arc;
-    @Input({ required: true }) nbChapterCompleted!: number;
-    @Input({ required: true }) nbChapterTotal!: number;
-    name!: string;
+export class ArcCardContainer {
+    arc = input.required<Arc>();
+    nbChapterCompleted = input.required<number>();
+    nbChapterTotal = input.required<number>();
+
+    protected name = computed(() => this.arc().name);
     protected readonly formatDateShort = formatDateShort;
 
-    ngOnInit(): void {
-        this.name = this.arc.name + ' Arc';
-    }
-
     get progress(): number {
-        if (this.nbChapterCompleted == 0 || this.nbChapterTotal === 0) {
+        if (this.nbChapterCompleted() === 0 || this.nbChapterTotal() === 0) {
             return 0;
         }
-
-        return Math.floor((this.nbChapterCompleted / this.nbChapterTotal) * 100);
+        return Math.floor((this.nbChapterCompleted() / this.nbChapterTotal()) * 100);
     }
 }

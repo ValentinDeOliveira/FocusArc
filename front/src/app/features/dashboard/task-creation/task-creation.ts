@@ -14,6 +14,7 @@ import {TaskNameField} from '../../../shared/input-field/task-name-field/task-na
 import {TaskTimeDuration} from '../../../shared/task-time-duration/task-time-duration';
 import {ChapterService} from '../../../core/services/chapter.service';
 import {ChapterCreationDto} from '../../../models/chapter.model';
+import {ArcService} from '../../../core/services/arc.service';
 
 @Component({
     selector: 'app-task-creation',
@@ -45,6 +46,7 @@ export class TaskCreation {
     private contextStore = inject(ContextStore);
     private taskService = inject(TaskService);
     private chapterService = inject(ChapterService);
+    private arcService = inject(ArcService);
 
     protected addTask() {
         this.isTaskCreation = true;
@@ -64,7 +66,6 @@ export class TaskCreation {
 
         const today = this.taskTimeDuration.getStartDate();
 
-        console.log(this.shouldCreateChapter());
         if (this.shouldCreateChapter()) {
             const chapterDto: ChapterCreationDto = {
                 arcId: this.contextStore.currentArcId()!,
@@ -72,11 +73,11 @@ export class TaskCreation {
                 scheduledDate: today.toISOString()
             }
 
-            console.log(chapterDto);
-
             this.chapterService.create(chapterDto).subscribe(chapter => {
                 this.contextStore.setChapterId(chapter.id);
                 this.createTask(today);
+                // refresh summary to update count of chapter
+                this.arcService.getSummary().subscribe(summary => this.contextStore.setSummary(summary));
             })
         } else {
             this.createTask(today);
@@ -91,7 +92,6 @@ export class TaskCreation {
             tagId: !!this.selectedTag ? this.selectedTag()!.id : null,
             name: this.taskNameField.getValue()
         }
-        console.log(dto);
 
         this.taskService.create(dto).subscribe({
             next: () => {

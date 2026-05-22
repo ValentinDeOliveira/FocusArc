@@ -111,8 +111,6 @@ export class DashboardResume implements OnInit {
     }
 
     protected onTaskCreated() {
-        this.taskService.getTodayTask().subscribe(tasks => {
-            this.tasks.set(tasks);
-        })
+        this.taskService.getTodayTask().subscribe(tasks => this.tasks.set(tasks));
     }
 }
