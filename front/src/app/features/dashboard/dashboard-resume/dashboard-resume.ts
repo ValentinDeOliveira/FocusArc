@@ -1,8 +1,8 @@
 import {Component, inject, OnInit, signal} from '@angular/core';
 import {TaskService} from '../../../core/services/task.service';
-import {Task, TaskCompletedDto} from '../../../models/task.model';
+import {Task, TaskCompletedDto, TaskStatus} from '../../../models/task.model';
 import {ChapterService} from '../../../core/services/chapter.service';
-import {formatDateLong, formatTimeHHmm} from '../../../utils/date.utils';
+import {formatDateLong} from '../../../utils/date.utils';
 import {formatMinutes} from '../../../utils/time.utils';
 import {DashboardTaskTimer} from '../dashboard-task-timer/dashboard-task-timer';
 import {TagStore} from '../../../core/stores/tag.store';
@@ -70,10 +70,6 @@ export class DashboardResume implements OnInit {
         return formatDateLong(Date.now());
     }
 
-    taskSummary(task: Task): string {
-        return [formatTimeHHmm(task.startAt) + ' - ' + formatTimeHHmm(task.endAt), formatMinutes(task.estimatedMinutes)].join(' · ');
-    }
-
     getPlannedTime() {
         return formatMinutes(this.chapterSummary()!.estimatedMinutes);
     }
@@ -83,11 +79,7 @@ export class DashboardResume implements OnInit {
     }
 
     get getNumberOfCompletedTasks() {
-        if (this.tasks().length === 0) {
-            return 0;
-        }
-
-        return this.tasks().filter((task) => task.status == "DONE").length;
+        return this.tasks().filter((task) => task.status == TaskStatus.DONE).length;
     }
 
     protected onTaskDone(overtime: number) {

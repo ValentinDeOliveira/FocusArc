@@ -51,6 +51,11 @@ export class TimeField implements OnInit {
         return this.verifyInvalidTime() && !isTimeAfterNow(this.hours(), this.minutes())
     }
 
+    reset() {
+        this.hours.set(9);
+        this.minutes.set(0);
+    }
+
     private emit(): void {
         this.timeChange.emit(`${padTime(this.hours())}:${padTime(this.minutes())}`);
     }

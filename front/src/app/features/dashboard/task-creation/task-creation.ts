@@ -58,16 +58,21 @@ export class TaskCreation {
     }
 
     protected confirm() {
-        const today = new Date();
-        const [hours, minutes] = this.taskTimeDuration.startTime().split(':').map(Number);
-        today.setHours(hours, minutes, 0, 0);
+        const nameValid = this.taskNameField.validate();
+        const timeValid = this.taskTimeDuration.validate();
+        if (!nameValid || !timeValid) return;
 
+        const today = this.taskTimeDuration.getStartDate();
+
+        console.log(this.shouldCreateChapter());
         if (this.shouldCreateChapter()) {
             const chapterDto: ChapterCreationDto = {
                 arcId: this.contextStore.currentArcId()!,
                 estimatedMinutes: this.taskTimeDuration.duration(),
                 scheduledDate: today.toISOString()
             }
+
+            console.log(chapterDto);
 
             this.chapterService.create(chapterDto).subscribe(chapter => {
                 this.contextStore.setChapterId(chapter.id);
