@@ -28,6 +28,12 @@
     overflow: visible;
 }
 
+.task-list-card > app-task-info-dashboard:first-of-type {
+    display: block;
+    border-radius: 16px 16px 0 0;
+    overflow: hidden;
+}
+
 .task-divider {
     height: 1px;
     background-color: var(--color-surface-subtle);

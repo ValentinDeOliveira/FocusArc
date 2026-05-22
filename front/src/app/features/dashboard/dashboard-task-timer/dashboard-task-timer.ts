@@ -1,7 +1,14 @@
-import { Component, computed, DestroyRef, inject, input, OnInit, output, signal } from '@angular/core';
-import { Task } from '../../../models/task.model';
+import {Component, computed, DestroyRef, inject, input, OnInit, output, signal} from '@angular/core';
+import {Task} from '../../../models/task.model';
 import {formatSeconds} from '../../../utils/time.utils';
 import {PrimaryButton} from '../../../shared/primary-button/primary-button';
+
+const STORAGE_KEY = 'active_task_timer';
+
+interface PersistedTimer {
+    taskId: string;
+    startedAt: number; // Unix ms
+}
 
 @Component({
     selector: 'app-dashboard-task-timer',
@@ -49,26 +56,54 @@ export class DashboardTaskTimer implements OnInit {
         this.isOvertime() ? 'Done - log actual time' : 'Done'
     );
 
-    done = output<number>(); // emits overtime in seconds (0 if finished before estimate)
+    done = output<number>(); // emits overtime in minutes (0 if finished before estimate)
 
     private interval: ReturnType<typeof setInterval> | null = null;
+    private static MAX_OVERTIME = 3600;
+
 
     complete() {
         this.clearIntervalIfExists();
-        const overtime = Math.max(0, -this.remainingSeconds()/60);
+        localStorage.removeItem(STORAGE_KEY);
+        const overtime = Math.max(0, -this.remainingSeconds() / 60);
         this.done.emit(overtime);
     }
 
     ngOnInit() {
         const total = this.task().estimatedMinutes * 60;
         this.totalSeconds.set(total);
-        this.remainingSeconds.set(total);
+
+        const startedAt = this.resolveStartedAt();
+        const elapsed = Math.floor((Date.now() - startedAt) / 1000);
+        this.remainingSeconds.set(Math.max(total - elapsed, -DashboardTaskTimer.MAX_OVERTIME));
 
         this.interval = setInterval(() => {
+            if (this.remainingSeconds() <= -DashboardTaskTimer.MAX_OVERTIME) {
+                this.clearIntervalIfExists();
+                return;
+            }
             this.remainingSeconds.update(s => s - 1);
-        }, 0.5);
+        }, 1000);
 
         this.destroyRef.onDestroy(() => this.clearIntervalIfExists());
+    }
+
+    // fallback in case the user refresh / close the window
+    private resolveStartedAt(): number {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) {
+            try {
+                const persisted: PersistedTimer = JSON.parse(raw);
+                if (persisted.taskId === this.task().id) {
+                    return persisted.startedAt;
+                }
+            } catch {
+                // stale or corrupt entry — fall through to fresh start
+            }
+        }
+        const now = Date.now();
+        localStorage.setItem(STORAGE_KEY, JSON.stringify({ taskId: this.task().id, startedAt: now } satisfies PersistedTimer));
+        return now;
     }
 
     private clearIntervalIfExists() {
