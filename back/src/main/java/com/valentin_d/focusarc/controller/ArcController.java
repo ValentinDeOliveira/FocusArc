@@ -44,7 +44,6 @@ public class ArcController {
     }
 
     @Operation(summary = "Get all arcs for the authenticated user")
-    @ApiResponse(responseCode = "204", description = "No arcs found")
     @GetMapping("/me")
     public ResponseEntity<List<Arc>> getAllForCurrentUser(@AuthenticationPrincipal final User user) {
         final var userArcs = service.findAllForUser(user.getId());

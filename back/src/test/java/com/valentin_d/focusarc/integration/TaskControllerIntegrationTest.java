@@ -101,11 +101,11 @@ public class TaskControllerIntegrationTest extends BaseTaskControllerIntegration
     }
 
     @Test
-    void shouldReturnNoContent_whenChapterHasNoTasks() {
+    void shouldReturnOk_whenChapterHasNoTasks() {
         final var chapter = domainFixture.chapterForUser(user.getId());
         final var response = request(chaptersUrl(chapter.getId()), HttpMethod.GET, Void.class);
 
-        assertionHelper.assertNoContent(response);
+        assertionHelper.assertOk(response);
     }
 
     @ParameterizedTest

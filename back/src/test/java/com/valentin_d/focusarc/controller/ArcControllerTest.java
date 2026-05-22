@@ -73,14 +73,6 @@ class ArcControllerTest extends BaseSecurityControllerTest {
     }
 
     @Test
-    void shouldReturnNoContent_whenUserHasNoArcs() throws Exception {
-        when(arcService.findAllForUser(any())).thenReturn(List.of());
-
-        mvcGetWithUser(ROOT + "/me", aUser())
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
     void shouldReturnActiveArc_whenUserIdExists() throws Exception {
         final var arc = anArcWithOwnerIdAndStatus(user.getId(), ArcStatus.ACTIVE);
 

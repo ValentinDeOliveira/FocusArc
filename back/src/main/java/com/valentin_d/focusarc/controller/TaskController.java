@@ -41,7 +41,6 @@ public class TaskController {
     }
 
     @Operation(summary = "Get all tasks for a chapter")
-    @ApiResponse(responseCode = "204", description = "No tasks found")
     @GetMapping("/chapters/{chapterId}")
     public ResponseEntity<List<Task>> getAllForChapter(@AuthenticationPrincipal final User user,
                                                        @PathVariable ChapterId chapterId) {
@@ -115,7 +114,6 @@ public class TaskController {
 
     @Operation(summary = "Get today's tasks",
             description = "Tasks for today's chapter in the user's active arc. User resolved from JWT.")
-    @ApiResponse(responseCode = "204", description = "No tasks today")
     @GetMapping("/today")
     public ResponseEntity<List<Task>> getTodayTask(@AuthenticationPrincipal final User user) {
         final var task = service.getTodaysTasks(user.getId());

@@ -85,10 +85,10 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     }
 
     @Test
-    void shouldReturnNoContent_whenUserHasNoArcs() {
+    void shouldReturnOk_whenUserHasNoArcs() {
         final var response = request(URL + "/me", HttpMethod.GET,  Void.class);
 
-        assertionHelper.assertNoContent(response);
+        assertionHelper.assertOk(response);
     }
 
     @ParameterizedTest

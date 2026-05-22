@@ -41,7 +41,6 @@ public class ChapterController {
     }
 
     @Operation(summary = "Get all chapters for an arc")
-    @ApiResponse(responseCode = "204", description = "No chapters found")
     @GetMapping("/arcs/{arcId}")
     public ResponseEntity<List<Chapter>> getAllForArc(@AuthenticationPrincipal final User user,
                                                       @PathVariable final ArcId arcId) {

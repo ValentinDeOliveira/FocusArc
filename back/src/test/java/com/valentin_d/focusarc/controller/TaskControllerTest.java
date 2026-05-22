@@ -59,15 +59,6 @@ class TaskControllerTest extends BaseSecurityControllerTest {
     }
 
     @Test
-    void shouldReturnNoContent_whenChapterIdExistsButNoTasks() throws Exception {
-        final var chapterId = ChapterId.random();
-        when(taskService.findAllForChapter(chapterId, user.getId())).thenReturn(List.of());
-
-        mvcGetWithUser(chaptersUrl(chapterId), user)
-                .andExpect(status().isNoContent());
-    }
-
-    @Test
     void shouldCreateTask_whenDataIsValid() throws Exception {
         final var task = aTask();
         final var creationDto = aTaskCreationDto();
@@ -163,14 +154,6 @@ class TaskControllerTest extends BaseSecurityControllerTest {
                 .andExpect(status().isOk());
 
         taskAssertion.assertListJson(actions, task);
-    }
-
-    @Test
-    void shouldReturnNoContent_whenGettingTodayTaskWhenNoTask() throws Exception {
-        when(taskService.getTodaysTasks(any(UserId.class))).thenReturn(List.of());
-
-        mvcGetWithUser(ROOT + "/today", user)
-                .andExpect(status().isNoContent());
     }
 
     private String taskUrl(TaskId taskId) {

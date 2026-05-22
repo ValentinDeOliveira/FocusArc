@@ -104,13 +104,13 @@ public class ChapterControllerIntegrationTest extends BaseChapterControllerInteg
     }
 
     @Test
-    void shouldReturnNoContent_whenArcHasNoChapters() {
+    void shouldReturnOk_whenArcHasNoChapters() {
         final var arc = domainFixture.arcForUser(user.getId());
 
         final var response = request(chapterByArcUrl(arc.getId()), HttpMethod.GET,
                 Void.class);
 
-        assertionHelper.assertNoContent(response);
+        assertionHelper.assertOk(response);
     }
 
     @ParameterizedTest
