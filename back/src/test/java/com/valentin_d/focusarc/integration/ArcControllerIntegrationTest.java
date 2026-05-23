@@ -7,7 +7,6 @@ import com.valentin_d.focusarc.dto.task.TaskStatsDto;
 import com.valentin_d.focusarc.integration.base.BaseArcControllerIntegrationTest;
 import com.valentin_d.focusarc.model.Chapter;
 import com.valentin_d.focusarc.model.arc.Arc;
-import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.task.Task;
 import com.valentin_d.focusarc.model.task.TaskRecurrence;
@@ -29,8 +28,11 @@ import java.util.stream.Stream;
 import static com.mongodb.assertions.Assertions.assertNotNull;
 import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.aTaskRecurrenceDto;
+import static com.valentin_d.focusarc.model.arc.ArcStatus.ACTIVE;
+import static com.valentin_d.focusarc.model.arc.ArcStatus.COMPLETED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTest {
     @Test
@@ -76,7 +78,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     @Test
     void shouldReturnAllArc_whenUserIdExists() {
         final var arc1 = domainFixture.arcForUser(user.getId());
-        final var arc2 = domainFixture.arcForUser(user.getId(), ArcStatus.COMPLETED);
+        final var arc2 = domainFixture.arcForUser(user.getId(), COMPLETED);
 
         final var response = request(URL + "/me", HttpMethod.GET,  Arc[].class);
 
@@ -153,7 +155,7 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
     @Test
     void shouldDeleteAllArcForUser_whenUserIdExists() {
         domainFixture.arcForUser(user.getId());
-        domainFixture.arcForUser(user.getId(), ArcStatus.COMPLETED);
+        domainFixture.arcForUser(user.getId(), COMPLETED);
 
         final var response = request(URL, HttpMethod.DELETE, Void.class);
 
@@ -323,5 +325,41 @@ public class ArcControllerIntegrationTest extends BaseArcControllerIntegrationTe
                 List.of(aTaskRecurrenceDto(new TaskRecurrence.Daily())), Void.class);
 
         assertionHelper.assertNotFound(response);
+    }
+
+    @Test
+    void shouldReturnLastCompletedArc_whenMultipleArcExists() {
+        final var now = LocalDate.now();
+        domainFixture.arcForUserWithDatesAndStatus(user.getId(), now.minusDays(10), now.minusDays(8), COMPLETED);
+        final var lastCompletedArc = domainFixture.arcForUserWithDatesAndStatus(user.getId(), now.minusDays(5), now.minusDays(2), COMPLETED);
+        domainFixture.arcForUserWithDatesAndStatus(user.getId(), now.minusDays(1), now.plusDays(7), ACTIVE);
+
+        final var response = request(URL + "/latest", HttpMethod.GET, Arc.class);
+
+        assertionHelper.assertOk(response);
+        assertNotNull(response.getBody());
+
+        assertArcEquals(response.getBody(), lastCompletedArc);
+    }
+
+    @Test
+    void shouldReturnActiveArc_whenNoCompletedArcExists() {
+        final var now = LocalDate.now();
+        final var activeArc = domainFixture.arcForUserWithDatesAndStatus(user.getId(), now.minusDays(5), now.plusDays(2), ACTIVE);
+
+        final var response = request(URL + "/latest", HttpMethod.GET, Arc.class);
+
+        assertionHelper.assertOk(response);
+        assertNotNull(response.getBody());
+
+        assertArcEquals(response.getBody(), activeArc);
+    }
+
+    @Test
+    void shouldReturnNull_whenNoArcExists() {
+        final var response = request(URL + "/latest", HttpMethod.GET, Arc.class);
+
+        assertionHelper.assertOk(response);
+        assertNull(response.getBody());
     }
 }

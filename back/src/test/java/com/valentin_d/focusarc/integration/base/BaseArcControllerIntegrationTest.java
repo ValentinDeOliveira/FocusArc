@@ -15,6 +15,9 @@ public class BaseArcControllerIntegrationTest extends SecuredIntegrationTest {
         assertEquals(expected.getOwner(), actual.getOwner());
         assertEquals(expected.getTotalEstimatedMinutes(), actual.getTotalEstimatedMinutes());
         assertEquals(expected.getTotalCompletedMinutes(), actual.getTotalCompletedMinutes());
+        assertEquals(expected.getStatus(), actual.getStatus());
+        assertEquals(expected.getStartDate(), actual.getStartDate());
+        assertEquals(expected.getEndDate(), actual.getEndDate());
     }
 
     protected String arcUrl(final ArcId arcId) {
