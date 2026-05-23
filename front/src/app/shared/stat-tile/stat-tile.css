@@ -1,0 +1,50 @@
+@import '../stat-icons.css';
+
+:host {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 16px;
+    padding: 14px 16px 16px;
+    gap: 2px;
+    box-shadow: 0 2px 8px var(--color-primary-shadow), 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.stat-tile-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.stat-tile-label {
+    font-size: 0.68rem;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--color-text-faint);
+}
+
+.stat-tile-value {
+    font-size: 1.6rem;
+    font-weight: 800;
+    color: var(--color-text);
+    line-height: 1.1;
+}
+
+.stat-total {
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--color-text-muted);
+}
+
+.stat-total-unit {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+}
+
+.stat-tile-sub {
+    font-size: 0.75rem;
+    color: var(--color-text-faint);
+    margin-top: 2px;
+}

@@ -1,0 +1,20 @@
+<div class="stat-tile-header">
+  <div class="stat-icon {{ iconClass() }}">
+    <mat-icon>{{ icon() }}</mat-icon>
+  </div>
+  <span class="stat-tile-label">{{ label() }}</span>
+</div>
+
+<div class="stat-tile-value">
+  {{ value() }}
+  @if (total() !== undefined) {
+    <span class="stat-total"> / {{ total() }}</span>
+  }
+  @if (totalUnit()) {
+    <span class="stat-total-unit"> {{ totalUnit() }}</span>
+  }
+</div>
+
+@if (sub()) {
+  <div class="stat-tile-sub">{{ sub() }}</div>
+}

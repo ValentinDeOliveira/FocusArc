@@ -5,7 +5,6 @@ import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistException;
 import com.valentin_d.focusarc.exception.arc.ArcDoesNotExistForUserException;
 import com.valentin_d.focusarc.exception.arc.NoActiveArcException;
 import com.valentin_d.focusarc.model.arc.Arc;
-import com.valentin_d.focusarc.model.arc.ArcStatus;
 import com.valentin_d.focusarc.model.id.ArcId;
 import com.valentin_d.focusarc.model.id.UserId;
 import com.valentin_d.focusarc.repository.ArcRepository;
@@ -15,6 +14,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 import java.util.Optional;
+
+import static com.valentin_d.focusarc.model.arc.ArcStatus.ACTIVE;
+import static com.valentin_d.focusarc.model.arc.ArcStatus.COMPLETED;
 
 @Component
 @RequiredArgsConstructor
@@ -30,7 +32,7 @@ public class ArcLoader extends BaseLoader {
     }
 
     public void assertNotAnotherActiveArc(UserId userId) {
-        if (arcRepository.existsByOwnerAndStatus(userId, ArcStatus.ACTIVE)) {
+        if (arcRepository.existsByOwnerAndStatus(userId, ACTIVE)) {
             throw new ArcAlreadyExistsException(userId);
         }
     }
@@ -40,7 +42,7 @@ public class ArcLoader extends BaseLoader {
     }
 
     public Optional<Arc> findActiveArcForUser(UserId userId) {
-        return arcRepository.findByOwnerAndStatus(userId, ArcStatus.ACTIVE);
+        return arcRepository.findByOwnerAndStatus(userId, ACTIVE);
     }
 
     public Arc getArcIfExistsForUser(ArcId arcId, UserId userId) {
@@ -56,5 +58,12 @@ public class ArcLoader extends BaseLoader {
 
     public List<Arc> getAllByOwner(UserId userId) {
         return arcRepository.findAllByOwner(userId);
+    }
+
+    public Arc getLatestArc(UserId userId) {
+        return arcRepository
+                .findTopByOwnerAndStatusOrderByEndDateDesc(userId, COMPLETED)
+                .or(() -> arcRepository.findByOwnerAndStatus(userId, ACTIVE))
+                .orElse(null);
     }
 }

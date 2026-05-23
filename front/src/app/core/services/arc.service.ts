@@ -60,4 +60,8 @@ export class ArcService {
     massCreate(id: string, tasksRecurrence: TaskRecurrenceDto[]): Observable<void> {
         return this.http.post<void>(`${this.baseUrl}/${id}/tasks/init`, tasksRecurrence);
     }
+
+    getLatest(): Observable<Arc> {
+        return this.http.get<Arc>(`${this.baseUrl}/latest`);
+    }
 }

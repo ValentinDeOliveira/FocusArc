@@ -1,4 +1,8 @@
-export type ArcStatus = 'ACTIVE' | 'COMPLETED' | 'ARCHIVED';
+export enum ArcStatus {
+    ACTIVE = 'ACTIVE',
+    COMPLETED = 'COMPLETED',
+    ARCHIVED = 'ARCHIVED',
+}
 
 export interface Arc {
   id: string;

@@ -1,0 +1,47 @@
+.stat-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.stat-icon mat-icon {
+    font-size: 20px;
+    width: 20px;
+    height: 20px;
+}
+
+/* Gray — focus / neutral */
+.icon-time {
+    background-color: rgba(0, 0, 0, 0.06);
+}
+.icon-time mat-icon {
+    color: var(--color-text-secondary);
+}
+
+/* Orange — streak / fire */
+.icon-streak {
+    background-color: rgba(239, 108, 0, 0.12);
+}
+.icon-streak mat-icon {
+    color: #ef6c00;
+}
+
+/* Blue — primary (tasks, remaining days, …) */
+.icon-primary {
+    background-color: rgba(37, 99, 235, 0.1);
+}
+.icon-primary mat-icon {
+    color: var(--color-primary);
+}
+
+/* Teal — chapters / milestones */
+.icon-teal {
+    background-color: rgba(20, 184, 166, 0.1);
+}
+.icon-teal mat-icon {
+    color: #14b8a6;
+}

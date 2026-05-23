@@ -1,0 +1,50 @@
+<div class="completion-page flex flex-col">
+
+  <div class="hero-card">
+    <img class="hero-bg-img" ngSrc="/arc-background.png" alt="" height="768" width="1536" priority/>
+
+    <div class="hero-content flex flex-col">
+      <p class="arc-meta">{{ dateRange() }}</p>
+      <h1 class="arc-name">{{ arc().name }}</h1>
+      <p class="arc-description">{{ descriptionText() }}</p>
+
+      <div class="progress-section flex flex-col">
+        <div class="flex justify-between items-center">
+          <span class="progress-label">Overall completion</span>
+          <span class="progress-pct">{{ overallCompletion() }}%</span>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" [style.width.%]="overallCompletion()"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <app-stat-tile icon="schedule" iconClass="icon-time" label="FOCUS"
+      [value]="focusTime()" [sub]="'across ' + durationDays() + ' days'" />
+
+    @if (totalTasksPlanned() > 0) {
+      <app-stat-tile icon="task_alt" iconClass="icon-primary" label="TASKS"
+        [value]="totalTasksDone()" [total]="totalTasksPlanned()"
+        [sub]="taskCompletionPct() + '% complete'" />
+    }
+
+    <app-stat-tile icon="local_fire_department" iconClass="icon-streak" label="STREAK"
+      [value]="arcSummary().daysStreak" totalUnit="days" />
+
+    <app-stat-tile icon="compare_arrows" iconClass="icon-teal" label="CHAPTERS"
+      [value]="arcSummary().nbChapterCompleted" [total]="totalChapters()" />
+  </div>
+
+  @if (tagStats().length > 0) {
+    <app-arc-tag-stats [tagStats]="tagStats()" />
+  }
+
+  <div class="footer-action">
+    <app-primary-btn routerLink="/arc-creation">
+      Start a new arc &nbsp;→
+    </app-primary-btn>
+  </div>
+
+</div>
