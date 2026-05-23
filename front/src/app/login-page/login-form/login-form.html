@@ -1,8 +1,8 @@
-@if (error()) {
-  <p class="form-error-banner">{{ error() }}</p>
-}
-
 <form [formGroup]="form" (ngSubmit)="onSubmit()" novalidate>
+    @if (error()) {
+        <p class="form-error-banner">{{ error() }}</p>
+    }
+
   <app-form-input-field
     label="Email address"
     inputId="login-email"
