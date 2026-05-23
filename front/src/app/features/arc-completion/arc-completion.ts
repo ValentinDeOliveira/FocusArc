@@ -40,7 +40,7 @@ export class ArcCompletion {
             : 0
     );
 
-    focusTime = computed(() => formatMinutes(this.arcSummary().totalCompletedMinutes) || '—');
+    focusTime = computed(() => formatMinutes(this.arcSummary().totalCompletedMinutes) || '-');
 
     totalTasksDone = computed(() => this.tagStats().reduce((sum, s) => sum + s.done, 0));
     totalTasksPlanned = computed(() => this.tagStats().reduce((sum, s) => sum + s.total, 0));
