@@ -51,7 +51,7 @@ export class ArcCompletion {
     );
 
     descriptionText = computed(() => {
-        return `You wrapped up ${this.arcSummary().nbChapterCompleted} of ${this.totalChapters()} chapters and logged real focus time. Take a moment — then plan what's next.`;
+        return `You wrapped up ${this.arcSummary().nbChapterCompleted} of ${this.totalChapters()} chapters and logged real focus time. Take a moment, then plan what's next.`;
     });
 
     dateRange= computed(() => {
