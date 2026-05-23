@@ -39,6 +39,16 @@
     color: var(--color-text);
 }
 
+.btn.light {
+    background-color: var(--color-surface);
+    color: var(--color-primary);
+    border: none;
+}
+
+.btn.light:hover {
+    background-color: var(--color-bg);
+}
+
 .btn.full-width {
     width: 100%;
     border-radius: 10px;

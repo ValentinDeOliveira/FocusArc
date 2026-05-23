@@ -31,12 +31,27 @@ export class ArcTagStats {
             .sort((a, b) => b.done - a.done);
     }
 
+    private readonly MAX_ROWS = 4;
+
+    private get incompleteRows(): StatRow[] {
+        return this.allRows.filter(r => r.pct < 100);
+    }
+
+    private get allCompletedRows(): StatRow[] {
+        return this.allRows.filter(r => r.pct === 100);
+    }
+
     get rows(): StatRow[] {
-        return this.allRows.filter(r => r.pct < 100).slice(0, 4);
+        const incomplete = this.incompleteRows.slice(0, this.MAX_ROWS);
+        const slots = this.MAX_ROWS - incomplete.length;
+        return slots > 0
+            ? [...incomplete, ...this.allCompletedRows.slice(0, slots)]
+            : incomplete;
     }
 
     get completedRows(): StatRow[] {
-        return this.allRows.filter(r => r.pct === 100);
+        const promoted = Math.max(0, this.MAX_ROWS - this.incompleteRows.length);
+        return this.allCompletedRows.slice(promoted);
     }
 
     get completedLabel(): string {

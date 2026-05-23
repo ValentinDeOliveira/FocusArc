@@ -1,0 +1,123 @@
+.completion-page {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 28px 16px 52px;
+    gap: 16px;
+}
+
+.hero-card {
+    position: relative;
+    overflow: hidden;
+    background-color: var(--color-primary);
+    border-radius: 20px;
+    padding: 8px;
+}
+
+/* Background texture — same asset as arc-card-container */
+.hero-bg-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    opacity: 0.25;
+    pointer-events: none;
+}
+
+/* All text content sits above the image */
+.hero-content {
+    position: relative;
+    z-index: 1;
+    padding: 28px;
+}
+
+
+/* Date / meta line */
+.arc-meta {
+    font-size: 0.8rem;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    color: rgba(255, 255, 255, 0.7);
+    margin: 0 0 6px;
+}
+
+/* Arc name */
+.arc-name {
+    color: white;
+    line-height: 1.1;
+    margin: 0 0 12px;
+}
+
+/* Description */
+.arc-description {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.78);
+    line-height: 1.55;
+    margin: 0 0 22px;
+    max-width: 420px;
+}
+
+/* Progress bar */
+.progress-section {
+    gap: 8px;
+}
+
+.progress-label {
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.72);
+}
+
+.progress-pct {
+    font-size: 1.3rem;
+    font-weight: 800;
+    color: white;
+}
+
+.progress-track {
+    height: 8px;
+    background: rgba(255, 255, 255, 0.22);
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-fill {
+    height: 100%;
+    background: white;
+    border-radius: 999px;
+    transition: width 0.5s ease;
+    min-width: 0;
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px;
+}
+
+.footer-action {
+    display: flex;
+    justify-content: flex-end;
+    padding-top: 4px;
+}
+
+.loading-state {
+    padding: 60px 40px;
+    text-align: center;
+    color: var(--color-text-faint);
+    font-size: 0.9rem;
+}
+
+@media (max-width: 600px) {
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .arc-name {
+        font-size: 1.75rem;
+    }
+
+    .completion-page {
+        padding: 20px 12px 40px;
+    }
+}

@@ -223,6 +223,16 @@ class ArcControllerTest extends BaseSecurityControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    @Test
+    void shouldReturnLatestArc_whenArcAndUserExists() throws Exception {
+        final var arc = anArcWithOwnerId(user.getId());
+        when(arcService.getLatestArc(user.getId())).thenReturn(arc);
+
+        mvcGetWithUser(ROOT + "/latest", user)
+                .andExpect(status().isOk());
+    }
+
+
     private String arcUrl(ArcId arcId) {
         return ROOT + "/" + arcId.id();
     }

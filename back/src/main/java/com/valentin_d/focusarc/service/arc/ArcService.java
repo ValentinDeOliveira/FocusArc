@@ -141,6 +141,10 @@ public class ArcService {
                 .execute(taskMassCreationDto);
     }
 
+    public Arc getLatestArc(@NotNull UserId id) {
+        return arcLoader.getLatestArc(id);
+    }
+
     private List<ChapterId> getChaptersForUser(UserId userId) {
         userLoader.assertUserExists(userId);
 
@@ -174,5 +178,4 @@ public class ArcService {
         }
         return streak;
     }
-
 }

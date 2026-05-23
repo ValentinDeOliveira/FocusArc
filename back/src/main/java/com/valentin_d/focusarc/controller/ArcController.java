@@ -119,4 +119,14 @@ public class ArcController {
         service.massCreate(taskRecurrenceDtos, arcId, user.getId());
         return ResponseEntity.noContent().build();
     }
+
+    @Operation(
+            summary = "get latest completed arc. If there is no completed arc, return active arc." +
+                      "If there is no active arc, return null"
+    )
+    @GetMapping("/latest")
+    public ResponseEntity<Arc> getLatestArc(@AuthenticationPrincipal final User user) {
+        final var latest = service.getLatestArc(user.getId());
+        return ResponseEntity.ok(latest);
+    }
 }

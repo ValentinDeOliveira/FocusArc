@@ -11,8 +11,8 @@ title: V1 Roadmap
 - [ ] Move ids from DTO (eg: TaskCreationDto contains ChapterId, might be better to give that id at controller level)
 ## Frontend
 
-- [ ] Add a page to create an arc 
-- [ ] Add login / registration page
+- [X] Add a page to create an arc 
+- [X] Add login / registration page
 - [ ] Add front tests
 
 ## Future (post-v1)

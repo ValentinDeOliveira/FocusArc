@@ -9,8 +9,6 @@
 }
 
 .arc-title {
-    font-size: 1.5rem;
-    font-weight: 700;
     color: var(--color-text);
     margin: 0 0 16px 0;
 }

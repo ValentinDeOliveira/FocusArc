@@ -18,9 +18,7 @@ import org.springframework.stereotype.Component;
 import java.time.Instant;
 import java.time.LocalDate;
 
-import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArc;
-import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwnerAndStartAndEndDates;
-import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.anArcWithOwnerIdAndStatus;
+import static com.valentin_d.focusarc.fixtures.factory.ArcFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.ChapterFactory.*;
 import static com.valentin_d.focusarc.fixtures.factory.TagFactory.aTagWithOwnerId;
 import static com.valentin_d.focusarc.fixtures.factory.TaskFactory.*;
@@ -49,6 +47,11 @@ public class DomainFixture {
 
     public Arc arcForUserWithDates(final UserId userId, final LocalDate start, final LocalDate end) {
         return arcRepository.save(anArcWithOwnerAndStartAndEndDates(userId, start, end));
+    }
+
+    public Arc arcForUserWithDatesAndStatus(final UserId userId, final LocalDate start,
+                                            final LocalDate end, final ArcStatus status) {
+        return arcRepository.save(anArcWithOwnerAndStartAndEndDatesAndStatus(userId, start, end, status));
     }
 
     public Chapter chapter() {

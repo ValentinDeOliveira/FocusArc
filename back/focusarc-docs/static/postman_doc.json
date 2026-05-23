@@ -308,6 +308,19 @@
           "response": []
         },
         {
+          "name": "Get Latest Arc",
+          "request": {
+            "method": "GET",
+            "url": {
+              "raw": "{{baseUrl}}/arcs/latest",
+              "host": ["{{baseUrl}}"],
+              "path": ["arcs", "latest"]
+            },
+            "description": "Returns the most recently completed arc (ordered by end date). Falls back to the active arc if no completed arc exists. Returns `null` if neither exists.\n\n**Responses**\n- `200 OK` — arc or null\n- `401 Unauthorized`"
+          },
+          "response": []
+        },
+        {
           "name": "Mass Create Tasks (recurrence)",
           "request": {
             "method": "POST",

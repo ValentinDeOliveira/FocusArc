@@ -9,7 +9,13 @@ export const hasArcGuard: CanActivateFn = () => {
     const router = inject(Router);
 
     return arcService.getActive().pipe(
-        map(() => true),
+        map((arc) => {
+            const today = new Date().toISOString().split('T')[0]; // "YYYY-MM-DD"
+            if (arc.endDate < today) {
+                return router.createUrlTree(['/arc-completion']);
+            }
+            return true;
+        }),
         catchError((error: HttpErrorResponse) => {
             if (error.status === 404) {
                 return of(router.createUrlTree(['/arc-creation']));

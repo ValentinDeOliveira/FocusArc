@@ -1,35 +1,30 @@
-import {Chapter} from '../../models/chapter.model';
-import {ResolveFn} from '@angular/router';
-import {ChapterService} from '../../core/services/chapter.service';
 import {inject} from '@angular/core';
+import {ResolveFn} from '@angular/router';
+import {lastValueFrom} from 'rxjs';
+import {tap} from 'rxjs/operators';
+import {Chapter} from '../../models/chapter.model';
+import {ChapterService} from '../../core/services/chapter.service';
 import {ArcService} from '../../core/services/arc.service';
 import {ContextStore} from '../../core/stores/context.store';
-import {map, tap} from 'rxjs/operators';
-import {forkJoin, switchMap} from 'rxjs';
 import {TagStore} from '../../core/stores/tag.store';
 
-export const arcResolver: ResolveFn<Chapter[]> = () => {
+export const arcResolver: ResolveFn<Chapter[]> = async () => {
     const contextStore = inject(ContextStore);
     const chapterService = inject(ChapterService);
-    const tagStore = inject(TagStore);
+    const tagStore= inject(TagStore);
 
-    const load = (arcId: string) => forkJoin({
-        chapters: chapterService.getAllForArc(arcId),
-        // TODO: tag load is called everytime? Try to avoid that
-        tags: tagStore.load()
-    }).pipe(map(r => r.chapters));
+    const stored = contextStore.arcSummary();
 
-    const existingSummary = contextStore.arcSummary();
-    if (existingSummary) {
-        return load(existingSummary.arcId);
-    }
+    const arcId = stored
+        ? stored.arcId
+        : await lastValueFrom(inject(ArcService).getSummary().pipe(
+            tap(s => { contextStore.setSummary(s); contextStore.setArcId(s.arcId); })
+          )).then(s => s.arcId);
 
-    const arcService = inject(ArcService);
-    return arcService.getSummary().pipe(
-        tap(summary => {
-            contextStore.setSummary(summary);
-            contextStore.setArcId(summary.arcId);
-        }),
-        switchMap(summary => load(summary.arcId))
-    );
-}
+    const [chapters] = await Promise.all([
+        lastValueFrom(chapterService.getAllForArc(arcId)),
+        lastValueFrom(tagStore.load()),
+    ]);
+
+    return chapters;
+};

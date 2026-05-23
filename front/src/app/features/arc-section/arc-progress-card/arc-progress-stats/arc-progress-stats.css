@@ -1,3 +1,5 @@
+@import '../../../../shared/stat-icons.css';
+
 mat-card.arc-progress-stats-container {
     border: 1px solid var(--color-border);
     border-radius: 16px;
@@ -28,46 +30,6 @@ hr {
     gap: 12px;
     padding: 10px 16px;
     justify-content: space-between;
-}
-
-.stat-icon {
-    width: 36px;
-    height: 36px;
-    border-radius: 10px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-}
-
-.stat-icon mat-icon {
-    font-size: 20px;
-    width: 20px;
-    height: 20px;
-}
-
-.icon-time {
-    background-color: rgba(0, 0, 0, 0.06);
-}
-
-.icon-time mat-icon {
-    color: var(--color-text-secondary);
-}
-
-.icon-streak {
-    background-color: rgba(239, 108, 0, 0.12);
-}
-
-.icon-streak mat-icon {
-    color: #ef6c00;
-}
-
-.icon-remaining {
-    background-color: rgba(92, 107, 192, 0.12);
-}
-
-.icon-remaining mat-icon {
-    color: #5c6bc0;
 }
 
 .stat-left {
