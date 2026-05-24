@@ -3,9 +3,20 @@
 # FocusArc
 
 Productivity application. 
-Users organize focused work sessions through a three-level hierarchy: **Arc** (a multi-week goal) → **Chapter** (one calendar day) → **Task** (a timed work block). When a task's estimated time runs out, the timer enters **overtime mode** automatically — no interruption, no required input.
+Users organize focused work sessions through a three-level hierarchy: **Arc** (a multi-week goal) → **Chapter** (one calendar day) → **Task** (a timed work block). When a task's estimated time runs out, the timer enters **overtime mode** automatically. No interruption, no required input.
 
-📖 **[Full documentation →](https://google.com)**
+📖 **[Full documentation →](https://focus-arc-docs-8udonll03-valentindeoliveiras-projects.vercel.app/docs/)**
+
+---
+
+## Screenshots
+
+<img src="assets/dashboard.png" alt="Dashboard" width="100%" />
+
+<p>
+  <img src="assets/arc-preview.png" alt="Arc view" width="49%" />
+  <img src="assets/arc-completion.png" alt="Arc completion" width="49%" />
+</p>
 
 ---
 
