@@ -19,8 +19,9 @@ export class TimeField implements OnInit {
 
     ngOnInit(): void {
         const now = new Date();
-        this.hours.set(now.getHours());
-        this.minutes.set(now.getMinutes() + 1);
+        const totalMinutes = now.getHours() * 60 + now.getMinutes() + 1;
+        this.hours.set(Math.floor(totalMinutes / 60) % 24);
+        this.minutes.set(totalMinutes % 60);
     }
 
     onHoursInput(event: Event): void {

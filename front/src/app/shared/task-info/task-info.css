@@ -1,7 +1,4 @@
 .task-card {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
     padding: 0.75rem 1rem;
     background: var(--color-surface);
     gap: 0.75rem;
@@ -15,9 +12,11 @@
 }
 
 .task-info {
-    display: flex;
-    flex-direction: column;
     flex: 1;
+}
+
+app-tag-pill {
+    zoom: 0.75;
 }
 
 .task-name {
@@ -26,8 +25,6 @@
 }
 
 .task-meta {
-    display: flex;
-    align-items: center;
     gap: 0.5rem;
 }
 
