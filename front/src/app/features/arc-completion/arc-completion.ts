@@ -1,5 +1,5 @@
 import {Component, computed, inject, signal} from '@angular/core';
-import {ActivatedRoute} from '@angular/router';
+import {ActivatedRoute, RouterLink} from '@angular/router';
 import {NgOptimizedImage} from '@angular/common';
 import {formatMinutes} from '../../utils/time.utils';
 import {formatDateShort} from '../../utils/date.utils';
@@ -10,7 +10,7 @@ import {ArcCompletionData} from './arc-completion.resolver';
 
 @Component({
     selector: 'app-arc-completion',
-    imports: [ArcTagStats, PrimaryButton, StatTile, NgOptimizedImage],
+    imports: [ArcTagStats, PrimaryButton, StatTile, NgOptimizedImage, RouterLink],
     templateUrl: './arc-completion.html',
     styleUrl: './arc-completion.css',
 })
