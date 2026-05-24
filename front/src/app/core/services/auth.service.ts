@@ -2,11 +2,12 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {GoogleAuthRequestDto, LoginRequestDto, RegisterRequestDto} from '../../models/auth.model';
+import {environment} from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
     private http = inject(HttpClient);
-    private baseUrl = "http://localhost:8080/api/auth";
+    private baseUrl = environment.apiBaseUrl + '/api/auth';
 
     register(dto: RegisterRequestDto): Observable<void> {
         return this.http.post<void>(`${this.baseUrl}/register`, dto);

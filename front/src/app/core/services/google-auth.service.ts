@@ -1,9 +1,9 @@
 import {Injectable} from '@angular/core';
-
-const GOOGLE_CLIENT_ID = '468172227016-rb385r55f5hlm995o0mnfg2ldj7s85jl.apps.googleusercontent.com';
+import {environment} from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class GoogleAuthService {
+    private clientId = environment.googleClientId;
     private callback: ((credential: string) => void) | null = null;
     private initialized = false;
 
@@ -13,7 +13,7 @@ export class GoogleAuthService {
             this.initialized = true;
             this.whenGoogleReady(() =>
                 google.accounts.id.initialize({
-                    client_id: GOOGLE_CLIENT_ID,
+                    client_id: this.clientId,
                     callback: ({ credential }) => this.callback?.(credential),
                 })
             );

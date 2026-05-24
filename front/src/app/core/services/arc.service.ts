@@ -4,11 +4,12 @@ import {Observable, Subject} from 'rxjs';
 import {Arc, ArcCreationDto, ArcSummaryResponseDto, ArcUpdateDto} from '../../models/arc.model';
 import {TagStatDto} from '../../models/tag.model';
 import {TaskRecurrenceDto, TaskStatDto} from '../../models/task.model';
+import {environment} from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ArcService {
     private http = inject(HttpClient);
-    private baseUrl = "http://localhost:8080/api/arcs";
+    private baseUrl = environment.apiBaseUrl + '/api/arcs';
 
     private statsChangedSubject = new Subject<void>();
     readonly statsChanged$ = this.statsChangedSubject.asObservable();
