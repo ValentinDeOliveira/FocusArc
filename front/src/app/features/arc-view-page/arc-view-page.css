@@ -8,6 +8,10 @@
     gap: 6px;
 }
 
+.back-btn-wrap {
+    margin-bottom: 8px;
+}
+
 .arc-title {
     color: var(--color-text);
     margin: 0 0 16px 0;

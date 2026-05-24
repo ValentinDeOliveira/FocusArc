@@ -11,6 +11,7 @@ import {ArcService} from '../../core/services/arc.service';
 import {TagStatDto} from '../../models/tag.model';
 import {ArcTaskStats} from './arc-task-stats/arc-task-stats';
 import {TaskStatDto} from '../../models/task.model';
+import {PrimaryButton} from '../../shared/primary-button/primary-button';
 
 @Component({
     selector: 'app-arc-view-page',
@@ -21,6 +22,7 @@ import {TaskStatDto} from '../../models/task.model';
         ArcDonutChart,
         ArcTagStats,
         ArcTaskStats,
+        PrimaryButton,
     ],
 })
 export class ArcViewPage implements OnInit {

@@ -3,9 +3,9 @@ import {Task} from '../../../models/task.model';
 import {formatSeconds} from '../../../utils/time.utils';
 import {PrimaryButton} from '../../../shared/primary-button/primary-button';
 
-const STORAGE_KEY = 'active_task_timer';
+export const TIMER_STORAGE_KEY = 'active_task_timer';
 
-interface PersistedTimer {
+export interface PersistedTimer {
     taskId: string;
     startedAt: number; // Unix ms
 }
@@ -52,9 +52,7 @@ export class DashboardTaskTimer implements OnInit {
         this.isOvertime() ? `+${formatSeconds(-this.remainingSeconds())}` : null
     );
 
-    doneButtonText = computed(() =>
-        this.isOvertime() ? 'Done - log actual time' : 'Done'
-    );
+    canComplete = computed(() => this.remainingSeconds() <= 0);
 
     done = output<number>(); // emits overtime in minutes (0 if finished before estimate)
 
@@ -64,7 +62,7 @@ export class DashboardTaskTimer implements OnInit {
 
     complete() {
         this.clearIntervalIfExists();
-        localStorage.removeItem(STORAGE_KEY);
+        localStorage.removeItem(TIMER_STORAGE_KEY);
         const overtime = Math.max(0, -this.remainingSeconds() / 60);
         this.done.emit(overtime);
     }
@@ -90,7 +88,7 @@ export class DashboardTaskTimer implements OnInit {
 
     // fallback in case the user refresh / close the window
     private resolveStartedAt(): number {
-        const raw = localStorage.getItem(STORAGE_KEY);
+        const raw = localStorage.getItem(TIMER_STORAGE_KEY);
         if (raw) {
             try {
                 const persisted: PersistedTimer = JSON.parse(raw);
@@ -102,7 +100,7 @@ export class DashboardTaskTimer implements OnInit {
             }
         }
         const now = Date.now();
-        localStorage.setItem(STORAGE_KEY, JSON.stringify({ taskId: this.task().id, startedAt: now } satisfies PersistedTimer));
+        localStorage.setItem(TIMER_STORAGE_KEY, JSON.stringify({ taskId: this.task().id, startedAt: now } satisfies PersistedTimer));
         return now;
     }
 

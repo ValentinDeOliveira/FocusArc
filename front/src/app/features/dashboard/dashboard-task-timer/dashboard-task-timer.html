@@ -23,5 +23,5 @@
             <span class="overtime-duration">{{ overtimeDisplay() }} over</span>
         }
     </div>
-    <app-primary-btn (click)="complete()">{{ doneButtonText() }}</app-primary-btn>
+    <app-primary-btn [disabled]="!canComplete()" (click)="complete()">Done</app-primary-btn>
 </div>

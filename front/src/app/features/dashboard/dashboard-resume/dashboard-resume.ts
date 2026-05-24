@@ -4,7 +4,7 @@ import {Task, TaskCompletedDto, TaskStatus} from '../../../models/task.model';
 import {ChapterService} from '../../../core/services/chapter.service';
 import {formatDateLong} from '../../../utils/date.utils';
 import {formatMinutes} from '../../../utils/time.utils';
-import {DashboardTaskTimer} from '../dashboard-task-timer/dashboard-task-timer';
+import {DashboardTaskTimer, PersistedTimer, TIMER_STORAGE_KEY} from '../dashboard-task-timer/dashboard-task-timer';
 import {TagStore} from '../../../core/stores/tag.store';
 import {forkJoin, of, switchMap} from 'rxjs';
 import {catchError, tap} from 'rxjs/operators';
@@ -63,7 +63,10 @@ export class DashboardResume implements OnInit {
                 }
                 throw err;
             })
-        ).subscribe(tasks => this.tasks.set(tasks));
+        ).subscribe(tasks => {
+            this.tasks.set(tasks);
+            this.restoreActiveTaskFromStorage(tasks);
+        });
     }
 
     todayDate() {
@@ -101,6 +104,22 @@ export class DashboardResume implements OnInit {
         ).subscribe(summary => {
             this.contextStore.setSummary(summary);
         });
+    }
+
+    private restoreActiveTaskFromStorage(tasks: Task[]): void {
+        const raw = localStorage.getItem(TIMER_STORAGE_KEY);
+        if (!raw) return;
+        try {
+            const persisted: PersistedTimer = JSON.parse(raw);
+            const match = tasks.find(t => t.id === persisted.taskId);
+            if (match && !isTaskEnded(match)) {
+                this.activeTask.set(match);
+            } else {
+                localStorage.removeItem(TIMER_STORAGE_KEY);
+            }
+        } catch {
+            localStorage.removeItem(TIMER_STORAGE_KEY);
+        }
     }
 
     protected setActiveTask(task: Task) {

@@ -1,4 +1,5 @@
 mat-card.arc-card-container {
+    position: relative;
     padding: 0;
     overflow: hidden;
     border-radius: 16px;
@@ -7,15 +8,21 @@ mat-card.arc-card-container {
     box-shadow: 0 8px 32px rgba(37, 99, 235, 0.35), 0 2px 8px rgba(0, 0, 0, 0.15);
 }
 
+/* Spacer: keeps the header text area in normal flow so content-container sits below it */
 .image-wrapper {
-    position: relative;
+    min-height: 140px;
 }
 
+/* Image is now absolute relative to mat-card → covers the full card uniformly */
 .image-wrapper img {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
-    height: auto;
-    border-radius: 16px 16px 0 0;
+    height: 100%;
+    object-fit: cover;
     opacity: 0.3;
+    pointer-events: none;
 }
 
 .card-header {
@@ -23,6 +30,7 @@ mat-card.arc-card-container {
     inset: 0;
     padding: 1.25rem;
     gap: 0;
+    z-index: 1;
 }
 
 .current-arc-label {
@@ -56,7 +64,9 @@ mat-card.arc-card-container {
 }
 
 .content-container {
-    background-color: var(--color-primary);
+    position: relative;
+    z-index: 1;
+    background-color: transparent;
     padding: 16px;
     gap: 14px;
 }

@@ -15,11 +15,6 @@
 
 /* Background texture — same asset as arc-card-container */
 .hero-bg-img {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
     object-fit: cover;
     opacity: 0.25;
     pointer-events: none;
