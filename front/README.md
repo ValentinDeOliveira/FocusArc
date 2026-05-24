@@ -1,59 +1,70 @@
-# Front
+# FocusArc Frontend
 
-This project was generated using [Angular CLI](https://github.com/angular/angular-cli) version 21.2.1.
+Angular client for FocusArc, a productivity application. 
+Users organize focused work sessions through a three-level hierarchy: **Arc** (a multi-week goal) → **Chapter** (one calendar day) → **Task** (a timed work block with overtime support).
 
-## Development server
+📖 **[Full documentation →](https://google.com)**
 
-To start a local development server, run:
+---
 
+## Tech stack
+
+| Layer     | Technology                        |
+|-----------|-----------------------------------|
+| Framework | Angular 21                        |
+| Language  | TypeScript 5.9                    |
+| Styling   | Tailwind CSS 4 · Angular Material |
+| Testing   | Vitest                            |
+| Build     | Angular CLI 21                    |
+
+---
+
+## Prerequisites
+
+- Node.js 20+
+- npm 11.6.2+
+- Angular CLI 21 — `npm install -g @angular/cli`
+- The [backend](../back/README.md) running on `http://localhost:8080`
+
+---
+
+## Run locally
+
+**1. Install dependencies**
 ```bash
-ng serve
+npm install
 ```
 
-Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
-
-## Code scaffolding
-
-Angular CLI includes powerful code scaffolding tools. To generate a new component, run:
-
+**2. Set environment variables** — copy the example file and fill in the values:
 ```bash
-ng generate component component-name
+cp .env.example .env
+# edit .env
 ```
 
-For a complete list of available schematics (such as `components`, `directives`, or `pipes`), run:
-
+**3. Start the dev server**
 ```bash
-ng generate --help
+npm start
 ```
 
-## Building
+The app is available at `http://localhost:4200` and reloads automatically on file changes.
 
-To build the project run:
 
-```bash
-ng build
-```
 
-This will compile your project and store the build artifacts in the `dist/` directory. By default, the production build optimizes your application for performance and speed.
-
-## Running unit tests
-
-To execute unit tests with the [Vitest](https://vitest.dev/) test runner, use the following command:
+## Build for production
 
 ```bash
-ng test
+npm run build
 ```
 
-## Running end-to-end tests
+Output is in `dist/`. Serve it with any static file host.
 
-For end-to-end (e2e) testing, run:
+---
 
-```bash
-ng e2e
-```
+## Environment variables
 
-Angular CLI does not come with an end-to-end testing framework by default. You can choose one that suits your needs.
+| Variable                  | Description                                                                                      |
+|---------------------------|--------------------------------------------------------------------------------------------------|
+| `NG_APP_API_BASE_URL`     | Backend base URL (e.g. `http://localhost:8080/api` locally, `https://api.focusarc.com` in prod). |
+| `NG_APP_GOOGLE_CLIENT_ID` | Google OAuth 2.0 client ID — must match the backend's `GOOGLE_CLIENT_ID`.                        |
 
-## Additional Resources
-
-For more information on using the Angular CLI, including detailed command references, visit the [Angular CLI Overview and Command Reference](https://angular.dev/tools/cli) page.
+> Variables are injected at build time via [`@ngx-env/builder`](https://github.com/chihab/ngx-env). All frontend env vars must be prefixed with `NG_APP_`.
