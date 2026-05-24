@@ -1,5 +1,10 @@
 <div class="layout flex flex-col md:flex-row">
     <div class="main-content flex flex-col">
+        <div class="back-btn-wrap self-start">
+            <app-primary-btn ghost routerLink="/">
+                <span class="material-icons">arrow_back</span> Home
+            </app-primary-btn>
+        </div>
         <h1 class="arc-title">{{ arcSummary?.name }}</h1>
         @for (chapter of chapters; track chapter.id; let i = $index) {
             <app-arc-view-chapter
