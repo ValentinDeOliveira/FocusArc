@@ -3,7 +3,7 @@
 Angular client for FocusArc, a productivity application. 
 Users organize focused work sessions through a three-level hierarchy: **Arc** (a multi-week goal) → **Chapter** (one calendar day) → **Task** (a timed work block with overtime support).
 
-📖 **[Full documentation →](https://google.com)**
+📖 **[Full documentation →](https://focus-arc-docs-8udonll03-valentindeoliveiras-projects.vercel.app/docs/)**
 
 ---
 
