@@ -25,3 +25,5 @@ title: V1 Roadmap
 ### Frontend
 
 - [ ] Add a page to view all arcs
+- [ ] Add a possibility to cancel / delete task
+- [ ] Add a possibility to delete tag
