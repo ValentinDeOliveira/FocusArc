@@ -72,7 +72,9 @@ export class ArcDetailsStep {
             endDate: this.endDate()!.toISOString(),
         }
 
-        this.arcService.create(dto).subscribe(arc => this.contextStore.setArcId(arc.id));
-        this.nextStep.emit();
+        this.arcService.create(dto).subscribe(arc => {
+            this.contextStore.setArcId(arc.id);
+            this.nextStep.emit();
+        });
     }
 }

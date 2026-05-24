@@ -43,7 +43,7 @@
         <app-week-schedule [tasks]="tasks()" />
     }
     <div class="button-container flex justify-between">
-        <app-primary-btn ghost>Skip</app-primary-btn>
+        <app-primary-btn ghost routerLink="/">Skip</app-primary-btn>
         @if (tasks().length > 0) {
             <app-primary-btn (click)="goToNextStep()">
                 Go to dashboard

@@ -89,7 +89,7 @@ export class TaskCreation {
             chapterId: this.contextStore.currentChapterId()!,
             estimatedMinutes: this.taskTimeDuration.duration(),
             scheduledAt: creationDate.toISOString(),
-            tagId: !!this.selectedTag ? this.selectedTag()!.id : null,
+            tagId: this.selectedTag()?.id ?? null,
             name: this.taskNameField.getValue()
         }
 

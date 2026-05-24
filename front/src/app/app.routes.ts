@@ -14,4 +14,5 @@ export const routes: Routes = [
     { path: 'arc', component: ArcViewPage, resolve: {chapters: arcResolver}, canActivate: [hasArcGuard] },
     { path: 'arc-creation', component: ArcCreation },
     { path: 'arc-completion', component: ArcCompletion, resolve: { completion: arcCompletionResolver } },
+    { path: '**', redirectTo: '' },
 ];

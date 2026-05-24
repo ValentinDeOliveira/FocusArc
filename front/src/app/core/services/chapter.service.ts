@@ -2,11 +2,12 @@ import {inject, Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {Chapter, ChapterCreationDto, ChapterSummaryResponseDto, ChapterUpdateDto} from '../../models/chapter.model';
+import {environment} from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class ChapterService {
     private http = inject(HttpClient);
-    private baseUrl = "http://localhost:8080/api/chapters";
+    private baseUrl = environment.apiBaseUrl + '/api/chapters';
 
     getById(id: string): Observable<Chapter> {
         return this.http.get<Chapter>(`${this.baseUrl}/${id}`);
