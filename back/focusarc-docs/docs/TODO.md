@@ -1,5 +1,5 @@
 ---                                                                                                                                                                                                                               
-sidebar_position: 1
+sidebar_position: 4
 title: V1 Roadmap
 ---
 
@@ -7,7 +7,7 @@ title: V1 Roadmap
 
 ## Backend
 - [X] Have an endpoint for getting active arc
-- [ ] Securize API keys
+- [X] Securize API keys
 - [ ] Move ids from DTO (eg: TaskCreationDto contains ChapterId, might be better to give that id at controller level)
 ## Frontend
 

@@ -3,24 +3,24 @@
     "message": "Next",
     "description": "The label for version current"
   },
-  "sidebar.tutorialSidebar.category.adr": {
-    "message": "ADR",
-    "description": "The label for category 'adr' in sidebar 'tutorialSidebar'"
+  "sidebar.tutorialSidebar.category.Getting Started": {
+    "message": "始め方",
+    "description": "The label for category 'Getting Started' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.api": {
-    "message": "API",
-    "description": "The label for category 'api' in sidebar 'tutorialSidebar'"
-  },
-  "sidebar.tutorialSidebar.category.domain": {
+  "sidebar.tutorialSidebar.category.Domain": {
     "message": "ドメイン",
-    "description": "The label for category 'domain' in sidebar 'tutorialSidebar'"
+    "description": "The label for category 'Domain' in sidebar 'tutorialSidebar'"
   },
   "sidebar.tutorialSidebar.category.entities": {
     "message": "エンティティ",
     "description": "The label for category 'entities' in sidebar 'tutorialSidebar'"
   },
-  "sidebar.tutorialSidebar.category.getting-started": {
-    "message": "始め方",
-    "description": "The label for category 'getting-started' in sidebar 'tutorialSidebar'"
+  "sidebar.tutorialSidebar.category.ADR": {
+    "message": "ADR",
+    "description": "The label for category 'ADR' in sidebar 'tutorialSidebar'"
+  },
+  "sidebar.tutorialSidebar.category.API Reference": {
+    "message": "APIリファレンス",
+    "description": "The label for category 'API Reference' in sidebar 'tutorialSidebar'"
   }
 }
