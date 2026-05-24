@@ -87,9 +87,8 @@ export class DashboardResume implements OnInit {
 
     protected onTaskDone(overtime: number) {
         let finalTime = this.activeTask()!.estimatedMinutes;
-        if (overtime != null) {
-            finalTime += overtime;
-        }
+        finalTime += overtime;
+
 
         const dto: TaskCompletedDto = {
             completedMinutes: finalTime
