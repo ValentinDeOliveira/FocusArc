@@ -1,0 +1,30 @@
+name: PR coverage
+
+on:
+  # triggered after ci.yml done to get coverage result
+  workflow_run:
+    workflows: ["CI"]
+    types: [completed]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    # run only if build is successful
+    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    steps:
+      - name: Download coverage artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: jacoco-report
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Add coverage to PR
+        uses: madrapps/jacoco-report@v1.7.2
+        with:
+          paths: jacoco.xml
+          token: ${{ secrets.GITHUB_TOKEN }}
+          min-coverage-overall: 85
+          min-coverage-changed-files: 80
