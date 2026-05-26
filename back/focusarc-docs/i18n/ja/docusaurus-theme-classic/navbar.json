@@ -4,11 +4,11 @@
     "description": "The title in the navbar"
   },
   "item.label.Docs": {
-    "message": "Docs",
+    "message": "ドキュメント",
     "description": "Navbar item with label Docs"
   },
   "item.label.API Reference": {
-    "message": "API Reference",
+    "message": "APIリファレンス",
     "description": "Navbar item with label API Reference"
   },
   "item.label.GitHub": {
