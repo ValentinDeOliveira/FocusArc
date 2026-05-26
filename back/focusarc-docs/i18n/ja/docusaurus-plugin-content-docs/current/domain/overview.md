@@ -1,5 +1,5 @@
 ---
-title: Domain Overview
+title: ドメインの概要
 sidebar_position: 1
 ---
 
