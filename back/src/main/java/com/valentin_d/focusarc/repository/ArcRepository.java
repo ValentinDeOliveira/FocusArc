@@ -21,4 +21,6 @@ public interface ArcRepository extends MongoRepository<Arc, ArcId> {
     Optional<Arc> findByIdAndOwner(final ArcId id, final UserId owner);
 
     boolean existsByIdAndOwner(final ArcId id, final UserId owner);
+
+    void deleteAllByOwner(final UserId owner);
 }
