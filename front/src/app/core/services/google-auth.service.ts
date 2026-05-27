@@ -3,34 +3,16 @@ import {environment} from '../../../environments/environment';
 
 @Injectable({ providedIn: 'root' })
 export class GoogleAuthService {
-    private clientId = environment.googleClientId;
-    private callback: ((credential: string) => void) | null = null;
-    private initialized = false;
 
-    register(callback: (credential: string) => void): void {
-        this.callback = callback;
-        if (!this.initialized) {
-            this.initialized = true;
-            this.whenGoogleReady(() =>
-                google.accounts.id.initialize({
-                    client_id: this.clientId,
-                    callback: ({ credential }) => this.callback?.(credential),
-                })
-            );
-        }
-    }
-
-    prompt(): void {
-        if (typeof google !== 'undefined') {
-            google.accounts.id.prompt();
-        }
-    }
-
-    private whenGoogleReady(fn: () => void): void {
-        if (typeof google !== 'undefined') {
-            fn();
-        } else {
-            (window as Window & { onGoogleLibraryLoad?: () => void }).onGoogleLibraryLoad = fn;
-        }
+    render(element: HTMLElement, onCredential: (token: string) => void): void {
+        const setup = () => {
+            google.accounts.id.initialize({
+                client_id: environment.googleClientId,
+                callback: r => onCredential(r.credential),
+            });
+            google.accounts.id.renderButton(element, { type: 'standard', theme: 'outline', size: 'large' });
+        };
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        typeof google !== 'undefined' ? setup() : (window as any).onGoogleLibraryLoad = setup;
     }
 }
