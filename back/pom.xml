@@ -178,7 +178,9 @@
                 <configuration>
                     <excludes>
                         <!-- Excluded from test context via @Profile("!test"), untestable by design -->
-                        <exclude>com/valentin_d/focusarc/config/SecurityConfig.class</exclude>
+                        <exclude>**/SecurityConfig.class</exclude>
+                        <!-- Entry point — main() is never called by Spring during tests -->
+                        <exclude>**/FocusarcApplication.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>
