@@ -15,6 +15,10 @@ public class CookieService {
     private long expirationTime;
     @Value("${jwt.refresh-expiration-time}")
     private long refreshExpirationTime;
+    @Value("${app.cookie.same-site}")
+    private String sameSite;
+    @Value("${app.cookie.secure}")
+    private boolean secure;
 
     public static final String ACCESS_TOKEN = "access_token";
     public static final String REFRESH_TOKEN = "refresh_token";
@@ -43,9 +47,10 @@ public class CookieService {
     private ResponseCookie buildCookie(final String name, final String value, final long maxAgeSeconds) {
         return ResponseCookie.from(name, value)
                 .httpOnly(true)
+                .secure(secure)
                 .path("/")
                 .maxAge(maxAgeSeconds)
-                .sameSite("Strict")
+                .sameSite(sameSite)
                 .build();
     }
 }

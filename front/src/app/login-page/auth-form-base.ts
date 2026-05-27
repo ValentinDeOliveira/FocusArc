@@ -1,23 +1,30 @@
-import {Directive, inject, OnInit, signal} from '@angular/core';
+import {AfterViewInit, Directive, ElementRef, inject, signal, ViewChild} from '@angular/core';
 import {Router} from '@angular/router';
 import {HttpErrorResponse} from '@angular/common/http';
 import {AuthService} from '../core/services/auth.service';
 import {GoogleAuthService} from '../core/services/google-auth.service';
 
 @Directive()
-export abstract class AuthFormBase implements OnInit {
+export abstract class AuthFormBase implements AfterViewInit {
     protected authService = inject(AuthService);
     protected router = inject(Router);
     private googleAuthService = inject(GoogleAuthService);
 
+    @ViewChild('googleBtnContainer') private googleBtnContainer?: ElementRef<HTMLDivElement>;
+
     loading = signal(false);
     error = signal<string | null>(null);
 
-    ngOnInit(): void {
-        this.googleAuthService.register((credential) => this.handleGoogleCredential(credential));
+    ngAfterViewInit(): void {
+        if (this.googleBtnContainer) {
+            this.googleAuthService.render(
+                this.googleBtnContainer.nativeElement,
+                token => this.handleGoogleCredential(token),
+            );
+        }
     }
 
-    handleGoogleCredential(idToken: string): void {
+    private handleGoogleCredential(idToken: string): void {
         this.loading.set(true);
         this.error.set(null);
         this.authService.loginWithGoogle({ idToken }).subscribe({
@@ -27,10 +34,6 @@ export abstract class AuthFormBase implements OnInit {
                 this.loading.set(false);
             },
         });
-    }
-
-    promptGoogle(): void {
-        this.googleAuthService.prompt();
     }
 
     protected abstract onGoogleSuccess(): void;
