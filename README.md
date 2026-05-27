@@ -20,6 +20,17 @@ Users organize focused work sessions through a three-level hierarchy: **Arc** (a
 
 ---
 
+## Try it
+
+A demo account is available, no setup required:
+
+| Credentials  | Value              |
+|--------------|--------------------|
+| **Email**    | `dev@focusarc.com` |
+| **Password** | `password123`      |
+
+---
+
 ## Structure
 
 | Folder              | Description                                         |
