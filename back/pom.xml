@@ -179,7 +179,6 @@
                     <excludes>
                         <!-- Excluded from test context via @Profile("!test"), untestable by design -->
                         <exclude>com/valentin_d/focusarc/config/SecurityConfig.class</exclude>
-                        <exclude>com/valentin_d/focusarc/controller/DevSeedController.class</exclude>
                     </excludes>
                 </configuration>
                 <executions>

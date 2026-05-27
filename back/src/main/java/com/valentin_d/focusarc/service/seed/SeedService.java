@@ -13,7 +13,6 @@ import com.valentin_d.focusarc.model.user.AuthProvider;
 import com.valentin_d.focusarc.model.user.User;
 import com.valentin_d.focusarc.repository.*;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -25,10 +24,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-@Profile("!test")
 @RequiredArgsConstructor
 public class SeedService {
-
     public static final String SEED_EMAIL = "dev@focusarc.com";
     public static final String SEED_PASSWORD = "password123";
 

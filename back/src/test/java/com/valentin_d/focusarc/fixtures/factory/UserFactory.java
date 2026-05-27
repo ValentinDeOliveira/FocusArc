@@ -12,6 +12,10 @@ public final class UserFactory {
         return UserBuilder.builder().build().build();
     }
 
+    public static User aUserWithEmailAndPassword(final String email, final String password) {
+        return UserBuilder.builder().email(email).password(password).build().build();
+    }
+
     public static UserUpdateDto aUserUpdateDto() {
         return UserUpdateDtoBuilder.builder().build().build();
     }

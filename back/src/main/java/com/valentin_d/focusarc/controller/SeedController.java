@@ -8,7 +8,6 @@ import com.valentin_d.focusarc.service.auth.JwtService;
 import com.valentin_d.focusarc.service.seed.SeedService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -20,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/dev")
-@Profile("!test")
 @RequiredArgsConstructor
 public class SeedController {
     private final SeedService seedService;

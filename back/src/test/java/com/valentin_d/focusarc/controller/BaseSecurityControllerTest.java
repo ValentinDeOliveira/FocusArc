@@ -43,6 +43,10 @@ abstract class BaseSecurityControllerTest extends BaseControllerTest {
         return mvcPost(url, json, getAuth(user));
     }
 
+    protected ResultActions mvcPostWithUser(final String url, final User user) throws Exception {
+        return mvcPost(url, "", getAuth(user));
+    }
+
     protected ResultActions mvcPatchWithUser(final String url, final String json, final User user) throws Exception {
         return mvcPatch(url, json, getAuth(user));
     }
