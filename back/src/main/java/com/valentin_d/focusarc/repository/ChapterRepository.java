@@ -15,4 +15,6 @@ public interface ChapterRepository extends MongoRepository<Chapter, ChapterId> {
     boolean existsByArcAndScheduledDate(ArcId arc, LocalDate scheduledDate);
 
     Optional<Chapter> findByArcAndScheduledDate(ArcId arc, LocalDate scheduledDate);
+
+    void deleteAllByArc(ArcId arcId);
 }
