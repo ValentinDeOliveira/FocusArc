@@ -4,7 +4,6 @@ on:
     branches: [ main ]
   pull_request:
     branches: [ main ]
-  workflow_dispatch:
 
 jobs:
   build:
@@ -82,7 +81,7 @@ jobs:
       - name: Build native image
         working-directory: back
         run: |
-          ./mvnw -Pnative spring-boot:build-image \
+          ./mvnw -Pnative spring-boot:build-image -DskipTests \
             -Dspring-boot.build-image.imageName=ghcr.io/${{ github.repository_owner }}/focusarc:latest
 
       - name: Push image
