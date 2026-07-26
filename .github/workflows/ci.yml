@@ -82,7 +82,7 @@ jobs:
         working-directory: back
         run: |
           ./mvnw -Pnative spring-boot:build-image -DskipTests \
-            -Dspring-boot.build-image.imageName=ghcr.io/${{ github.repository_owner }}/focusarc:latest
+            -Dspring-boot.build-image.imageName=ghcr.io/${{ steps.vars.outputs.owner_lc }}/focusarc:latest
 
       - name: Push image
-        run: docker push ghcr.io/${{ github.repository_owner }}/focusarc:latest
+        run: docker push ghcr.io/${{ steps.vars.outputs.owner_lc }}/focusarc:latest
