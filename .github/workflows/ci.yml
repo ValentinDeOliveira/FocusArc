@@ -91,3 +91,6 @@ jobs:
 
       - name: Push image
         run: docker push ghcr.io/${{ steps.vars.outputs.owner_lc }}/focusarc:latest
+
+      - name: Trigger Render deploy
+        run: curl -X POST "${{ secrets.RENDER_DEPLOY_HOOK }}"
